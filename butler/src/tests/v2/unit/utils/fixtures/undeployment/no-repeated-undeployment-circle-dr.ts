@@ -33,7 +33,8 @@ export const noRepeatedUndeploymentCircleDr = {
         labels: {
           circleId: 'default-circle-id',
           component: 'A',
-          tag: 'v2'
+          tag: 'v2',
+          deploymentId: 'deployment-id2'
         },
         name: 'default-circle-id'
       }

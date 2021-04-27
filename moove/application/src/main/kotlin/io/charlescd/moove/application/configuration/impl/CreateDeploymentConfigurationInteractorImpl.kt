@@ -21,23 +21,45 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateDeploymentConfigurationRequest
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
+import io.charlescd.moove.infrastructure.service.DeployClientService
 import javax.inject.Named
 
 @Named
 class CreateDeploymentConfigurationInteractorImpl(
     private val deploymentConfigurationRepository: DeploymentConfigurationRepository,
     private val userService: UserService,
+    private val deployClientService: DeployClientService,
     private val workspaceService: WorkspaceService
 ) : CreateDeploymentConfigurationInteractor {
 
     override fun execute(request: CreateDeploymentConfigurationRequest, workspaceId: String, authorization: String): DeploymentConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)
 
+        validateButlerUrl(request.butlerUrl)
+
         val author = userService.findByAuthorizationToken(authorization)
+
+        checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
 
         val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
 
         return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
+    }
+
+    private fun validateButlerUrl(butlerUrl: String) {
+        try {
+            this.deployClientService.healthCheck(butlerUrl)
+        } catch (exception: Exception) {
+            throw BusinessException.of(MooveErrorCode.INVALID_BUTLER_URL_ERROR)
+        }
+    }
+
+    private fun checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId: String) {
+        if (deploymentConfigurationRepository.existsAnyByWorkspaceId(workspaceId)) {
+            throw BusinessException.of(MooveErrorCode.DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED)
+        }
     }
 }

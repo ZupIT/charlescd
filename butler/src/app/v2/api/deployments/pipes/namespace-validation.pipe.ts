@@ -14,35 +14,33 @@
  * limitations under the License.
  */
 
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { ConflictException, Injectable, PipeTransform } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { Repository } from 'typeorm'
+import { InjectRepository } from '@nestjs/typeorm'
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
+import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
+import { K8sClient } from '../../../core/integrations/k8s/client'
+
 
 @Injectable()
-export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
+export class NamespaceValidationPipe implements PipeTransform {
 
   constructor(
     @InjectRepository(DeploymentEntity)
-    private readonly deploymentsRepository: Repository<DeploymentEntity>
+    private readonly deploymentsRepository: Repository<DeploymentEntity>,
+    private readonly k8sClient: K8sClient
   ) {}
 
   public async transform(deploymentRequest: CreateDeploymentRequestDto): Promise<CreateDeploymentRequestDto> {
-    if (!deploymentRequest.circle.default) {
-      return deploymentRequest
-    }
+    
+    const response = await this.k8sClient.getNamespace(deploymentRequest.namespace)
 
-    const deployment: DeploymentEntity | undefined = await this.deploymentsRepository.findOne(
-      { defaultCircle: true, current: true, circleId: deploymentRequest.circle.id }
-    )
-
-    if (deployment && deployment.namespace !== deploymentRequest.namespace) {
-      throw new ConflictException({
+    if (response.body.status?.phase !== 'Active') {
+      throw new BadRequestException({
         errors: [
           {
-            title: 'Invalid namespace',
-            detail: 'Circle already has an active default deployment in a different namespace.',
+            message: `invalid namespace '${deploymentRequest.namespace}'`,
+            detail: 'namespace does not exist or is not active',
             meta: {
               component: 'butler',
               timestamp: Date.now()
@@ -50,13 +48,11 @@ export class DefaultCircleNamespaceUniquenessPipe implements PipeTransform {
             source: {
               pointer: 'namespace'
             },
-            status: 409
+            status: 400
           }
         ]
-      }
-      )
+      })
     }
-
     return deploymentRequest
   }
 }

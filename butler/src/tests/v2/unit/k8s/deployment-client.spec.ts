@@ -57,11 +57,11 @@ describe('Deployment CRD client apply method', () => {
   })
 
   it('should call the read method with the correct arguments', async() => {
-    const readSpy = jest.spyOn(k8sClient.client, 'read')
+    const readSpy = jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'create')
+    jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
@@ -71,11 +71,11 @@ describe('Deployment CRD client apply method', () => {
   })
 
   it('should call the patch method with the correct arguments and should not call the create method', async() => {
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const patchSpy = jest.spyOn(k8sClient.client, 'patch')
+    const patchSpy = jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const createSpy = jest.spyOn(k8sClient.client, 'create')
+    const createSpy = jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
@@ -93,11 +93,11 @@ describe('Deployment CRD client apply method', () => {
   })
 
   it('should call the create method with the correct arguments and should not call the patch method', async() => {
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.reject(new k8s.HttpError({} as http.IncomingMessage, {}, 404)))
-    const patchSpy = jest.spyOn(k8sClient.client, 'patch')
+    const patchSpy = jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const createSpy = jest.spyOn(k8sClient.client, 'create')
+    const createSpy = jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     const expectedManifest = CrdBuilder.buildDeploymentCrdManifest(deployment, butlerNamespace)
@@ -110,11 +110,11 @@ describe('Deployment CRD client apply method', () => {
   it('should throw error when create method fails', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.reject(new k8s.HttpError({} as http.IncomingMessage, {}, 404)))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'create')
+    jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.reject(expectedError))
 
     await expect(k8sClient.applyDeploymentCustomResource(deployment))
@@ -124,11 +124,11 @@ describe('Deployment CRD client apply method', () => {
   it('should throw error when patch method fails', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.reject(expectedError))
-    jest.spyOn(k8sClient.client, 'create')
+    jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await expect(k8sClient.applyDeploymentCustomResource(deployment))
@@ -138,11 +138,11 @@ describe('Deployment CRD client apply method', () => {
   it('should throw error when read method fails and should not call the create method', async() => {
     const expectedError = new k8s.HttpError({} as http.IncomingMessage, {}, 500)
 
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.reject(expectedError))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    const createSpy = jest.spyOn(k8sClient.client, 'create')
+    const createSpy = jest.spyOn(k8sClient.objectApi, 'create')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await expect(k8sClient.applyDeploymentCustomResource(deployment))
@@ -152,9 +152,9 @@ describe('Deployment CRD client apply method', () => {
 
   it('should call the deployment crd builder method with the correct deployment and namespace', async() => {
     const builderSpy = jest.spyOn(CrdBuilder, 'buildDeploymentCrdManifest')
-    jest.spyOn(k8sClient.client, 'read')
+    jest.spyOn(k8sClient.objectApi, 'read')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
-    jest.spyOn(k8sClient.client, 'patch')
+    jest.spyOn(k8sClient.objectApi, 'patch')
       .mockImplementation(() => Promise.resolve({} as K8sClientResolveObject))
 
     await k8sClient.applyDeploymentCustomResource(deployment)

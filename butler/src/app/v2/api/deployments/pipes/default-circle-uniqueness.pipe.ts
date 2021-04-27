@@ -38,7 +38,22 @@ export class DefaultCircleUniquenessPipe implements PipeTransform {
     )
 
     if (deployment && deployment.circleId !== deploymentRequest.circle.id) {
-      throw new ConflictException('Invalid circle id. Namespace already has an active default deployment with a different circle id.')
+      throw new ConflictException( {
+        errors: [
+          {
+            title: 'Invalid circle id.',
+            detail: 'Circle already has an active default deployment in a different namespace.',
+            meta: {
+              component: 'butler',
+              timestamp: Date.now()
+            },
+            source: {
+              pointer: 'circle/id'
+            },
+            status: 409
+          }
+        ]
+      })
     }
 
     return deploymentRequest

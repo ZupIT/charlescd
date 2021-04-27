@@ -32,7 +32,22 @@ export class DeploymentUniquenessPipe implements PipeTransform {
     const deployment: DeploymentEntity | undefined =
       await this.deploymentsRepository.findOne({ id: deploymentRequest.deploymentId })
     if (deployment) {
-      throw new ConflictException('Deployment already exists')
+      throw new ConflictException( {
+        errors: [
+          {
+            detail: 'deployment already exists',
+            meta: {
+              component: 'butler',
+              timestamp: Date.now()
+            },
+            source: {
+              pointer: 'deploymentId'
+            },
+            status: 409
+          }
+        ]
+      }
+      )
     }
     return deploymentRequest
   }
