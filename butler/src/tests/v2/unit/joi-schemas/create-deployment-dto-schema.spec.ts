@@ -99,41 +99,41 @@ it('Formats the error to the correct format', () => {
   }
   const formattedErrors = validator.formatErrors(validatorResult.errors, HttpStatus.BAD_REQUEST)
   const expectedErrors  = [
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"deploymentId" is required',
-        'source': 'deploymentId'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"namespace" is required',
-        'source': 'namespace'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"circle" is required',
-        'source': 'circle'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"git" is required',
-        'source': 'git'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"components" is required',
-        'source': 'components'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"authorId" is required',
-        'source': 'authorId'
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'title': '"callbackUrl" is required',
-        'source': 'callbackUrl'
-      }
-    ]
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"deploymentId" is required',
+      'source': 'deploymentId'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"namespace" is required',
+      'source': 'namespace'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"circle" is required',
+      'source': 'circle'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"git" is required',
+      'source': 'git'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"components" is required',
+      'source': 'components'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"authorId" is required',
+      'source': 'authorId'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"callbackUrl" is required',
+      'source': 'callbackUrl'
+    }
+  ]
   expect(formattedErrors).toEqual(expectedErrors)
 })
