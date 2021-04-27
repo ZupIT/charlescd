@@ -7,16 +7,18 @@ import { Response } from 'express'
 import { plainToClass } from 'class-transformer'
 
 @Catch(BadRequestException)
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export class HttpExceptionFilter implements ExceptionFilter {
   public catch(exception: BadRequestException, host: ArgumentsHost): void {
+    const errorResponse = exception.getResponse()  as string | Record<string, unknown>
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
-    if(!this.alreadyDetailedError(exception.getResponse())) {
+    if(!this.alreadyDetailedError(errorResponse)) {
       response
         .status(exception.getStatus())
         .json({
           errors: [{
-            title: this.getExceptionMessage(exception.getResponse()),
+            title: this.getExceptionMessage(errorResponse),
             meta: {
               component: 'butler',
               timestamp: Date.now()
@@ -30,16 +32,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
         .json(exception.getResponse())
     }
   }
-  private getExceptionMessage(response: string | Record<string, any>) {
+  private getExceptionMessage(response: string | Record<string, unknown>) {
     return typeof response === 'string' ? response  : this.convertToClass(response)
   }
 
-  private convertToClass(response: Record<string, any>): Record<string, any> | string {
+  private convertToClass(response: Record<string, any>): Record<string, unknown> | string {
     return plainToClass(ErrorResponse, response).message
   }
-  private alreadyDetailedError(response: string | Record<string, any>): boolean {
-    return  typeof response !== 'string' &&  Object.entries(response).some(
-      ([key, value]) => key === 'errors')
+  private alreadyDetailedError(response: string | Record<string, unknown>): boolean {
+    return  typeof response !== 'string' &&  Object.keys(response).some(
+      (key) => key === 'errors')
   }
 
 }
