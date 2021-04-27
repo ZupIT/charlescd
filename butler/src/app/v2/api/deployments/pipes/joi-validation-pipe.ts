@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -15,9 +14,10 @@
  * limitations under the License.
  */
 
-import { BadRequestException, HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
+import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { CreateDeploymentValidator } from '../validations/create-deployment-validator'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Injectable()
 export class JoiValidationPipe implements PipeTransform {
@@ -26,7 +26,7 @@ export class JoiValidationPipe implements PipeTransform {
     const validator = new CreateDeploymentValidator(value)
     const validationResult = validator.validate()
     if (!validationResult.valid) {
-      throw new BadRequestException(validator.formatErrors(validationResult.errors, HttpStatus.BAD_REQUEST))
+      throw ExceptionBuilder.buildFromArray(validator.formatErrors(validationResult.errors, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST)
     }
 
     return validationResult.data

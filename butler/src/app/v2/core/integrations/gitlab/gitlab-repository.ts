@@ -20,6 +20,7 @@ import { ConfigurationConstants } from '../../constants/application/configuratio
 import { ConsoleLoggerService } from '../../logs/console'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
+import { ExceptionBuilder } from '../../utils/exception.utils'
 
 @Injectable()
 export class GitLabRepository implements Repository {
@@ -87,24 +88,10 @@ export class GitLabRepository implements Repository {
     return this.httpService.get(url, config)
       .toPromise()
       .catch(function(error) {
-        const err = {
-          errors: [{
-            title: 'Unable to fetch GitLab URL',
-            detail: `Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`,
-            meta: {
-              component: 'butler',
-              timestamp: Date.now()
-            },
-            source: {
-              pointer: 'components.helmRepository'
-            },
-            status: `${error.response.status}`
-          }
-          ] }
-        if (error.response.status >= 400 && error.response.status < 500){
-          throw new BadRequestException(err)
-        }
-        throw new InternalServerErrorException(err)
+        throw new ExceptionBuilder('Unable to fetch GitLab URL', error.status)
+          .withDetail(`Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`)
+          .withSource('components.helmRepository')
+          .build()
       })
   }
 

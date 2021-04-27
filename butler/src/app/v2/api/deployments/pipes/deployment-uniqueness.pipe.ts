@@ -15,10 +15,11 @@
  */
 
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { ConflictException, Injectable, PipeTransform } from '@nestjs/common'
+import { ConflictException, HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { Repository } from 'typeorm'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Injectable()
 export class DeploymentUniquenessPipe implements PipeTransform {
@@ -32,22 +33,8 @@ export class DeploymentUniquenessPipe implements PipeTransform {
     const deployment: DeploymentEntity | undefined =
       await this.deploymentsRepository.findOne({ id: deploymentRequest.deploymentId })
     if (deployment) {
-      throw new ConflictException( {
-        errors: [
-          {
-            detail: 'deployment already exists',
-            meta: {
-              component: 'butler',
-              timestamp: Date.now()
-            },
-            source: {
-              pointer: 'deploymentId'
-            },
-            status: 409
-          }
-        ]
-      }
-      )
+      throw new ExceptionBuilder('deployment already exists', HttpStatus.CONFLICT).withSource('deploymentId')
+        .build()
     }
     return deploymentRequest
   }

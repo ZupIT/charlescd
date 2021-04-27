@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../repository/component.repository'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Injectable()
 export class UndeploymentValidation implements PipeTransform {
@@ -33,7 +34,8 @@ export class UndeploymentValidation implements PipeTransform {
   public async transform(deploymentId: string): Promise<string> {
     const deployment = await this.deploymentsRepository.findOneOrFail({ id: deploymentId })
     if (deployment.current === false) {
-      throw new BadRequestException('Cannot undeploy not current deployment')
+      throw new ExceptionBuilder('Cannot undeploy not current deployment', HttpStatus.BAD_REQUEST)
+        .build()
     }
 
     // const circleId = deployment.circleId

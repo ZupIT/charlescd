@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common'
+import { Injectable, } from '@nestjs/common'
 import { spawn } from 'child_process'
 import { promises as fs } from 'fs'
 import * as yaml from 'js-yaml'
@@ -31,6 +28,8 @@ import { RepositoryStrategyFactory } from '../../integrations/repository-strateg
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
+import { ExceptionBuilder } from '../../utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -59,7 +58,7 @@ export class HelmManifest implements Manifest {
       return manifest
     } catch (exception) {
       this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
-      throw new BadRequestException(`Not a valid template. ${exception.message}`)
+      throw new ExceptionBuilder('Not a valid manifest', HttpStatus.UNPROCESSABLE_ENTITY).build()
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       this.cleanUp(chartPath)
