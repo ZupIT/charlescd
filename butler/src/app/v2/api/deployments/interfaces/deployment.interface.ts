@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
 import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
+import { Component } from './'
 
 export interface Deployment {
     id: string
@@ -25,8 +25,6 @@ export interface Deployment {
     callbackUrl: string
 
     createdAt: Date
-
-    cdConfiguration: CdConfiguration
 
     circleId: string
 
@@ -40,6 +38,7 @@ export interface Deployment {
 export interface Metadata {
     scope: MetadataScopeEnum
     content: Record<string, string>
+    namespace: string
 }
 
 export type DeploymentComponent = Omit<Component, 'deployment'>

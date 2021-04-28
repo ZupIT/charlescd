@@ -44,10 +44,6 @@ export const ConfigurationConstants = {
 
   DARWIN_CALLBACK: 'http://localhost:8883/deploy/notifications',
 
-  SPINNAKER_URL: 'http://localhost:8883/spinnaker',
-
-  SPINNAKER_GITHUB_ACCOUNT: 'github-account',
-
   HELM_TEMPLATE_URL: 'http://localhost:8883/helm',
 
   HELM_PREFIX_URL: 'http://localhost:8883/helm',
@@ -58,11 +54,11 @@ export const ConfigurationConstants = {
 
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
 
-  OCTOPIPE_URL: 'http://localhost:8883/octopipe',
-
   DEPLOYMENT_EXPIRE_TIME: 25,
 
-  BUTLER_URL: 'http://localhost:8883/butler'
-}
+  BUTLER_URL: 'http://localhost:8883/butler',
 
-export type DefaultCircleId = 'f5d23a57-5607-4306-9993-477e1598cc2a'
+  CHART_DOWNLOAD_TIMEOUT: 5000,
+
+  BUTLER_NAMESPACE: 'default'
+}

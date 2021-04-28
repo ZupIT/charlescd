@@ -17,24 +17,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
+import { KubernetesManifest } from '../../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
 import * as request from 'supertest'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
+import { simpleManifests } from '../../fixtures/manifests.fixture'
+import { UrlConstants } from '../test-constants'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
+  let manifests: KubernetesManifest[]
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -48,20 +48,18 @@ describe('DeploymentController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
+    manifests = simpleManifests
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
-    await worker.pgBoss.start()
     await fixtureUtilsService.clearDatabase()
+<<<<<<< HEAD
     await worker.pgBoss.clearStorage()
   })
 
@@ -138,6 +136,8 @@ describe('DeploymentController v2', () => {
         expect(response.body.size).toEqual(1)
         expect(response.body.last).toEqual(true)
       })
+=======
+>>>>>>> butler-operator
   })
 
   it('validate query string parameters', async() => {
@@ -150,7 +150,7 @@ describe('DeploymentController v2', () => {
       statusCode: 400
     }
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 0, page: -1 })
+      .get('/v2/executions').query({ current: false, size: 0, page: -1 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(response => {
         expect(response.body).toEqual(errorMessages)
@@ -158,21 +158,13 @@ describe('DeploymentController v2', () => {
   })
 
   it('returns the right entity values', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-
     const params = {
+      defaultCircle: false,
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
       components: [
         {
-          helmRepository: 'https://some-helm.repo',
+          helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
           buildImageUrl: 'imageurl.com',
           buildImageTag: 'tag1',
@@ -182,21 +174,22 @@ describe('DeploymentController v2', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+<<<<<<< HEAD
       defaultCircle: false,
       metadata: null
+=======
+>>>>>>> butler-operator
     }
 
-    await createDeploymentAndExecution(params, cdConfiguration, manager)
+    await createDeploymentAndExecution(params, 'namespace', manifests, manager)
     const expectedBody = {
       createdAt: expect.any(String),
       deployment: {
-        active: false,
+        current: false,
         author_id: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-        callback_url: 'http://localhost:8883/deploy/notifications/deployment',
-        cd_configuration_id: expect.any(String),
+        callback_url: UrlConstants.deploymentCallbackUrl,
         circle_id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
         components: [
           {
@@ -222,7 +215,7 @@ describe('DeploymentController v2', () => {
     }
 
     await request(app.getHttpServer())
-      .get('/v2/executions').query({ active: false, size: 1, page: 0 })
+      .get('/v2/executions').query({ current: false, size: 1, page: 0 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(200)
       .expect(response => {
@@ -231,15 +224,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('parameters are optional when quering executions', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
@@ -255,20 +239,18 @@ describe('DeploymentController v2', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
     }
 
-    await createDeploymentAndExecution(params, cdConfiguration, manager)
+    await createDeploymentAndExecution(params, 'default', [], manager)
     const expectedBody = {
       createdAt: expect.any(String),
       deployment: {
-        active: false,
+        current: false,
         author_id: '580a7726-a274-4fc3-9ec1-44e3563d58af',
         callback_url: 'http://localhost:8883/deploy/notifications/deployment',
-        cd_configuration_id: expect.any(String),
         circle_id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
         components: [
           {
@@ -303,15 +285,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('returns correct page size and last page false', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
@@ -327,15 +300,14 @@ describe('DeploymentController v2', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
     }
 
-    await createDeploymentAndExecution(params, cdConfiguration, manager)
-    await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
-    await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
+    await createDeploymentAndExecution(params, 'deafult', [], manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, 'default', [], manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, 'default', [], manager)
 
     await request(app.getHttpServer())
       .get('/v2/executions?size=2&page=0')
@@ -348,15 +320,6 @@ describe('DeploymentController v2', () => {
   })
 
   it('returns correct page size and last page true', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
-
     const params = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: '333365f8-bb29-49f7-bf2b-3ec956a71583',
@@ -372,15 +335,14 @@ describe('DeploymentController v2', () => {
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
       defaultCircle: false
     }
 
-    await createDeploymentAndExecution(params, cdConfiguration, manager)
-    await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
-    await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, cdConfiguration, manager)
+    await createDeploymentAndExecution(params, 'default', [], manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'a33365f8-bb29-49f7-bf2b-3ec956a71583' }, 'default', [], manager)
+    await createDeploymentAndExecution({ ...params, deploymentId: 'b33365f8-bb29-49f7-bf2b-3ec956a71583' }, 'default', [], manager)
 
     await request(app.getHttpServer())
       .get('/v2/executions?size=2&page=1')
@@ -393,7 +355,7 @@ describe('DeploymentController v2', () => {
   })
 })
 
-const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfigurationEntity, manager: any) : Promise<Execution> => {
+const createDeploymentAndExecution = async(params: any, namespace: string, manifests: KubernetesManifest[], manager: any) : Promise<Execution> => {
   const components = params.components.map((c: any) => {
     return new ComponentEntity(
       c.helmRepository,
@@ -402,7 +364,8 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
       c.componentName,
       c.componentId,
       c.hostValue,
-      c.gatewayName
+      c.gatewayName,
+      manifests
     )
   })
 
@@ -410,11 +373,15 @@ const createDeploymentAndExecution = async(params: any, cdConfiguration: CdConfi
     params.deploymentId,
     params.authorId,
     params.circle,
-    cdConfiguration,
     params.callbackUrl,
     components,
     params.defaultCircle,
+<<<<<<< HEAD
     null
+=======
+    namespace,
+    5
+>>>>>>> butler-operator
   ))
 
   const execution : Execution = await manager.save(new Execution(

@@ -35,7 +35,7 @@
 
 - request:
     method: POST
-    url: ^/deployments/circle
+    url: ^/v2/deployments
 
   response:
     status: 200
@@ -44,96 +44,12 @@
     body: >
       {
         "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0db",
-        "applicationName": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dv",
-        "modulesDeployments":[
-          {
-            "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dz",
-            "moduleId":"131d2352-287b-4b24-99f2-41dd3dcc6efc",
-            "k8sConfigurationId": "131d2352-287b-4b24-99f2-41dd3dcc6eff",
-            "componentsDeployments":[
-              {
-                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
-                "componentId":"7256b285-2101-44d6-ac38-d0d7503419e3",
-                "componentName":"component1",
-                "buildImageUrl":"registry.io/component1:qa-1",
-                "buildImageTag":"qa-1",
-                "status": "CREATED",
-                "createdAt": "2019-09-19T22:20:06.379Z"
-              },
-              {
-                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
-                "componentId":"82c05d7e-b49c-4f0a-990b-126144e0f5e6",
-                "componentName":"component2",
-                "buildImageUrl":"registry.io/component2:qa-2",
-                "buildImageTag":"qa-2",
-                "status": "CREATED",
-                "createdAt": "2019-09-19T22:20:06.379Z"
-              }
-            ],
-            "status": "CREATED",
-            "createdAt": "2019-09-19T22:20:06.379Z"
-          }
-        ],
-        "authorId":"8f87dee4-c67d-45a5-999c-afa9df02c1ab",
-        "callbackUrl":"http://localhost/callback/deploy/01261eba-56ee-4c27-b770-7d9fad5fbd96",
-        "circle": {
-          "headerValue":"Developer"
-        },
-        "status": "CREATED",
-        "createdAt": "2019-09-19T22:20:06.379Z"
+        "status": "CREATED"
       }
 
 - request:
     method: POST
-    url: ^/deployments/default
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {
-        "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0db",
-        "applicationName": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dv",
-        "modulesDeployments":[
-          {
-            "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0dz",
-            "moduleId":"131d2352-287b-4b24-99f2-41dd3dcc6efc",
-            "k8sConfigurationId": "131d2352-287b-4b24-99f2-41dd3dcc6eff",
-            "componentsDeployments":[
-              {
-                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
-                "componentId":"7256b285-2101-44d6-ac38-d0d7503419e3",
-                "componentName":"component1",
-                "buildImageUrl":"registry.io/component1:qa-1",
-                "buildImageTag":"qa-1",
-                "status": "CREATED",
-                "createdAt": "2019-09-19T22:20:06.379Z"
-              },
-              {
-                "id": "ccd9f717-6b38-4f1e-ad64-f735cda7a0da",
-                "componentId":"82c05d7e-b49c-4f0a-990b-126144e0f5e6",
-                "componentName":"component2",
-                "buildImageUrl":"registry.io/component2:qa-2",
-                "buildImageTag":"qa-2",
-                "status": "CREATED",
-                "createdAt": "2019-09-19T22:20:06.379Z"
-              }
-            ],
-            "status": "CREATED",
-            "createdAt": "2019-09-19T22:20:06.379Z"
-          }
-        ],
-        "authorId":"8f87dee4-c67d-45a5-999c-afa9df02c1ab",
-        "callbackUrl":"http://localhost/callback/deploy/01261eba-56ee-4c27-b770-7d9fad5fbd96",
-        "circle": null,
-        "status": "CREATED",
-        "createdAt": "2019-09-19T22:20:06.379Z"
-      }
-
-- request:
-    method: POST
-    url: ^/deployments/.+/undeploy
+    url: ^/v2/deployments/.+/undeploy
 
   response:
     status: 200
@@ -329,3 +245,14 @@
     status: 204
     headers:
       content-type: application/json
+
+- request:
+    method: POST
+    url: ^/api/v1/subscriptions/publish
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {}

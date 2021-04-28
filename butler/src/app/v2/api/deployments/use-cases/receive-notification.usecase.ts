@@ -75,26 +75,26 @@ export class ReceiveNotificationUseCase {
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
       execution.status = DeploymentStatusEnum.SUCCEEDED
-      execution.deployment.active = true
+      execution.deployment.current = true
       if (currentActiveDeployment) {
-        currentActiveDeployment.active = false
+        currentActiveDeployment.current = false
       }
     }
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.FAILED) {
       execution.status = DeploymentStatusEnum.FAILED
-      execution.deployment.active = false
+      execution.deployment.current = false
     }
 
     const savedExecution = await getConnection().transaction(async transactionManager => {
       try {
         if (currentActiveDeployment) {
-          await transactionManager.update(DeploymentEntityV2, { id: currentActiveDeployment.id }, { active: currentActiveDeployment.active })
+          await transactionManager.update(DeploymentEntityV2, { id: currentActiveDeployment.id }, { current: currentActiveDeployment.current })
         }
         for await (const c of execution.deployment.components) {
           transactionManager.update(ComponentEntityV2, { id: c.id }, { running: c.running })
         }
-        await transactionManager.update(DeploymentEntityV2, { id: execution.deployment.id }, { active: execution.deployment.active })
+        await transactionManager.update(DeploymentEntityV2, { id: execution.deployment.id }, { current  : execution.deployment.current })
         await transactionManager.update(Execution, { id: execution.id }, { status: execution.status, finishedAt: DateUtils.now() })
         await transactionManager.save(deploymentLogs)
         return execution
@@ -158,7 +158,7 @@ export class ReceiveNotificationUseCase {
     })
 
     if (deploymentNotificationDto.status === DeploymentStatusEnum.SUCCEEDED) {
-      execution.deployment.active = false
+      execution.deployment.current = false
       execution.status = DeploymentStatusEnum.SUCCEEDED
     }
 

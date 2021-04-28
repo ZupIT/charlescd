@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import { Http, K8sManifest, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component, Deployment } from '../../../api/deployments/interfaces'
-import { ISpinnakerConfigurationData } from '../../../api/configurations/interfaces'
-import { IstioManifestsUtils } from './istio-manifests.utilts'
-import { DeploymentUtils } from './deployment.utils'
 import { DeploymentComponent } from '../../../api/deployments/interfaces/deployment.interface'
+import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
+import { Http, Subset } from '../interfaces/k8s-manifest.interface'
+import { DeploymentUtils } from './deployment.utils'
+import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { AppConstants } from '../../constants'
 
 const IstioUndeploymentManifestsUtils = {
 
-  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
+  getVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): VirtualServiceSpec => {
     return {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'VirtualService',
       metadata: {
         name: `${component.name}`,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${deployment.namespace}`,
+        annotations: {
+          circles: JSON.stringify(activeByName.map(c => c.deployment.circleId))
+        }
       },
       spec: {
         gateways: component.gatewayName ? [component.gatewayName] : [],
@@ -39,52 +43,21 @@ const IstioUndeploymentManifestsUtils = {
     }
   },
 
-  getEmptyVirtualServiceManifest: (deployment: Deployment, component: DeploymentComponent): K8sManifest => {
+  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): DestinationRuleSpec => {
+    const istioSubsets = IstioUndeploymentManifestsUtils.getActiveComponentsSubsets(deployment.circleId, activeByName)
     return {
-      apiVersion: 'networking.istio.io/v1alpha3',
-      kind: 'VirtualService',
-      metadata: {
-        name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
-      },
-      spec: {
-        gateways: component.gatewayName ? [component.gatewayName] : [],
-        hosts: component.hostValue ? [component.hostValue, component.name] : [component.name],
-        http: [
-          {
-            match: [
-              {
-                headers: {
-                  'unreachable-cookie-name': {
-                    exact: 'unreachable-cookie - value'
-                  }
-                }
-              }
-            ],
-            route: [
-              {
-                destination: {
-                  host: 'unreachable-app-name'
-                }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  },
-
-  getDestinationRulesManifest: (deployment: Deployment, component: DeploymentComponent, activeByName: Component[]): K8sManifest => {
-    return {
-      apiVersion: 'networking.istio.io/v1alpha3',
+      apiVersion: AppConstants.ISTIO_RESOURCES_API_VERSION,
       kind: 'DestinationRule',
       metadata: {
         name: component.name,
-        namespace: `${(deployment.cdConfiguration.configurationData as ISpinnakerConfigurationData).namespace}`
+        namespace: `${deployment.namespace}`,
+        annotations: {
+          circles: JSON.stringify(istioSubsets.map(s => s.labels.circleId))
+        }
       },
       spec: {
         host: component.name,
-        subsets: IstioUndeploymentManifestsUtils.getActiveComponentsSubsets(deployment.circleId, activeByName)
+        subsets: istioSubsets
       }
     }
   },

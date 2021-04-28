@@ -105,6 +105,8 @@ env:
   value: "http://charlescd-octopipe:8080"
 - name: BUTLER_URL
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000"
+- name: BUTLER_NAMESPACE
+  value: {{ .ChartContext.Release.Namespace }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:

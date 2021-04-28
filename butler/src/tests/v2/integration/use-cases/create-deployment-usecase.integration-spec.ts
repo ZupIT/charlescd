@@ -17,20 +17,19 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-import { AppModule } from '../../../../app/app.module'
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { FixtureUtilsService } from '../fixture-utils.service'
-import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
-import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { AppModule } from '../../../../app/app.module'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
-import { PgBossWorker } from '../../../../app/v2/api/deployments/jobs/pgboss.worker'
+import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
+import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
+import { getSimpleManifests } from '../../fixtures/manifests.fixture'
+import { FixtureUtilsService } from '../fixture-utils.service'
+import { UrlConstants } from '../test-constants'
+import { TestSetupUtils } from '../test-setup-utils'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
-  let worker: PgBossWorker
   let manager: EntityManager
 
   beforeAll(async() => {
@@ -45,77 +44,73 @@ describe('CreateDeploymentUsecase v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    worker = app.get<PgBossWorker>(PgBossWorker)
     manager = fixtureUtilsService.connection.manager
   })
 
   afterAll(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.clearStorage()
-    await worker.pgBoss.stop()
     await app.close()
   })
 
   beforeEach(async() => {
     await fixtureUtilsService.clearDatabase()
-    await worker.pgBoss.start()
-    await worker.pgBoss.clearStorage()
   })
 
   it('should only merge default circle components from the previous deployment entity of that circle', async() => {
-    const cdConfiguration = new CdConfigurationEntity(
-      CdTypeEnum.SPINNAKER,
-      { account: 'my-account', gitAccount: 'git-account', url: 'www.spinnaker.url', namespace: 'my-namespace' },
-      'config-name',
-      'authorId',
-      'workspaceId'
-    )
-    await fixtureUtilsService.createEncryptedConfiguration(cdConfiguration)
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+        default: true
       },
-      modules: [
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: [
-            {
-              componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'v2',
-              componentName: 'A'
-            }
-          ]
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag-example',
+          componentName: 'A'
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      cdConfigurationId: cdConfiguration.id,
-      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      defaultCircle: true
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      namespace: 'my-namespace'
     }
 
     const component1 = new ComponentEntity(
-      'https://some-helm.repo',
-      'v2',
+      UrlConstants.helmRepository,
+      'tag-example',
       'imageurl.com',
       'A',
       '777765f8-bb29-49f7-bf2b-3ec956a71583',
       null,
       null,
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
     )
     component1.running = false
     component1.id = expect.anything()
     component1.merged = false
     const component2 = new ComponentEntity(
-      'http://localhost:2222/helm',
+      UrlConstants.helmRepository,
       'v1',
       'https://repository.com/B:v1',
       'B',
       '1c29210c-e313-4447-80e3-db89b2359138',
       null,
-      null
+      null,
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
     )
     component2.running = false
     component2.id = expect.anything()
@@ -129,95 +124,104 @@ describe('CreateDeploymentUsecase v2', () => {
     const sameCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'baa226a2-97f1-4e1b-b05a-d758839408f9',
       'user-1',
-      '333365f8-bb29-49f7-bf2b-3ec956a71583',
-      cdConfiguration,
+      'f5d23a57-5607-4306-9993-477e1598cc2a',
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/A:v1',
           'A',
           'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
           null,
-          null
+          null,
+          getSimpleManifests('A', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/B:v1',
           'B',
           '1c29210c-e313-4447-80e3-db89b2359138',
           null,
-          null
+          null,
+          getSimpleManifests('B', 'my-namespace', 'imageurl.com')
         )
       ],
       true,
+      'my-namespace',
+      60,
       null
     )
-    sameCircleActiveDeployment.active = true
+    sameCircleActiveDeployment.current = true
+
 
     const diffCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'd63ef13f-6138-41ca-ac64-6f5c25eb89f2',
       'user-1',
       '22220857-a638-4a4a-b513-63e3ef6f9d54',
-      cdConfiguration,
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/C:v1',
           'C',
           '46b83994-bfae-4f1e-84cd-0d18b59735bc',
           null,
-          null
+          null,
+          getSimpleManifests('C', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/D:v1',
           'D',
           '5ff6c5f3-fca5-440a-aaf5-ab3c25fdf0f5',
           null,
-          null
+          null,
+          getSimpleManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
       true,
+      'my-namespace',
+      60,
       null
     )
-    diffCircleActiveDeployment.active = true
-
+    diffCircleActiveDeployment.current = true
     const normalCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
       'user-1',
       'fcd22a4e-c192-4c86-bca2-f23de7b73757',
-      cdConfiguration,
       'http://localhost:1234/notifications/deployment?deploymentId=1',
       [
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/E:v1',
           'E',
           '222cd8db-3767-45d5-a415-7cca09cccf91',
           null,
-          null
+          null,
+          getSimpleManifests('E', 'my-namespace', 'imageurl.com')
         ),
         new ComponentEntity(
-          'http://localhost:2222/helm',
+          UrlConstants.helmRepository,
           'v1',
           'https://repository.com/F:v1',
           'F',
           '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
           null,
-          null
+          null,
+          getSimpleManifests('F', 'my-namespace', 'imageurl.com')
         )
       ],
       false,
+      'my-namespace',
+      60,
       null
     )
-    normalCircleActiveDeployment.active = true
+    normalCircleActiveDeployment.current = true
 
     await manager.save(sameCircleActiveDeployment)
     await manager.save(diffCircleActiveDeployment)

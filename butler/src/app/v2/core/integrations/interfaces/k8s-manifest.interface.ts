@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { KubernetesObject } from '@kubernetes/client-node'
+
 interface Cookie {
   regex: string
 }
@@ -69,19 +71,6 @@ interface Labels {
   circleId: string
 }
 
-interface Spec {
-  host?: string
-  subsets?: Subset[]
-  hosts?: string[]
-  http?: Http[]
-  gateways?: string[]
-}
-
-interface ManifestMetadata {
-  name: string
-  namespace: string
-}
-
 export interface Http {
   match?: Match[]
   route: Route[]
@@ -92,9 +81,16 @@ export interface Subset {
   name: string
 }
 
-export interface K8sManifest {
-  apiVersion: string
-  kind: string
-  metadata: ManifestMetadata
-  spec: Spec
+export type SpecTemplateManifest = {
+  spec?: {
+    template?: {
+      metadata?: {
+        labels?: {
+          [key: string]: string
+        }
+      }
+    }
+  }
 }
+
+export type KubernetesManifest = KubernetesObject

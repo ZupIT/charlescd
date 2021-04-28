@@ -1,0 +1,82 @@
+---
+# Source: test/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: helm-test-chart
+    service: helm-test-chart
+    component: helm-test-chart
+    tag: tag-example
+    circleId: f5d23a57-5607-4306-9993-477e1598cc2a
+  name: helm-test-chart
+  namespace: my-namespace
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    
+  selector:
+    app: helm-test-chart
+  type: ClusterIP
+---
+# Source: test/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helm-test-chart
+  namespace: my-namespace
+  labels:
+    app: helm-test-chart
+    version: helm-test-chart
+    component: helm-test-chart
+    tag: tag-example
+    circleId: f5d23a57-5607-4306-9993-477e1598cc2a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-test-chart
+      version: helm-test-chart
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: helm-test-chart
+        version: helm-test-chart
+    spec:
+      containers:
+        - name: helm-test-chart
+          image: test/latest
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP  
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1 
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 128m
+              memory: 128Mi
+            requests:
+              cpu: 64m
+              memory: 64Mi
+      imagePullSecrets:
+        - name: realwavelab-registry
