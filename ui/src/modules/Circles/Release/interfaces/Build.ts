@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
+import { Circle } from 'modules/Circles/interfaces/Circle';
 import { Module } from 'modules/Modules/interfaces/Module';
 
 interface Feature {
@@ -24,12 +26,22 @@ interface Feature {
   modules: Module[];
 }
 
+export interface Deployment {
+  id: string;
+  deployedAt?: string;
+  createdAt?: string;
+  status: DEPLOYMENT_STATUS;
+  metadata: Map<string, string>;
+  circle?: Circle;
+  buildId: string;
+}
+
 export interface Build {
   id: string;
   createdAt: string;
   features: Feature[];
   status: string;
-  deployments: [];
+  deployments: Deployment[];
   tag: string;
 }
 

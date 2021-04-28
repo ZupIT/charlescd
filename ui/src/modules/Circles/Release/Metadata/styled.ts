@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-export interface CreateDeployment {
-  buildId: string;
-  circleId: string;
-  metadata?: Map<string, string>;
-}
+import styled from 'styled-components';
+
+const Metadata = styled.div``;
+
+export default {
+  Metadata
+};
