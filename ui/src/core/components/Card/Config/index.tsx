@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, MouseEvent } from 'react';
+import React, { ReactNode } from 'react';
 import Card from 'core/components/Card';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
@@ -26,8 +26,8 @@ export interface Props {
   icon: string;
   description: string;
   actions?: ReactNode;
-  onClick?: (event: MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onClose?: (event: MouseEvent<unknown, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onClose?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
   canClose?: boolean;
   children?: ReactNode;
   className?: string;
