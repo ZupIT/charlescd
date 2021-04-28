@@ -92,7 +92,7 @@ test("component for edit mode render", async () => {
   await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
 });
 
-test("component for edit mode create", async () => {
+test("component for create mode", async () => {
   const { container } = render(
     <AllTheProviders>
       <FormModule
@@ -318,4 +318,27 @@ test('should not show error when typing whitespaces followed by some value', asy
   const helmBranch = screen.getByTestId('input-text-helmBranch');
   await act(async () => userEvent.type(helmBranch, '   some value'))
   await waitFor(() => expect(screen.queryByText('No whitespaces')).not.toBeInTheDocument());
+});
+
+test('should validate name component field max length', async () => {
+  const longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e.';
+
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={mockOnChange}
+        module={null}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const componentName = screen.getByTestId('input-text-components[0].name');
+
+  act(() => {
+    userEvent.type(componentName, longText);
+  });
+
+  expect(componentName).toHaveValue(longText);
+  expect(await screen.findAllByRole('alert')).toHaveLength(1);
 });
