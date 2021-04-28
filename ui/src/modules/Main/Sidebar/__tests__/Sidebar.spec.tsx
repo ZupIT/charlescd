@@ -53,7 +53,7 @@ test('renders sidebar component', async () => {
   const links = await screen.findByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
-  const accountId = genMenuId(routes.account);
+  const accountId = genMenuId(routes.accountProfile);
 
   expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
   expect(screen.getByTestId(accountId)).toBeInTheDocument();
