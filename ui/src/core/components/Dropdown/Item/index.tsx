@@ -41,7 +41,6 @@ const DropdownItem = ({
 }: Props) => {
   const handleClick = (event: MouseEvent) => {
     if (!isInactive) {
-      event.stopPropagation();
       onClick && onClick(event);
       onSelect && onSelect(name);
     }

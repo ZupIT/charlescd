@@ -40,7 +40,7 @@ const CircleFilter = ({ control, setValue }: Props) => {
   }, [data, getCircles, setValue]);
 
   useEffect(() => {
-    filterCircles('', CIRCLE_STATUS.active);
+    filterCircles({name: '', status: CIRCLE_STATUS.active, page: 0});
   }, [filterCircles]);
 
   return (

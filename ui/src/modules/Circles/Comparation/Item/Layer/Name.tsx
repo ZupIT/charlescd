@@ -24,6 +24,7 @@ import { isRequired, maxLength } from 'core/utils/validations';
 
 interface Props {
   name: string;
+  isDefault: boolean;
   onSave: (name: string) => void;
 }
 
@@ -31,7 +32,7 @@ type FormValues = {
   name: string;
 }
 
-const LayerName = ({ name, onSave }: Props) => {
+const LayerName = ({ name, onSave, isDefault }: Props) => {
   const { register, handleSubmit, getValues, errors } = useForm<FormValues>({
     mode: 'onChange'
   });
@@ -56,6 +57,7 @@ const LayerName = ({ name, onSave }: Props) => {
             defaultValue={name}
             isDisabled={!!errors.name}
             resume
+            readOnly={isDefault}
           />
           {errors.name && (
             <Styled.FieldErrorWrapper>

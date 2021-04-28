@@ -14,33 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, act, screen } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import FormCDConfiguration from '../Sections/CDConfiguration/Form';
-import userEvent from '@testing-library/user-event';
 
 const mockOnFinish = jest.fn();
 
-test('render CD Configuration form for CharlesCD', async () => {
+test('render CD Configuration form', async () => {
   render(
     <FormCDConfiguration onFinish={mockOnFinish}/>
   );
-
-  const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-OCTOPIPE');
-  act(() => userEvent.click(radioButton));
-  
-  const input = await screen.findByTestId('input-text-name');
-
-  expect(input).toBeInTheDocument();
-});
-
-test('render CD Configuration form for Spinnaker', async () => {
-  render(
-    <FormCDConfiguration onFinish={mockOnFinish}/>
-  );
-
-  const radioButton = await screen.findByTestId('radio-group-cd-configuration-item-SPINNAKER');
-  act(() => userEvent.click(radioButton));
 
   const input = await screen.findByTestId('input-text-name');
 

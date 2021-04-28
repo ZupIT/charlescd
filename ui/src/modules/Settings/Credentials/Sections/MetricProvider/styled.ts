@@ -16,6 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
+import TextComponent from 'core/components/Text';
 import SelectComponent from 'core/components/Form/Select';
 import Button from 'core/components/Button';
 import { fadeIn } from 'core/assets/style/animate';
@@ -73,6 +74,7 @@ const Field = styled.div`
 
 const TestConnectionButton = styled(Button.Default)`
   margin-bottom: 30px;
+  margin-top: 30px;
 `;
 
 const HealthSwitch = styled(Switch)`
@@ -105,6 +107,19 @@ const HealthWrapper = styled.div`
   display: flex;
 `;
 
+const Placeholder = styled(TextComponent.h4)`
+  pointer-events: none;
+  margin-left: 47px;
+  opacity: 60%;
+  overflow: hidden;
+  position: absolute;
+  top: 21px
+`;
+
+const Wrapper = styled.div`
+  position: relative;
+`;
+
 export default {
   Form,
   Content,
@@ -113,5 +128,7 @@ export default {
   Select,
   TestConnectionButton,
   HealthWrapper,
-  HealthSwitch
+  HealthSwitch,
+  Placeholder,
+  Wrapper
 };

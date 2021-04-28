@@ -52,6 +52,7 @@ const Dropdown = ({
       isBase
       data-testid="dropdown-actions"
       className={className}
+      onClick={() => switchToggle(false)}
     >
       {children}
     </Styled.Dropdown>
