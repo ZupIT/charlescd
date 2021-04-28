@@ -42,10 +42,10 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const handleClick = () => {
     const currentWorkspace = { ...workspace, id, name, status }
     selectedWorkspace(name);
-    setUserAbilities();
     dispatch(statusWorkspaceAction('idle'));
     dispatch(loadedWorkspaceAction(currentWorkspace));
     saveWorkspace(currentWorkspace);
+    setUserAbilities();
     history.push({
       pathname:
         status === WORKSPACE_STATUS.INCOMPLETE &&
