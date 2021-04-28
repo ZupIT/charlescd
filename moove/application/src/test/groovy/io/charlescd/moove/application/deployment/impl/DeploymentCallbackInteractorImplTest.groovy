@@ -524,8 +524,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
 
 
         def currentDeployment = new Deployment(deploymentId, author, LocalDateTime.now(), null, DeploymentStatusEnum.UNDEPLOYING, circle,
-                "97f508ad-cdbd-45df-969f-07781cc00513", "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
-        def previousDeployment = new Deployment("44b87381-6616-462a-9437-27608246bc1b", author, LocalDateTime.now(), null, DeploymentStatusEnum.DEPLOYED, circle,
                 buildId, "be8fce55-c2cf-4213-865b-69cf89178008", null, null)
 
         when:

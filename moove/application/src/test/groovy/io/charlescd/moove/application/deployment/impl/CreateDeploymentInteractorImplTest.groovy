@@ -385,7 +385,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def author = TestUtils.user
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -413,7 +413,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def percentageCircle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.PERCENTAGE, null, null, null, false, workspaceId, false, 20)
@@ -449,7 +449,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = getDummyUser()
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def percentageCircle = getCircle(false,20)
         def deployedPercentageCircle = getCircle(false, 90)
