@@ -129,7 +129,7 @@ describe('Hook Routes Manifest Creation', () => {
       },
       children: {
         'DestinationRule.networking.istio.io/v1alpha3': {
-          A: {
+          'namespace/A': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'DestinationRule',
             metadata: {
@@ -146,7 +146,7 @@ describe('Hook Routes Manifest Creation', () => {
           }
         },
         'VirtualService.networking.istio.io/v1alpha3': {
-          A: {
+          'namespace/A': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'VirtualService',
             metadata: {
@@ -193,7 +193,7 @@ describe('Hook Routes Manifest Creation', () => {
       },
       children: {
         'DestinationRule.networking.istio.io/v1alpha3': {
-          A: {
+          'namespace/A': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'DestinationRule',
             metadata: {
@@ -208,7 +208,7 @@ describe('Hook Routes Manifest Creation', () => {
               subsets: []
             }
           },
-          B: {
+          'namespace/B': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'DestinationRule',
             metadata: {
@@ -225,7 +225,7 @@ describe('Hook Routes Manifest Creation', () => {
           }
         },
         'VirtualService.networking.istio.io/v1alpha3': {
-          A: {
+          'namespace/A': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'VirtualService',
             metadata: {
@@ -241,7 +241,7 @@ describe('Hook Routes Manifest Creation', () => {
               http: []
             }
           },
-          B: {
+          'namespace/B': {
             apiVersion: 'networking.istio.io/v1alpha3',
             kind: 'VirtualService',
             metadata: {
@@ -590,7 +590,7 @@ describe('Compare observed routes state with desired routes state', () => {
       },
       children: {
         'DestinationRule.networking.istio.io/v1alpha3': {
-          abobora: {
+          'namespace/abobora': {
             kind: 'DestinationRule',
             metadata: {
               name: 'abobora',
@@ -600,10 +600,10 @@ describe('Compare observed routes state with desired routes state', () => {
               }
             }
           },
-          jilo: {
+          'namespace/jilo': {
             kind: 'DestinationRule',
             metadata: {
-              name: 'abobora',
+              name: 'jilo',
               namespace: 'namespace',
               annotations: {
                 circles: '["ad2a1669-34b8-4af2-b42c-acbad2ec6b60"]'
@@ -612,7 +612,7 @@ describe('Compare observed routes state with desired routes state', () => {
           }
         },
         'VirtualService.networking.istio.io/v1alpha3': {
-          abobora: {
+          'namespace/abobora': {
             kind: 'VirtualService',
             metadata: {
               name: 'abobora',
@@ -622,7 +622,7 @@ describe('Compare observed routes state with desired routes state', () => {
               }
             }
           },
-          jilo: {
+          'namespace/jilo': {
             kind: 'VirtualService',
             metadata: {
               name: 'jilo',
