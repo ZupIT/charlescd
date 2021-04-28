@@ -47,6 +47,7 @@ export interface EnvVariables {
   REACT_APP_IDM: string;
   REACT_APP_WORKSPACE_ID?: string;
   REACT_APP_MOCK?: string;
+  REACT_APP_CHARLES_VERSION: string;
 }
 
 type GlobalApexCharts = {
@@ -62,6 +63,7 @@ declare global {
 
 export const basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
 export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
+export const charlesVersion = window.CHARLESCD_ENVIRONMENT?.REACT_APP_CHARLES_VERSION;
 
 export const authRequest = (
   url: string,
@@ -170,7 +172,7 @@ export const patchRequest = (
   url: string,
   opType: string,
   path: string,
-  value?: string
+  value?: string | string[]
 ): ((options: RequestInit) => Promise<Response>) => {
   const patches = isUndefined(value)
     ? [{ op: opType, path }]

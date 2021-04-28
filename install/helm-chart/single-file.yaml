@@ -46,8 +46,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "ZjJqNGJpd0wwRQ=="
-  postgresql-password: "UXRTeEpSd2NoZQ=="
+  postgresql-postgres-password: "UXJNRExLQXYzRA=="
+  postgresql-password: "cWpySnhnSDVybQ=="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -162,6 +162,12 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
+                  
+                  - match:
+                      prefix: "/hermes/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-hermes
                   
                   - match:
                       prefix: "/"
@@ -290,6 +296,21 @@ data:
                 address:
                   socket_address:
                     address: charlescd-compass
+                    port_value: 8080
+      
+      - name: charlescd-hermes
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-hermes
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-hermes
                     port_value: 8080
     admin:
       access_log_path: "/dev/stdout"
@@ -5660,28 +5681,34 @@ metadata:
 data:
   charles-init.sh: |
     #!/bin/bash
-    export PGUSER=postgres
-    export PGPASSWORD=firstpassword
-    psql -c "CREATE DATABASE charlescd_butler"
-    psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
-    psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
-    psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_moove"
-    psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
-    psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
-    psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE charlescd_villager"
-    psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
-    psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
-    psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
-    psql -c "CREATE DATABASE keycloak"
-    psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
-    psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
-
-    psql -c "CREATE DATABASE charlescd_compass"
-    psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
-    psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
-    psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+      psql -c "CREATE DATABASE charlescd_butler"
+      psql -c "CREATE USER charlescd_butler WITH PASSWORD '3f2Yq8R4HhDCnefR'"
+      psql -c "ALTER DATABASE charlescd_butler OWNER TO charlescd_butler"
+      psql -d charlescd_butler -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_compass"
+      psql -c "CREATE USER charlescd_compass WITH PASSWORD 'C1UinUu6N0vc'"
+      psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
+      psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_hermes"
+      psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
+      psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"
+      psql -d charlescd_hermes -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_moove"
+      psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
+      psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
+      psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE charlescd_villager"
+      psql -c "CREATE USER charlescd_villager WITH PASSWORD 'ZkQ67Lnhs2bM3MPN'"
+      psql -c "ALTER DATABASE charlescd_villager OWNER TO charlescd_villager"
+      psql -d charlescd_villager -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+    
+      psql -c "CREATE DATABASE keycloak"
+      psql -c "CREATE USER keycloak WITH PASSWORD 'DCWYW66Mq2ca6w8u'"
+      psql -c "ALTER DATABASE keycloak OWNER TO keycloak"
 ---
 # Source: charlescd/charts/ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -6430,8 +6457,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 3f2Yq8R4HhDCnefR
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_butler -U charlescd_butler;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-butler
@@ -6463,7 +6493,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.6.1
+          image: zupcharles/charlescd-butler:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6480,7 +6510,12 @@ spec:
               port: 3000
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 256Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6521,7 +6556,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.6.1
+          image: zupcharles/charlescd-circle-matcher:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6571,8 +6606,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: C1UinUu6N0vc
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_compass -U charlescd_compass;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-compass
@@ -6613,7 +6651,7 @@ spec:
             - name: MOOVE_AUTH
               value: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MTEyNTMzMzcsImlhdCI6MTYxMTI0OTczNywianRpIjoiNmU5OWYyZjUtOTBlMS00OGFjLWFlN2QtYWJkMjIyODIwY2FmIiwiaXNzIjoiaHR0cDovL2NoYXJsZXMuaW5mby5leGFtcGxlL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiJkYThjYTQ5OC1lNDQ5LTQzMjYtYThkZC00ODM5NDI0Y2JkZDAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjI5Mzk2ZDZlLWI4ZDctNGU0ZC1hYTI2LWVlYWVlM2M5ODRjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290Ijp0cnVlLCJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIGNoYXJsZXNhZG1pbkBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImdpdmVuX25hbWUiOiJjaGFybGVzYWRtaW5AYWRtaW4iLCJmYW1pbHlfbmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImVtYWlsIjoiY2hhcmxlc2FkbWluQGFkbWluIn0.NLzu9222nMb-eyIiKwbznPzSTXe26QQp5cYGWw4MhfTW43gl6bXFAd-YMSXMEz5mmRy73NlW8WWnMKfQpC2FR-3wSKajVTB5_Y2CJC8PTLjXUpcZS2UxvBuV_ANZiINNovGiX87XFNhm9bHZxXzYUhDKqGh2C72G18fZKUTGMCfcTFHhFjxWDx1MEm5AN5JzPNbtcYWmrCMufgTsaQD9pQrHWxr9-8kNgKYff6wMVJLR6YIVpNVy7eHWTTOKwa59BFpw-w45clA3dtcs5cbMQo6GoA52_f5XdyvCZ-llYfvYpT09iPMsekWjG0TTbo2hCA59VKnMZA0r7JtPan9wrQ"
             - name: REQUESTS_PER_SECOND_LIMIT
-              value: ""
+              value: "5"
             - name: LIMITER_TOKEN_TTL
               value: "5"
             - name: LIMITER_HEADERS_TTL
@@ -6623,7 +6661,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.6.1
+          image: zupcharles/charlescd-compass:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6640,7 +6678,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6668,8 +6711,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: 7Qs2KuM9gYzw48BS
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_moove -U charlescd_moove;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-moove
@@ -6694,9 +6740,9 @@ spec:
           - name: KEYCLOAK_CLIENT_ID
             value: "realm-charlescd"
           - name: RATELIMIT_CAPACITY
-            value: "4"
+            value: "5"
           - name: RATELIMIT_TOKENS
-            value: "4"
+            value: "5"
           - name: RATELIMIT_SECONDS
             value: "1"
           - name: KEYCLOAK_CLIENT_SECRET
@@ -6710,7 +6756,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.6.1
+          image: zupcharles/charlescd-moove:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6727,7 +6773,12 @@ spec:
               port: 8080
             initialDelaySeconds: 180
           resources:
-              {}
+              limits:
+                cpu: 1
+                memory: 1024Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6765,7 +6816,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.6.1
+          image: zupcharles/charlescd-octopipe:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6782,7 +6833,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 512m
+                memory: 1Gi
+              requests:
+                cpu: 512m
+                memory: 1Gi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6827,7 +6883,9 @@ spec:
               value: /protocol/openid-connect/logout
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
-          image: zupcharles/charlescd-ui:0.6.1
+            - name: REACT_APP_CHARLES_VERSION
+              value: 
+          image: zupcharles/charlescd-ui:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6844,7 +6902,12 @@ spec:
               port: 3000
             initialDelaySeconds: 20
           resources:
-              {}
+              limits:
+                cpu: 128m
+                memory: 128Mi
+              requests:
+                cpu: 64m
+                memory: 64Mi
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6872,8 +6935,11 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: ZkQ67Lnhs2bM3MPN
           command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_villager -U charlescd_villager;
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: charlescd-villager
@@ -6893,7 +6959,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.6.1
+          image: zupcharles/charlescd-villager:0.7.0
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6910,7 +6976,12 @@ spec:
               port: 8080
             initialDelaySeconds: 60
           resources:
-              {}
+              limits:
+                cpu: 256m
+                memory: 512Mi
+              requests:
+                cpu: 128m
+                memory: 128Mi
 ---
 # Source: charlescd/templates/hpa.yaml
 apiVersion: autoscaling/v2beta2
@@ -6925,7 +6996,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: charlescd-circle-matcher
-  minReplicas: 3
+  minReplicas: 1
   maxReplicas: 10
   metrics:
     - type: Resource
@@ -6968,8 +7039,8 @@ spec:
       initContainers:
         - name: check-db-ready
           image: postgres:9.6.5
-          command: ['sh', '-c', 
-            'until pg_isready -h charlescd-postgresql -p 5432; 
+          command: ['sh', '-c',
+            'until pg_isready -h charlescd-postgresql -p 5432;
             do echo waiting for database; sleep 2; done;']
         
       containers:
@@ -7389,6 +7460,9 @@ spec:
         backend:
           serviceName: envoy-proxy
           servicePort: 80
+---
+# Source: charlescd/templates/charlescd-secrets.yaml
+---
 ---
 # Source: charlescd/charts/ingress-nginx/templates/admission-webhooks/validating-webhook.yaml
 # before changing this value, check the required kubernetes version

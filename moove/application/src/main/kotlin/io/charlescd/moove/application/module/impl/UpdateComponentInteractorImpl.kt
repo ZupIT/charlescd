@@ -40,9 +40,23 @@ class UpdateComponentInteractorImpl @Inject constructor(private val moduleServic
     ): ComponentResponse {
         val module = moduleService.find(moduleId, workspaceId)
         checkIfComponentExists(module, componentId)
+        validateComponentName(module, componentId, request)
         val updatedComponent = buildUpdatedComponent(module, componentId, request)
         moduleService.updateComponent(updatedComponent)
         return ComponentResponse.from(updatedComponent)
+    }
+
+    private fun validateComponentName(
+        module: Module,
+        componentId: String,
+        request: ComponentRequest
+    ) {
+        if (module.components.find { it.id == componentId }!!.name != request.name) {
+            val componentNameList = module.components.map { it.name }.toMutableList()
+            componentNameList.add(request.name)
+
+            moduleService.checkIfComponentNameIsDuplicated(componentNameList)
+        }
     }
 
     private fun buildUpdatedComponent(

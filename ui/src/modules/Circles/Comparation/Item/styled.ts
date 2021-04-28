@@ -34,6 +34,10 @@ const Actions = styled.div`
   display: flex;
   flex-direction: row;
 
+  > :first-child {
+    margin-right: 36px;
+  }
+
   > :last-child {
     margin-left: 36px;
   }
@@ -152,6 +156,18 @@ const MetricsGroupsCard = styled.div`
   height: 40px;
 `;
 
+const WarningPercentageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  > span {
+    margin-left: 10px;
+  }
+`;
+
 const FieldErrorWrapper = styled.div`
   display: flex;
   margin-top: 2px;
@@ -178,5 +194,6 @@ export default {
   MetricsGroupsNameContent,
   MetricsGroupsCountContent,
   MetricsGroupsThresholdsContent,
+  WarningPercentageContainer,
   FieldErrorWrapper
 };

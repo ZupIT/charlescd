@@ -1,5 +1,5 @@
 {{- range .Values.CharlesApplications -}}
-{{- if .hpa -}}
+{{- if and .hpa .enabled -}}
 {{$data := dict "RangeContext" . "ChartContext" $}}
 {{- $appEnvs := include "test.appEnvs" $data -}}
 apiVersion: autoscaling/v2beta2

@@ -15,18 +15,20 @@
  */
 
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
+import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interfaces';
 
 export interface Workspace {
   id: string;
   name: string;
-  createdAt: string;
   status?: string;
+  createdAt: string;
   circleMatcherUrl?: string;
   gitConfiguration?: Configuration;
   userGroups?: UserGroup[];
   cdConfiguration?: Configuration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
+  webhookConfiguration?: Webhook[];
 }
 
 export interface Configuration {

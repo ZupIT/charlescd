@@ -12,10 +12,8 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"istio.io/api/networking/v1alpha3"
-	"k8s.io/klog"
-
 	"golang.org/x/sync/errgroup"
+	"istio.io/api/networking/v1alpha3"
 )
 
 func (manager Manager) executeV2Manifests(
@@ -46,7 +44,7 @@ func (manager Manager) applyV2Manifest(
 		return err
 	}
 
-	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, manager.kubectl)
+	deployment := manager.deploymentMain.NewDeployment(action, false, namespace, manifest, config, manager.kubectl, manager.logAggregator)
 	err = deployment.Do()
 	if err != nil {
 		return err
@@ -111,9 +109,9 @@ func (manager Manager) getFilesFromV2Repository(deployment V2Deployment) (string
 }
 
 func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string, status string, incomingCircleId string) {
-	klog.Info(fmt.Sprintf("TRIGGER CALLBACK - STATUS: %s - URL: %s", status, callbackUrl))
+	manager.logAggregator.AppendInfoAndLog(fmt.Sprintf("Triggering callback - status: %s - URL: %s", status, callbackUrl))
 	client := http.Client{}
-	callbackData := V2CallbackData{callbackType, status}
+	callbackData := V2CallbackData{callbackType, status, manager.logAggregator.Logs}
 	request, err := manager.mountV2WebhookRequest(callbackUrl, callbackData, incomingCircleId)
 	if err != nil {
 		logrus.WithFields(customerror.WithLogFields(customerror.New("Mount webhook request", err.Error(), map[string]string{
@@ -132,6 +130,7 @@ func (manager Manager) triggerV2Callback(callbackUrl string, callbackType string
 		}))).Error()
 		return
 	}
+	manager.logAggregator.CleanLogs()
 }
 
 func (manager Manager) mountV2WebhookRequest(callbackUrl string, payload V2CallbackData, incomingCircleId string) (*http.Request, error) {

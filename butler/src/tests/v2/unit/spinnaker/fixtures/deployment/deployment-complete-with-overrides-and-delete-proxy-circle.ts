@@ -1241,6 +1241,8 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       requisiteStageRefIds: [
         '14'
       ],
+      stageEnabled: {
+      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {
@@ -1306,7 +1308,7 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       source: 'text',
       stageEnabled: {
         expression: '${ #stage(\'Undeploy Destination Rules C\').status.toString() == \'SUCCEEDED\'}',
-        type: 'expression'
+        type: 'expression',
       },
       trafficManagement: {
         enabled: false,
@@ -1317,6 +1319,7 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       },
       type: 'deployManifest'
     },
+
     {
       completeOtherBranchesThenFail: false,
       continuePipeline: true,
@@ -1328,7 +1331,8 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '23',
       requisiteStageRefIds: [
@@ -1354,7 +1358,8 @@ export const completeWithOverridesAndDeleteProxyForCircle : SpinnakerPipeline = 
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '24',
       requisiteStageRefIds: [

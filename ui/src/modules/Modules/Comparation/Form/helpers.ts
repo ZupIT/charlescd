@@ -101,11 +101,11 @@ const destructGithub = (
 
   if (infoSplit.length < 4) {
     const branch = infoSplit[2].split('?');
-    setValue('helmBranch', branch[1].slice(4));
+    setValue('helmBranch', branch[1]?.slice(4));
   } else {
-    const pathBranchList = infoSplit[3].split('?');
-    const path = pathBranchList[0];
-    const branch = pathBranchList[1].slice(4);
+    const pathBranchList = infoSplit[3]?.split('?');
+    const path = pathBranchList?.[0];
+    const branch = pathBranchList[1]?.slice(4);
     setValue('helmPath', path);
     setValue('helmBranch', branch);
   }
@@ -169,8 +169,8 @@ export const validateSlash = (input: string, name: string) => {
 }
 
 
-export const getHelmFieldsValidations = (name: string) => ({
-  required: isRequired(),
+export const getHelmFieldsValidations = (name: string, required = true) => ({
+  required: required ? isRequired() : null,
   validate: {
     validSlash: (value: string) => validateSlash(value, name),
     notBlank: isNotBlank

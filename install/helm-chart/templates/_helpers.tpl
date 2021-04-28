@@ -60,6 +60,9 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "octopipe" .RangeContext.name }}
 {{ include "test.octopipe-envs" .}}
 {{- end -}}
+{{- if contains "hermes" .RangeContext.name }}
+{{ include "test.hermes-envs" .}}
+{{- end -}}
 {{- end -}}
 
 
@@ -133,9 +136,9 @@ env:
 - name: KEYCLOAK_CLIENT_ID
   value: "{{ .RangeContext.keycloak.clientId}}"
 - name: RATELIMIT_CAPACITY
-  value: "4"
+  value: "5"
 - name: RATELIMIT_TOKENS
-  value: "4"
+  value: "5"
 - name: RATELIMIT_SECONDS
   value: "1"
 - name: KEYCLOAK_CLIENT_SECRET
@@ -210,7 +213,7 @@ env:
   - name: MOOVE_USER
     value: "{{ .RangeContext.moove.user }}"
   - name: MOOVE_PATH
-    value: "http://charlescd--moove:8080"
+    value: "http://charlescd-moove:8080"
   - name: MOOVE_AUTH
     value: "{{ .RangeContext.moove.auth }}"
   - name: REQUESTS_PER_SECOND_LIMIT
@@ -262,10 +265,52 @@ env:
     value: {{ .RangeContext.idmLogoutUri }}
   - name: REACT_APP_IDM_REDIRECT_URI
     value: {{ .RangeContext.idmRedirectHost }}
+  - name: REACT_APP_CHARLES_VERSION
+    value: {{ .RangeContext.image.tag | default .ChartContext.Chart.AppVersion }}
 {{- end -}}
 
-
-
+{{- define "test.hermes-envs" -}}
+env:
+  - name: DB_HOST
+    value: "{{ .RangeContext.database.host}}"
+  - name: DB_PORT
+    value: "{{ .RangeContext.database.port}}"
+  - name: DB_USER
+    value: "{{ .RangeContext.database.user}}"
+  - name: DB_PASSWORD
+    value: "{{ .RangeContext.database.password}}"
+  - name: DB_NAME
+    value: "{{ .RangeContext.database.name}}"
+  - name: DB_SSL
+    value: "disable"
+  - name: ENCRYPTION_KEY
+    valueFrom:
+      secretKeyRef:
+        name: "hermes-aes256-key"
+        key: "encryption-key"
+  - name: AMQP_URL
+    value: "{{ .RangeContext.amqp.url}}"
+  - name: AMQP_MESSAGE_QUEUE
+    value: "{{ .RangeContext.amqp.message.queue}}"
+  - name: AMQP_MESSAGE_ROUTING_KEY
+    value: "{{ .RangeContext.amqp.message.routingKey}}"
+  - name: AMQP_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.message.exchange}}"
+  - name: AMQP_WAIT_MESSAGE_QUEUE
+    value: "{{ .RangeContext.amqp.waitMessage.queue}}"
+  - name: AMQP_WAIT_MESSAGE_EXCHANGE
+    value: "{{ .RangeContext.amqp.waitMessage.exchange}}"
+  - name: PUBLISHER_TIME
+    value: "{{ .RangeContext.publisher.time}}"
+  - name: PUBLISHER_ATTEMPTS
+    value: "{{ .RangeContext.publisher.attempts}}"
+  - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+    value: "{{ .RangeContext.consumer.messageRetry.expiration}}"
+  - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+    value: "{{ .RangeContext.consumer.messageRetry.attempts}}"
+  - name: SUBSCRIPTION_REGISTER_LIMIT
+    value: "{{ .RangeContext.subscriptionRegisterLimit}}"
+{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.

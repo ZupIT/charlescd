@@ -67,6 +67,7 @@ class JdbcDeploymentRepository(
                        deployment_circle.imported_kv_records AS deployment_circle_imported_kv_records,
                        deployment_circle.imported_at         AS deployment_circle_imported_at,
                        deployment_circle.default_circle      AS deployment_circle_default_circle,
+                       deployment_circle.percentage          AS deployment_circle_percentage,
                        deployment_circle.workspace_id        AS deployment_circle_workspace_id,
                        deployment_circle_user.id             AS deployment_circle_user_id,
                        deployment_circle_user.name           AS deployment_circle_user_name,
@@ -418,7 +419,7 @@ class JdbcDeploymentRepository(
                             deployments.created_at                                                                              AS deployment_created_at,
                             EXTRACT(epoch FROM DATE_TRUNC('second', (deployments.deployed_at - deployments.created_at)))        AS deployment_average_time,
                             deployments.status                                                                                  AS deployment_status,	                        
-                            users.name                                                                                          AS user_name,
+                            users.email                                                                                         AS user_email,
 	                        builds.tag                                                                                          AS deployment_version,
 	                        circles.name                                                                                        AS circle_name
                     FROM deployments deployments
@@ -431,7 +432,7 @@ class JdbcDeploymentRepository(
 
     private fun createHistoryOrderByClause(): String {
         return """
-                ORDER BY deployments.created_at
+                ORDER BY deployments.created_at DESC
         """
     }
 

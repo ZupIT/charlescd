@@ -50,7 +50,9 @@ class CircleExtractor : ResultSetExtractor<Set<Circle>> {
         importedKvRecords = resultSet.getInt("circle_imported_kv_records"),
         importedAt = resultSet.getTimestamp("circle_imported_at")?.toLocalDateTime(),
         defaultCircle = resultSet.getBoolean("circle_default"),
-        workspaceId = resultSet.getString("circle_workspace_id")
+        workspaceId = resultSet.getString("circle_workspace_id"),
+        active = resultSet.getBoolean("circle_active"),
+        percentage = resultSet.getInt("circle_percentage")
     )
 
     private fun mapCircleUser(resultSet: ResultSet): User? {

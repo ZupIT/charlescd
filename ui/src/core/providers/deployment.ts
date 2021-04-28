@@ -15,13 +15,23 @@
  */
 
 import { CreateDeployment } from 'modules/Circles/Release/interfaces/Deployment';
-import { postRequest } from './base';
+import { postRequest, baseRequest } from './base';
 
-const endpoint = '/moove/deployments';
 const v2Endpoint = '/moove/v2/deployments';
 
 export const createDeployment = (data: CreateDeployment) =>
   postRequest(v2Endpoint, data);
 
 export const undeploy = (deploymentId: string) =>
-  postRequest(`${endpoint}/${deploymentId}/undeploy`);
+  postRequest(`${v2Endpoint}/${deploymentId}/undeploy`);
+
+export const getDeployHistoryByCircleId = (
+  params: URLSearchParams,
+  circleId: string
+) => {
+  params.append('size', '10');
+  return baseRequest(`${v2Endpoint}/circle/${circleId}/history?${params}`);
+}
+
+export const findDeployLogsByDeploymentId = (deploymentId: string) =>
+  baseRequest(`${v2Endpoint}/${deploymentId}/logs`);

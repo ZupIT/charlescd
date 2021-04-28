@@ -230,7 +230,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         ex.id == registryConfigurationId
     }
 
-    def 'when replacing circle matcher url, should patch information successfully'() {
+    def 'when adding circle matcher url, should patch information successfully'() {
         given:
         def newCircleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
@@ -239,7 +239,9 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
+
+        def circles = new Circles([circle])
 
         when:
         interactor.execute(workspace.id, request)
@@ -248,8 +250,49 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(newCircleMatcherUrl, workspace.id)
-        1 * circleRepository.findDefaultByWorkspaceId(workspace.id) >> Optional.of(circle)
-        1 * circleMatcherService.create(circle, newCircleMatcherUrl)
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.deleteAllFor(circles, newCircleMatcherUrl)
+        1 * circleMatcherService.saveAllFor(circles, newCircleMatcherUrl)
+        1 * workspaceRepository.update(_) >> { arguments ->
+            def workspaceUpdated = arguments[0]
+            workspaceUpdated instanceof Workspace
+
+            assert workspaceUpdated.id == workspace.id
+            assert workspaceUpdated.name == workspace.name
+            assert workspaceUpdated.userGroups == workspace.userGroups
+            assert workspaceUpdated.author == workspace.author
+            assert workspaceUpdated.status == workspace.status
+            assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
+            assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
+            assert workspaceUpdated.circleMatcherUrl == newCircleMatcherUrl
+        }
+    }
+
+    def 'when replacing circle matcher url, should patch information successfully'() {
+        given:
+        def oldCircleMatcherUrl = "https://old-circle-matcher-url.com.br"
+        def newCircleMatcherUrl = "https://new-circle-matcher-url.com.br"
+        def author = getDummyUser()
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
+        def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
+
+        def circles = new Circles([circle])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        0 * gitConfigurationRepository.exists(workspace.id, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(newCircleMatcherUrl, workspace.id)
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.deleteAllFor(circles, oldCircleMatcherUrl)
+        1 * circleMatcherService.deleteAllFor(circles, newCircleMatcherUrl)
+        1 * circleMatcherService.saveAllFor(circles, newCircleMatcherUrl)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
             workspaceUpdated instanceof Workspace
@@ -270,10 +313,12 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         def circleMatcherUrl = "https://new-circle-matcher-url.com.br"
         def author = getDummyUser()
         def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, "https://old-circle-matcher-url.com.br", null, null, null)
+                WorkspaceStatusEnum.INCOMPLETE, null, circleMatcherUrl, null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
+
+        def circles = new Circles([circle])
 
         when:
         interactor.execute(workspace.id, request)
@@ -282,8 +327,9 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(circleMatcherUrl, workspace.id)
-        1 * circleMatcherService.create(circle, circleMatcherUrl)
-        1 * circleRepository.findDefaultByWorkspaceId(workspace.id) >> Optional.of(circle)
+        0 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        0 * circleMatcherService.deleteAllFor(circles, _)
+        0 * circleMatcherService.saveAllFor(circles, _)
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
             workspaceUpdated instanceof Workspace
@@ -396,8 +442,6 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
 
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", newCircleMatcherUrl)])
-        def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
 
         when:
         interactor.execute(workspace.id, request)
@@ -406,8 +450,9 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(newCircleMatcherUrl, workspace.id)
-        1 * circleRepository.findDefaultByWorkspaceId(workspace.id) >> Optional.empty()
-        0 * circleMatcherService.create(circle, newCircleMatcherUrl)
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> new Circles()
+        0 * circleMatcherService.deleteAllFor(_, newCircleMatcherUrl)
+        0 * circleMatcherService.saveAllFor(_, newCircleMatcherUrl)
         0 * workspaceRepository.update(_)
 
         thrown(BusinessException)
@@ -421,7 +466,9 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 WorkspaceStatusEnum.INCOMPLETE, null, "https://old-circle-matcher-url.com.br", null, null, null)
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/circleMatcherUrl", circleMatcherUrl)])
         def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id)
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
+
+        def circles = new Circles([circle])
 
         when:
         interactor.execute(workspace.id, request)
@@ -430,13 +477,47 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(workspace.id, _)
         0 * villagerService.checkIfRegistryConfigurationExists(circleMatcherUrl, workspace.id)
-        1 * circleRepository.findDefaultByWorkspaceId(workspace.id) >> Optional.of(circle)
-        1 * circleMatcherService.create(circle, circleMatcherUrl) >> { arguments ->
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.saveAllFor(circles, circleMatcherUrl) >> { arguments ->
             throw new NotFoundException()
         }
         0 * workspaceRepository.update(_)
 
         thrown(BusinessException)
+    }
+
+    def 'when removing circle matcher url, should patch information successfully'() {
+        given:
+        def oldCircleMatcherUrl = "https://old-circle-matcher-url.com.br"
+        def author = getDummyUser()
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, oldCircleMatcherUrl, null, null, null)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/circleMatcherUrl", null)])
+        def circle = new Circle("0121983as-557b-45c5-91be-1e1db909bef6", "Default", "reference", author, LocalDateTime.now(),
+                MatcherTypeEnum.REGULAR, null, null, null, true, workspace.id, false, null)
+
+        def circles = new Circles([circle])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * circleRepository.findByWorkspaceId(workspace.id) >> circles
+        1 * circleMatcherService.deleteAllFor(circles, oldCircleMatcherUrl)
+        1 * workspaceRepository.update(_) >> { arguments ->
+            def workspaceUpdated = (Workspace) arguments[0]
+
+            assert workspaceUpdated.id == workspace.id
+            assert workspaceUpdated.name == workspace.name
+            assert workspaceUpdated.userGroups == workspace.userGroups
+            assert workspaceUpdated.author == workspace.author
+            assert workspaceUpdated.status == workspace.status
+            assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
+            assert workspaceUpdated.registryConfigurationId == workspace.registryConfigurationId
+            assert workspaceUpdated.circleMatcherUrl == null
+        }
     }
 
     private User getDummyUser() {

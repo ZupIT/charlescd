@@ -1310,6 +1310,8 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       requisiteStageRefIds: [
         '14'
       ],
+      stageEnabled: {
+      },
       skipExpressionEvaluation: false,
       source: 'text',
       trafficManagement: {
@@ -1401,7 +1403,8 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       name: 'Trigger Failure Webhook',
       payload: {
         status: DeploymentStatusEnum.FAILED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '23',
       requisiteStageRefIds: [
@@ -1427,7 +1430,8 @@ export const completeWithOverridesAndDeleteProxy : SpinnakerPipeline = {
       name: 'Trigger Success Webhook',
       payload: {
         status: DeploymentStatusEnum.SUCCEEDED,
-        type: ExecutionTypeEnum.DEPLOYMENT
+        type: ExecutionTypeEnum.DEPLOYMENT,
+        logs: []
       },
       refId: '24',
       requisiteStageRefIds: [
