@@ -19,7 +19,7 @@ p,modules_write,/moove/v2/modules*,(GET)|(POST)|(PUT)|(DELETE)
 p,(hypothesis_write)|(modules_read),/moove/v2/modules*,GET
 p,circles_read,/moove/metrics*,GET
 p,maintenance_write,/moove/v2/roles*,GET
-p,maintenance_write,/moove/v2/workspaces*,(GET)|(POST)|(PATCH)
+p,maintenance_write,/moove/v2/workspaces*,(GET)|(PATCH)
 p,maintenance_write,/moove/v2/workspaces/{workspaceId}/groups*,(POST)|(PATCH)
 p,hypothesis_write,/moove/v2/workspaces/users,GET
 p,maintenance_write,/moove/v2/user-groups*,GET
@@ -37,3 +37,4 @@ p,management,/moove/v2/users/{id}/workspaces,GET
 p,management,/moove/v2/users/password,GET
 p,management,/moove/v2/users,GET
 p,management,/gate/api/v1/system-token*,(GET)|(POST)|(PUT)
+p,management,/moove/v2/workspaces*,POST
