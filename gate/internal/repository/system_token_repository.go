@@ -20,6 +20,8 @@ package repository
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
@@ -29,7 +31,6 @@ import (
 	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"strings"
 )
 
 type SystemTokenRepository interface {
@@ -63,7 +64,7 @@ func (systemTokenRepository systemTokenRepository) Create(systemToken domain.Sys
 
 	if err := systemTokenRepository.db.Transaction(
 		func(tx *gorm.DB) error {
-			res := systemTokenRepository.db.Table("system_tokens").Create(insertSystemTokenMap(systemTokenToSave))
+			res := systemTokenRepository.db.Table("system_tokens").Create(systemTokenMap(systemTokenToSave))
 			if res.Error != nil {
 				return res.Error
 			}
@@ -94,7 +95,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(name string, pageRequ
 	var systemTokens []models.SystemToken
 	var page = pageRequest
 
-	res := systemTokenRepository.db.Where("revoked = false AND upper(name) like ?", "%" + strings.ToUpper(name) + "%").
+	res := systemTokenRepository.db.Where("revoked = false AND upper(name) like ?", "%"+strings.ToUpper(name)+"%").
 		Order(page.Sort).
 		Offset(page.Offset()).
 		Limit(page.PageSize).
@@ -152,8 +153,8 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 
 	systemTokenToUpdate := mapper.SystemTokenDomainToModel(systemToken)
 
-	if res := systemTokenRepository.db.Model(models.SystemToken{}).
-		Where("id = ?", systemToken.ID).Updates(&systemTokenToUpdate); res.Error != nil {
+	if res := systemTokenRepository.db.Table("system_tokens").Where("id = ?", systemToken.ID).
+		Updates(systemTokenMap(systemTokenToUpdate)); res.Error != nil {
 		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.Update.Updates", res.Error, logging.InternalError)
 	}
 
@@ -164,7 +165,7 @@ func handleSystemTokenError(message string, operation string, err error, errType
 	return logging.NewError(message, err, errType, nil, operation)
 }
 
-func insertSystemTokenMap(systemToken models.SystemToken) map[string]interface{} {
+func systemTokenMap(systemToken models.SystemToken) map[string]interface{} {
 	return map[string]interface{}{
 		"id":             systemToken.ID,
 		"name":           systemToken.Name,
