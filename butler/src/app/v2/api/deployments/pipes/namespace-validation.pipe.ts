@@ -16,10 +16,12 @@
 
 import { Repository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { Injectable, PipeTransform } from '@nestjs/common'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { K8sClient } from '../../../core/integrations/k8s/client'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 
 @Injectable()
@@ -36,22 +38,11 @@ export class NamespaceValidationPipe implements PipeTransform {
     const response = await this.k8sClient.getNamespace(deploymentRequest.namespace)
 
     if (response.body.status?.phase !== 'Active') {
-      throw new BadRequestException({
-        errors: [
-          {
-            message: `invalid namespace '${deploymentRequest.namespace}'`,
-            detail: 'namespace does not exist or is not active',
-            meta: {
-              component: 'butler',
-              timestamp: Date.now()
-            },
-            source: {
-              pointer: 'namespace'
-            },
-            status: 400
-          }
-        ]
-      })
+      throw new ExceptionBuilder(
+        `invalid namespace '${deploymentRequest.namespace}' `,
+        HttpStatus.BAD_REQUEST)
+        .withDetail('namespace does not exist or is not active')
+        .build()
     }
     return deploymentRequest
   }

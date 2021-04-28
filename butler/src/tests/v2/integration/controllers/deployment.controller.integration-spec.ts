@@ -61,7 +61,7 @@ describe('DeploymentController v2', () => {
     const errorResponse = {
       errors: [
         {
-          detail: '"deploymentId" is required',
+          title: '"deploymentId" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -72,7 +72,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"namespace" is required',
+          title: '"namespace" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -83,7 +83,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"circle" is required',
+          title: '"circle" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -94,7 +94,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"git" is required',
+          title: '"git" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -105,7 +105,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"components" is required',
+          title: '"components" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -116,7 +116,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"authorId" is required',
+          title: '"authorId" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -127,7 +127,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"callbackUrl" is required',
+          title: '"callbackUrl" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -226,7 +226,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const expectedError = {
       errors: [
         {
-          detail: 'Unable to decrypt "token"',
+          title: 'Unable to decrypt "token"',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -304,7 +304,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          detail: '"namespace" is required',
+          title: '"namespace" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -315,7 +315,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"circle.id" is required',
+          title: '"circle.id" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -326,7 +326,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"circle.default" is required',
+          title: '"circle.default" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -337,7 +337,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"circle.headerValue" is not allowed',
+          title: '"circle.headerValue" is not allowed',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -348,7 +348,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"git" is required',
+          title: '"git" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -359,7 +359,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/',
+          title: expect.stringContaining('"buildImageUrl" with value "imageurl.com2 " fails to match the required pattern'),
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -370,7 +370,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"buildImageUrl" with value "imageurl-ends-with-dash.com3-" fails to match the required pattern: /^[a-zA-Z0-9][a-zA-Z0-9-.:\\/]*[a-zA-Z0-9]$/',
+          title: expect.stringContaining('"buildImageUrl" with value "imageurl-ends-with-dash.com3-" fails to match the required pattern'),
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -381,7 +381,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"buildImageUrl" length must be less than or equal to 253 characters long',
+          title: '"buildImageUrl" length must be less than or equal to 253 characters long',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -392,7 +392,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           status: 400
         },
         {
-          detail: '"components" contains a duplicate value',
+          title: '"components" contains a duplicate value',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -433,7 +433,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          detail: '"components" must contain at least 1 items',
+          title: '"components" must contain at least 1 items',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -533,7 +533,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          detail: 'Sum of lengths of componentName and buildImageTag cant be greater than 63',
+          title: 'Sum of lengths of componentName and buildImageTag cant be greater than 63',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -596,7 +596,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          detail: 'The tag suplied on the buildImageUrl must match the buildImageTag',
+          title: 'The tag suplied on the buildImageUrl must match the buildImageTag',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -893,7 +893,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          detail: 'Unable to decrypt "token"',
+          title: 'Unable to decrypt "token"',
           meta: {
             component: 'butler',
             timestamp: expect.anything()

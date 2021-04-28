@@ -54,6 +54,8 @@ export const ConfigurationConstants = {
 
   ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
 
+  MOOVE_ENCRYPTION_KEY: process.env.MOOVE_ENCRYPTION_KEY,
+
   DEPLOYMENT_EXPIRE_TIME: 25,
 
   BUTLER_URL: 'http://localhost:8883/butler',

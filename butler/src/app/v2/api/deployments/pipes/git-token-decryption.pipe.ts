@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common'
+import { Injectable, PipeTransform } from '@nestjs/common'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import * as openpgp from 'openpgp'
 import { AppConstants } from '../../../core/constants'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 @Injectable()
 export class GitTokenDecryptionPipe implements PipeTransform {
@@ -29,28 +31,15 @@ export class GitTokenDecryptionPipe implements PipeTransform {
       deploymentRequest.git.token = decryptedToken
       return deploymentRequest
     }
-    throw new BadRequestException({
-      errors: [
-        {
-          detail: 'Unable to decrypt "token"',
-          meta: {
-            component: 'butler',
-            timestamp: Date.now()
-          },
-          source: {
-            pointer: 'git.token'
-          },
-          status: 400
-        }
-      ]
-    })
+    throw new ExceptionBuilder( 'Unable to decrypt "token"', HttpStatus.BAD_REQUEST)
+      .withSource('git.token').build()
   }
 
   private async decryptToken(pgpToken: string) : Promise<string | undefined> {
     try {
       const decodedToken = Buffer.from(pgpToken, 'base64').toString('utf8')
       const message = await openpgp.readMessage({ armoredMessage: decodedToken })
-      const decryptedMessage = await openpgp.decrypt({ message: message, passwords: AppConstants.ENCRYPTION_KEY })
+      const decryptedMessage = await openpgp.decrypt({ message: message, passwords: AppConstants.MOOVE_ENCRYPTION_KEY })
       return decryptedMessage.data
     } catch (error) {
       return

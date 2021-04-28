@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@nestjs/common'
+import { Injectable, } from '@nestjs/common'
 import { spawn } from 'child_process'
 import { promises as fs } from 'fs'
 import * as yaml from 'js-yaml'
@@ -28,6 +28,8 @@ import { RepositoryStrategyFactory } from '../../integrations/repository-strateg
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 import { Manifest } from '../manifest'
 import { ManifestConfig } from '../manifest.interface'
+import { ExceptionBuilder } from '../../utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 @Injectable()
 export class HelmManifest implements Manifest {
@@ -54,6 +56,11 @@ export class HelmManifest implements Manifest {
       const manifest =  await this.template(chartPath, config)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest
+    } catch (exception) {
+      this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
+      throw new ExceptionBuilder('Not a valid manifest', HttpStatus.UNPROCESSABLE_ENTITY)
+        .withDetail(exception.message)
+        .build()
     } finally {
       this.consoleLoggerService.log('START:CLEANING TEMP FILES', chartPath)
       this.cleanUp(chartPath)
@@ -101,7 +108,7 @@ export class HelmManifest implements Manifest {
       helmProcess.on('close', (code) => {
         if (err) {
           reject({
-            err: err,
+            message: err,
             code: code
           })
           return

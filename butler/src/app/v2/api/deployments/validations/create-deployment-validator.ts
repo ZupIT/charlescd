@@ -20,22 +20,25 @@ import { CreateCircleDeploymentDto } from '../dto/create-circle-request.dto'
 import { CreateComponentRequestDto } from '../dto/create-component-request.dto'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
-import Joi = require('joi')
 import { GitProvidersEnum } from '../../../core/configuration/interfaces'
 import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
+import Joi = require('joi')
 
 export interface JsonAPIError {
     errors: {
-      status: HttpStatus
-      detail: string
+      status: number
+      detail?: string | undefined
+      title: string
       source: {
-        pointer: string
+        pointer: string | undefined
       }
       meta: {
-        component: 'butler'
+        component: string
         timestamp: number
       }
     }[]
+
 }
 
 export class CreateDeploymentValidator {
@@ -57,22 +60,10 @@ export class CreateDeploymentValidator {
     return { valid: false, errors: validated.error }
   }
 
-  public formatErrors(error: ValidationError, statusCode: HttpStatus) : JsonAPIError {
-    return {
-      errors: error.details.flatMap(d => {
-        return {
-          detail: d.message,
-          meta: {
-            component: 'butler',
-            timestamp: Date.now()
-          },
-          source: {
-            pointer: d.path.join('/')
-          },
-          status: statusCode
-        }
-      })
-    }
+  public formatErrors(error: ValidationError, statusCode: HttpStatus) : ExceptionBuilder[] {
+    return error.details.flatMap(d => {
+      return new ExceptionBuilder(d.message, statusCode).withSource(d.path.join('/'))
+    })
   }
 
   private createDto(validated: Joi.ValidationResult) {

@@ -15,10 +15,11 @@
  */
 
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { ConflictException, Injectable, PipeTransform } from '@nestjs/common'
+import { HttpStatus, Injectable, PipeTransform } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { Repository } from 'typeorm'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Injectable()
 export class DefaultCircleUniquenessPipe implements PipeTransform {
@@ -38,22 +39,9 @@ export class DefaultCircleUniquenessPipe implements PipeTransform {
     )
 
     if (deployment && deployment.circleId !== deploymentRequest.circle.id) {
-      throw new ConflictException( {
-        errors: [
-          {
-            title: 'Invalid circle id.',
-            detail: 'Circle already has an active default deployment in a different namespace.',
-            meta: {
-              component: 'butler',
-              timestamp: Date.now()
-            },
-            source: {
-              pointer: 'circle/id'
-            },
-            status: 409
-          }
-        ]
-      })
+      throw new ExceptionBuilder('Invalid circle id.', HttpStatus.CONFLICT)
+        .withDetail('Circle already has an active default deployment in a different namespace.')
+        .withSource('circle/id').build()
     }
 
     return deploymentRequest

@@ -16,7 +16,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as http from 'http'
-import { BadRequestException, INestApplication } from '@nestjs/common'
+import { HttpException, HttpStatus, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { CreateCircleDeploymentDto } from '../../../../../src/app/v2/api/deployments/dto/create-circle-request.dto'
 import { CreateComponentRequestDto } from '../../../../../src/app/v2/api/deployments/dto/create-component-request.dto'
@@ -88,7 +88,7 @@ describe('NamespaceValidationPipe', () => {
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
       10
     )
-    await expect(pipe.transform(req)).rejects.toThrow(new BadRequestException({}))
+    await expect(pipe.transform(req)).rejects.toThrow(new HttpException({}, HttpStatus.BAD_REQUEST))
   })
 
   it('allows the operation to continue due valid namespace', async() => {
