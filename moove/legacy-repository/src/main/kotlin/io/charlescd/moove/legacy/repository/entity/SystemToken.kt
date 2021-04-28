@@ -1,11 +1,11 @@
 package io.charlescd.moove.legacy.repository.entity
 
-import org.hibernate.annotations.ColumnTransformer
 import javax.persistence.*
+import org.hibernate.annotations.ColumnTransformer
 
 @Entity
 @Table(name = "system_tokens")
-class SystemToken (
+class SystemToken(
 
     @Id
     val id: String,

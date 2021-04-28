@@ -25,5 +25,4 @@ interface UserRepository : JpaRepository<User, String> {
     fun findByEmail(email: String): Optional<User>
 
     fun findBySystemTokenId(systemTokenId: String): Optional<User>
-
 }

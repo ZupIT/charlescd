@@ -10,5 +10,4 @@ class SystemTokenService(private val systemTokenRepository: SystemTokenRepositor
     fun getSystemTokenIdByTokenValue(tokenValue: String): String {
         return this.systemTokenRepository.getIdByTokenValue(tokenValue) ?: throw NotFoundException("system_token", tokenValue)
     }
-
 }
