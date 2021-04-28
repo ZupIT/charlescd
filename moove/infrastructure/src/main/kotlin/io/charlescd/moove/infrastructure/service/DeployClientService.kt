@@ -65,7 +65,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         build: Build,
         circleId: String,
         isDefault: Boolean,
-        deploymentConfiguration: DeploymentConfiguration
+        deploymentConfiguration: DeploymentConfiguration,
         metadata: Map<String, String>?
     ): DeployRequest {
         return DeployRequest(
