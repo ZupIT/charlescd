@@ -169,6 +169,7 @@ data:
                       request_handle:logInfo("LUASCRIPT:AUTHORIZATION_SERVICE")
                       local user_token = request_handle:headers():get("authorization")
                       local system_token = request_handle:headers():get("x-charles-token")
+                      local workspace_id = request_handle:headers():get("x-workspace-id")
                       local method = request_handle:headers():get(":method")
 
                       local url_encoded = request_handle:headers():get(":path")
@@ -193,6 +194,7 @@ data:
                         ["content-type"] = "application/json",
                         ["authorization"] = user_token,
                         ["x-charles-token"] = system_token
+                        ["x-workspace-id"] = workspace_id
                       },
                       "{\"path\": \"" ..path.. "\", \"method\": \"" ..method.. "\"}",
                       2000,
@@ -201,7 +203,7 @@ data:
 
                       request_handle:logInfo("Authorization service response status: "..headers[":status"])
                       if headers[":status"] ~= "204" then
-                        request_handle:logInfo("Denying request")
+                        request_handle:logInfo("Denying request ["..method.."] "..path)
                         request_handle:respond({
                           [":status"] = 403
                         }, "Forbidden")
