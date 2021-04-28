@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-export interface CreateDeployment {
-  buildId: string;
-  circleId: string;
-  metadata?: Map<string, string>;
+import Styled from './styled';
+
+const Metadata = () => {
+
+  return (
+    <Styled.Metadata>
+
+    </Styled.Metadata>
+  );
 }
+
+export default Metadata;
