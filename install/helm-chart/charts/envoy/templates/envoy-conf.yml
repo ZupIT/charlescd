@@ -193,7 +193,7 @@ data:
                         [":authority"] = "charlescd-gate",
                         ["content-type"] = "application/json",
                         ["authorization"] = user_token,
-                        ["x-charles-token"] = system_token
+                        ["x-charles-token"] = system_token,
                         ["x-workspace-id"] = workspace_id
                       },
                       "{\"path\": \"" ..path.. "\", \"method\": \"" ..method.. "\"}",
