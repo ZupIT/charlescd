@@ -28,6 +28,8 @@ import { Component } from 'modules/Modules/interfaces/Component';
 import { useDeleteComponent } from 'modules/Modules/hooks/component';
 import { FIRST, ONE } from './constants';
 import Styled from './styled';
+import Dropdown from 'core/components/Dropdown';
+import { copyToClipboard } from 'core/utils/clipboard';
 
 interface Props {
   module: Module;
@@ -45,6 +47,25 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
       onChange();
     }
   }, [status, onChange]);
+
+  const renderAction = (component: Component, index: number) => (
+    <Styled.Dropdown color="light">
+      {(index !== FIRST || module.components.length > ONE)
+        && (
+          <Dropdown.Item
+            icon="delete"
+            name="Delete"
+            onClick={() => removeComponent(module?.id, component?.id)}
+          />
+        )
+      }
+      <Dropdown.Item
+        icon="copy"
+        name="Copy ID"
+        onClick={() => copyToClipboard(component?.id)}
+      />
+    </Styled.Dropdown>
+)
 
   return (
     <>
@@ -92,8 +113,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               key={component?.id}
               isLoading={loading}
               description={component?.name}
-              canClose={index !== FIRST || module.components.length > ONE}
-              onClose={() => removeComponent(module?.id, component?.id)}
+              actions={renderAction(component, index)}
               onClick={() => onSelectComponent(component)}
             >
               <Styled.Component.Wrapper>
