@@ -20,7 +20,7 @@ import { CreateComponentRequestDto } from '../../../../app/v2/api/deployments/dt
 import { CreateDeploymentRequestDto } from '../../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { CreateGitDeploymentDto } from '../../../../app/v2/api/deployments/dto/create-git-request.dto'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
-import { CreateDeploymentValidator, JsonAPIError } from '../../../../app/v2/api/deployments/validations/create-deployment-validator'
+import { CreateDeploymentValidator } from '../../../../app/v2/api/deployments/validations/create-deployment-validator'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
 import { UrlConstants } from '../../integration/test-constants'
 
@@ -90,7 +90,7 @@ it('Returns valid DTO object when params are valid', () => {
   expect(validator).toEqual({ valid: true, data: expectedDto })
 })
 
-it('Formats the error to the JSON-API spec', () => {
+it('Formats the error to the correct format', () => {
   const params = {}
   const validator = new CreateDeploymentValidator(params)
   const validatorResult = validator.validate()
@@ -98,86 +98,42 @@ it('Formats the error to the JSON-API spec', () => {
     fail('Should not be valid')
   }
   const formattedErrors = validator.formatErrors(validatorResult.errors, HttpStatus.BAD_REQUEST)
-  const jsonApiError : JsonAPIError= {
-    'errors': [
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"deploymentId" is required',
-        'source': {
-          'pointer': 'deploymentId'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"namespace" is required',
-        'source': {
-          'pointer': 'namespace'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"circle" is required',
-        'source': {
-          'pointer': 'circle'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"git" is required',
-        'source': {
-          'pointer': 'git'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"components" is required',
-        'source': {
-          'pointer': 'components'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"authorId" is required',
-        'source': {
-          'pointer': 'authorId'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      },
-      {
-        'status': HttpStatus.BAD_REQUEST,
-        'detail': '"callbackUrl" is required',
-        'source': {
-          'pointer': 'callbackUrl'
-        },
-        'meta': {
-          'component': 'butler',
-          'timestamp': expect.anything()
-        }
-      }
-    ]
-  }
-  expect(formattedErrors).toEqual(jsonApiError)
+  const expectedErrors  = [
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"deploymentId" is required',
+      'source': 'deploymentId'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"namespace" is required',
+      'source': 'namespace'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"circle" is required',
+      'source': 'circle'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"git" is required',
+      'source': 'git'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"components" is required',
+      'source': 'components'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"authorId" is required',
+      'source': 'authorId'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"callbackUrl" is required',
+      'source': 'callbackUrl'
+    }
+  ]
+  expect(formattedErrors).toEqual(expectedErrors)
 })

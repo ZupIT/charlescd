@@ -21,6 +21,7 @@ import { AppConstants } from '../../../app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from '../../../app/v2/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from '../../../app/v2/core/logs/console'
 import { K8sClient } from '../../../app/v2/core/integrations/k8s/client'
+import { HttpExceptionFilter } from '../../../app/v2/core/filters/http-exception.filter'
 
 /**
  * Since we are not running integration tests inside a Kubernetes cluster, the K8sClient
@@ -64,6 +65,7 @@ export class TestSetupUtils {
       const consoleLoggerService: ConsoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
 
       app.useGlobalFilters(new EntityNotFoundExceptionFilter(consoleLoggerService))
+      app.useGlobalFilters(new HttpExceptionFilter())
       app.enableShutdownHooks()
       await app.init()
       return app

@@ -15,7 +15,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BadRequestException, INestApplication } from '@nestjs/common'
+import { HttpException, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { EntityManager } from 'typeorm'
 import { AppModule } from '../../../../app/app.module'
@@ -30,6 +30,8 @@ import { simpleManifests } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
+import { ExceptionBuilder } from '../../../../app/v2/core/utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 describe('DeploymentCleanupHandler', () => {
   let app: INestApplication
@@ -72,7 +74,7 @@ describe('DeploymentCleanupHandler', () => {
 
     await expect(
       pipe.transform(nonExistingDeploymentId)
-    ).rejects.toThrow(new BadRequestException(errorMessage))
+    ).rejects.toThrow(new HttpException(errorMessage, HttpStatus.BAD_REQUEST))
 
   })
 
@@ -101,7 +103,9 @@ describe('DeploymentCleanupHandler', () => {
     const deployment = await createDeploymentAndExecution(params, fixtureUtilsService, manifests, manager, false, false)
     await expect(
       pipe.transform(deployment.id)
-    ).rejects.toThrow(new BadRequestException('Cannot undeploy not current deployment'))
+    ).rejects.toThrow(new ExceptionBuilder(
+      'Cannot undeploy not current deployment', HttpStatus.BAD_REQUEST)
+      .build())
   })
 
   it('allows undeployment of active deployment', async() => {
