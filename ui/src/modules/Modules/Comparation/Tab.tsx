@@ -122,7 +122,6 @@ const Tab = ({ param }: Props) => {
       {mode === 'view' && isEmpty(component) && (
         <ViewModule
           module={module}
-          mode={mode}
           onChange={updateModule}
           onSelectComponent={(c: Component) => setComponent(c)}
         />
