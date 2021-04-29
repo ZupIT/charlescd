@@ -21,6 +21,12 @@ import { ConsoleLoggerService } from '../../logs/console'
 
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 import { ExceptionBuilder } from '../../utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { Observable, of, throwError } from 'rxjs'
+import { AppConstants } from '../../constants'
+
+
 
 @Injectable()
 export class GitLabRepository implements Repository {
@@ -85,14 +91,21 @@ export class GitLabRepository implements Repository {
 
   private async fetch(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
-    return this.httpService.get(url, config)
-      .toPromise()
-      .catch(function(error) {
-        throw new ExceptionBuilder('Unable to fetch GitLab URL', error.response.status)
-          .withDetail(`Status '${error.response.statusText}' received when accessing GitLab resource: ${url}`)
-          .withSource('components.helmRepository')
-          .build()
-      })
+    try {
+      return await this.httpService.get(url, config).pipe(
+        map(response => response),
+        retryWhen(error => this.getRetryFetchCondition(error) )
+      ).toPromise()
+    }catch(error ) {
+      this.consoleLoggerService.error('ERROR:FETCHING_RESOURCE', error)
+      const status = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
+      const statusMessage = error.response ? error.response.statusText : 'INTERNAL_SERVER_ERROR'
+      throw new ExceptionBuilder('Unable to fetch GitHub URL', status)
+        .withDetail(`Status '${statusMessage}' received when accessing GitHub resource: ${url}. Error: ${error}`)
+        .withSource('components.helmRepository')
+        .build()
+    }
+
   }
 
   private appendPathParam(urlResource: URL, resourceName: string): void {
@@ -100,6 +113,20 @@ export class GitLabRepository implements Repository {
     urlResource.searchParams.set(
       'path',
       pathValue ? `${pathValue}/${resourceName}` : resourceName
+    )
+  }
+
+  private getRetryFetchCondition(fetchError: Observable<any>) {
+    return fetchError.pipe(
+      concatMap((error, attempts: number) => {
+        return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS   ?
+          throwError(`Maximum fetch retry attempts reached! ${error} `) :
+          of(error).pipe(
+            tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
+            delay(AppConstants.MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY)
+          )
+      },
+      )
     )
   }
 }

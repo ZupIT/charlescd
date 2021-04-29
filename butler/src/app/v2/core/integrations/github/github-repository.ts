@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { HttpService, Injectable } from '@nestjs/common'
+import { HttpException, HttpService, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 import { ExceptionBuilder } from '../../utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
+import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
+import { Observable, of, throwError } from 'rxjs'
+import { AppConstants } from '../../constants'
 
 @Injectable()
 export class GitHubRepository implements Repository {
@@ -81,14 +85,35 @@ export class GitHubRepository implements Repository {
   }
 
   private async fetch(url: URL, config: AxiosRequestConfig): Promise<AxiosResponse> {
-    this.consoleLoggerService.log('START:FETCHING RESOURCE', url.toString())
-    return await this.httpService.get(url.toString(), config)
-      .toPromise()
-      .catch(function(error) {
-        throw new ExceptionBuilder('Unable to fetch GitHub URL', error.response.status)
-          .withDetail(`Status '${error.response.statusText}' received when accessing GitHub resource: ${url}`)
-          .withSource('components.helmRepository')
-          .build()
-      })
+    this.consoleLoggerService.log('START:FETCHING_RESOURCE', url.toString())
+    try {
+      return await this.httpService.get(url.toString(), config).pipe(
+        map(response => response),
+        retryWhen(error => this.getRetryFetchCondition(error))
+      ).toPromise()
+    } catch (error) {
+      this.consoleLoggerService.error('ERROR:FETCHING_RESOURCE', error)
+      const status = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
+      const statusMessage = error.response ? error.response.statusText : 'INTERNAL_SERVER_ERROR'
+      throw new ExceptionBuilder('Unable to fetch GitHub URL', status)
+        .withDetail(`Status '${statusMessage}' received when accessing GitHub resource: ${url} error: ${error}`)
+        .withSource('components.helmRepository')
+        .build()
+    }
+  }
+
+  private getRetryFetchCondition(fetchError: Observable<any>) {
+    return fetchError.pipe(
+      concatMap((error, attempts: number) => {
+        return attempts >= AppConstants.FETCH_RESOURCE_MAXIMUM_RETRY_ATTEMPTS   ?
+          throwError(`Maximum fetch retry attempts reached! ${error} `) :
+          of(error).pipe(
+            tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
+            delay(AppConstants.FETCH_RESOURCE_MILLISECONDS_RETRY_DELAY)
+          )
+      },
+      )
+    )
   }
 }
+
