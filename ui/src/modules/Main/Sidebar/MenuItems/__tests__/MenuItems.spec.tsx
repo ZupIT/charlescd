@@ -21,6 +21,9 @@ import { genMenuId } from 'core/utils/menu';
 import MenuItems from '../index';
 import { saveProfile } from 'core/utils/profile';
 import {dark as sidebarDarkTheme} from 'core/assets/themes/sidebar';
+import userEvent from '@testing-library/user-event';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom'
 
 const originalWindow = { ...window };
 
@@ -45,7 +48,7 @@ test('renders sidebar menu Items', async () => {
   const links = screen.getByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
-  const accountId = genMenuId(routes.account);
+  const accountId = genMenuId(routes.accountProfile);
 
   expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
   expect(screen.getByTestId(accountId)).toBeInTheDocument();
@@ -67,7 +70,7 @@ test('testing outside click menu Items', async () => {
   const links = screen.getByTestId('sidebar-links');
 
   const workspacesId = genMenuId(routes.workspaces);
-  const accountId = genMenuId(routes.account);
+  const accountId = genMenuId(routes.accountProfile);
 
   expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
   expect(screen.getByTestId(accountId)).toBeInTheDocument();
@@ -86,7 +89,7 @@ test('testing expand menu click', async () => {
   );
   const links = screen.getByTestId('sidebar-links');
   const workspacesId = genMenuId(routes.workspaces);
-  const accountId = genMenuId(routes.account);
+  const accountId = genMenuId(routes.accountProfile);
 
   expect(screen.getByTestId(workspacesId)).toBeInTheDocument();
   expect(screen.getByTestId(accountId)).toBeInTheDocument();
@@ -204,4 +207,25 @@ test('should show main menu', () => {
   expect(screen.queryByText('Users')).not.toBeInTheDocument();
   expect(screen.queryByText('User Group')).not.toBeInTheDocument();
   expect(screen.getByText('Account')).toBeInTheDocument();
+});
+
+test('should render route /account/profile when click on account', () => {
+  const history = createMemoryHistory();
+
+  const {rerender} = render(
+    <Router history={history}>
+      <MenuItems isExpanded expandMenu={() => jest.fn()} />
+    </Router>
+  );
+
+  const menuAccount = screen.getByTestId('menu-account-profile');
+  userEvent.click(menuAccount);
+
+  rerender(
+    <Router history={history}>
+      <MenuItems isExpanded expandMenu={() => jest.fn()} />
+    </Router>
+  );
+
+  expect(history.location.pathname).toBe(routes.accountProfile);
 });

@@ -53,7 +53,6 @@ const fakeComponentWithoutMoreOptions: ComponentInterface = {
   errorThreshold: "30",
 };
 
-
 const fakeModule: Module = {
   gitRepositoryAddress: "fake-github",
   helmRepository: "fake-api",
@@ -75,6 +74,59 @@ jest.mock('containers/Can', () => {
   };
 });
 
+test('should render create component default', async () => {
+  const advancedOptionsText = 'Show advanced options (be careful, do not change this if you are not using istio gateway)';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={{}}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  expect(await screen.findByText('Create component')).toBeInTheDocument();
+
+  const subtitle = 'use the fields below to add the component:';
+  expect(screen.getByText(subtitle)).toBeInTheDocument();
+
+  expect(screen.getByLabelText('Enter name component')).toBeInTheDocument();
+  expect(screen.getByLabelText('Latency Threshold (ms)')).toBeInTheDocument();
+  expect(screen.getByLabelText('Http Error Threshold (%)')).toBeInTheDocument();
+  expect(screen.getByText(advancedOptionsText)).toBeInTheDocument();
+  expect(screen.getByRole('button')).toHaveTextContent('Save');
+});
+
+test('should render edit component default', async () => {
+  const advancedOptionsText = 'Show advanced options (be careful, do not change this if you are not using istio gateway)';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={fakeComponent}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  expect(await screen.findByText('Edit component')).toBeInTheDocument();
+
+  const subtitle = 'use the fields below to add the component:';
+  expect(screen.getByText(subtitle)).toBeInTheDocument();
+
+  expect(screen.getByLabelText('Enter name component')).toBeInTheDocument();
+  expect(screen.getByLabelText('Latency Threshold (ms)')).toBeInTheDocument();
+  expect(screen.getByLabelText('Http Error Threshold (%)')).toBeInTheDocument();
+  expect(screen.getByText(advancedOptionsText)).toBeInTheDocument();
+  expect(screen.getByRole('button')).toHaveTextContent('Edit');
+});
 
 test("component for edit mode render", async () => {
   const { container } = render(
@@ -124,7 +176,7 @@ test("component for show advanced options", async () => {
   const componentButton: any = container.querySelector("span");
   const advancedOptions = screen.getByTestId('button-default-save-edit-module');
   expect(container.innerHTML).toMatch("Show");
-  act(() => userEvent.click(componentButton));
+  await act(async () => userEvent.click(componentButton));
 
   expect(advancedOptions).toBeInTheDocument();
 });
@@ -173,4 +225,33 @@ test("component to not render more option", async () => {
   );
 
   await waitFor(() => expect(componentHostValue?.value).toEqual(""));
+});
+
+test('should validate name component max length', async () => {
+  const longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e.';
+
+  render(
+    <AllTheProviders>
+      <Component
+        onClose={mockOnClose}
+        onUpdate={mockOnUpdate}
+        component={{}}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>
+  );
+
+  const nameComponentInput = screen.getByTestId('input-text-name');
+
+  act(() => {
+    userEvent.type(nameComponentInput, longText);
+  });
+  
+  expect(nameComponentInput).toHaveValue(longText);
+
+  const button = screen.getByRole('button');
+  userEvent.click(button);
+
+  expect(await screen.findAllByRole('alert')).toHaveLength(1);
 });

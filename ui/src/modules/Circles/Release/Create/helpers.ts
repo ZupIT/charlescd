@@ -25,6 +25,8 @@ import groupBy from 'lodash/groupBy';
 import includes from 'lodash/includes';
 import isEmpty from 'lodash/isEmpty';
 
+const MAX_LENGTH = 63;
+
 export const formatModuleOptions = (module: Module[]) => {
   return map(module, content => ({
     label: content.name,
@@ -128,4 +130,25 @@ export const validFields = (fields: object) => {
   });
 
   return status;
+};
+
+interface Props {
+  tag?: Tag;
+  onError?: (error: boolean) => void;
+  setIsError?: (error: boolean) => void;
+}
+
+export const checkComponentAndVersionMaxLength = ({tag, onError, setIsError} : Props) => {
+  const componentAndVersion = tag?.artifact.split('/');
+  const componentAndVersionSplited = componentAndVersion[1].split(':');
+  const componentNameLen = componentAndVersionSplited[0].length;
+  const versionNameLen = componentAndVersionSplited[1].length;
+
+  if((componentNameLen + versionNameLen) > MAX_LENGTH) {
+    onError(true);
+    setIsError(true);
+  } else {
+    onError(false);
+    setIsError(false);
+  }
 };

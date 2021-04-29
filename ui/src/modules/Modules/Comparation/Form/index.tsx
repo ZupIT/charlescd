@@ -195,7 +195,7 @@ const FormModule = ({ module, onChange }: Props) => {
           icon="info"
           link={`${CHARLES_DOC}/get-started/creating-your-first-module`}
           linkLabel="View documentation"
-          description="To configure a module you need to register a Git URL and enter the Helm repository URL. You will need to insert the components in the nex step. Consult our documentation for futher details."
+          description="To configure a module you need to register a Git URL and enter the Helm repository URL. You will need to insert the components in the next step. Consult our documentation for further details."
         />
       </Styled.Title>
       <Styled.Subtitle color="dark">
