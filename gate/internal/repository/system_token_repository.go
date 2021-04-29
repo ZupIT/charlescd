@@ -39,6 +39,7 @@ type SystemTokenRepository interface {
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
 	Update(systemToken domain.SystemToken) error
+	UpdateLastUsedAt(systemToken domain.SystemToken) error
 }
 
 type systemTokenRepository struct {
@@ -156,6 +157,17 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 	if res := systemTokenRepository.db.Table("system_tokens").Where("id = ?", systemToken.ID).
 		Updates(systemTokenMap(systemTokenToUpdate)); res.Error != nil {
 		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.Update.Updates", res.Error, logging.InternalError)
+	}
+
+	return nil
+}
+
+func (systemTokenRepository systemTokenRepository) UpdateLastUsedAt(systemToken domain.SystemToken) error {
+
+	err := systemTokenRepository.db.Table("system_tokens").Where("id = ?", systemToken.ID).Update("last_used_at", systemToken.LastUsedAt)
+
+	if err.Error != nil {
+		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.UpdateLastUsedAt.Raw", err.Error, logging.InternalError)
 	}
 
 	return nil
