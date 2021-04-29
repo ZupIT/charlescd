@@ -86,7 +86,6 @@ export class GitHubRepository implements Repository {
     return await this.httpService.get(url.toString(), config)
       .toPromise()
       .catch(function(error) {
-        console.log(error)
         const errorStatus = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
         throw new ExceptionBuilder('Unable to fetch GitHub URL', errorStatus)
           .withDetail(`Status '${error.response ? error.response.statusText : HttpStatus.INTERNAL_SERVER_ERROR.toString()}' received when accessing GitHub resource: ${url}`)

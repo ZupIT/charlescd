@@ -54,7 +54,8 @@ it('Returns valid DTO object when params are valid', () => {
     ],
     authorId: 'bc2a1669-34b8-4af2-b42c-acbad2ec6b60',
     callbackUrl: UrlConstants.deploymentCallbackUrl,
-    timeoutInSeconds: 10
+    timeoutInSeconds: 10,
+    metadata: null
   }
   const validator = new CreateDeploymentValidator(params).validate()
   const expectedDto = new CreateDeploymentRequestDto(
