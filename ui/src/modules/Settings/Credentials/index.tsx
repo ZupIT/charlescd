@@ -61,6 +61,7 @@ const Credentials = ({ onClickHelp }: Props) => {
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
+  
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspace(name);
   };
