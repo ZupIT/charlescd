@@ -26,6 +26,7 @@ import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -999,6 +1000,62 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .expect(409)
       .expect(response => {
         expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns logs from deployment id', async() => {
+    const deploymentId = '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3'
+    const deployment = new DeploymentEntityV2(
+      deploymentId,
+      '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      'ad03d665-f689-42aa-b1de-d19653e89b86',
+      UrlConstants.deploymentCallbackUrl,
+      [
+        new ComponentEntityV2(
+          UrlConstants.helmRepository,
+          'currenttag',
+          'imageurl.com:currenttag',
+          'my-component',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          'host-value-1',
+          'gateway-name-1',
+          []
+        )
+      ],
+      true,
+      'default',
+      120,
+    )
+
+    await manager.save(deployment)
+
+    const log = new LogEntity (
+      deploymentId,
+      [
+        {
+          type: 'INFO',
+          title: 'Created',
+          details: '{"message":"Container image "paulczar/gb-frontend:v5" already present on machine","object":"Pod/frontend-7cb5fb8b96-prqxv"}',
+          timestamp: '2021-04-29T10:17:24-03:00'
+        }
+      ]
+    )
+    await manager.save(log)
+
+    await request(app.getHttpServer())
+      .get(`/v2/deployments/${deploymentId}/logs`)
+      .expect(200)
+      .expect(response => {
+        expect(response.body).toEqual({
+          logs: [
+            {
+              type: 'INFO',
+              title: 'Created',
+              details: '{"message":"Container image "paulczar/gb-frontend:v5" already present on machine","object":"Pod/frontend-7cb5fb8b96-prqxv"}',
+              timestamp: '2021-04-29T10:17:24-03:00'
+            }
+          ]
+        })
       })
   })
 })
