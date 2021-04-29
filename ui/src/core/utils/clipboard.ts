@@ -15,7 +15,7 @@
  */
 
 export const copyToClipboard = (value: string) => {
-  if(navigator.clipboard && window.isSecureContext) {
+  if(navigator.clipboard) {
     navigator.clipboard.writeText(value);
   } else {
     let copyInput = document.createElement("input");
