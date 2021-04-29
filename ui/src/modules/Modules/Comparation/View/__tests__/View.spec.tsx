@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { render, screen } from 'unit-test/testUtils';
-import View from '..';
+import { act, render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
+import * as clipboardUtils from 'core/utils/clipboard';
+import View from '..';
+import { FetchMock } from 'jest-fetch-mock/types';
 
 const components = [
   {
@@ -75,4 +77,41 @@ test('render Modules View with multiple components triggering card options dropd
 
   expect(DropdownItemDelete).toBeInTheDocument();
   expect(DropdownItemCopyID).toBeInTheDocument();
+});
+
+test('render View and try Copy ID', async () => {
+  const copyToClipboardSpy = jest.spyOn(clipboardUtils, 'copyToClipboard');
+  render(<View {...props} module={{ ...props.module, components: components }}/>);
+
+  const Content = await screen.findByTestId('contentIcon-modules');
+  expect(Content).toBeInTheDocument();
+
+  const DropdownTrigger = await screen.findAllByTestId('icon-vertical-dots');
+  expect(DropdownTrigger[0]).toBeInTheDocument();
+  userEvent.click(DropdownTrigger[0]);
+
+  const DropdownItemCopyID = screen.getByText('Copy ID');
+  expect(DropdownItemCopyID).toBeInTheDocument();
+
+  act(() => userEvent.click(DropdownItemCopyID));
+  expect(copyToClipboardSpy).toBeCalled();
+});
+
+test('render View and try delete', async () => {
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}))
+
+  render(<View {...props} module={{ ...props.module, components: components }}/>);
+
+  const Content = await screen.findByTestId('contentIcon-modules');
+  expect(Content).toBeInTheDocument();
+
+  const DropdownTrigger = await screen.findAllByTestId('icon-vertical-dots');
+  expect(DropdownTrigger[0]).toBeInTheDocument();
+  userEvent.click(DropdownTrigger[0]);
+
+  const DropdownItemDelete = screen.getByText('Delete');
+  expect(DropdownItemDelete).toBeInTheDocument();
+
+  act(() => userEvent.click(DropdownItemDelete));
+  await waitFor(() => expect(props.onChange).toBeCalled());
 });
