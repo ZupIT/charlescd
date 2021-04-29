@@ -85,7 +85,8 @@ it('Returns valid DTO object when params are valid', () => {
     ],
     'namespace',
     new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
-    10
+    10,
+    null
   )
   expect(validator).toEqual({ valid: true, data: expectedDto })
 })

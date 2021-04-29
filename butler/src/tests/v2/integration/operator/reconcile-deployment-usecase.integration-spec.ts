@@ -296,7 +296,8 @@ describe('Reconcile deployments usecase', () => {
       ],
       false,
       'my-namespace',
-      60
+      60,
+      null
     )
     previousDeployment.current = false
     previousDeployment.healthy = false
@@ -320,7 +321,8 @@ describe('Reconcile deployments usecase', () => {
       ],
       false,
       'my-namespace',
-      60
+      60,
+      null
     )
     currentDeployment.current = true
     currentDeployment.healthy = false

@@ -42,7 +42,7 @@ export class DeploymentsController {
   ) { }
 
   @Post('/')
-  @UsePipes(GitTokenDecryptionPipe)
+  // @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(DefaultCircleUniquenessPipe)
   @UsePipes(NamespaceValidationPipe)

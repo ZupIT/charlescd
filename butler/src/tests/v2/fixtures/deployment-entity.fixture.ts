@@ -24,7 +24,8 @@ export const deploymentFixture = new DeploymentEntityV2(
   ],
   true,
   'namespace',
-  60
+  60,
+  null
 )
 
 export const deploymentFixture2 = new DeploymentEntityV2(
@@ -47,7 +48,8 @@ export const deploymentFixture2 = new DeploymentEntityV2(
   ],
   true,
   'namespace',
-  60
+  60,
+  null
 )
 
 type ManifestType = 'simple' | 'complex' | 'noLabels' | 'noManifest'
@@ -119,7 +121,8 @@ export const createDeployComponent = (
     ],
     defaultCircle,
     namespace,
-    60
+    60,
+    null
   )
   component.deployment.createdAt = new Date()
   component.deployment.healthy = isDeploymentHealthy
@@ -148,7 +151,8 @@ export const getDeploymentWithManifestFixture = (manifestType: ManifestType): De
     ],
     true,
     'namespace',
-    60
+    60,
+    null
   )
   return deployment
 }
@@ -174,7 +178,8 @@ export const getDeploymentWithManifestAndPreviousFixture = (manifestType: Manife
     ],
     true,
     'namespace',
-    60
+    60,
+    null
   )
   const previousDeployment = getDeploymentWithManifestFixture(manifestType)
   deployment.previousDeploymentId = previousDeployment.id

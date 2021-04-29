@@ -252,7 +252,8 @@ describe('Reconcile routes usecase', () => {
       ],
       false,
       'namespace',
-      60
+      60,
+      null
     )
     previousDeployment.current = false
     previousDeployment.healthy = true
@@ -276,7 +277,8 @@ describe('Reconcile routes usecase', () => {
       ],
       false,
       'namespace',
-      60
+      60,
+      null
     )
     unhealthyDeployment.current = true
     unhealthyDeployment.healthy = false
@@ -301,7 +303,8 @@ describe('Reconcile routes usecase', () => {
       ],
       false,
       'namespace',
-      60
+      60,
+      null
     )
     healthyDeploymentDiffCircle.current = true
     healthyDeploymentDiffCircle.healthy = true
@@ -342,7 +345,8 @@ describe('Reconcile routes usecase', () => {
       ],
       false,
       'namespace',
-      60
+      60,
+      null
     )
     unhealthyDeployment.current = true
     unhealthyDeployment.healthy = false
@@ -366,7 +370,8 @@ describe('Reconcile routes usecase', () => {
       ],
       false,
       'namespace',
-      60
+      60,
+      null
     )
     healthyDeploymentDiffCircle.current = true
     healthyDeploymentDiffCircle.healthy = true

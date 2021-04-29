@@ -23,6 +23,7 @@ import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { GitProvidersEnum } from '../../../core/configuration/interfaces'
 import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
 import { ExceptionBuilder } from '../../../core/utils/exception.utils'
+import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 import Joi = require('joi')
 
 export interface JsonAPIError {
@@ -89,7 +90,8 @@ export class CreateDeploymentValidator {
       components,
       value.namespace,
       new CreateGitDeploymentDto(value.git.token, value.git.provider),
-      value.timeoutInSeconds
+      value.timeoutInSeconds,
+      value.metadata
     )
     return dto
   }
@@ -109,7 +111,24 @@ export class CreateDeploymentValidator {
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255),
-      timeoutInSeconds: Joi.number().integer().min(5).optional()
+      timeoutInSeconds: Joi.number().integer().min(5).optional(),
+      metadata: Joi.allow(null).custom( (metadata, helper) => {
+        if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
+          const invalidMetadata = Object.keys(metadata.content).find(
+            key => !this.isValidKeyAndValue(key, metadata.content[key])
+          )
+          if (Object.keys(metadata.content).length === 0 || invalidMetadata != null) {
+            return helper.error('invalid.metadata')
+          }
+
+        } else {
+          throw new ExceptionBuilder('Invalid metadata scope', HttpStatus.BAD_REQUEST).build()
+        }
+      }).messages(
+        {
+          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+        }
+      )
     })
   }
 
@@ -152,6 +171,15 @@ export class CreateDeploymentValidator {
       return buildImageTag
     }
     return extractedTag[extractedTag.length -1]
+  }
+
+  private isValidKeyAndValue(key: string, value: string): boolean {
+    console.log(this.isValidLength(key, 63) && this.isValidLength(value, 253))
+    return this.isValidLength(key, 63) && this.isValidLength(value, 253)
+  }
+
+  private isValidLength(key: string, maxLength: number): boolean {
+    return key.length  > 0 && key.length < maxLength
   }
 }
 

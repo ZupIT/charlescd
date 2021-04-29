@@ -27,6 +27,7 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
+import * as Url from 'url'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -492,7 +493,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      timeoutInSeconds: 10
+      timeoutInSeconds: 10,
+      metadata: null
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -746,7 +748,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      metadata: null
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -1010,32 +1013,44 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
   it('returns error for defined metadata and empty metadata keys/values', async() => {
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
       },
-      modules: [
-        {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: [{
-            componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-            buildImageUrl: 'imageurl.com',
-            buildImageTag: 'tag1',
-            componentName: 'component-name'
-          }]
-        }
-      ],
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [{
+        componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'tag1',
+        componentName: 'component-name',
+        helmRepository: UrlConstants.helmRepository,
+      }],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      defaultCircle: false,
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {}
       }
     }
-    const errorMessages = [
-      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -1043,7 +1058,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -1051,26 +1066,26 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
       },
-      modules: [
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: [
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      defaultCircle: false,
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
@@ -1078,9 +1093,21 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       }
     }
-    const errorMessages = [
-      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -1088,7 +1115,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -1096,26 +1123,26 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
       },
-      modules: [
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: [
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      defaultCircle: false,
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
@@ -1123,9 +1150,21 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       }
     }
-    const errorMessages = [
-      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -1133,7 +1172,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
 
@@ -1141,26 +1180,26 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
       circle: {
-        headerValue: '333365f8-bb29-49f7-bf2b-3ec956a71583'
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
       },
-      modules: [
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
         {
-          moduleId: 'acf45587-3684-476a-8e6f-b479820a8cd5',
-          helmRepository: 'https://some-helm.repo',
-          components: [
-            {
-              componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
-              buildImageUrl: 'imageurl.com',
-              buildImageTag: 'tag1',
-              componentName: 'component-name'
-            }
-          ]
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
-      defaultCircle: false,
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
@@ -1168,9 +1207,21 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       }
     }
-    const errorMessages = [
-      'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
-    ]
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -1178,7 +1229,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        expect(response.body).toEqual({ error: 'Bad Request', message: errorMessages, statusCode: 400 })
+        expect(response.body).toEqual(errorResponse)
       })
   })
   

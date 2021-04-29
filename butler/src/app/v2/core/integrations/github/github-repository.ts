@@ -20,6 +20,7 @@ import { ConfigurationConstants } from '../../constants/application/configuratio
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 import { ExceptionBuilder } from '../../utils/exception.utils'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 @Injectable()
 export class GitHubRepository implements Repository {
@@ -85,8 +86,10 @@ export class GitHubRepository implements Repository {
     return await this.httpService.get(url.toString(), config)
       .toPromise()
       .catch(function(error) {
-        throw new ExceptionBuilder('Unable to fetch GitHub URL', error.response.status)
-          .withDetail(`Status '${error.response.statusText}' received when accessing GitHub resource: ${url}`)
+        console.log(error)
+        const errorStatus = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
+        throw new ExceptionBuilder('Unable to fetch GitHub URL', errorStatus)
+          .withDetail(`Status '${error.response ? error.response.statusText : HttpStatus.INTERNAL_SERVER_ERROR.toString()}' received when accessing GitHub resource: ${url}`)
           .withSource('components.helmRepository')
           .build()
       })

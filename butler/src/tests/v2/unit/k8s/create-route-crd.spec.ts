@@ -36,7 +36,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         circleId: 'circle-id-1',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null
       }
     },
     {
@@ -55,7 +56,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         circleId: 'circle-id-2',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null
       }
     },
     {
@@ -74,7 +76,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         circleId: 'circle-id-1',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null
       }
     },
     {
@@ -93,7 +96,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         circleId: 'circle-id-2',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null
       }
     },
     {
@@ -112,7 +116,8 @@ it('must generate the correct CharlesRoutes custom resource object', () => {
         circleId: 'circle-id-3',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null
       }
     }
   ]
