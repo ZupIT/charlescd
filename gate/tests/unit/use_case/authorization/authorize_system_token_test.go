@@ -32,7 +32,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
 	var systemToken = utils.GetDummySystemToken()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
+	as.systemTokenRepository.On("UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
@@ -40,7 +40,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenPublicPath() {
 	require.Equal(as.T(), 2, len(as.systemTokenRepository.ExpectedCalls))
 	require.Equal(as.T(), 0, len(as.workspaceRepository.ExpectedCalls))
 	require.Equal(as.T(), 0, len(as.permissionRepository.ExpectedCalls))
-	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
+	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePermission() {
@@ -85,7 +85,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
 	as.workspaceRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(workspaces, nil).Once()
 	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
-	as.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
+	as.systemTokenRepository.On("UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, workspaces[0].ID.String(), utils.GetDummyAuthorizationAuthorization(path, method))
@@ -94,7 +94,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	require.Equal(as.T(), 2, len(as.systemTokenRepository.ExpectedCalls))
 	require.Equal(as.T(), 1, len(as.workspaceRepository.ExpectedCalls))
 	require.Equal(as.T(), 1, len(as.permissionRepository.ExpectedCalls))
-	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
+	require.True(as.T(), as.systemTokenRepository.AssertCalled(as.T(), "UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathSystemTokenRevoked() {
