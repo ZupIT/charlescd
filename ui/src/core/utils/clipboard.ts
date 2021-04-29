@@ -20,12 +20,8 @@ export const copyToClipboard = (value: string) => {
   } else {
     let copyInput = document.createElement("input");
     copyInput.value = value;
-    copyInput.style.position = "fixed";
-    copyInput.style.left = "-999999px";
-    copyInput.style.top = "-999999px";
     document.body.appendChild(copyInput);
     
-    copyInput.focus();
     copyInput.select();
     document.execCommand("copy");
 
