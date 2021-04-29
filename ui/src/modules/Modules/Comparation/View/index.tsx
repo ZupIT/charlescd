@@ -35,7 +35,6 @@ interface Props {
   module: Module;
   onChange: Function;
   onSelectComponent: (component: Component) => void;
-  mode: string;
 }
 
 const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
