@@ -43,4 +43,4 @@ spec:
     kind: CharlesDeployment
     plural: charlesdeployments
     singular: charlesdeployment
-  scope: Namespaced
+  scope: Cluster

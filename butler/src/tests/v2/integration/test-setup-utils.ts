@@ -75,6 +75,6 @@ export class TestSetupUtils {
   }
 
   public static seApplicationConstants(): void {
-    AppConstants.ENCRYPTION_KEY = 'jest-test-aes-key'
+    AppConstants.MOOVE_ENCRYPTION_KEY = 'jest-test-aes-key'
   }
 }

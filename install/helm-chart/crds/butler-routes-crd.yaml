@@ -47,4 +47,4 @@ spec:
     kind: CharlesRoutes
     plural: charlesroutes
     singular: charlesroute
-  scope: Namespaced
+  scope: Cluster

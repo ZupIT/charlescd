@@ -42,8 +42,9 @@ export class ReconcileUtils {
 
   // TODO this is highly coupled with Istio. Maybe implement strategy pattern once butler support other service meshes.
   public static checkIfComponentRoutesExistOnObserved(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): boolean {
-    const observedDestinationRules = observed.children['DestinationRule.networking.istio.io/v1alpha3'][spec.metadata.name]
-    const observedVirtualService = observed.children['VirtualService.networking.istio.io/v1alpha3'][spec.metadata.name]
+    const observedResourceName = `${spec.metadata.namespace}/${spec.metadata.name}`
+    const observedDestinationRules = observed.children['DestinationRule.networking.istio.io/v1alpha3'][observedResourceName]
+    const observedVirtualService = observed.children['VirtualService.networking.istio.io/v1alpha3'][observedResourceName]
     if (!observedDestinationRules || !observedVirtualService) {
       return false
     }

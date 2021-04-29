@@ -17,4 +17,3 @@ export class DeploymentsHookController {
     return await this.reconcileDeploymentUsecase.execute(params)
   }
 }
-
