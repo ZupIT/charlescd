@@ -42,10 +42,10 @@ export class DeploymentsController {
   ) { }
 
   @Post('/')
-  // @UsePipes(GitTokenDecryptionPipe)
+  @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(DefaultCircleUniquenessPipe)
-  // @UsePipes(NamespaceValidationPipe)
+  @UsePipes(NamespaceValidationPipe)
   @UsePipes(DefaultCircleNamespaceUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
