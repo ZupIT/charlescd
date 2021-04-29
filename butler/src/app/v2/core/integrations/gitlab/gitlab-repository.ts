@@ -100,8 +100,8 @@ export class GitLabRepository implements Repository {
       this.consoleLoggerService.error('ERROR:FETCHING_RESOURCE', error)
       const status = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
       const statusMessage = error.response ? error.response.statusText : 'INTERNAL_SERVER_ERROR'
-      throw new ExceptionBuilder('Unable to fetch GitHub URL', status)
-        .withDetail(`Status '${statusMessage}' received when accessing GitHub resource: ${url}. Error: ${error}`)
+      throw new ExceptionBuilder(`Unable to fetch resource from gitlab url: ${url}`, status)
+        .withDetail(`Status '${statusMessage}' with error: ${error}`)
         .withSource('components.helmRepository')
         .build()
     }
@@ -120,7 +120,7 @@ export class GitLabRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Maximum fetch retry attempts reached! ${error} `) :
+          throwError(`Reached maximum fetch attempts! ${error} `) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY)

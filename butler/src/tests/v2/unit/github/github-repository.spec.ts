@@ -18,13 +18,14 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import 'jest'
-import { HttpService } from '@nestjs/common'
-import { of } from 'rxjs'
+import { HttpException, HttpService } from '@nestjs/common'
+import { of, throwError } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
 import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
+import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()
@@ -87,6 +88,27 @@ describe('Download resources from github', () => {
 
     await repository.getResource({ url: url, token: githubToken, resourceName: 'helm-chart' })
     expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
+  })
+
+  it('should thrown error with the  maximum retry attempts message error', async() => {
+    const errorMessage = 'Timeout of 500ms'
+    jest.spyOn(httpService, 'get')
+      .mockImplementation(() =>
+        throwError(errorMessage)
+      )
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    await expect(
+      repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
+    ).rejects.toMatchObject({
+      response: {
+        errors: [{
+          detail: `Status 'INTERNAL_SERVER_ERROR' with error: Reached maximum fetch attempts! ${errorMessage}`,
+          source: 'components.helmRepository',
+          status: 500,
+          title: 'Unable to fetch resource from github url: https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart'
+        }]
+      }
+    })
   })
 })
 
