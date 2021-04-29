@@ -63,7 +63,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 	if allowed {
 		systemToken.SetLastUsed()
-		authorizeSystemToken.systemTokenRepository.Update(systemToken)
+		authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
 		return nil
 	}
 
@@ -95,7 +95,7 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 		if allowed {
 			systemToken.SetLastUsed()
-			authorizeSystemToken.systemTokenRepository.Update(systemToken)
+			authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
 			return nil
 		}
 	}
