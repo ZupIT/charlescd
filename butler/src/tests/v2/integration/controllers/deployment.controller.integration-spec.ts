@@ -27,7 +27,6 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
-import * as Url from 'url'
 
 describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
