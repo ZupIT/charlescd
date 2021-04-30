@@ -144,6 +144,12 @@ class JdbcDeploymentConfigurationRepository(
     }
 
     private fun deleteDeploymentConfigurationById(id: String) {
+        val statement = """
+               DELETE
+                FROM deployment_configurations
+                WHERE id = ?
+            """
 
+        this.jdbcTemplate.update(statement, id)
     }
 }
