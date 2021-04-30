@@ -98,8 +98,8 @@ export class GitHubRepository implements Repository {
       this.consoleLoggerService.error('ERROR:FETCHING_RESOURCE', error)
       const status = error.response ? error.response.status : HttpStatus.INTERNAL_SERVER_ERROR
       const statusMessage = error.response ? error.response.statusText : 'INTERNAL_SERVER_ERROR'
-      throw new ExceptionBuilder(`Unable to fetch resource from github url: ${url} `, status)
-        .withDetail(`Status '${statusMessage}' with error:  ${error}`)
+      throw new ExceptionBuilder(`Unable to fetch resource from github url: ${url}`, status)
+        .withDetail(`Status '${statusMessage}' with error: ${error}`)
         .withSource('components.helmRepository')
         .build()
     }
@@ -109,7 +109,7 @@ export class GitHubRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.FETCH_RESOURCE_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Reached maximum fetch attempts! ${error} `) :
+          throwError(`Reached maximum fetch attempts! ${error}`) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.FETCH_RESOURCE_MILLISECONDS_RETRY_DELAY)
