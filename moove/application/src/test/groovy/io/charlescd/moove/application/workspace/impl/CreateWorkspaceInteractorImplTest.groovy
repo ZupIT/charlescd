@@ -159,7 +159,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         workspaceResponse.status == expectedWorkspace.status.name()
         workspaceResponse.createdAt == expectedWorkspace.createdAt
         workspaceResponse.authorId == expectedWorkspace.author.id
-        workspaceResponse.cdConfiguration == null
+        workspaceResponse.deploymentConfiguration == null
         workspaceResponse.circleMatcherUrl == expectedWorkspace.circleMatcherUrl
         workspaceResponse.gitConfiguration == null
         workspaceResponse.registryConfiguration == null
