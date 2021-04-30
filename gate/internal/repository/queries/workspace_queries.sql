@@ -1,10 +1,15 @@
 -- name: find-user-permissions-at-workspace
-select wug.permissions
-from workspaces w
-         inner join workspaces_user_groups wug on wug.workspace_id = ?
-         inner join user_groups ug on ug.id = wug.user_group_id
-         inner join user_groups_users ugu on ugu.user_group_id = ug.id
-         inner join users u on ? = ugu.user_id;
+select workspaces_user_groups.permissions as workspace_user_group_permissions
+from users
+         left join user_groups_users on users.id = user_groups_users.user_id
+         left join user_groups on user_groups_users.user_group_id = user_groups.id
+         left join workspaces_user_groups on user_groups.id = workspaces_user_groups.user_group_id
+         left join workspaces on workspaces_user_groups.workspace_id = workspaces.id and
+                                 (workspaces_user_groups.permissions @> '[{"name": "maintenance_write"}]'
+                                      and workspaces.status in ('INCOMPLETE', 'COMPLETE')
+                                     or workspaces.status = 'COMPLETE')
+        where workspaces.id = ?
+        and users.id = ?;
 
 -- name: find-workspaces-by-system-token-id
 SELECT id,
