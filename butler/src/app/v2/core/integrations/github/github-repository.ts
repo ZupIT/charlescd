@@ -89,7 +89,6 @@ export class GitHubRepository implements Repository {
     try {
       return await this.httpService.get(url.toString(), config).pipe(
         map(response => {
-          console.log(response)
           return response
         }),
         retryWhen(error => this.getRetryFetchCondition(error))
