@@ -36,6 +36,7 @@ enum class MooveErrorCode(val key: String) {
     INTERNAL_SERVER_ERROR("internal.server.error"),
     INVALID_BUILD_STATUS("invalid.build.status"),
     INVALID_PAYLOAD("invalid.payload"),
+    CONFLICT("conflict"),
     MISSING_PARAMETER("missing.parameter"),
     MOVE_BUILD_INVALID_COLUMN("move.build.invalid.column"),
     FORBIDDEN("forbidden"),
