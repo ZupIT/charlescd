@@ -1,5 +1,59 @@
 # Changelog
 
+## 0.7.1 (27/04/2021)
+- [#1113](https://github.com/ZupIT/charlescd/pull/1113) Hotfix/webhook event error
+- [#1111](https://github.com/ZupIT/charlescd/pull/1111) Butler cluster roles to read all namespaces
+- [#1096](https://github.com/ZupIT/charlescd/pull/1096) Moove interactors tests with system token
+- [#1100](https://github.com/ZupIT/charlescd/pull/1100) Fix invalid operator url
+- [#1106](https://github.com/ZupIT/charlescd/pull/1106) Fixing lint
+- [#1095](https://github.com/ZupIT/charlescd/pull/1095) Fix availability and callbacks
+- [#1099](https://github.com/ZupIT/charlescd/pull/1099) Operator tests fix 
+- [#1104](https://github.com/ZupIT/charlescd/pull/1104) Fix error messages
+- [#1101](https://github.com/ZupIT/charlescd/pull/1101) Hotfix/moove cdconfiguration unique validation
+- [#1089](https://github.com/ZupIT/charlescd/pull/1089) Fix virtual service generation for non healthy deployments / Fix validations
+- [#1093](https://github.com/ZupIT/charlescd/pull/1093) Updating CHANGELOG.
+- [#1079](https://github.com/ZupIT/charlescd/pull/1079) [GATE] Personate system token
+- [#1092](https://github.com/ZupIT/charlescd/pull/1092) fixing lastused value
+
+---
+
+## 0.7.0 (22/04/2021)
+Features
+- [#986](https://github.com/ZupIT/charlescd/pull/986) Showing in which charles version you are
+- [#1023](https://github.com/ZupIT/charlescd/pull/1023) Feature: deploy logs
+- [#996](https://github.com/ZupIT/charlescd/pull/996) Sync circle matcher information when creating or deleting.
+- [#982](https://github.com/ZupIT/charlescd/pull/982) [Hermes] - Webhook module
+- [#726](https://github.com/ZupIT/charlescd/pull/726) Added percentage deployment strategy
+
+
+
+Improvements
+- [#922](https://github.com/ZupIT/charlescd/pull/922) Butler executions filters
+- [#970](https://github.com/ZupIT/charlescd/pull/970) Bump elliptic from 6.5.3 to 6.5.4 in /ui
+- [#872](https://github.com/ZupIT/charlescd/pull/872) Bump node-notifier from 8.0.0 to 8.0.1 in /ui
+- [#955](https://github.com/ZupIT/charlescd/pull/955) Custom virtual service
+- [#962](https://github.com/ZupIT/charlescd/pull/962) Add Mock Service Worker on UI
+- [#1021](https://github.com/ZupIT/charlescd/pull/1021) Upgrade react-scripts from 4.0.1 to 4.0.3
+- [#1011](https://github.com/ZupIT/charlescd/pull/1011) Removing actions from module tab when creating it
+- [#981](https://github.com/ZupIT/charlescd/pull/981) Improving advanced options at component screen.
+- [#907](https://github.com/ZupIT/charlescd/pull/907) [Hypotheses] Removing hypotheses feature.
+
+
+Fixes
+- [#918](https://github.com/ZupIT/charlescd/pull/918) [UserGroups] Prevent duplicate list after updates
+- [#966](https://github.com/ZupIT/charlescd/pull/966) Fix button enabled/disabled when creating a new user
+- [#971](https://github.com/ZupIT/charlescd/pull/971) Fixing watch log on octopipe
+- [#963](https://github.com/ZupIT/charlescd/pull/963) Fixing circle creation from CSV file.
+- [#930](https://github.com/ZupIT/charlescd/pull/930) [UserGroups] Permission to Maintainer remove Groups from Workspace 
+- [#1036](https://github.com/ZupIT/charlescd/pull/1036) [HERMES] Checking if subscription is null.
+- [#1016](https://github.com/ZupIT/charlescd/pull/1016) Fix showing username undefined in the initial screen
+- [#1013](https://github.com/ZupIT/charlescd/pull/1013) Fix list metric prometheus error
+- [#942](https://github.com/ZupIT/charlescd/pull/942) Fix inconsistently displaying the menu after go to root path
+- [#1004](https://github.com/ZupIT/charlescd/pull/1004) Getting circle percentage at repository.
+- [#810](https://github.com/ZupIT/charlescd/pull/810) Change butler steps on pipeline
+- [#953](https://github.com/ZupIT/charlescd/pull/953) Fix showing required for an optional field when registering a module
+---
+
 ## 0.6.1 (05/03/2021)
 - [#940](https://github.com/ZupIT/charlescd/pull/940) Removing unused chart
 - [#939](https://github.com/ZupIT/charlescd/pull/939) Feature/get system token
@@ -457,38 +511,3 @@
 - [#419](https://github.com/ZupIT/charlescd/pull/419) Fix repeated drules v2
 - [#416](https://github.com/ZupIT/charlescd/pull/416) Fix incomingCircleId for callbacks
 - [#398](https://github.com/ZupIT/charlescd/pull/398) Hotfix: moove was allowing post and delete requests without token
-
----
-
-## 0.3.4-rc.2 (21/08/2020)
-- [#387](https://github.com/ZupIT/charlescd/pull/387) Add link that opens Charles Documentation
-- [#408](https://github.com/ZupIT/charlescd/pull/408) Set components running to false on cleanup
-- [#406](https://github.com/ZupIT/charlescd/pull/406) fix butler callback url
-- [#404](https://github.com/ZupIT/charlescd/pull/404) Remove hardcoded user/pass
-- [#403](https://github.com/ZupIT/charlescd/pull/403) Fix butler undeployment return
-- [#401](https://github.com/ZupIT/charlescd/pull/401) fix callback url
-- [#400](https://github.com/ZupIT/charlescd/pull/400) notify moove on cd callback
-- [#399](https://github.com/ZupIT/charlescd/pull/399) Return the same dto for v1 and v2 deployments
-- [#372](https://github.com/ZupIT/charlescd/pull/372) CI Update of charts and changelog
-- [#396](https://github.com/ZupIT/charlescd/pull/396) Butler v2 undeploy tests
-- [#382](https://github.com/ZupIT/charlescd/pull/382) Fix empty deploy period
-- [#394](https://github.com/ZupIT/charlescd/pull/394) Butler stabilization autofix
-- [#380](https://github.com/ZupIT/charlescd/pull/380) V2 Undeployments
-- [#322](https://github.com/ZupIT/charlescd/pull/322) Improve tests
-- [#331](https://github.com/ZupIT/charlescd/pull/331) Validating circle segments
-- [#391](https://github.com/ZupIT/charlescd/pull/391) add new circles-sample tgz and change service port
-- [#389](https://github.com/ZupIT/charlescd/pull/389) Fixing Octopipe Host and Circles Sample port
-- [#373](https://github.com/ZupIT/charlescd/pull/373) Bump class-transformer from 0.2.3 to 0.3.1 in /butler
-- [#388](https://github.com/ZupIT/charlescd/pull/388) Butler stabilization lint fix
-- [#385](https://github.com/ZupIT/charlescd/pull/385) enable CORS on the moove and circle matcher routes via nginx
-- [#335](https://github.com/ZupIT/charlescd/pull/335) Issue modal user group layout
-- [#366](https://github.com/ZupIT/charlescd/pull/366) Fixing GitLab integration
-
----
-
-## 0.3.4-rc.1 (13/08/2020)
-- [#386](https://github.com/ZupIT/charlescd/pull/386) added option for Octopipe to skip https validation on git requests
-- [#384](https://github.com/ZupIT/charlescd/pull/384) Changing circle sample's chart template value
-- [#327](https://github.com/ZupIT/charlescd/pull/327) Correction User Group Tab Layout
-- [#326](https://github.com/ZupIT/charlescd/pull/326) Creating Circle Sample.
-- [#381](https://github.com/ZupIT/charlescd/pull/381) Butler stabilization timeout

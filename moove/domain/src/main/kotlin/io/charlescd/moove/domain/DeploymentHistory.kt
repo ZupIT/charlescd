@@ -23,7 +23,7 @@ data class DeploymentHistory(
     val id: String,
     val deployedAt: LocalDateTime?,
     val status: DeploymentStatusEnum,
-    val authorName: String,
+    val authorEmail: String,
     val tag: String,
     val undeployedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
