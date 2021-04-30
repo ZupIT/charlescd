@@ -179,6 +179,7 @@ export class K8sClient {
     }
   }
 
+  // eslint-disable-next-line
   public async watchEvents(callback: (phase: string, coreEvent: k8s.CoreV1Event) => void, done: (err: any) => void): Promise<k8s.RequestResult> {
     const k8sWatch = new k8s.Watch(this.kubeConfig)
     return k8sWatch.watch('/api/v1/events', {}, callback, done)
