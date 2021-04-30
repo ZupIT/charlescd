@@ -102,10 +102,6 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-gate
-                    typed_per_filter_config:
-                      envoy.filters.http.lua:
-                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
-                        disabled: true
                   {{- end}}
                   {{ if .Values.ui.enabled }}
                   - match:
