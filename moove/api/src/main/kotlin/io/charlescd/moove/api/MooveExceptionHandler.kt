@@ -45,6 +45,13 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 class MooveExceptionHandler(private val messageSource: MessageSource) {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
+    @ExceptionHandler(ConflictException::class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    fun exceptions(ex: ConflictException): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.CONFLICT, ex.messageDetails)
+    }
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

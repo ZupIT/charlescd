@@ -23,8 +23,10 @@ import io.charlescd.moove.application.configuration.request.CreateDeploymentConf
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.ConflictException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import io.charlescd.moove.infrastructure.service.DeployClientService
+import org.springframework.dao.DuplicateKeyException
 import javax.inject.Named
 
 @Named
@@ -36,17 +38,22 @@ class CreateDeploymentConfigurationInteractorImpl(
 ) : CreateDeploymentConfigurationInteractor {
 
     override fun execute(request: CreateDeploymentConfigurationRequest, workspaceId: String, authorization: String): DeploymentConfigurationResponse {
-        workspaceService.checkIfWorkspaceExists(workspaceId)
+        try {
 
-        validateButlerUrl(request.butlerUrl)
+            workspaceService.checkIfWorkspaceExists(workspaceId)
 
-        val author = userService.findByAuthorizationToken(authorization)
+            validateButlerUrl(request.butlerUrl)
 
-        checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
+            val author = userService.findByAuthorizationToken(authorization)
 
-        val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
+            checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
 
-        return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
+            val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
+
+            return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
+        } catch (duplicateKeyException: DuplicateKeyException) {
+            throw ConflictException("Butler url ${request.butlerUrl} already registered with namespace ${request.namespace} in another workspace")
+        }
     }
 
     private fun validateButlerUrl(butlerUrl: String) {
