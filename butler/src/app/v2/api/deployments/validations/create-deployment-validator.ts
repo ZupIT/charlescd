@@ -103,7 +103,7 @@ export class CreateDeploymentValidator {
         default: Joi.bool().required()
       }).required(),
       git: Joi.object({
-        token: Joi.string().base64().trim().required(),
+        token: Joi.string().required(),
         provider: Joi.string().valid(GitProvidersEnum.GITHUB, GitProvidersEnum.GITLAB).required()
       }).required(),
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
@@ -119,8 +119,8 @@ export class CreateDeploymentValidator {
       buildImageUrl: Joi.string().required().max(255).regex(/^[a-zA-Z0-9][a-zA-Z0-9-.:/]*[a-zA-Z0-9]$/).max(253).label('buildImageUrl'),
       buildImageTag: Joi.string().required().max(255).label('buildImageTag'),
       componentName: Joi.string().required().max(255).label('componentName'),
-      gatewayName: Joi.string().max(255).optional().label('gatewayName'),
-      hostValue: Joi.string().max(255).optional().label('hostValue'),
+      gatewayName: Joi.string().max(255).allow(null).optional().label('gatewayName'),
+      hostValue: Joi.string().max(255).allow(null).optional().label('hostValue'),
       helmRepository: Joi.string().required().label('helmRepository')
     })
       .custom((obj, helper) => {
