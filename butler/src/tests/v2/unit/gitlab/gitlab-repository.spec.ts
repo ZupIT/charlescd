@@ -19,7 +19,7 @@ import * as path from 'path'
 
 import 'jest'
 import { HttpService } from '@nestjs/common'
-import { of } from 'rxjs'
+import { of, throwError } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
@@ -88,6 +88,28 @@ describe('Download resources from gitlab', () => {
 
     await repository.getResource({ url: urlFeature, token: gitlabToken, resourceName: 'helm-chart' })
     expect(getSpy).toHaveBeenCalledWith(expect.anything(), expectedRequestConfig)
+  })
+
+  it('should thrown error with the  maximum retry attempts message error', async() => {
+    const gitlabToken = 'gitlab-auth-token123'
+    const errorMessage = 'Timeout of 500ms'
+    jest.spyOn(httpService, 'get')
+      .mockImplementation(() =>
+        throwError(errorMessage)
+      )
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    await expect(
+      repository.getResource({ url: urlFeature, token: gitlabToken, resourceName: 'helm-chart' })
+    ).rejects.toMatchObject({
+      response: {
+        errors: [{
+          detail: `Status 'INTERNAL_SERVER_ERROR' with error: Reached maximum fetch attempts! ${errorMessage}`,
+          source: 'components.helmRepository',
+          status: 500,
+          title: 'Unable to fetch resource from gitlab url: https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart'
+        }]
+      }
+    })
   })
 })
 

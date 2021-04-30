@@ -20,15 +20,17 @@ import { LogEntity } from '../entity/logs.entity'
 @EntityRepository(LogEntity)
 export class LogRepository extends Repository<LogEntity> {
 
-  public async findDeploymentLogs(deploymentId: string, workspaceId?: string): Promise<LogEntity | undefined> {
-    const queryBuilder = this.createQueryBuilder('v2logs')
-      .leftJoinAndSelect('v2logs.deployment', 'deployment')
-      .andWhere('deployment.id = :deploymentId', { deploymentId })
+  public async findDeploymentLogs(deploymentId: string): Promise<LogEntity | undefined> {
+    const logEntries = await this.query(`
+      SELECT l.deployment_id, json_agg((select * from jsonb_array_elements(l.logs))) as logs 
+      FROM v2logs l 
+      WHERE l.deployment_id = $1
+      GROUP BY deployment_id`, [deploymentId])
 
-    return workspaceId ?
-      queryBuilder.leftJoinAndSelect('deployment.cdConfiguration', 'c')
-        .andWhere('c.workspaceId = :workspaceId', { workspaceId }).getOne() :
-      queryBuilder.getOne()
+    return this.toLogEntity(deploymentId, logEntries)
   }
 
+  private toLogEntity(deploymentId: string, logEntries: LogEntity[]) {
+    return new LogEntity(deploymentId, logEntries ? logEntries.flatMap(e => e.logs) : [])
+  }
 }
