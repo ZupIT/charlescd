@@ -57,7 +57,6 @@ class FindDeploymentLogsInteractorTest extends Specification {
         def deploymentConfiguration = TestUtils.deploymentConfig
         def log = new Log("INFO", "log title", "log details", LocalDateTime.now().toString())
         def logResponse = new LogResponse(
-                "id",
                 [log]
         )
 
