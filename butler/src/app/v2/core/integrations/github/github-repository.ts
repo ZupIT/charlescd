@@ -88,9 +88,7 @@ export class GitHubRepository implements Repository {
     this.consoleLoggerService.log('START:FETCHING_RESOURCE', url.toString())
     try {
       return await this.httpService.get(url.toString(), config).pipe(
-        map(response => {
-          return response
-        }),
+        map(response => response),
         retryWhen(error => this.getRetryFetchCondition(error))
       ).toPromise()
     } catch (error) {
