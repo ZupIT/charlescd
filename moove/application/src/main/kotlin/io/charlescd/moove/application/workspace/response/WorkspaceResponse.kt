@@ -30,6 +30,7 @@ data class WorkspaceResponse(
     val name: String,
     val status: String,
     val authorId: String,
+    val authorEmail: String,
     val gitConfiguration: GitConfigurationResponse? = null,
     val registryConfiguration: RegistryConfigurationResponse? = null,
     val circleMatcherUrl: String? = null,
@@ -55,6 +56,7 @@ data class WorkspaceResponse(
                 name = workspace.name,
                 status = workspace.status.name,
                 authorId = workspace.author.id,
+                authorEmail = workspace.author.email,
                 userGroups = workspace.userGroups.map { UserGroupResponse.from(it) },
                 createdAt = workspace.createdAt,
                 gitConfiguration = gitConfiguration?.let {

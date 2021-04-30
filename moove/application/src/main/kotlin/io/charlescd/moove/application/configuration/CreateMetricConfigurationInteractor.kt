@@ -23,5 +23,5 @@ import io.charlescd.moove.application.configuration.response.MetricConfiguration
 
 interface CreateMetricConfigurationInteractor {
 
-    fun execute(request: CreateMetricConfigurationRequest, workspaceId: String, authorization: String): MetricConfigurationResponse
+    fun execute(request: CreateMetricConfigurationRequest, workspaceId: String, authorization: String?, token: String?): MetricConfigurationResponse
 }

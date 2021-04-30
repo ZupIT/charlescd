@@ -29,13 +29,13 @@ class GetWebhookSubscriptionInteractorImpl @Inject constructor(
     private val webhookService: WebhookService,
     private val hermesService: HermesService
 ) : GetWebhookSubscriptionInteractor {
-    override fun execute(workspaceId: String, authorization: String, id: String): WebhookSubscriptionResponse {
-        val webhookSubscription = getSubscription(workspaceId, authorization, id)
+    override fun execute(workspaceId: String, authorization: String?, token: String?, id: String): WebhookSubscriptionResponse {
+        val webhookSubscription = getSubscription(workspaceId, authorization, token, id)
         return WebhookSubscriptionResponse.from(webhookSubscription)
     }
 
-    private fun getSubscription(workspaceId: String, authorization: String, id: String): WebhookSubscription {
-        val author = webhookService.getAuthor(authorization)
+    private fun getSubscription(workspaceId: String, authorization: String?, token: String?, id: String): WebhookSubscription {
+        val author = webhookService.getAuthor(authorization, token)
         val subscription = hermesService.getSubscription(author.email, id)
         webhookService.validateWorkspace(workspaceId, id, author, subscription)
         return subscription

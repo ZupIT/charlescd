@@ -60,6 +60,9 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "octopipe" .RangeContext.name }}
 {{ include "test.octopipe-envs" .}}
 {{- end -}}
+{{- if contains "gate" .RangeContext.name }}
+{{ include "test.gate-envs" .}}
+{{- end -}}
 {{- if contains "hermes" .RangeContext.name }}
 {{ include "test.hermes-envs" .}}
 {{- end -}}
@@ -158,6 +161,11 @@ env:
   valueFrom:
     secretKeyRef:
       name: "application-aes256-key"
+      key: "encryption-key"
+- name: GATE_ENCRYPTION_KEY
+  valueFrom:
+    secretKeyRef:
+      name: "gate-aes256-key"
       key: "encryption-key"
 {{- end -}}
 
@@ -317,6 +325,35 @@ env:
     value: "{{ .RangeContext.consumer.messageRetry.attempts}}"
   - name: SUBSCRIPTION_REGISTER_LIMIT
     value: "{{ .RangeContext.subscriptionRegisterLimit}}"
+{{- end -}}
+
+{{- define "test.gate-envs" -}}
+env:
+  - name: DB_USER
+    value: "{{ .RangeContext.database.user}}"
+  - name: DB_PASSWORD
+    value: "{{ .RangeContext.database.password}}"
+  - name: DB_HOST
+    value: "{{ .RangeContext.database.host}}"
+  - name: DB_PORT
+    value: "{{ .RangeContext.database.port}}"
+  - name: DB_NAME
+    value: "{{ .RangeContext.database.name}}"
+  - name: DB_SSL
+    value: "disable"
+  - name: ENV
+    value: "PROD"
+  - name: POLICY_PATH
+    value: "{{ .RangeContext.policyPath}}"
+  - name: AUTH_CONF_PATH
+    value: "{{ .RangeContext.authConfPath}}"
+  - name: ENCRYPTION_KEY
+    valueFrom:
+      secretKeyRef:
+        name: "gate-aes256-key"
+        key: "encryption-key"
+  - name: QUERIES_PATH
+    value: "{{ .RangeContext.queiresPath}}"
 {{- end -}}
 
 {{/*

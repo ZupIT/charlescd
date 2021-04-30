@@ -21,5 +21,5 @@ import io.charlescd.moove.application.circle.response.CircleResponse
 
 interface CreateCircleInteractor {
 
-    fun execute(request: CreateCircleRequest, workspaceId: String, authorization: String): CircleResponse
+    fun execute(request: CreateCircleRequest, workspaceId: String, authorization: String?, token: String?): CircleResponse
 }

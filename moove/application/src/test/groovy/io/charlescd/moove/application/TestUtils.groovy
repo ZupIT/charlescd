@@ -19,6 +19,7 @@ package io.charlescd.moove.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.legacy.repository.entity.SystemToken
 
 import java.time.LocalDateTime
 
@@ -36,8 +37,16 @@ class TestUtils {
         return "e7abd3c1-15a3-45b6-84fb-f0e548aca230"
     }
 
+    static String getSystemTokenId() {
+        return "6df2a6d7-f786-479a-bf20-34ba78942881"
+    }
+
     static String getAuthorization() {
         return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
+    }
+
+    static String getSystemTokenValue() {
+        return "f916bea53b54433b869ea34c3499be6d"
     }
 
     static String getDeploymentId() {

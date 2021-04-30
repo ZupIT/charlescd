@@ -21,5 +21,5 @@ import io.charlescd.moove.application.workspace.response.WorkspaceResponse
 
 interface CreateWorkspaceInteractor {
 
-    fun execute(request: CreateWorkspaceRequest, authorization: String): WorkspaceResponse
+    fun execute(request: CreateWorkspaceRequest, authorization: String?, token: String?): WorkspaceResponse
 }

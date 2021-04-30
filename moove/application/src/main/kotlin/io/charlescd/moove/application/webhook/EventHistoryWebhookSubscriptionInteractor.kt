@@ -22,7 +22,8 @@ import io.charlescd.moove.domain.PageRequest
 interface EventHistoryWebhookSubscriptionInteractor {
     fun execute(
         workspaceId: String,
-        authorEmail: String,
+        authorization: String?,
+        token: String?,
         id: String,
         eventType: String?,
         eventStatus: String?,

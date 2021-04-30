@@ -59,7 +59,7 @@ class CardServiceUnitTest {
     private val modules = listOf("module1", "module2")
     private val helmRepository = "http://github.com"
 
-    private val user = User(authorId, "username", "email", "url", false, LocalDateTime.now())
+    private val user = User(authorId, "username", "email", "url", false, null, LocalDateTime.now())
     private val gitCredential = buildGitCredential(GitServiceProvider.GITHUB)
     private val gitConfiguration1 = buildGitConfiguration("id1")
     private val gitConfiguration2 = buildGitConfiguration("id2")
