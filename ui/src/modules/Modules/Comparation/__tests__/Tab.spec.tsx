@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import { FetchMock } from 'jest-fetch-mock/types';
-import ModulesComparation  from '..';
+import Tab from '../Tab';
+import userEvent from '@testing-library/user-event';
 
-const originalWindow = { ...window };
+test('render Modules comparation Tab', async () => {
+  render(<Tab param="123" />);
 
-beforeEach(() => {
-  delete window.location;
+  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement);
 
-  window.location = {
-    ...window.location,
-    pathname: '/modules/compare',
-    search: '?module=3f126d1b-c776-4c26-831d-b9ca148be910' 
-  };
-});
+  screen.debug();
 
-afterEach(() => {
-  // eslint-disable-next-line no-native-reassign
-  window = originalWindow;
-});
+  const dropdownItemEdit = screen.getByText('Edit');
+  const dropdownItemDelete = screen.getByText('Delete');
+  const dropdownItemCopyID = screen.getByText('Copy ID');
 
-test('render Modules comparation', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'workspace' }));
-  render(<ModulesComparation />);
+  expect(dropdownItemEdit).toBeInTheDocument();
+  expect(dropdownItemDelete).toBeInTheDocument();
+  expect(dropdownItemCopyID).toBeInTheDocument();
 
-  const tabpanel = await screen.findByTestId('tabpanel-workspace');
+  const tabpanel = await screen.findByTestId('tabpanel-Untitled');
   expect(tabpanel).toBeInTheDocument();
 });
