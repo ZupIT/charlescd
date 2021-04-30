@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain.repository
+package io.charlescd.moove.application.configuration
 
-import io.charlescd.moove.domain.DeploymentConfiguration
-import java.util.*
+interface DeleteDeploymentConfigurationByIdInteractor {
 
-interface DeploymentConfigurationRepository {
-
-    fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration
-
-    fun find(id: String): Optional<DeploymentConfiguration>
-
-    fun exists(workspaceId: String, id: String): Boolean
-
-    fun existsAnyByWorkspaceId(workspaceId: String): Boolean
-
-    fun delete(id: String)
+    fun execute(workspaceId: String, id: String)
 }
