@@ -14,5 +14,4 @@ class DeleteDeploymentConfigurationByIdInteractorImpl @Inject constructor(
         deploymentConfigurationService.checkIfDeploymentConfigurationExists(workspaceId, id)
         deploymentConfigurationService.delete(id)
     }
-
 }

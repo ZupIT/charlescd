@@ -176,5 +176,4 @@ class V2ConfigurationController(
     ) {
         this.deleteDeploymentConfigurationByIdInteractor.execute(workspaceId, id)
     }
-
 }

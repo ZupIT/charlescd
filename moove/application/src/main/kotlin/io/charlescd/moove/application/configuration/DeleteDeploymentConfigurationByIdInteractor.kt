@@ -19,5 +19,4 @@ package io.charlescd.moove.application.configuration
 interface DeleteDeploymentConfigurationByIdInteractor {
 
     fun execute(workspaceId: String, id: String)
-
 }
