@@ -38,6 +38,10 @@ class DeploymentConfigurationService(
         }
     }
 
+    fun delete(id: String) {
+        deploymentConfigurationRepository.delete(id)
+    }
+
     fun checkIfDeploymentConfigurationExists(workspaceId: String, deploymentConfigurationId: String) {
         if (!this.deploymentConfigurationRepository.exists(workspaceId, deploymentConfigurationId)) {
             throw NotFoundException("deploymentConfigurationId", deploymentConfigurationId)

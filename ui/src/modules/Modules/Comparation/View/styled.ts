@@ -19,6 +19,7 @@ import Card from 'core/components/Card';
 import Button from 'core/components/Button';
 import Form from 'core/components/Form';
 import ContentIcon from 'core/components/ContentIcon';
+import ComponentDropdown from 'core/components/Dropdown';
 
 const Layer = styled.div`
   margin: 40px 0;
@@ -61,8 +62,14 @@ const FormLink = styled(Form.Link)`
 interface StepProp {
   isDisabled: boolean;
 }
+
 const Step = styled('div')<StepProp>`
   display: ${({ isDisabled }) => (isDisabled ? 'none' : 'block')};
+`;
+
+const Dropdown = styled(ComponentDropdown)`
+  right: 14px;
+  top: 0px;
 `;
 
 export default {
@@ -75,5 +82,6 @@ export default {
     Wrapper: ComponentWrapper,
     Info: ComponentIfon
   },
-  Step
+  Step,
+  Dropdown
 };

@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
+package io.charlescd.moove.application.configuration
 
-const CardBody = styled.div`
-  margin-left: 17px;
-  margin-right: 17px;
-  word-wrap: break-word;
+interface DeleteDeploymentConfigurationByIdInteractor {
 
-  ${({ onClick }) =>
-    onClick &&
-    css`
-      cursor: pointer;
-    `}
-`;
-
-export default {
-  CardBody
-};
+    fun execute(workspaceId: String, id: String)
+}
