@@ -31,12 +31,12 @@ import javax.inject.Named
 @Named
 open class PatchWorkspaceInteractorImpl(
     private val gitConfigurationService: GitConfigurationService,
-    private val cdConfigurationService: CdConfigurationService,
     private val workspaceService: WorkspaceService,
     private val registryConfigurationService: RegistryConfigurationService,
     private val metricConfigurationService: MetricConfigurationService,
     private val circleMatcherService: CircleMatcherService,
-    private val circleService: CircleService
+    private val circleService: CircleService,
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : PatchWorkspaceInteractor {
 
     override fun execute(workspaceId: String, request: PatchWorkspaceRequest) {
@@ -106,10 +106,10 @@ open class PatchWorkspaceInteractorImpl(
             )
         }
 
-        if (shouldConfigurationBeChecked(workspace.cdConfigurationId, updatedWorkspace.cdConfigurationId)) {
-            cdConfigurationService.checkIfCdConfigurationExists(
+        if (shouldConfigurationBeChecked(workspace.deploymentConfigurationId, updatedWorkspace.deploymentConfigurationId)) {
+            deploymentConfigurationService.checkIfDeploymentConfigurationExists(
                 workspaceId,
-                updatedWorkspace.cdConfigurationId!!
+                updatedWorkspace.deploymentConfigurationId!!
             )
         }
 

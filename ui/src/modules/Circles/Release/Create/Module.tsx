@@ -24,19 +24,27 @@ import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
+import {checkComponentAndVersionMaxLength} from './helpers';
 
 interface Props {
   index: number;
   onClose: () => void;
+  onError: (hasError: boolean) => void;
   isNotUnique?: boolean;
   module?: Partial<ArrayField<Record<string, string>, 'id'>>;
 }
 
-const Module = ({ index, onClose, isNotUnique }: Props) => {
+interface TagProps {
+  artifact: string;
+  name: string
+}
+
+const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const { getAllModules, response: modules } = useFindAllModules();
   const [moduleOptions, setModuleOptions] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
   const [isEmptyTag, setIsEmptyTag] = useState(false);
+  const [isError, setIsError] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
   const {
@@ -80,7 +88,9 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
     name: string
   ) => {
     setValue(`${prefixName}.tag`, '');
-    const tag = await getComponentTag(moduleId, componentId, { name });
+    const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
+
+    if(tag) checkComponentAndVersionMaxLength({tag, onError, setIsError});
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
@@ -140,7 +150,7 @@ const Module = ({ index, onClose, isNotUnique }: Props) => {
           // eslint-disable-next-line react-hooks/exhaustive-deps
           onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}
-          hasError={isEmptyTag}
+          hasError={isEmptyTag || isError}
           label="Version name"
         />
         {isEmptyTag && (

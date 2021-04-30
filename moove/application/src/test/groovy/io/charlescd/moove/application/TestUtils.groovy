@@ -40,6 +40,10 @@ class TestUtils {
         return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }
 
+    static String getDeploymentId() {
+        return "083337ef-6177-4a24-b32e-f7429336ec20"
+    }
+
     static String getIntruderAuthorId() {
         return "qwwweabd3c1-15a3-45b6-84fb-f0e548ac123s"
     }
@@ -62,6 +66,9 @@ class TestUtils {
         return "charlesadmin@zup.com.br"
     }
 
+    static String getDeploymentConfigId() {
+        return "5a0d5b3f-8c28-49ab-a6d0-7b5d1296f610"
+    }
 
     static User getUser() {
         new User(
@@ -87,7 +94,7 @@ class TestUtils {
         )
     }
 
-    static Workspace getWorkspace() {
+    static Workspace getWorkspaceWithoutDeploymentConfiguration() {
         new Workspace(
                 workspaceId,
                 "Charles",
@@ -100,6 +107,22 @@ class TestUtils {
                 "aa3448d8-4421-4aba-99a9-184bdabe3046",
                 "cc3448d8-4421-4aba-99a9-184bdabeq233",
                 null
+        )
+    }
+
+    static Workspace getWorkspace() {
+        new Workspace(
+                workspaceId,
+                "Charles",
+                user,
+                LocalDateTime.now(),
+                [],
+                WorkspaceStatusEnum.COMPLETE,
+                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
+                "http://circle-matcher.com",
+                "aa3448d8-4421-4aba-99a9-184bdabe3046",
+                "cc3448d8-4421-4aba-99a9-184bdabeq233",
+                deploymentConfigId
         )
     }
 
@@ -122,5 +145,19 @@ class TestUtils {
 
     static String getHypothesisId() {
         return "865758f1-17ea-4f96-8518-3490977fa0ea"
+    }
+
+    static DeploymentConfiguration getDeploymentConfig() {
+        new DeploymentConfiguration(
+                deploymentConfigId,
+                "deploymentConfigName",
+                user,
+                workspaceId,
+                LocalDateTime.now(),
+                "butler-url",
+                "k8s-namespace",
+                "git-token",
+                GitProviderEnum.GITHUB
+        )
     }
 }

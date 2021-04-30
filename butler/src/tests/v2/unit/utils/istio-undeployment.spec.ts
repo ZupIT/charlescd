@@ -1,5 +1,20 @@
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
 import { DeploymentComponent } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
 import { IstioUndeploymentManifestsUtils } from '../../../../app/v2/core/integrations/utils/istio-undeployment-manifests.utils'
 import { noRepeatedUndeploymentCircleDr } from './fixtures/undeployment/no-repeated-undeployment-circle-dr'
@@ -20,24 +35,10 @@ it('must not insert two default circle subsets', () => {
     id: 'deployment-id0',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
     circleId: 'default-circle-id',
     defaultCircle: true,
     createdAt: new Date(),
+    namespace: 'sandbox',
     components: [
       newComponent
     ]
@@ -58,22 +59,8 @@ it('must not insert two default circle subsets', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: true
+        defaultCircle: true,
+        namespace: 'sandbox'
       }
     },
     {
@@ -91,22 +78,8 @@ it('must not insert two default circle subsets', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'normal-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: false
+        defaultCircle: false,
+        namespace: 'sandbox'
       }
     }
   ]
@@ -131,24 +104,10 @@ it('must not insert two subsets for the same circle', () => {
     id: 'deployment-id1',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
     circleId: 'normal-circle-id',
     defaultCircle: true,
     createdAt: new Date(),
+    namespace: 'sandbox',
     components: [
       newComponent
     ]
@@ -169,22 +128,8 @@ it('must not insert two subsets for the same circle', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: true
+        defaultCircle: true,
+        namespace: 'sandbox'
       }
     },
     {
@@ -202,22 +147,8 @@ it('must not insert two subsets for the same circle', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'normal-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: false
+        defaultCircle: false,
+        namespace: 'sandbox'
       }
     }
   ]

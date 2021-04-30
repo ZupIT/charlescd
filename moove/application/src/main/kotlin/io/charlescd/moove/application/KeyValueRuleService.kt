@@ -37,4 +37,8 @@ class KeyValueRuleService(private val keyValueRuleRepository: KeyValueRuleReposi
     fun delete(circleId: String) {
         this.keyValueRuleRepository.delete(circleId)
     }
+
+    fun findByCircle(id: String): List<KeyValueRule> {
+        return this.keyValueRuleRepository.findByCircle(id)
+    }
 }

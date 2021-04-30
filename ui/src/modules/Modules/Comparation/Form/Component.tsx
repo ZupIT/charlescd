@@ -32,6 +32,7 @@ import routes from 'core/constants/routes';
 import { updateParam } from 'core/utils/path';
 import { validFields } from './helpers';
 import Styled from './styled';
+import { maxLength } from 'core/utils/validations';
 
 interface MoreOptionsModel {
   name: string;
@@ -47,7 +48,7 @@ interface Props {
 }
 
 const Component = ({ component, module, onClose, onUpdate }: Props) => {
-  const { register, handleSubmit, watch, getValues } = useForm();
+  const { register, handleSubmit, watch, getValues, errors } = useForm({mode: 'onChange'});
   const [isDisabled, setIsDisabled] = useState(true);
   const {
     saveComponent,
@@ -136,7 +137,11 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           label="Enter name component"
           name="name"
           defaultValue={component?.name}
-          ref={register({ required: true })}
+          ref={register({ 
+            required: true,
+            maxLength: maxLength(50) 
+          })}
+          error={errors?.name?.message}
         />
         <Styled.Number
           label="Latency Threshold (ms)"

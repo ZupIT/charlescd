@@ -40,13 +40,18 @@ class UndeployInteractorImplTest extends Specification {
     private DeployService deployService = Mock(DeployService)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private HermesService hermesService = Mock(HermesService)
+    private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
+    private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
 
     def setup() {
         this.undeployInteractor = new  UndeployInteractorImpl(
                 new DeploymentService(deploymentRepository),
                 new UserService(userRepository, managementUserSecurityService),
                 deployService,
-                new WebhookEventService(hermesService, new BuildService(buildRepository)))
+                new WebhookEventService(hermesService, new BuildService(buildRepository)),
+                new WorkspaceService(workspaceRepository, userRepository),
+                new DeploymentConfigurationService(deploymentConfigurationRepository)
+        )
     }
 
     def 'when deploy does not exist, should throw exception and notify hermes'() {
@@ -68,17 +73,22 @@ class UndeployInteractorImplTest extends Specification {
     def 'when undeploy has successful should not throw exception and notify'() {
         given:
         def workspaceId = TestUtils.workspaceId
+        def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def author = TestUtils.user
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
 
         when:
         undeployInteractor.execute(workspaceId, authorization, deploymentId)
 
         then:
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * buildRepository.findById(buildId) >> Optional.of(build)
-        1 * deployService.undeploy(deploymentId, author.id)
+        1 * deployService.undeploy(deploymentId, author.id, deploymentConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
@@ -90,6 +100,9 @@ class UndeployInteractorImplTest extends Specification {
     def 'when undeploy has error should throw exception and notify'() {
         given:
         def workspaceId = TestUtils.workspaceId
+        def workspace = TestUtils.workspace
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
         def author = TestUtils.user
@@ -98,15 +111,16 @@ class UndeployInteractorImplTest extends Specification {
         undeployInteractor.execute(workspaceId, authorization, deploymentId)
 
         then:
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
         1 * buildRepository.findById(buildId) >> Optional.of(build)
-        1 * deployService.undeploy(deploymentId, author.id) >> {
+        1 * deployService.undeploy(deploymentId, author.id, deploymentConfig) >> {
             throw new RuntimeException("Error")
         }
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
-        1 * deploymentRepository.update(_)
 
         thrown(RuntimeException)
     }

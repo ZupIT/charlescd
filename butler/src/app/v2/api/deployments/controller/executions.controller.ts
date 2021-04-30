@@ -1,15 +1,28 @@
-import { Body, Controller, Get, Param, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common'
-import { DeploymentNotificationRequestDto } from '../dto/deployment-notification-request.dto'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Controller, Get, Query, UsePipes, ValidationPipe } from '@nestjs/common'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
 import { PaginatedResponse } from '../dto/paginated-response.dto'
 import { Execution } from '../entity/execution.entity'
 import { PaginatedExecutionsUseCase } from '../use-cases/paginated-executions.usecase'
-import { ReceiveNotificationUseCase } from '../use-cases/receive-notification.usecase'
 
 @Controller('v2/executions')
 export class ExecutionsController {
   constructor(
-    private receiveNotificationUseCase: ReceiveNotificationUseCase,
     private paginatedExecutionsUseCase: PaginatedExecutionsUseCase
   ) { }
 
@@ -19,14 +32,5 @@ export class ExecutionsController {
     @Query() params: ExecutionQuery,
   ): Promise<PaginatedResponse<Execution>> {
     return await this.paginatedExecutionsUseCase.execute(params)
-  }
-
-  @Post('/:id/notify')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  public async receiveNotification(
-    @Param('id') executionId: string,
-    @Body() deploymentNotification: DeploymentNotificationRequestDto,
-  ): Promise<Execution> {
-    return await this.receiveNotificationUseCase.execute(executionId, deploymentNotification)
   }
 }
