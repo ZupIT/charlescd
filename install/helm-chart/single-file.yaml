@@ -26,6 +26,20 @@ metadata:
 imagePullSecrets:
     []
 ---
+# Source: charlescd/charts/rabbitmq/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+secrets:
+  - name: charlescd-rabbitmq
+---
 # Source: charlescd/templates/service-account.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -46,8 +60,24 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgresql-postgres-password: "UXJNRExLQXYzRA=="
-  postgresql-password: "cWpySnhnSDVybQ=="
+  postgresql-postgres-password: "TnRaYjNBSGRpYg=="
+  postgresql-password: "NlljdmNNcXY4RA=="
+---
+# Source: charlescd/charts/rabbitmq/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  rabbitmq-password: "Z3Vlc3Q="
+  rabbitmq-erlang-cookie: "QUNjS0x3ZTdXSm0zMkljY0xwcFRTTkh2eTlubFJRaXg="
 ---
 # Source: charlescd/charts/redis/templates/secret.yaml
 apiVersion: v1
@@ -92,13 +122,20 @@ data:
   encryption-key: OGVhMzY4OGYtYmUxOS00YWU2LTljNmMtZDFhNjAzNjAyYTJm
 ---
 # Source: charlescd/templates/charlescd-secrets.yaml
----
 apiVersion: v1
 data:
   encryption-key: NjQ5NzE5MjNkMjFhNDg4N2EzYWNmMWFkMTU5NjFiYmM=
 kind: Secret
 metadata:
   name: gate-aes256-key
+---
+# Source: charlescd/templates/charlescd-secrets.yaml
+apiVersion: v1
+data:
+  encryption-key: Yjg0NDVkMDUtMzliOC00YTkxLWEwOWMtZDRhN2VkOGRlZmRj
+kind: Secret
+metadata:
+  name: hermes-aes256-key
 type: Opaque
 ---
 # Source: charlescd/charts/envoy/templates/envoy-conf.yml
@@ -1823,6 +1860,38 @@ data:
     
     run-batch
     stop-embedded-server
+---
+# Source: charlescd/charts/rabbitmq/templates/configuration.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: charlescd-rabbitmq-config
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+data:
+  rabbitmq.conf: |-
+    ## Username and password
+    ##
+    default_user = guest
+    default_pass = guest
+    ## Clustering
+    ##
+    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+    cluster_formation.node_cleanup.interval = 10
+    cluster_formation.node_cleanup.only_log_warning = true
+    cluster_partition_handling = autoheal
+    # queue master locator
+    queue_master_locator = min-masters
+    # enable guest user
+    loopback_users.guest = false
+    #default_vhost = charles-vhost
+    #disk_free_limit.absolute = 50MB
+    #load_definitions = /app/load_definition.json
 ---
 # Source: charlescd/charts/redis/templates/configmap-scripts.yaml
 apiVersion: v1
@@ -5958,6 +6027,25 @@ rules:
       - create
       - patch
 ---
+# Source: charlescd/charts/rabbitmq/templates/role.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: charlescd-rabbitmq-endpoint-reader
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+---
 # Source: charlescd/charts/ingress-nginx/templates/controller-rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -5978,6 +6066,25 @@ subjects:
   - kind: ServiceAccount
     name: charlescd-ingress-nginx
     namespace: charles
+---
+# Source: charlescd/charts/rabbitmq/templates/rolebinding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: charlescd-rabbitmq-endpoint-reader
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+subjects:
+  - kind: ServiceAccount
+    name: charlescd-rabbitmq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: charlescd-rabbitmq-endpoint-reader
 ---
 # Source: charlescd/charts/envoy/templates/envoy-service.yml
 apiVersion: v1
@@ -6155,6 +6262,70 @@ spec:
     app.kubernetes.io/instance: charlescd
     role: primary
 ---
+# Source: charlescd/charts/rabbitmq/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-rabbitmq-headless
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  clusterIP: None
+  ports:
+    - name: epmd
+      port: 4369
+      targetPort: epmd
+    - name: amqp
+      port: 5672
+      targetPort: amqp
+    - name: dist
+      port: 25672
+      targetPort: dist
+    - name: http-stats
+      port: 15672
+      targetPort: stats
+  selector: 
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: charlescd
+---
+# Source: charlescd/charts/rabbitmq/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: amqp
+      nodePort: null
+    - name: epmd
+      port: 4369
+      targetPort: epmd
+      nodePort: null
+    - name: dist
+      port: 25672
+      targetPort: dist
+      nodePort: null
+    - name: http-stats
+      port: 15672
+      targetPort: stats
+      nodePort: null
+  selector: 
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/instance: charlescd
+---
 # Source: charlescd/charts/redis/templates/headless-svc.yaml
 apiVersion: v1
 kind: Service
@@ -6244,6 +6415,21 @@ spec:
     
   selector:
     app: charlescd-compass
+---
+# Source: charlescd/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: charlescd-hermes
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    
+  selector:
+    app: charlescd-hermes
 ---
 # Source: charlescd/templates/service.yaml
 apiVersion: v1
@@ -6529,7 +6715,7 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
-          image: zupcharles/charlescd-butler:0.7.0
+          image: zupcharles/charlescd-butler:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6592,7 +6778,7 @@ spec:
             value: "false"
           - name: ALLOWED_ORIGINS
             value: http://charles.info.example
-          image: zupcharles/charlescd-circle-matcher:0.7.0
+          image: zupcharles/charlescd-circle-matcher:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6683,7 +6869,7 @@ spec:
             - name: MOOVE_USER
               value: "Y2hhcmxlc2FkbWluQGFkbWlu"
             - name: MOOVE_PATH
-              value: "http://charlescd--moove:8080"
+              value: "http://charlescd-moove:8080"
             - name: MOOVE_AUTH
               value: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MTEyNTMzMzcsImlhdCI6MTYxMTI0OTczNywianRpIjoiNmU5OWYyZjUtOTBlMS00OGFjLWFlN2QtYWJkMjIyODIwY2FmIiwiaXNzIjoiaHR0cDovL2NoYXJsZXMuaW5mby5leGFtcGxlL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiJkYThjYTQ5OC1lNDQ5LTQzMjYtYThkZC00ODM5NDI0Y2JkZDAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjI5Mzk2ZDZlLWI4ZDctNGU0ZC1hYTI2LWVlYWVlM2M5ODRjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290Ijp0cnVlLCJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIGNoYXJsZXNhZG1pbkBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImdpdmVuX25hbWUiOiJjaGFybGVzYWRtaW5AYWRtaW4iLCJmYW1pbHlfbmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImVtYWlsIjoiY2hhcmxlc2FkbWluQGFkbWluIn0.NLzu9222nMb-eyIiKwbznPzSTXe26QQp5cYGWw4MhfTW43gl6bXFAd-YMSXMEz5mmRy73NlW8WWnMKfQpC2FR-3wSKajVTB5_Y2CJC8PTLjXUpcZS2UxvBuV_ANZiINNovGiX87XFNhm9bHZxXzYUhDKqGh2C72G18fZKUTGMCfcTFHhFjxWDx1MEm5AN5JzPNbtcYWmrCMufgTsaQD9pQrHWxr9-8kNgKYff6wMVJLR6YIVpNVy7eHWTTOKwa59BFpw-w45clA3dtcs5cbMQo6GoA52_f5XdyvCZ-llYfvYpT09iPMsekWjG0TTbo2hCA59VKnMZA0r7JtPan9wrQ"
             - name: REQUESTS_PER_SECOND_LIMIT
@@ -6697,7 +6883,7 @@ spec:
                 secretKeyRef:
                   name: "compass-aes256-key"
                   key: "encryption-key"
-          image: zupcharles/charlescd-compass:0.7.0
+          image: zupcharles/charlescd-compass:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6720,6 +6906,100 @@ spec:
               requests:
                 cpu: 64m
                 memory: 64Mi
+---
+# Source: charlescd/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: charlescd-hermes
+  namespace: charles
+  labels:
+    app: charlescd-hermes
+    version: charlescd-hermes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: charlescd-hermes
+      version: charlescd-hermes
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'true' 
+      labels:
+        app: charlescd-hermes
+        version: charlescd-hermes
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:9.6.5
+          env:
+              - name: PGPASSWORD
+                value: aGVybWVz
+          command: ['sh', '-c', 
+            'until pg_isready -h charlescd-postgresql -p 5432 -d charlescd_hermes -U charlescd_hermes;
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: charlescd-hermes
+                    
+          env:
+            - name: DB_HOST
+              value: "charlescd-postgresql"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "charlescd_hermes"
+            - name: DB_PASSWORD
+              value: "aGVybWVz"
+            - name: DB_NAME
+              value: "charlescd_hermes"
+            - name: DB_SSL
+              value: "disable"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: "hermes-aes256-key"
+                  key: "encryption-key"
+            - name: AMQP_URL
+              value: "amqp://guest:guest@charlescd-rabbitmq:5672/"
+            - name: AMQP_MESSAGE_QUEUE
+              value: "queue-message"
+            - name: AMQP_MESSAGE_ROUTING_KEY
+              value: "routing-key-message"
+            - name: AMQP_MESSAGE_EXCHANGE
+              value: "exchange-message"
+            - name: AMQP_WAIT_MESSAGE_QUEUE
+              value: "queue-message-wait"
+            - name: AMQP_WAIT_MESSAGE_EXCHANGE
+              value: "exchange-message-wait"
+            - name: PUBLISHER_TIME
+              value: "@every 5s"
+            - name: PUBLISHER_ATTEMPTS
+              value: "3"
+            - name: CONSUMER_MESSAGE_RETRY_EXPIRATION
+              value: "60000"
+            - name: CONSUMER_MESSAGE_RETRY_ATTEMPTS
+              value: "3"
+            - name: SUBSCRIPTION_REGISTER_LIMIT
+              value: "5"
+          image: zupcharles/charlescd-hermes:0.7.1
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+          resources:
+              {}
 ---
 # Source: charlescd/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6792,7 +7072,7 @@ spec:
               secretKeyRef:
                 name: "application-aes256-key"
                 key: "encryption-key"
-          image: zupcharles/charlescd-moove:0.7.0
+          image: zupcharles/charlescd-moove:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6852,7 +7132,7 @@ spec:
               value: "300"
             - name: LIMIT_REQUESTS_BY_SECOND
               value: "10"
-          image: zupcharles/charlescd-octopipe:0.7.0
+          image: zupcharles/charlescd-octopipe:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6920,8 +7200,8 @@ spec:
             - name: REACT_APP_IDM_REDIRECT_URI
               value: http://charles.info.example
             - name: REACT_APP_CHARLES_VERSION
-              value: 
-          image: zupcharles/charlescd-ui:0.7.0
+              value: 0.7.1
+          image: zupcharles/charlescd-ui:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -6995,7 +7275,7 @@ spec:
               value: zup
             - name: CRYPT_KEY
               value: pvMPbPPNNB
-          image: zupcharles/charlescd-villager:0.7.0
+          image: zupcharles/charlescd-villager:0.7.1
           imagePullPolicy: Always
           ports:
             - name: http
@@ -7258,9 +7538,12 @@ spec:
           image: docker.io/bitnami/postgresql:11.10.0-debian-10-r60
           imagePullPolicy: "IfNotPresent"
           resources:
-            requests:
-              cpu: 250m
+            limits:
+              cpu: 128m
               memory: 256Mi
+            requests:
+              cpu: 128m
+              memory: 128Mi
           securityContext:
             runAsUser: 1001
           env:
@@ -7342,6 +7625,184 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: charlescd/charts/rabbitmq/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: charlescd-rabbitmq
+  namespace: "charles"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.9.1
+    app.kubernetes.io/instance: charlescd
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: charlescd-rabbitmq-headless
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/instance: charlescd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rabbitmq
+        helm.sh/chart: rabbitmq-8.9.1
+        app.kubernetes.io/instance: charlescd
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/config: 74e5aba7b901f08f0d97815eb6898f704cf9580d05ef8fe38abd96918b221844
+        checksum/secret: e4b7b82f6afeab7b7ea1da642abb0efa75af0a10c0f0234745a3b70d15c303e4
+    spec:
+      
+      serviceAccountName: charlescd-rabbitmq
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: rabbitmq
+                    app.kubernetes.io/instance: charlescd
+                namespaces:
+                  - charles
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: rabbitmq
+          image: docker.io/bitnami/rabbitmq:3.8.11-debian-10-r0
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: "charlescd-rabbitmq-headless"
+            - name: K8S_ADDRESS_TYPE
+              value: hostname
+            - name: RABBITMQ_FORCE_BOOT
+              value: "no"
+            - name: RABBITMQ_NODE_NAME
+              value: "rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: K8S_HOSTNAME_SUFFIX
+              value: ".$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: RABBITMQ_MNESIA_DIR
+              value: "/bitnami/rabbitmq/mnesia/$(RABBITMQ_NODE_NAME)"
+            - name: RABBITMQ_LDAP_ENABLE
+              value: "no"
+            - name: RABBITMQ_LOGS
+              value: "-"
+            - name: RABBITMQ_ULIMIT_NOFILES
+              value: "65536"
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+            - name: RABBITMQ_ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-rabbitmq
+                  key: rabbitmq-erlang-cookie
+            - name: RABBITMQ_USERNAME
+              value: "guest"
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charlescd-rabbitmq
+                  key: rabbitmq-password
+            - name: RABBITMQ_PLUGINS
+              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
+          ports:
+            - name: amqp
+              containerPort: 5672
+            - name: dist
+              containerPort: 25672
+            - name: stats
+              containerPort: 15672
+            - name: epmd
+              containerPort: 4369
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - rabbitmq-diagnostics -q ping
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 20
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -ec
+                - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits: {}
+            requests: {}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -ec
+                  - |
+                    if [[ -f /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh ]]; then
+                        /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh -t "120" -d  "false"
+                    else
+                        rabbitmqctl stop_app
+                    fi
+          volumeMounts:
+            - name: configuration
+              mountPath: /bitnami/rabbitmq/conf
+            - name: data
+              mountPath: /bitnami/rabbitmq/mnesia
+      volumes:
+        - name: configuration
+          configMap:
+            name: charlescd-rabbitmq-config
+            items:
+              - key: rabbitmq.conf
+                path: rabbitmq.conf
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/instance: charlescd
       spec:
         accessModes:
           - "ReadWriteOnce"
