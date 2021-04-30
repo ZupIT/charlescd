@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Param,
-  Post,
-  UnprocessableEntityException,
-  UsePipes,
-  ValidationPipe
-} from '@nestjs/common'
+import { Body, Controller, Get, Headers, HttpStatus, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
 import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
-import { CdConfigurationExistencePipe, SimultaneousDeploymentValidationPipe } from '../pipes'
 import { CreateDeploymentUseCase } from '../use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from '../use-cases/create-undeployment.usecase'
 import { DeploymentUniquenessPipe } from '../pipes/deployment-uniqueness.pipe'
 import { UndeploymentValidation } from '../pipes/undeployment-validation.pipe'
+import { JoiValidationPipe } from '../pipes/joi-validation-pipe'
+import { GitTokenDecryptionPipe } from '../pipes/git-token-decryption.pipe'
+import { DefaultCircleUniquenessPipe } from '../pipes/default-circle-uniqueness.pipe'
+import { NamespaceValidationPipe } from '../pipes/namespace-validation.pipe'
 import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
 import { ReadLogsDto } from '../dto/read-logs.dto'
+import { DefaultCircleNamespaceUniquenessPipe } from '../pipes/default-circle-namespace-uniqueness.pipe'
+import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Controller('v2/deployments')
 export class DeploymentsController {
@@ -47,10 +42,12 @@ export class DeploymentsController {
   ) { }
 
   @Post('/')
-  @UsePipes(SimultaneousDeploymentValidationPipe)
-  @UsePipes(CdConfigurationExistencePipe)
+  @UsePipes(GitTokenDecryptionPipe)
   @UsePipes(DeploymentUniquenessPipe)
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(DefaultCircleUniquenessPipe)
+  @UsePipes(NamespaceValidationPipe)
+  @UsePipes(DefaultCircleNamespaceUniquenessPipe)
+  @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
     @Headers('x-circle-id') incomingCircleId: string | undefined,
@@ -63,9 +60,8 @@ export class DeploymentsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
-      @Headers('x-workspace-id') workspaceId: string,
   ): Promise<ReadLogsDto> {
-    return this.findDeploymentLogsByIdUseCase.execute(deploymentId, workspaceId)
+    return this.findDeploymentLogsByIdUseCase.execute(deploymentId)
   }
 
   @Post('/:id/undeploy')
@@ -85,7 +81,7 @@ export class DeploymentsController {
     }
 
     if (!uuidValidate(incomingCircleId)) {
-      throw new UnprocessableEntityException('x-circle-id must be UUID')
+      throw new ExceptionBuilder('x-circle-id must be UUID', HttpStatus.UNPROCESSABLE_ENTITY).build()
     }
 
     return incomingCircleId

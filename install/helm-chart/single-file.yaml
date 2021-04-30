@@ -6715,6 +6715,11 @@ spec:
               secretKeyRef:
                 name: deploy-aes256-key
                 key: encryption-key
+          - name: MOOVE_ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: application-aes256-key
+                key: encryption-key                
           image: zupcharles/charlescd-butler:0.7.1
           imagePullPolicy: Always
           ports:

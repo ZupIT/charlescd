@@ -90,7 +90,6 @@ class CreateGitConfigurationInteractorImplTest extends Specification {
         given:
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
-        def authorId = TestUtils.authorId
         def authorization = TestUtils.authorization
 
         def credentialsPart = new GitCredentialsData("http://github.com", "zup", "123@zup", null, GitServiceProvider.GITHUB)

@@ -16,8 +16,6 @@
 
 import { Inject, Injectable } from '@nestjs/common'
 import { Connection, EntityManager } from 'typeorm'
-import { CdConfigurationEntity } from '../../../app/v2/api/configurations/entity'
-import { CdConfigurationsRepository } from '../../../app/v2/api/configurations/repository'
 import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
@@ -48,37 +46,26 @@ export class FixtureUtilsService {
 
   private getOrderedClearDbEntities(): DatabaseEntity[] {
     return [
-      { name: 'CdConfigurationEntity', tableName: 'cd_configurations' },
       { name: 'Execution', tableName: 'v2executions' },
       { name: 'DeploymentEntityV2', tableName: 'v2deployments' },
       { name: 'ComponentEntityV2', tableName: 'v2components' },
     ]
   }
 
-  public async createCdConfiguration(
-    cdConfigurationRequest: Record<string, unknown>
-  ): Promise<CdConfigurationEntity> {
-    const cdConfiguration = this.manager.create(CdConfigurationEntity, cdConfigurationRequest)
-    return this.manager.save(cdConfiguration)
-  }
-
-  public async createEncryptedConfiguration(cdConfig: CdConfigurationEntity) : Promise<CdConfigurationEntity>{
-    const configRepo = this.manager.getCustomRepository<CdConfigurationsRepository>(CdConfigurationsRepository)
-    return configRepo.saveEncrypted(cdConfig)
-  }
-
   public async createV2CircleDeployment(
-    deploymentRequest: CreateDeploymentRequestDto
+    deploymentRequest: CreateDeploymentRequestDto,
+    newComponents: ComponentEntityV2[]
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity())
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toCircleEntity(newComponents))
     return this.manager.save(deployment)
   }
 
   public async createV2DefaultDeployment(
     deploymentRequest: CreateDeploymentRequestDto,
-    unchangedComponents: ComponentEntityV2[]
+    unchangedComponents: ComponentEntityV2[],
+    newComponents: ComponentEntityV2[]
   ): Promise<DeploymentEntityV2> {
-    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(unchangedComponents))
+    const deployment = this.manager.create(DeploymentEntityV2, deploymentRequest.toDefaultEntity(unchangedComponents, newComponents))
     return this.manager.save(deployment)
   }
 

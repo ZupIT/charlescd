@@ -108,11 +108,18 @@ env:
   value: "http://charlescd-octopipe:8080"
 - name: BUTLER_URL
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000"
+- name: BUTLER_NAMESPACE
+  value: {{ .ChartContext.Release.Namespace }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:
       name: deploy-aes256-key
       key: encryption-key
+- name: MOOVE_ENCRYPTION_KEY
+  valueFrom:
+    secretKeyRef:
+      name: application-aes256-key
+      key: encryption-key      
 {{- end -}}
 
 {{- define "test.moove-envs" -}}

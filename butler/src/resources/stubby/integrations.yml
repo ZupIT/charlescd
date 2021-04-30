@@ -29,78 +29,6 @@
     body: >
       {}
 
-# SPINNAKER
-
-- request:
-    method: POST
-    url: ^/spinnaker/pipelines
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {}
-
-- request:
-    method: POST
-    url: ^/spinnaker/tasks
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {}
-
-- request:
-    method: GET
-    url: ^/spinnaker/applications/.*/pipelineConfigs/.*
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {
-        "id": "486b0b26-b2fd-43d0-bdd0-df126e314c70"
-      }
-
-- request:
-    method: POST
-    url: ^/spinnaker/webhooks/webhook/.*
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {}
-
-- request:
-    method: POST
-    url: ^/spinnaker/pipelines/.*/.*
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {}
-
-# OCTOPIPE
-
-- request:
-    method: POST
-    url: ^/octopipe/api/v1/pipelines
-
-  response:
-    status: 200
-    headers:
-      content-type: application/json
-    body: >
-      {}
-
 # NOTIFICATION
 
 - request:
@@ -130,8 +58,190 @@
             "mooveUrl": "http://localhost:8883/moove",
             "darwinDeploymentCallbackUrl": "http://localhost:8883/deploy/notifications",
             "darwinUndeploymentCallbackUrl": "http://localhost:8883/deploy/notifications",
-            "spinnakerUrl": "http://localhost:8883/spinnaker",
-            "octopipeUrl": "http://localhost:8883/octopipe"
           }
         }
       ]
+
+# GITHUB
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/contents/([a-zA-Z\\-]+)$
+    query:
+      ref: master
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "name": "Chart.yaml",
+          "path": "helm-chart/Chart.yaml",
+          "sha": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+          "size": 103,
+          "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/Chart.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/Chart.yaml",
+          "git_url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/Chart.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/Chart.yaml?ref=master",
+            "git": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/Chart.yaml"
+          }
+        },
+        {
+          "name": "<% url.1 %>.yaml",
+          "path": "helm-chart/<% url.1 %>.yaml",
+          "sha": "845fdfb7268757643309685e2a70fc5f887076ef",
+          "size": 337,
+          "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/helm-chart.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/helm-chart.yaml",
+          "git_url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/helm-chart.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/helm-chart.yaml?ref=master",
+            "git": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/helm-chart.yaml"
+          }
+        },
+        {
+          "name": "templates",
+          "path": "helm-chart/templates",
+          "sha": "28ee07d6d2ed359ecde7c9f51862d570158f8306",
+          "size": 0,
+          "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/tree/master/helm-chart/templates",
+          "git_url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/trees/28ee07d6d2ed359ecde7c9f51862d570158f8306",
+          "download_url": null,
+          "type": "dir",
+          "_links": {
+            "self": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates?ref=master",
+            "git": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/trees/28ee07d6d2ed359ecde7c9f51862d570158f8306",
+            "html": "https://github.com/charlescd-fake/helm-chart/tree/master/helm-chart/templates"
+          }
+        }
+      ]
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODpiYTNjYmFhMDlhOWM0NDgzMGFmZmU1ZDZiNjY0NGEyNzUxZjdmMjNk",
+        "size": 103,
+        "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
+        "content": "YXBpVmVyc2lvbjogdjEKYXBwVmVyc2lvbjogIjEuMCIKZGVzY3JpcHRpb246\nIERyYWdvbmJvYXJkaW5nIGFwcApuYW1lOiBkcmFnb25ib2FyZGluZwp2ZXJz\naW9uOiAnZGFyd2luJw==\n",
+        "encoding": "base64"
+      }
+
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "845fdfb7268757643309685e2a70fc5f887076ef",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODo4NDVmZGZiNzI2ODc1NzY0MzMwOTY4NWUyYTcwZmM1Zjg4NzA3NmVm",
+        "size": 337,
+        "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/845fdfb7268757643309685e2a70fc5f887076ef",
+        "content": "ZW5hYmxlZDogdHJ1ZQpuYW1lOiBkcmFnb25ib2FyZGluZwpyZXBsaWNhQ291\nbnQ6IDEKaW1hZ2U6CiAgcmVwb3NpdG9yeTogZHJhZ29uYm9hcmRpbmcKICB0\nYWc6IGxhdGVzdAogIHB1bGxQb2xpY3k6IEFsd2F5cwpzZXJ2aWNlOgogIG5h\nbWU6IGRyYWdvbmJvYXJkaW5nCiAgdHlwZTogQ2x1c3RlcklQCiAgcG9ydHM6\nCiAgICAtIG5hbWU6IGh0dHAKICAgICAgcG9ydDogODAKcmVzb3VyY2VzOgog\nIGxpbWl0czoKICAgIGNwdTogMTI4bQogICAgbWVtb3J5OiAxMjhNaQogIHJl\ncXVlc3RzOgogICAgY3B1OiA2NG0KICAgIG1lbW9yeTogNjRNaQpzaWRlY2Fy\nSXN0aW86CiAgZW5hYmxlZDogdHJ1ZQ==\n",
+        "encoding": "base64"
+      }
+  
+- request:
+    method: GET
+    url: .*/repos/.*/.*/contents/.*/templates$
+    query:
+      ref: master
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      [
+        {
+          "name": "deployment.yaml",
+          "path": "helm-chart/templates/deployment.yaml",
+          "sha": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+          "size": 1651,
+          "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/deployment.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/deployment.yaml",
+          "git_url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/templates/deployment.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/deployment.yaml?ref=master",
+            "git": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/deployment.yaml"
+          }
+        },
+        {
+          "name": "service.yaml",
+          "path": "helm-chart/templates/service.yaml",
+          "sha": "ea34109e14d019bd33db8db914adf1bfa31546fe",
+          "size": 417,
+          "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/service.yaml?ref=master",
+          "html_url": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/service.yaml",
+          "git_url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+          "download_url": "https://raw.githubusercontent.com/charlescd-fake/helm-chart/master/helm-chart/templates/service.yaml",
+          "type": "file",
+          "_links": {
+            "self": "http://localhost:8883/repos/charlescd-fake/helm-chart/contents/helm-chart/templates/service.yaml?ref=master",
+            "git": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+            "html": "https://github.com/charlescd-fake/helm-chart/blob/master/helm-chart/templates/service.yaml"
+          }
+        }
+      ]
+
+# DEPLOYMENT MANIFEST
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODpiMTkwM2QzYTk5MzdjOGE5MDhhOTc4Y2ZhZTdjMTJmOGMxMDg3MmJj",
+        "size": 1651,
+        "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/b1903d3a9937c8a908a978cfae7c12f8c10872bc",
+        "content": "YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIG5hbWU6IHt7IC5SZWxlYXNlLk5hbWUgfX0KICBuYW1lc3BhY2U6IHt7IC5SZWxlYXNlLk5hbWVzcGFjZSB9fQogIGxhYmVsczoKICAgIGFwcDoge3sgLlZhbHVlcy5uYW1lIH19CiAgICB2ZXJzaW9uOiB7eyAuVmFsdWVzLm5hbWUgfX0KICAgIGNvbXBvbmVudDoge3sgLlZhbHVlcy5jb21wb25lbnQgfX0KICAgIHRhZzoge3sgLlZhbHVlcy50YWcgfX0KICAgIGNpcmNsZUlkOiB7eyAuVmFsdWVzLmNpcmNsZUlkIH19CnNwZWM6CiAgcmVwbGljYXM6IHt7IC5WYWx1ZXMucmVwbGljYUNvdW50IH19CiAgc2VsZWN0b3I6CiAgICBtYXRjaExhYmVsczoKICAgICAgYXBwOiB7eyAuVmFsdWVzLm5hbWUgfX0KICAgICAgdmVyc2lvbjoge3sgLlJlbGVhc2UuTmFtZSB9fQogIHRlbXBsYXRlOgogICAgbWV0YWRhdGE6CiAgICAgIGFubm90YXRpb25zOgogICAgICAgIHNpZGVjYXIuaXN0aW8uaW8vaW5qZWN0OiAne3sgLlZhbHVlcy5zaWRlY2FySXN0aW8uZW5hYmxlZCB9fScgCiAgICAgIGxhYmVsczoKICAgICAgICBhcHA6IHt7IC5WYWx1ZXMubmFtZSB9fQogICAgICAgIHZlcnNpb246IHt7IC5SZWxlYXNlLk5hbWUgfX0KICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgICAgLSBuYW1lOiB7eyAuVmFsdWVzLm5hbWUgfX0KICAgICAgICAgIGltYWdlOiB7eyAuVmFsdWVzLmltYWdlLnRhZyB9fQogICAgICAgICAgbGl2ZW5lc3NQcm9iZToKICAgICAgICAgICAgZmFpbHVyZVRocmVzaG9sZDogMwogICAgICAgICAgICBodHRwR2V0OgogICAgICAgICAgICAgIHBhdGg6IC8KICAgICAgICAgICAgICBwb3J0OiA4MAogICAgICAgICAgICAgIHNjaGVtZTogSFRUUAogICAgICAgICAgICBpbml0aWFsRGVsYXlTZWNvbmRzOiAzMAogICAgICAgICAgICBwZXJpb2RTZWNvbmRzOiAyMAogICAgICAgICAgICBzdWNjZXNzVGhyZXNob2xkOiAxCiAgICAgICAgICAgIHRpbWVvdXRTZWNvbmRzOiAxCiAgICAgICAgICByZWFkaW5lc3NQcm9iZToKICAgICAgICAgICAgZmFpbHVyZVRocmVzaG9sZDogMwogICAgICAgICAgICBodHRwR2V0OgogICAgICAgICAgICAgIHBhdGg6IC8KICAgICAgICAgICAgICBwb3J0OiA4MAogICAgICAgICAgICAgIHNjaGVtZTogSFRUUCAgCiAgICAgICAgICAgIGluaXRpYWxEZWxheVNlY29uZHM6IDMwCiAgICAgICAgICAgIHBlcmlvZFNlY29uZHM6IDIwCiAgICAgICAgICAgIHN1Y2Nlc3NUaHJlc2hvbGQ6IDEKICAgICAgICAgICAgdGltZW91dFNlY29uZHM6IDEgCiAgICAgICAgICBpbWFnZVB1bGxQb2xpY3k6IHt7IC5WYWx1ZXMuaW1hZ2UucHVsbFBvbGljeSB9fQogICAgICAgICAgcmVzb3VyY2VzOgp7eyB0b1lhbWwgLlZhbHVlcy5yZXNvdXJjZXMgfCBpbmRlbnQgMTIgfX0KICAgICAgaW1hZ2VQdWxsU2VjcmV0czoKICAgICAgICAtIG5hbWU6IHJlYWx3YXZlbGFiLXJlZ2lzdHJ5CiAgICB7ey0gd2l0aCAuVmFsdWVzLm5vZGVTZWxlY3RvciB9fQogICAgICBub2RlU2VsZWN0b3I6Cnt7IHRvWWFtbCAuIHwgaW5kZW50IDggfX0KICAgIHt7LSBlbmQgfX0KICAgIHt7LSB3aXRoIC5WYWx1ZXMuYWZmaW5pdHkgfX0KICAgICAgYWZmaW5pdHk6Cnt7IHRvWWFtbCAuIHwgaW5kZW50IDggfX0KICAgIHt7LSBlbmQgfX0KICAgIHt7LSB3aXRoIC5WYWx1ZXMudG9sZXJhdGlvbnMgfX0KICAgICAgdG9sZXJhdGlvbnM6Cnt7IHRvWWFtbCAuIHwgaW5kZW50IDggfX0KICAgIHt7LSBlbmQgfX0=",
+        "encoding": "base64"
+      }
+
+# SERVICE MANIFEST
+- request:
+    method: GET
+    url: .*/repos/.*/.*/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe
+
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body: >
+      {
+        "sha": "ea34109e14d019bd33db8db914adf1bfa31546fe",
+        "node_id": "MDQ6QmxvYjI3NTAwMDUyODplYTM0MTA5ZTE0ZDAxOWJkMzNkYjhkYjkxNGFkZjFiZmEzMTU0NmZl",
+        "size": 417,
+        "url": "http://localhost:8883/repos/charlescd-fake/helm-chart/git/blobs/ea34109e14d019bd33db8db914adf1bfa31546fe",
+        "content": "YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBsYWJlbHM6CiAgICBhcHA6IHt7IC5WYWx1ZXMubmFtZSB9fQogICAgc2VydmljZToge3sgLlZhbHVlcy5uYW1lIH19CiAgICBjb21wb25lbnQ6IHt7IC5WYWx1ZXMuY29tcG9uZW50IH19CiAgICB0YWc6IHt7IC5WYWx1ZXMudGFnIH19CiAgICBjaXJjbGVJZDoge3sgLlZhbHVlcy5jaXJjbGVJZCB9fQogIG5hbWU6IHt7IC5WYWx1ZXMubmFtZSB9fQogIG5hbWVzcGFjZToge3sgLlJlbGVhc2UuTmFtZXNwYWNlIH19CnNwZWM6CiAgcG9ydHM6CiAgICB7eyByYW5nZSAkaSwgJHZhciA6PSAuVmFsdWVzLnNlcnZpY2UucG9ydHMgLX19CiAgICAtIG5hbWU6IHt7ICR2YXIubmFtZSB9fQogICAgICBwb3J0OiB7eyAkdmFyLnBvcnQgfX0KICAgICAgdGFyZ2V0UG9ydDoge3sgJHZhci5wb3J0IH19CiAgICB7eyBlbmQgfX0KICBzZWxlY3RvcjoKICAgIGFwcDoge3sgLlZhbHVlcy5uYW1lIH19CiAgdHlwZToge3sgLlZhbHVlcy5zZXJ2aWNlLnR5cGV9fQ==",
+        "encoding": "base64"
+      }
