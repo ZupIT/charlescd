@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.7.1.1 (30/04/2021)
+- [#1129](https://github.com/ZupIT/charlescd/pull/1129) changing token, gatewayName and host value validation
+- [#1127](https://github.com/ZupIT/charlescd/pull/1127) Fix pipeline
+- [#1119](https://github.com/ZupIT/charlescd/pull/1119) updating policy adding workspace post to management role
+- [#1125](https://github.com/ZupIT/charlescd/pull/1125) Butler fix log endpoint
+- [#1102](https://github.com/ZupIT/charlescd/pull/1102) bug hunting: fix typos
+- [#1103](https://github.com/ZupIT/charlescd/pull/1103) bug hunting: Fix menu item layout
+- [#1123](https://github.com/ZupIT/charlescd/pull/1123) Fixing update on authorize
+- [#1120](https://github.com/ZupIT/charlescd/pull/1120) adjust system token regenerate
+- [#1118](https://github.com/ZupIT/charlescd/pull/1118) Fix namespaced deployment
+- [#1116](https://github.com/ZupIT/charlescd/pull/1116) add workspace id to authorize request and log deny request
+- [#1112](https://github.com/ZupIT/charlescd/pull/1112) Fix regen system token
+- [#1024](https://github.com/ZupIT/charlescd/pull/1024) Add max length validation to input fields
+- [#1087](https://github.com/ZupIT/charlescd/pull/1087) CI Update of charts and changelog
+- [#1114](https://github.com/ZupIT/charlescd/pull/1114) Charlescd: release 0.7.1
+- [#1091](https://github.com/ZupIT/charlescd/pull/1091) Update routing when account is clicked
+- [#1107](https://github.com/ZupIT/charlescd/pull/1107) Handle template error
+- [#1109](https://github.com/ZupIT/charlescd/pull/1109) Hotfix/moove request git token base64
+- [#1098](https://github.com/ZupIT/charlescd/pull/1098) Butler events logs aggregator
+
+---
+
 ## 0.7.1 (27/04/2021)
 - [#1113](https://github.com/ZupIT/charlescd/pull/1113) Hotfix/webhook event error
 - [#1111](https://github.com/ZupIT/charlescd/pull/1111) Butler cluster roles to read all namespaces
@@ -478,36 +500,3 @@ Fixes
 - [#418](https://github.com/ZupIT/charlescd/pull/418) Create metrics groups
 - [#468](https://github.com/ZupIT/charlescd/pull/468) V2 one deployment circle
 - [#467](https://github.com/ZupIT/charlescd/pull/467) Removing comments on nginx-conf.yaml
-
----
-
-## 0.3.4-rc.3 (04/09/2020)
-- [#462](https://github.com/ZupIT/charlescd/pull/462) Refinement UI
-- [#460](https://github.com/ZupIT/charlescd/pull/460) Butler stabilization version concat validation
-- [#459](https://github.com/ZupIT/charlescd/pull/459) validate componentName + imageTag cannot be greater than 63
-- [#456](https://github.com/ZupIT/charlescd/pull/456) Fix spinnaker tests, return hostValue and gatewayName on executions index
-- [#454](https://github.com/ZupIT/charlescd/pull/454) Add component name v2
-- [#453](https://github.com/ZupIT/charlescd/pull/453) Index pagination by 0, validate query string params
-- [#407](https://github.com/ZupIT/charlescd/pull/407) remove module controller
-- [#393](https://github.com/ZupIT/charlescd/pull/393) add label circleId
-- [#451](https://github.com/ZupIT/charlescd/pull/451) Fix ingress options v2
-- [#450](https://github.com/ZupIT/charlescd/pull/450) Add page indication on paginated response
-- [#443](https://github.com/ZupIT/charlescd/pull/443) Codecov upgrade 1.0.7 to 1.0.13
-- [#441](https://github.com/ZupIT/charlescd/pull/441) Butler stabilization execution list
-- [#437](https://github.com/ZupIT/charlescd/pull/437) Add circle label on deployment
-- [#439](https://github.com/ZupIT/charlescd/pull/439) Add new ingress options butler v2
-- [#434](https://github.com/ZupIT/charlescd/pull/434) use pgcrypto to generate uuid
-- [#429](https://github.com/ZupIT/charlescd/pull/429) No rollback when pod is shared
-- [#347](https://github.com/ZupIT/charlescd/pull/347) Change user password
-- [#433](https://github.com/ZupIT/charlescd/pull/433) create pg extension in case the database cant run uuid_generate_v4
-- [#432](https://github.com/ZupIT/charlescd/pull/432) dont run cleanup query if no expired executions are found
-- [#427](https://github.com/ZupIT/charlescd/pull/427) Butler stabilization fix undeployment callback
-- [#431](https://github.com/ZupIT/charlescd/pull/431) dont log entire objects on deploy
-- [#405](https://github.com/ZupIT/charlescd/pull/405) Hotfix: user can not edit profile picture.
-- [#375](https://github.com/ZupIT/charlescd/pull/375) Validating if email is already registered.
-- [#420](https://github.com/ZupIT/charlescd/pull/420) Update execution status and notify moove on undeployment
-- [#417](https://github.com/ZupIT/charlescd/pull/417) CI Update of charts and changelog
-- [#415](https://github.com/ZupIT/charlescd/pull/415) alter migrations and entities
-- [#419](https://github.com/ZupIT/charlescd/pull/419) Fix repeated drules v2
-- [#416](https://github.com/ZupIT/charlescd/pull/416) Fix incomingCircleId for callbacks
-- [#398](https://github.com/ZupIT/charlescd/pull/398) Hotfix: moove was allowing post and delete requests without token
