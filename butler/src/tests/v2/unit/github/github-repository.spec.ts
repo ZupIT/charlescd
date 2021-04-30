@@ -18,14 +18,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import 'jest'
-import { HttpException, HttpService } from '@nestjs/common'
+import { HttpService } from '@nestjs/common'
 import { of, throwError } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
 import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
-import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()

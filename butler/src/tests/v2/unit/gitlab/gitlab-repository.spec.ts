@@ -25,7 +25,6 @@ import { AxiosResponse } from 'axios'
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
 import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
-import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
 
 describe('Download resources from gitlab', () => {
   const contents = getStubContents()

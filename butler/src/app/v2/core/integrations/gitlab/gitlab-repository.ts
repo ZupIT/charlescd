@@ -116,7 +116,7 @@ export class GitLabRepository implements Repository {
     )
   }
 
-  private getRetryFetchCondition(fetchError: Observable<any>) {
+  private getRetryFetchCondition(fetchError: Observable<unknown>) {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS   ?

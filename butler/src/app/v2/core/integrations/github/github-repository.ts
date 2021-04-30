@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HttpException, HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
@@ -105,7 +105,7 @@ export class GitHubRepository implements Repository {
     }
   }
 
-  private getRetryFetchCondition(fetchError: Observable<any>) {
+  private getRetryFetchCondition(fetchError: Observable<unknown>) {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.FETCH_RESOURCE_MAXIMUM_RETRY_ATTEMPTS   ?
