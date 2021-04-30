@@ -121,7 +121,7 @@ const AddModule = styled(ButtonComponent.Default)`
 `;
 
 const Submit = styled(ButtonComponent.Default)`
-  width: 80px;
+  margin-top: 20px;
 `;
 
 export default {

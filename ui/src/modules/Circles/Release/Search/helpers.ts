@@ -15,8 +15,35 @@
  */
 
 import map from 'lodash/map';
+import mapKeys from 'lodash/mapKeys';
 import { Build } from '../interfaces/Build';
+import { Metadata } from '../Metadata/interfaces';
 
 export const getBuildOptions = (builds: Build[]) => {
   return map(builds, build => ({ value: build.id, label: build.tag }));
+};
+
+export const getMetadata = (build: Build) => {
+  let metadatas: any = [];
+
+  const metaList = map(build.deployments, deployment => {
+    return deployment.metadata.content;
+  });
+
+  mapKeys(metaList[0], (value: string, key: string) => {
+    metadatas.push({ 'key': key, 'value': value });
+  });
+
+  return metadatas;
+};
+
+
+export const toKeyValue = ({ content }: Metadata) => {
+  let metadatas: any = {};
+  
+  map(content, (item) => {
+    metadatas = { ...metadatas, [item.key]: item.value };
+  })
+
+  return metadatas;
 };

@@ -16,8 +16,22 @@
 
 import styled from 'styled-components';
 
-const Form = styled.form``;
+const Field = styled.div`
+  width: 490px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  margin-bottom: 10px;
+
+  > * {
+    margin-right: 10px;
+  }
+
+  > :not(:first-child) {
+    width: 150px;
+  }
+`;
 
 export default {
-  Form
+  Field
 };

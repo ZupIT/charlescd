@@ -16,27 +16,53 @@
 
 import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { useForm } from 'react-hook-form';
+import find from 'lodash/find';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
+import Metadata from '../Metadata';
 import { useFindBuilds, useCreateDeployment } from '../hooks';
-import { getBuildOptions } from './helpers';
+import { getBuildOptions, getMetadata, toKeyValue } from './helpers';
 import Styled from '../styled';
+import { Option } from 'core/components/Form/Select/interfaces';
+import { Scope } from '../Metadata/interfaces';
 
 interface Props {
   circleId: string;
   onDeployed: (deploy: Deployment) => void;
 }
 
+const defaultValues = {
+  buildId: '',
+  circleId: '',
+  metadata: {
+    content: [{
+      key: '', value: ''
+    }]
+  }
+};
+
 const SearchRelease = ({ circleId, onDeployed }: Props) => {
-  const { control, handleSubmit, getValues } = useForm();
+  const form = useForm({
+    defaultValues,
+    mode: 'onChange',
+  });
+  const { control, handleSubmit, getValues, setValue, formState: { isValid } } = form;
+  const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const [lastTag, setLastTag] = useState('');
   const [buildOptions, setBuildOptions] = useState([]);
+  const [metadata, setMetadata] = useState([]);
   const { getBuilds, response, loading } = useFindBuilds();
   const { createDeployment, response: deployed } = useCreateDeployment();
 
   useEffect(() => {
     getBuilds({ status: 'BUILT' });
   }, [getBuilds]);
+
+  useEffect(() => {
+    if (metadata) {
+      setValue('metadata.content', metadata);
+    }
+  }, [metadata, setValue]);
 
   useEffect(() => {
     if (response) {
@@ -52,9 +78,25 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
   }, [deployed, onDeployed]);
 
   const onSubmit = () => {
-    const { buildId } = getValues();
-    createDeployment({ circleId, buildId });
+    const { buildId, metadata } = getValues();
+
+    createDeployment({
+      circleId,
+      buildId,
+      metadata: {
+        scope: Scope.APPLICATION,
+        content: toKeyValue(metadata)
+      }
+    });
   };
+
+  const onSelect = (option: Option) => {
+    if (response) {
+      const build = find(response.content, ['id', option.value]);
+      const metadata = getMetadata(build);
+      setMetadata(metadata);
+    }
+  }
 
   const onSearchChange = (value: string) => {
     if (value !== lastTag) {
@@ -64,22 +106,26 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
   };
 
   return (
-    <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Styled.SearchWrapper data-testid="search-release">
-        <Styled.Select
-          name="buildId"
-          label="Select a release name"
-          options={buildOptions}
-          control={control}
-          isLoading={loading}
-          onInputChange={debounce(onSearchChange, 500)}
-          rules={{ required: true }}
-        />
-      </Styled.SearchWrapper>
-      <Styled.Submit size="EXTRA_SMALL" type="submit">
-        Deploy
-      </Styled.Submit>
-    </Styled.Form>
+    <FormProvider {...form}>
+      <Styled.Form onSubmit={handleSubmit(onSubmit)}>
+        <Styled.SearchWrapper data-testid="search-release">
+          <Styled.Select
+            name="buildId"
+            label="Select a release name"
+            options={buildOptions}
+            control={control}
+            isLoading={loading}
+            onInputChange={debounce(onSearchChange, 500)}
+            onChange={onSelect}
+            rules={{ required: true }}
+          />
+        </Styled.SearchWrapper>
+        {metadata && <Metadata fieldArray={metadataFields} />}
+        <Styled.Submit size="EXTRA_SMALL" type="submit" isDisabled={!isValid}>
+          Deploy
+        </Styled.Submit>
+      </Styled.Form>
+    </FormProvider>
   );
 };
 

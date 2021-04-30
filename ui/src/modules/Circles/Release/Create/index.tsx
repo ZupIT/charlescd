@@ -17,21 +17,25 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
-import { validationResolver, formatDataModules, validFields } from './helpers';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import Button from 'core/components/Button';
+import Module from './Module';
+import Metadata from '../Metadata';
 import { ModuleForm } from '../interfaces/Module';
+import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
-import Module from './Module';
 import Styled from '../styled';
 import ConnectionStatus from 'core/components/ConnectionStatus';
+import { Scope } from '../Metadata/interfaces';
+import { toKeyValue } from '../Search/helpers';
 
 const defaultValues = {
   modules: [MODULE],
-  releaseName: ''
+  releaseName: '',
 };
 
 interface Props {
@@ -58,8 +62,9 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     control,
     name: 'modules'
   });
+  const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const isNotUnique = fields.length > ONE;
-  const [error, setError] = useState('');
+  const [error, setError] = useState('');;
 
   useEffect(() => {
     if (watchFields) {
@@ -76,12 +81,18 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   useEffect(() => {
     if (build) {
+      const { metadata } = getValues();
+
       createDeployment({
         buildId: build.id,
-        circleId
+        circleId,
+        metadata: {
+          scope: Scope.APPLICATION,
+          content: toKeyValue(metadata)
+        }
       });
     }
-  }, [createDeployment, build, circleId]);
+  }, [createDeployment, build, circleId, getValues]);
 
   const onSubmit = () => {
     const data = getValues();
@@ -125,25 +136,27 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Styled.Module.Info color="dark">
           You can add other modules:
         </Styled.Module.Info>
-        <Styled.Module.Button
+        <Button.Default
           type="button"
+          size="EXTRA_SMALL"
           id="add-module"
           isDisabled={isEmptyFields || !isEmpty(errors)}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
-        </Styled.Module.Button>
+        </Button.Default>
         {error && 
           <ConnectionStatus
             errorMessage={error}
-            status={"error"}
-          />}
+            status={"error"} />
+        }
+        <Metadata fieldArray={metadataFields} />
         <Styled.Submit
           id="submit"
           type="submit"
-          size="EXTRA_SMALL"
+          size="SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error)}
+          isDisabled={(isEmptyFields || !isEmpty(errors) || !isEmpty(error))}
         >
           Deploy
         </Styled.Submit>

@@ -14,13 +14,43 @@
  * limitations under the License.
  */
 
+import Button from 'core/components/Button';
+import Icon from 'core/components/Icon';
+import { ArrayField } from 'react-hook-form';
+import Fields from './Fields';
 import Styled from './styled';
 
-const Metadata = () => {
+interface Props {
+  fieldArray: {
+    append: (value: Partial<ArrayField> | Partial<ArrayField>[]) => void;
+    remove: (index?: number | number[] | undefined) => void;
+    fields: Partial<ArrayField>;
+  };
+}
+
+const Metadata = ({ fieldArray }: Props) => {
+  const { fields, append, remove } = fieldArray;
 
   return (
     <Styled.Metadata>
-
+      <Styled.Subtitle color="dark">
+        You can add metadata for this release:
+      </Styled.Subtitle>
+      {fields.map((field: any, index: number) => (
+        <Fields
+          key={`meta-form-${index}`}
+          field={field}
+          remove={remove}
+          index={index}
+        />
+      ))}
+      <Button.Default
+        size="EXTRA_SMALL"
+        id="add-component"
+        onClick={() => append({ content: { '': '' } })}
+      >
+        <Icon name="add" size="15px" /> Add metadata
+      </Button.Default>
     </Styled.Metadata>
   );
 }

@@ -31,7 +31,7 @@ export interface Deployment {
   deployedAt?: string;
   createdAt?: string;
   status: DEPLOYMENT_STATUS;
-  metadata: Map<string, string>;
+  metadata: any;
   circle?: Circle;
   buildId: string;
 }

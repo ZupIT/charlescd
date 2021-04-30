@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Metadata } from '../Metadata/interfaces';
+
 export interface Module {
   module: string;
   component: string;
@@ -24,4 +26,5 @@ export interface Module {
 export interface ModuleForm {
   releaseName: string;
   modules: Module[];
+  metadata: Metadata;
 }

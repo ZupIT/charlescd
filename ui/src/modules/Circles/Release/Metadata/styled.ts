@@ -15,9 +15,15 @@
  */
 
 import styled from 'styled-components';
+import Text from 'core/components/Text';
 
 const Metadata = styled.div``;
 
+const Subtitle = styled(Text.h5)`
+  margin: 10px 0px;
+`;
+
 export default {
-  Metadata
+  Metadata,
+  Subtitle
 };
