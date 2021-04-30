@@ -20,7 +20,6 @@ import {
 } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { registerSchema } from 'class-validator'
 import * as rTracer from 'cls-rtracer'
 import * as hpropagate from 'hpropagate'
 import * as morgan from 'morgan'
@@ -28,13 +27,8 @@ import { AppModule } from './app/app.module'
 import { AppConstants } from './app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from './app/v2/core/logs/console'
-import {
-  OctopipeEKSConfigurationDataSchema,
-  OctopipeGenericConfigurationDataSchema,
-  OctopipeDefaultConfigurationDataSchema,
-  SpinnakerConfigurationDataSchema
-} from './app/v2/core/validations/schemas'
 import { Request, Response, Router } from 'express'
+import { HttpExceptionFilter } from './app/v2/core/filters/http-exception.filter'
 
 const healtCheckRouter = Router()
 healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
@@ -52,11 +46,6 @@ async function bootstrap() {
     ]
   })
 
-  registerSchema(SpinnakerConfigurationDataSchema)
-  registerSchema(OctopipeEKSConfigurationDataSchema)
-  registerSchema(OctopipeGenericConfigurationDataSchema)
-  registerSchema(OctopipeDefaultConfigurationDataSchema)
-
   const appModule: DynamicModule = await AppModule.forRootAsync()
   const app: INestApplication = await NestFactory.create(appModule)
   const logger = app.get<ConsoleLoggerService>(ConsoleLoggerService)
@@ -69,6 +58,7 @@ async function bootstrap() {
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))
+  app.useGlobalFilters(new HttpExceptionFilter())
   app.use(rTracer.expressMiddleware())
   app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)

@@ -19,6 +19,7 @@
 package io.charlescd.moove.application.workspace.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
 import io.charlescd.moove.application.usergroup.response.UserGroupResponse
 import io.charlescd.moove.domain.*
@@ -31,9 +32,9 @@ data class WorkspaceResponse(
     val authorId: String,
     val gitConfiguration: GitConfigurationResponse? = null,
     val registryConfiguration: RegistryConfigurationResponse? = null,
-    val cdConfiguration: CdConfigurationResponse? = null,
     val circleMatcherUrl: String? = null,
     val metricConfiguration: MetricConfigurationResponse? = null,
+    val deploymentConfiguration: DeploymentConfigurationResponse? = null,
     val webhookConfiguration: List<WebhookConfigurationResponse>,
     val userGroups: List<UserGroupResponse>,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -45,8 +46,8 @@ data class WorkspaceResponse(
             workspace: Workspace,
             gitConfiguration: GitConfiguration? = null,
             registryConfigurationName: String? = null,
-            cdConfiguration: CdConfiguration? = null,
             metricConfiguration: MetricConfiguration? = null,
+            deploymentConfiguration: DeploymentConfiguration? = null,
             webhookConfiguration: List<WebhookConfiguration> = emptyList()
         ): WorkspaceResponse {
             return WorkspaceResponse(
@@ -69,16 +70,17 @@ data class WorkspaceResponse(
                         name = registryConfigurationName
                     )
                 },
-                cdConfiguration = cdConfiguration?.let {
-                    CdConfigurationResponse(
-                        id = it.id,
-                        name = it.name
-                    )
-                },
                 metricConfiguration = metricConfiguration?.let {
                     MetricConfigurationResponse(
                         id = it.id,
                         provider = it.provider.name
+                    )
+                },
+                deploymentConfiguration = deploymentConfiguration?.let {
+                    DeploymentConfigurationResponse(
+                        id = it.id,
+                        name = it.name,
+                        gitProvider = it.gitProvider
                     )
                 },
                 webhookConfiguration = webhookConfiguration.map {
@@ -104,11 +106,6 @@ data class WorkspaceResponse(
     )
 
     data class RegistryConfigurationResponse(
-        val name: String,
-        val id: String
-    )
-
-    data class CdConfigurationResponse(
         val name: String,
         val id: String
     )

@@ -22,11 +22,11 @@ export class ReadComponentDeploymentDto {
 
   public readonly componentName: string
 
+  public readonly helmRepository: string
+
   public readonly buildImageUrl: string
 
   public readonly buildImageTag: string
-
-  public readonly createdAt: Date
 
   public readonly hostValue: string | null
 
@@ -40,7 +40,7 @@ export class ReadComponentDeploymentDto {
     buildImageTag: string,
     hostValue: string | null,
     gatewayName: string | null,
-    createdAt: Date
+    helmRepository: string
   ) {
     this.id = id
     this.componentId = componentId
@@ -49,6 +49,6 @@ export class ReadComponentDeploymentDto {
     this.buildImageTag = buildImageTag
     this.hostValue = hostValue
     this.gatewayName = gatewayName
-    this.createdAt = createdAt
+    this.helmRepository = helmRepository
   }
 }
