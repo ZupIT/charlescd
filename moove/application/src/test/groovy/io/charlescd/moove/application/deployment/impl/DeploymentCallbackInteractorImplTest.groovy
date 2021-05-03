@@ -708,6 +708,6 @@ class DeploymentCallbackInteractorImplTest extends Specification {
     private static KeyValueRule getKeyValueRule(String key, String value)  {
         def nodePart = getNodePart(key, value)
         def jsonNode = new ObjectMapper().valueToTree(nodePart)
-        return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, TestUtils.cirleId)
+        return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, TestUtils.circleId)
     }
 }
