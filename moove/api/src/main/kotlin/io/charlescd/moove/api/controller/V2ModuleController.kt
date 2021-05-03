@@ -62,10 +62,11 @@ class V2ModuleController(
     @PostMapping
     fun create(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateModuleRequest
     ): ModuleResponse {
-        return createModuleInteractor.execute(request, workspaceId, authorization)
+        return createModuleInteractor.execute(request, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Find Module by id")

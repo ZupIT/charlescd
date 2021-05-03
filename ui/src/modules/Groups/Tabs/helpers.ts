@@ -18,7 +18,6 @@ import { User } from 'modules/Users/interfaces/User';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import some from 'lodash/some';
-import isEmpty from 'lodash/isEmpty';
 import { UserChecked } from '../interfaces/UserChecked';
 
 const filterSelectedUsers = (selectedUsers: UserChecked[], search: string) =>
@@ -55,10 +54,6 @@ export const diffCheckedUsers = (
     ...user,
     checked: false
   }));
-
-  if (isEmpty(search)) {
-    return mappedSelectedUsers;
-  }
 
   const filteredSelectedUsers = filterSelectedUsers(
     mappedSelectedUsers,

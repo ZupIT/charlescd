@@ -16,34 +16,34 @@
 
 package io.charlescd.moove.infrastructure.service.client.request
 
+import io.charlescd.moove.domain.GitProviderEnum
+
 data class DeployRequest(
     val deploymentId: String,
-    val applicationName: String,
-    val modules: List<DeployModuleRequest>,
     val authorId: String,
-    val description: String,
-    val circle: DeployCircleRequest,
     val callbackUrl: String,
-    val cdConfigurationId: String,
-    val defaultCircle: Boolean
-)
-
-data class DeployModuleRequest(
-    val moduleId: String,
-    val helmRepository: String,
-    val components: List<DeployComponentRequest>
+    val namespace: String,
+    val components: List<DeployComponentRequest>,
+    val git: GitRequest,
+    val circle: CircleRequest
 )
 
 data class DeployComponentRequest(
     val componentId: String,
     val componentName: String,
+    val helmRepository: String,
     val buildImageUrl: String,
     val buildImageTag: String,
     val hostValue: String?,
     val gatewayName: String?
 )
 
-data class DeployCircleRequest(
-    val headerValue: String,
-    val removeCircle: Boolean? = null
+data class CircleRequest(
+    val id: String,
+    val default: Boolean
+)
+
+data class GitRequest(
+    val token: String,
+    val provider: GitProviderEnum
 )

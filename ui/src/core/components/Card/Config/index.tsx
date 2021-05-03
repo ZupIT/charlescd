@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Card from 'core/components/Card';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
@@ -26,10 +26,11 @@ export interface Props {
   isDisabled?: boolean;
   icon: string;
   description: string;
+  actions?: ReactNode;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onClose?: (event: React.MouseEvent<unknown, MouseEvent>) => void;
   canClose?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
@@ -37,6 +38,7 @@ const CardConfig = ({
   id,
   icon,
   description,
+  actions,
   onClose,
   canClose = true,
   onClick,
@@ -62,11 +64,11 @@ const CardConfig = ({
   );
 
   const renderHeader = () => (
-    <Card.Header icon={headerIcon} action={headerAction} />
+    <Card.Header icon={headerIcon} action={actions || headerAction} />
   );
 
   const renderBody = () => (
-    <Styled.Body>
+    <Styled.Body onClick={onClick}>
       <Text.h4 color="light">{description}</Text.h4>
       {children}
     </Styled.Body>
@@ -76,7 +78,6 @@ const CardConfig = ({
     <Styled.CardConfig
       data-testid={id}
       className={className}
-      onClick={onClick}
       isDisabled={isDisabled}
     >
       {renderHeader()}

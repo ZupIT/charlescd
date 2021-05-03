@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CdConfiguration, Component } from './'
+import { Component } from './'
 
 export interface Deployment {
     id: string
@@ -25,13 +25,13 @@ export interface Deployment {
 
     createdAt: Date
 
-    cdConfiguration: CdConfiguration
-
     circleId: string
 
     components?: DeploymentComponent[]
 
     defaultCircle: boolean
+
+    namespace: string
 }
 
 export type DeploymentComponent = Omit<Component, 'deployment'>

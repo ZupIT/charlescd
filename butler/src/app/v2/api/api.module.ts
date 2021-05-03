@@ -15,13 +15,11 @@
  */
 
 import { Module } from '@nestjs/common'
-import { ConfigurationsModule } from './configurations/configurations.module'
 import { DeploymentsModule } from './deployments/deployments.module'
 
 @Module({
   imports: [
-    DeploymentsModule,
-    ConfigurationsModule
+    DeploymentsModule
   ]
 })
 export class ApiModule {}

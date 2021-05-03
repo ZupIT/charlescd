@@ -42,10 +42,6 @@ const Icon = styled.i<WrapperProps>`
       cursor: pointer;
       transition: 0.2s;
       padding: 0;
-
-      :hover {
-        transform: scale(1.1);
-      }
     `};
 
   > div > div {

@@ -87,6 +87,7 @@ class DeploymentServiceLegacyGroovyUnitTest extends Specification {
                 "zup-user@zup.com.br",
                 "http://zup-user.com/user.jpg",
                 false,
+                null,
                 LocalDateTime.now()
         )
         Hypothesis hypothesis = createHypothesis("hypothesis-a", user)

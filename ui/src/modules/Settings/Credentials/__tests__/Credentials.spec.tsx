@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock';
@@ -90,7 +90,7 @@ test('should render Credentials items', async () => {
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
   expect(screen.getByText('Registry')).toBeInTheDocument();
-  expect(screen.getByText('CD Configuration')).toBeInTheDocument();
+  expect(screen.getByText('Deployment Configuration')).toBeInTheDocument();
   expect(screen.getByText('Circle Matcher')).toBeInTheDocument();
   expect(screen.getByText('Datasources')).toBeInTheDocument();
   expect(screen.getByText('Metric Action')).toBeInTheDocument();
@@ -104,13 +104,14 @@ test('should render Credentials items in the right order', async () => {
 
   const itemsRightOrder = [
     'Registry',
-    'CD Configuration',
+    'Deployment Configuration',
     'Circle Matcher',
     'Datasources',
     'Metric Action',
     'Webhook',
     'User group'
   ];
+
   render(<Credentials />);
 
   const items = await screen.findAllByTestId(/contentIcon-.*/);
@@ -143,10 +144,10 @@ test('render User Group credentials', async () => {
   useDatasourceSpy.mockRestore();
 });
 
-test('render CD Configuration Credentials', async () => {
+test('render Deployment Configuration Credentials', async () => {
   render(<Credentials />);
 
-  const addCDConfigButton = await screen.findByText('Add CD Configuration');
+  const addCDConfigButton = await screen.findByText('Add Deployment Configuration');
 
   await act(async () => userEvent.click(addCDConfigButton));
 
@@ -187,13 +188,13 @@ test('should render Credentials items with the right type: Required or Optional'
   );
 
   const configurationItems = [
-    {name: 'Registry', type: 'Required'},
-    {name: 'CD Configuration', type: 'Required'},
-    {name: 'Circle Matcher', type: 'Required'},
-    {name: 'Datasources', type: 'Optional'},
-    {name: 'Metric Action', type: 'Optional'},
-    {name: 'Webhook', type: 'Optional'},
-    {name: 'User group', type: 'Optional'},
+    { name: 'Registry', type: 'Required' },
+    { name: 'Deployment Configuration', type: 'Required' },
+    { name: 'Circle Matcher', type: 'Required' },
+    { name: 'Datasources', type: 'Optional' },
+    { name: 'Metric Action', type: 'Optional' },
+    { name: 'Webhook', type: 'Optional' },
+    { name: 'User group', type: 'Optional' },
   ];
 
   render(<Credentials />);

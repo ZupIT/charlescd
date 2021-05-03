@@ -27,6 +27,7 @@ import Styled from './styled';
 
 export const Workspaces = lazy(() => import('modules/Workspaces'));
 export const Users = lazy(() => import('modules/Users'));
+export const Tokens = lazy(() => import('modules/Tokens'));
 export const Groups = lazy(() => import('modules/Groups'));
 export const Account = lazy(() => import('modules/Account'));
 export const Hypotheses = lazy(() => import('modules/Hypotheses'));
@@ -67,6 +68,11 @@ const Main = () => {
               )}
             />
             <Route path={routes.account} component={Account} />
+            <PrivateRoute
+              path={routes.tokens}
+              component={Tokens}
+              allowedRoles={['root']}
+            />
             <PrivateRoute
               path={routes.users}
               component={Users}

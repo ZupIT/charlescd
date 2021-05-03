@@ -41,17 +41,11 @@ export const Configuration: IEnvConfiguration = {
 
   darwinIstioDeploymentCallbackUrl: process.env.DARWIN_CALLBACK || ConfigurationConstants.DARWIN_CALLBACK,
 
-  spinnakerUrl: process.env.SPINNAKER_URL || ConfigurationConstants.SPINNAKER_URL,
-
-  spinnakerGithubAccount: process.env.SPINNAKER_GITHUB_ACCOUNT || ConfigurationConstants.SPINNAKER_GITHUB_ACCOUNT,
-
   helmTemplateUrl: process.env.HELM_TEMPLATE_URL || ConfigurationConstants.HELM_TEMPLATE_URL,
 
   helmPrefixUrl: process.env.HELM_PREFIX_URL || ConfigurationConstants.HELM_PREFIX_URL,
 
   helmRepoBranch: process.env.HELM_REPO_BRANCH || ConfigurationConstants.HELM_REPO_BRANCH,
-
-  octopipeUrl: process.env.OCTOPIPE_URL || ConfigurationConstants.OCTOPIPE_URL,
 
   deploymentExpireTime: Number(process.env.DEPLOYMENT_EXPIRE_TIME) || ConfigurationConstants.DEPLOYMENT_EXPIRE_TIME,
 
@@ -64,6 +58,7 @@ export const Configuration: IEnvConfiguration = {
     retentionDays: 7
   },
 
-  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL
+  butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 
+  butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE
 }

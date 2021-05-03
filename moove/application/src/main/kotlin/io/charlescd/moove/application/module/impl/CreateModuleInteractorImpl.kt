@@ -40,9 +40,9 @@ open class CreateModuleInteractorImpl(
     CreateModuleInteractor {
 
     @Transactional
-    override fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String): ModuleResponse {
+    override fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String?, token: String?): ModuleResponse {
 
-        val user = userService.findByAuthorizationToken(authorization)
+        val user = userService.findFromAuthMethods(authorization, token)
 
         moduleService.checkIfComponentNameIsDuplicated(request.components.map { it.name }.toList())
 

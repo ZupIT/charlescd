@@ -16,9 +16,16 @@
 
 import styled, { css } from 'styled-components';
 import Input from 'core/components/Form/Input';
+import Text from 'core/components/Text';
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+
+const Field = styled.div`
+  display: flex;
+  flex-direction: row;
   align-items: flex-end;
 `;
 
@@ -55,7 +62,13 @@ const InputTitle = styled(Input)`
   }
 `;
 
+const Error = styled(Text.h6)`
+  margin-top: 3px;
+`;
+
 export default {
   Wrapper,
-  InputTitle
+  Field,
+  InputTitle,
+  Error
 };

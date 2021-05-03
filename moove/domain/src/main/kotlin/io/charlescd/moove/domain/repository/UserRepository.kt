@@ -29,6 +29,8 @@ interface UserRepository {
 
     fun findByEmail(email: String): Optional<User>
 
+    fun findBySystemTokenId(systemTokenId: String): Optional<User>
+
     fun findAll(name: String?, email: String?, page: PageRequest): Page<User>
 
     fun findByWorkspace(workspaceId: String, name: String?, email: String?, pageRequest: PageRequest): Page<User>

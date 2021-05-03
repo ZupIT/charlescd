@@ -18,6 +18,7 @@ package io.charlescd.moove.application.circle.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.CircleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -29,6 +30,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
@@ -40,20 +42,22 @@ class CreateCircleInteractorImplTest extends Specification {
     private CreateCircleInteractor createCircleInteractor
     private CircleRepository circleRepository = Mock(CircleRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.createCircleInteractor = new CreateCircleInteractorImpl(
                 new CircleService(circleRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new WorkspaceService(workspaceRepository, userRepository),
                 circleMatcherService,
         )
     };
 
-    def "should create a new circle"() {
+    def "should create a new circle using authorization"() {
         given:
         def author = TestUtils.user
         def workspace =  TestUtils.workspace
@@ -64,11 +68,46 @@ class CreateCircleInteractorImplTest extends Specification {
         def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
-        def response = this.createCircleInteractor.execute(request, workspaceId, authorization)
+        def response = this.createCircleInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * circleRepository.save(_) >> circle
+        1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
+
+        notThrown(NotFoundException)
+
+        assert response != null
+        assert response.id == circle.id
+        assert response.author.id == TestUtils.authorId
+        assert response.createdAt == circle.createdAt
+        assert response.matcherType == circle.matcherType
+        assert response.name == circle.name
+        assert response.reference == circle.reference
+        assert response.workspaceId == circle.workspaceId
+        assert response.default == circle.defaultCircle
+        assert !response.default
+    }
+
+    def "should create a new circle using system token"() {
+        given:
+        def author = TestUtils.user
+        def workspace =  TestUtils.workspace
+        def circle =  TestUtils.circle
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
+
+        when:
+        def response = this.createCircleInteractor.execute(request, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * circleRepository.save(_) >> circle
         1 * circleMatcherService.create(circle, workspace.circleMatcherUrl, false)
@@ -97,7 +136,7 @@ class CreateCircleInteractorImplTest extends Specification {
         def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
-        this.createCircleInteractor.execute(request, workspaceId, authorization)
+        this.createCircleInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> "email@email.com"
@@ -118,7 +157,7 @@ class CreateCircleInteractorImplTest extends Specification {
         def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
         when:
-        this.createCircleInteractor.execute(request, workspaceId, authorization)
+        this.createCircleInteractor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email

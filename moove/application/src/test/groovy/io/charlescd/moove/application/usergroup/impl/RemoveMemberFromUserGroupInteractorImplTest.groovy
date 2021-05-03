@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.usergroup.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserGroupService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.usergroup.RemoveMemberFromUserGroupInteractor
@@ -23,6 +24,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.UserGroup
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserGroupRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -36,12 +38,13 @@ class RemoveMemberFromUserGroupInteractorImplTest extends Specification {
 
     private UserGroupRepository userGroupRepository = Mock(UserGroupRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.removeMemberFromUserGroupInteractor = new RemoveMemberFromUserGroupInteractorImpl(
                 new UserGroupService(userGroupRepository),
-                new UserService(userRepository, managementUserSecurityService)
+                new UserService(userRepository, systemTokenService, managementUserSecurityService)
         )
     }
 

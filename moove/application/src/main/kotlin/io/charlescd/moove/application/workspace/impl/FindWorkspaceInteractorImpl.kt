@@ -33,11 +33,10 @@ class FindWorkspaceInteractorImpl @Inject constructor(
     private val workspaceService: WorkspaceService,
     private val gitConfigurationService: GitConfigurationService,
     private val registryConfigurationService: RegistryConfigurationService,
-    private val cdConfigurationService: CdConfigurationService,
     private val metricConfigurationService: MetricConfigurationService,
+    private val deploymentConfigurationService: DeploymentConfigurationService,
     private val hermesService: HermesService,
     private val userService: UserService
-
 ) : FindWorkspaceInteractor {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -55,8 +54,8 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             )
         }
 
-        val cdConfiguration = workspace.cdConfigurationId?.let {
-            cdConfigurationService.find(workspace.id, workspace.cdConfigurationId!!)
+        val deploymentConfiguration = workspace.deploymentConfigurationId?.let {
+            deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         }
 
         val metricConfiguration = workspace.metricConfigurationId?.let {
@@ -69,8 +68,8 @@ class FindWorkspaceInteractorImpl @Inject constructor(
             workspace,
             gitConfiguration,
             registryConfiguration,
-            cdConfiguration,
             metricConfiguration,
+            deploymentConfiguration,
             webhookConfiguration
         )
     }
