@@ -52,7 +52,7 @@ const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_CD_CONFIGURATION)}
       type="Required"
     >
-      {data && (
+      {data && status !== 'resolved' && (
         <Card.Config
           icon="cd-configuration"
           description={data.name}
