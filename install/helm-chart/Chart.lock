@@ -1,18 +1,24 @@
 dependencies:
+- name: envoy
+  repository: ""
+  version: 0.3.10
+- name: metacontroller
+  repository: ""
+  version: 1.0.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 10.2.2
+  version: 10.4.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 12.6.0
+  version: 14.1.0
 - name: keycloak
   repository: https://codecentric.github.io/helm-charts
-  version: 9.8.1
+  version: 10.3.1
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
   version: 3.15.2
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
-  version: 8.9.1
-digest: sha256:ba88638b80003006fd0503bfdeb93629ddb51ad3ee8f4f9c4ff66de10ea41247
-generated: "2021-04-27T19:52:39.075645577Z"
+  version: 8.12.2
+digest: sha256:4f65249a24c057103926688ee0739ebef5cb27b515b765f5307f57c62650e2f4
+generated: "2021-05-02T22:17:40.814287915-03:00"

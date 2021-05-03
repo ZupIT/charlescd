@@ -17,7 +17,6 @@
 package io.charlescd.moove.infrastructure.service.client.response
 
 data class LogResponse(
-    val id: String,
     val logs: List<Log>
 )
 

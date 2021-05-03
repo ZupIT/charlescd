@@ -1,0 +1,81 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Charles Gate",
+		"_postman_id": "134905f1-94d6-6b42-b52b-2f627e5bdd29",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create System Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"systemTokenId\", jsonData.id);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{gateHost}}/api/v1/system-token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer token",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"New Token\",\n\t\"permissions\": [\"circles_read\", \"circles_write\", \"deploy_write\"],\n\t\"workspaces\": [\"workspace1\", \"workspace2\"]\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get System Token By Id",
+			"request": {
+				"url": "{{gateHost}}/api/v1/system-token/{{systemTokenId}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get All System Tokens",
+			"request": {
+				"url": "{{gateHost}}/api/v1/system-token",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke System Token",
+			"request": {
+				"url": "{{gateHost}}/api/v1/system-token/{{systemTokenId}}/revoke",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

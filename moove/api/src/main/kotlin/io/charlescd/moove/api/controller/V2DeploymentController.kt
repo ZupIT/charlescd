@@ -55,10 +55,11 @@ class V2DeploymentController(
     @PostMapping
     fun createDeployment(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody createDeploymentRequest: CreateDeploymentRequest
     ): DeploymentResponse {
-        return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization)
+        return this.createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Undeploy Deployment")
@@ -66,10 +67,11 @@ class V2DeploymentController(
     @PostMapping("/{deploymentId}/undeploy")
     fun undeploy(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("deploymentId") deploymentId: String
     ) {
-        return this.undeployInteractor.execute(workspaceId, authorization, deploymentId)
+        return this.undeployInteractor.execute(workspaceId, authorization, token, deploymentId)
     }
 
     @ApiOperation(value = "Deployment Callback")
@@ -112,9 +114,10 @@ class V2DeploymentController(
     @GetMapping("/{deploymentId}/logs")
     fun deploymentLogs(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("deploymentId") deploymentId: String
     ): LogResponse {
-        return this.findDeploymentLogsInteractor.execute(workspaceId, authorization, deploymentId)
+        return this.findDeploymentLogsInteractor.execute(workspaceId, authorization, token, deploymentId)
     }
 }

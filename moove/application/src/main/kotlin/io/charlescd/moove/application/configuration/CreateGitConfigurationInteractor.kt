@@ -21,5 +21,5 @@ import io.charlescd.moove.application.configuration.response.GitConfigurationRes
 
 interface CreateGitConfigurationInteractor {
 
-    fun execute(request: CreateGitConfigurationRequest, workspaceId: String, authorization: String): GitConfigurationResponse
+    fun execute(request: CreateGitConfigurationRequest, workspaceId: String, authorization: String?, token: String?): GitConfigurationResponse
 }

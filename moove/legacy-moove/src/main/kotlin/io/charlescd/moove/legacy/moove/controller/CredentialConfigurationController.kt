@@ -46,10 +46,11 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/registry")
     fun createRegistryConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody createRegistryConfigRequest: CreateRegistryConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization)
+        return this.credentialConfigurationService.createRegistryConfig(createRegistryConfigRequest, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Create CD Config")
@@ -63,10 +64,11 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     @PostMapping("/cd")
     fun createCdConfig(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody createCdConfigRequest: CreateCdConfigurationRequest
     ): CredentialConfigurationRepresentation {
-        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization)
+        return this.credentialConfigurationService.createCdConfig(createCdConfigRequest, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Get configurations by Type")
@@ -96,9 +98,10 @@ class CredentialConfigurationController(val credentialConfigurationService: Cred
     fun configurationValidation(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @Valid @RequestBody request: CreateRegistryConfigurationRequest,
-        @RequestHeader(value = "Authorization") authorization: String
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?
     ) {
-        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request, authorization)
+        this.credentialConfigurationService.testRegistryConfiguration(workspaceId, request, authorization, token)
     }
 
     @ApiOperation(value = "Test Registry Connection")

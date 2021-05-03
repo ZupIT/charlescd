@@ -10,7 +10,7 @@ CharlesApplications:
     enabled: true
     name: charlescd-butler
     serviceAccountName: charlescd-butler
-    sidecarIstio: 
+    sidecarIstio:
       enabled: true
     healthCheck:
       path: /healthcheck
@@ -134,6 +134,44 @@ CharlesApplications:
       password: ZkQ67Lnhs2bM3MPN
       name: charlescd_villager
 
+  octopipe:
+    enabled: true
+    serviceAccountName: charlescd-octopipe
+    name: charlescd-octopipe
+    sidecarIstio:
+      enabled: true
+    healthCheck:
+      path: /api/v1/health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-octopipe
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-octopipe
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    database: {}
+    resources:
+      limits:
+        cpu: 512m
+        memory: 1Gi
+      requests:
+        cpu: 512m
+        memory: 1Gi
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    #octopipe envs
+    limits:
+      timeoutResourceVerification: 300
+      requestBySecond: 10
+
   ui:
     enabled: true
     name: charlescd-ui
@@ -217,7 +255,7 @@ CharlesApplications:
     #Circle matcher envs
     allowedOriginHost: *hostGlobal
     redis:
-    # available: redis-standalone, redis-cluster and redis-sentinel
+      # available: redis-standalone, redis-cluster and redis-sentinel
       profile: redis-standalone
       host: charlescd-redis-master
       port: 6379
@@ -335,10 +373,46 @@ CharlesApplications:
         attempts: 3
     subscriptionRegisterLimit: 5
 
+  gate:
+    enabled: false
+    name: charlescd-gate
+    sidecarIstio:
+      enabled: true
+    healthCheck:
+      path: /health
+      port: 8080
+      initialDelay: 60
+    image:
+      registry: zupcharles
+      application: charlescd-gate
+    imagePullSecrets: false
+    pullPolicy: Always
+    service:
+      name: charlescd-gate
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+    replicaCount: 1
+    resources: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    postgresqlWait: true
+    #gate envs
+    database:
+      <<: *postgresInfo
+      user: charlescd_moove
+      password: 7Qs2KuM9gYzw48BS
+      name: charlescd_moove
+    policyPath: ./resources/policy.csv
+    authConfPath: ./resources/auth.conf
+    queiresPath: ./internal/repository/queries/
+
 postgresql:
   enabled: true
   fullnameOverride: *postgresHost
-  initdbScriptsConfigMap: charles-postgres
+  initdbScriptsConfigMap: charlescd-postgres
   pguser: postgres
   pgpassword: postgres
   resources:
@@ -350,12 +424,14 @@ postgresql:
       memory: 128Mi
 
 job:
+  enabled: false
   name: init-db
 
 redis:
   enabled: true
   fullnameOverride: charlescd-redis
-  password: "hb2Fj9MGKjBkZ6zV"
+  auth:
+    password: "hb2Fj9MGKjBkZ6zV"
   cluster:
     enabled: false
 
@@ -428,6 +504,15 @@ keycloak:
     initialDelaySeconds: 30
     timeoutSeconds: 1
 
+  startupProbe: |
+    httpGet:
+      path: /keycloak/auth/
+      port: http
+    initialDelaySeconds: 30
+    timeoutSeconds: 1
+    failureThreshold: 60
+    periodSeconds: 5
+
   extraInitContainers: |
     - name: check-db-ready
       image: postgres:9.6.5
@@ -463,6 +548,8 @@ envoy:
     enabled: true
   hermes:
     enabled: true
+  gate:
+    enabled: false
   cors:
     enabled: true
     hosts: []
@@ -474,9 +561,9 @@ envoy:
 
 
 ingress:
+  enabled: true
   host: charles.info.example
   class: nginx
-  enabled: true
 
 nginx_ingress_controller:
   enabled: true
@@ -493,6 +580,7 @@ rabbitmq:
   auth:
     username: guest
     password: guest
+    existingErlangSecret: charlescd-rabbitmq-erl
   configuration: |-
     ## Username and password
     ##
@@ -517,18 +605,6 @@ rabbitmq:
     ssl_options.cacertfile = /opt/bitnami/rabbitmq/certs/ca_certificate.pem
     ssl_options.certfile = /opt/bitnami/rabbitmq/certs/server_certificate.pem
     ssl_options.keyfile = /opt/bitnami/rabbitmq/certs/server_key.pem
-    {{- end }}
-    {{- if .Values.ldap.enabled }}
-    auth_backends.1 = rabbit_auth_backend_ldap
-    auth_backends.2 = internal
-    {{- range $index, $server := .Values.ldap.servers }}
-    auth_ldap.servers.{{ add $index 1 }} = {{ $server }}
-    {{- end }}
-    auth_ldap.port = {{ .Values.ldap.port }}
-    auth_ldap.user_dn_pattern = {{ .Values.ldap.user_dn_pattern  }}
-    {{- if .Values.ldap.tls.enabled }}
-    auth_ldap.use_ssl = true
-    {{- end }}
     {{- end }}
     {{- if .Values.metrics.enabled }}
     ## Prometheus metrics

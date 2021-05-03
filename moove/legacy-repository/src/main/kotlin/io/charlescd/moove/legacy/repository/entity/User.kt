@@ -36,5 +36,7 @@ data class User(
 
     val isRoot: Boolean,
 
+    val systemTokenId: String?,
+
     val createdAt: LocalDateTime
 )

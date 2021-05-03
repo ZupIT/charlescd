@@ -21,5 +21,5 @@ import io.charlescd.moove.application.circle.response.CircleResponse
 
 interface CreateCircleWithCsvFileInteractor {
 
-    fun execute(request: CreateCircleWithCsvRequest, workspaceId: String, authorization: String): CircleResponse
+    fun execute(request: CreateCircleWithCsvRequest, workspaceId: String, authorization: String?, token: String?): CircleResponse
 }
