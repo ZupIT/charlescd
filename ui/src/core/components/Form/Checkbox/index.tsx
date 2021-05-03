@@ -16,7 +16,6 @@
 
 import React, {
   Fragment,
-  useState,
   Ref,
   useRef,
   forwardRef,
@@ -25,11 +24,11 @@ import React, {
 import Styled from './styled';
 
 interface Props {
-  name: string;
+  name?: string;
   value: string;
-  label: string;
+  label?: string;
   description?: string;
-  active?: boolean;
+  disabled?: boolean;
   defaultChecked?: boolean;
   onChange?: (value: boolean) => void;
   className?: string;
@@ -42,7 +41,7 @@ const Checkbox = forwardRef(
       value,
       label,
       description,
-      active,
+      disabled,
       defaultChecked,
       onChange,
       className,
@@ -51,13 +50,11 @@ const Checkbox = forwardRef(
     ref: Ref<HTMLInputElement>
   ) => {
     const checkboxRef = useRef<HTMLInputElement>(null);
-    const [isChecked, setIsChecked] = useState(active);
 
     useImperativeHandle(ref, () => checkboxRef.current);
 
-    const onCheck = () => {
-      setIsChecked(!isChecked);
-      onChange && onChange(isChecked);
+    const onCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChange && onChange(event.target.checked);
     };
 
     const renderDescription = () => (
@@ -70,18 +67,18 @@ const Checkbox = forwardRef(
           <Styled.Input
             type="checkbox"
             data-testid={`checkbox-input-${label}`}
+            disabled={disabled}
             ref={checkboxRef}
             name={name}
             value={value}
-            checked={isChecked}
             onChange={onCheck}
             defaultChecked={defaultChecked}
             {...rest}
           />
           <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
-          <Styled.Label data-testid={`checkbox-${label}`} color="light">
+          {label && <Styled.Label data-testid={`checkbox-${label}`} color="light">
             {label}
-          </Styled.Label>
+          </Styled.Label>}
         </Styled.Checkbox>
 
         {description && renderDescription()}

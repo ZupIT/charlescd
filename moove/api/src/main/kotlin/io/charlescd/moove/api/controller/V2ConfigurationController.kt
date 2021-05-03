@@ -18,10 +18,8 @@ package io.charlescd.moove.api.controller
 
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.configuration.*
-import io.charlescd.moove.application.configuration.request.CreateGitConfigurationRequest
-import io.charlescd.moove.application.configuration.request.CreateMetricConfigurationRequest
-import io.charlescd.moove.application.configuration.request.TestConnectionGitConfigurationRequest
-import io.charlescd.moove.application.configuration.request.UpdateGitConfigurationRequest
+import io.charlescd.moove.application.configuration.request.*
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConfigurationResponse
 import io.charlescd.moove.application.configuration.response.GitConnectionResponse
 import io.charlescd.moove.application.configuration.response.MetricConfigurationResponse
@@ -45,7 +43,9 @@ class V2ConfigurationController(
     private val createMetricConfigurationInteractor: CreateMetricConfigurationInteractor,
     private val updateGitConfigurationInteractor: UpdateGitConfigurationInteractor,
     private val gitStatusConfigurationInteractor: GitConnectionStatusConfigurationInteractor,
-    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor
+    private val providerStatusConfigurationInteractor: ProviderConnectionStatusConfigurationInteractor,
+    private val createDeploymentConfigurationInteractor: CreateDeploymentConfigurationInteractor,
+    private val deleteDeploymentConfigurationByIdInteractor: DeleteDeploymentConfigurationByIdInteractor
 ) {
 
     @ApiOperation(value = "Create git Configuration")
@@ -59,10 +59,11 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createGitConfiguration(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateGitConfigurationRequest
     ): GitConfigurationResponse {
-        return this.createGitConfigurationInteractor.execute(request, workspaceId, authorization)
+        return this.createGitConfigurationInteractor.execute(request, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Find git Configuration")
@@ -118,10 +119,11 @@ class V2ConfigurationController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createMetricProvider(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateMetricConfigurationRequest
     ): MetricConfigurationResponse {
-        return this.createMetricConfigurationInteractor.execute(request, workspaceId, authorization)
+        return this.createMetricConfigurationInteractor.execute(request, workspaceId, authorization, token)
     }
 
     @ApiOperation(value = "Update git Configuration")
@@ -142,4 +144,38 @@ class V2ConfigurationController(
         @RequestParam providerType: MetricConfiguration.ProviderEnum
     ): ProviderConnectionResponse =
         providerStatusConfigurationInteractor.execute(provider, providerType)
+
+    @ApiOperation(value = "Create Deployment Configuration")
+    @ApiImplicitParam(
+        name = "request",
+        value = "Deployment Configuration",
+        required = true,
+        dataType = "CreateDeploymentConfigurationRequest"
+    )
+    @PostMapping("/deployment")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createDeploymentConfiguration(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestHeader(value = "Authorization") authorization: String,
+        @Valid @RequestBody request: CreateDeploymentConfigurationRequest
+    ): DeploymentConfigurationResponse {
+        return this.createDeploymentConfigurationInteractor.execute(request, workspaceId, authorization)
+    }
+
+    @ApiOperation(value = "Delete Deployment Configuration By Id")
+    @ApiImplicitParam(
+        name = "id",
+        value = "Deployment Configuration Id",
+        required = true,
+        dataType = "string",
+        paramType = "path"
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/deployment/{id}")
+    fun deleteDeploymentConfiguration(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @PathVariable("id") id: String
+    ) {
+        this.deleteDeploymentConfigurationByIdInteractor.execute(workspaceId, id)
+    }
 }

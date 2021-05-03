@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const CardBody = styled.div`
   margin-left: 17px;
   margin-right: 17px;
   word-wrap: break-word;
+
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 export default {

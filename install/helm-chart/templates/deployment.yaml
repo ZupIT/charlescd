@@ -37,6 +37,18 @@ spec:
           command: ['sh', '-c', 
             'until pg_isready -h {{ .database.host }} -p 5432 -d {{ .database.name }} -U {{ .database.user}};
             do echo waiting for database; sleep 2; done;']
+        {{- if eq .name "charlescd-gate"}}
+        - name: wait-for-moove-pod
+          image: curlimages/curl:7.76.1
+          args:
+          - /bin/sh
+          - -c
+          - >
+            set -x;
+            while [ $(curl -sw '%{http_code}' "http://charlescd-moove:8080/actuator/health" -o /dev/null) -ne 200 ]; do
+              sleep 15;
+            done
+        {{- end }}
     {{- end }}
     {{- with .imagePullSecrets }}
       imagePullSecrets:

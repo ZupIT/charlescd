@@ -16,4 +16,4 @@
 
 package io.charlescd.moove.commons.exceptions
 
-class NotFoundExceptionLegacy(val resourceName: String, val id: String) : RuntimeException("Resource not found!")
+class NotFoundExceptionLegacy(val resourceName: String, val id: String?) : RuntimeException("Resource not found!")

@@ -29,7 +29,19 @@ import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import javax.inject.Named
 
 @Named
-class UserService(private val userRepository: UserRepository, private val managementUserSecurityService: ManagementUserSecurityService) {
+class UserService(
+    private val userRepository: UserRepository,
+    private val systemTokenService: SystemTokenService,
+    private val managementUserSecurityService: ManagementUserSecurityService
+) {
+
+    fun findFromAuthMethods(authorization: String?, token: String?): User {
+        return when {
+            !authorization.isNullOrBlank() -> findByAuthorizationToken(authorization)
+            !token.isNullOrBlank() -> findBySystemToken(token)
+            else -> throw NotFoundException("user", null)
+        }
+    }
 
     fun find(userId: String): User {
         return this.userRepository.findById(
@@ -82,5 +94,10 @@ class UserService(private val userRepository: UserRepository, private val manage
 
     fun update(user: User): User {
         return userRepository.update(user)
+    }
+
+    private fun findBySystemToken(token: String): User {
+        val systemTokenId = systemTokenService.getSystemTokenIdByTokenValue(token)
+        return this.userRepository.findBySystemTokenId(systemTokenId).orElseThrow { NotFoundException("user", systemTokenId) }
     }
 }

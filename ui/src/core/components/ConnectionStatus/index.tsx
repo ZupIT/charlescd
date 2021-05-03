@@ -21,8 +21,8 @@ import Styled from './styled';
 
 type Props = {
   status: 'error' | 'success' | 'idle';
-  successMessage: string;
-  errorMessage: string;
+  successMessage?: string;
+  errorMessage?: string;
 };
 
 const ConnectionStatus = ({ successMessage, errorMessage, status }: Props) => {

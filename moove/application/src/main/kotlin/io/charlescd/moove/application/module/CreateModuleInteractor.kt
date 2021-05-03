@@ -21,5 +21,5 @@ import io.charlescd.moove.application.module.response.ModuleResponse
 
 interface CreateModuleInteractor {
 
-    fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String): ModuleResponse
+    fun execute(request: CreateModuleRequest, workspaceId: String, authorization: String?, token: String?): ModuleResponse
 }

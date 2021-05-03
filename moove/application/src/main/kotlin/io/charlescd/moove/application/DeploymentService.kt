@@ -36,6 +36,10 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         return this.deploymentRepository.update(deployment)
     }
 
+    fun findByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
+        return this.deploymentRepository.findByCircleIdAndWorkspaceId(circleId, workspaceId)
+    }
+
     fun findByCircleIdAndStatus(circleId: String, status: DeploymentStatusEnum): Optional<Deployment> {
         return this.deploymentRepository.find(circleId, status)
     }
@@ -56,9 +60,10 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
         }
     }
 
-    fun findByIdAndWorkspace(id: String, workspaceId: String): Deployment {
+    fun findByIdAndWorkspaceId(id: String, workspaceId: String): Deployment {
         return this.deploymentRepository.find(
-            id, workspaceId
+            id,
+            workspaceId
         ).orElseThrow {
             NotFoundException("deployment", id)
         }

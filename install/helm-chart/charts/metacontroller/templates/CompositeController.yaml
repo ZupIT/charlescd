@@ -1,0 +1,46 @@
+---
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+    name: charlesdeployments-controller
+spec:
+    generateSelector: true
+    parentResource:
+        apiVersion: charlescd.io/v1
+        resource: charlesdeployments
+    childResources:
+        - apiVersion: apps/v1
+          resource: deployments
+          updateStrategy:
+              method: InPlace
+    hooks:
+        sync:
+            webhook:
+                url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/deployment/hook/reconcile"
+---
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+    name: charlesroutes-controller
+spec:
+    generateSelector: true
+    parentResource:
+        apiVersion: charlescd.io/v1
+        resource: charlesroutes
+    childResources:
+        - apiVersion: networking.istio.io/v1alpha3
+          resource: virtualservices
+          updateStrategy:
+              method: InPlace
+        - apiVersion: networking.istio.io/v1alpha3
+          resource: destinationrules
+          updateStrategy:
+              method: InPlace
+        - apiVersion: v1
+          resource: services
+          updateStrategy:
+              method: InPlace
+    hooks:
+        sync:
+            webhook:
+                url: "http://charlescd-butler.{{ .Release.Namespace }}.svc.cluster.local:3000/v2/operator/routes/hook/reconcile"

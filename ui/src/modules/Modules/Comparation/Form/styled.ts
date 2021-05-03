@@ -37,6 +37,10 @@ const Subtitle = styled(Text.h5)`
   margin: 20px 0px 5px;
 `;
 
+const Options = styled(Text.h5)`
+  margin: 16px 0px;
+`;
+
 const MinorTitle = styled(Text.h3)`
   margin: 10px 0px;
 `;
@@ -108,7 +112,7 @@ const ComponentsWrapper = styled.div`
 `;
 
 const ComponentInput = styled(FormComponent.Input)`
-  width: 155px;
+  width: 165px;
   margin-right: 20px;
 `;
 
@@ -168,6 +172,7 @@ export default {
   Popover,
   Icon,
   Button,
+  Options,
   Components: {
     Wrapper: ComponentsWrapper,
     ColumnWrapper: ComponentsColumnWrapper,

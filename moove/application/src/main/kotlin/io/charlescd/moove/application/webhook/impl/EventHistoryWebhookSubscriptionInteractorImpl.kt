@@ -34,7 +34,8 @@ class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
 
     override fun execute(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         id: String,
         eventType: String?,
         eventStatus: String?,
@@ -42,13 +43,14 @@ class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
         eventValue: String?,
         pageRequest: PageRequest
     ): List<EventHistoryWebhookSubscriptionResponse> {
-        val history = getEventHistory(workspaceId, authorization, id, eventType, eventStatus, eventField, eventValue, pageRequest)
+        val history = getEventHistory(workspaceId, authorization, token, id, eventType, eventStatus, eventField, eventValue, pageRequest)
         return history.map { EventHistoryWebhookSubscriptionResponse.from(it) }
     }
 
     private fun getEventHistory(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         id: String,
         eventType: String?,
         eventStatus: String?,
@@ -56,7 +58,7 @@ class EventHistoryWebhookSubscriptionInteractorImpl @Inject constructor(
         eventValue: String?,
         pageRequest: PageRequest
     ): List<WebhookSubscriptionEventHistory> {
-        val author = webhookService.getAuthor(authorization)
+        val author = webhookService.getAuthor(authorization, token)
         validateSubscription(workspaceId, author, id)
         return hermesService.getSubscriptionEventHistory(author.email, id, eventType, eventStatus, eventField, eventValue, pageRequest)
     }

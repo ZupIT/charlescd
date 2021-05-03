@@ -41,7 +41,29 @@ export class ExecutionRepository extends Repository<Execution> {
     }
   }
 
-  public async listExecutionsAndRelations(pageSize: number, page: number, active?: boolean): Promise<[Execution[], number]> {
+  public async findByDeploymentId(deploymentId: string): Promise<Execution> {
+    return await this.findOneOrFail({ deploymentId: deploymentId })
+  }
+
+  public async updateTimedOutExecutions(): Promise<Execution[]> {
+    return await this.manager.transaction(async manager => {
+      const timedOutExecutions = await manager.createQueryBuilder(Execution, 'e')
+        .leftJoinAndMapOne('e.deployment', 'v2deployments', 'd', 'e.deployment_id = d.id')
+        .where('e.created_at < now() - interval \'1 second\' * d.timeout_in_seconds')
+        .andWhere('e.notification_status = :notificationStatus', { notificationStatus: NotificationStatusEnum.NOT_SENT })
+        .andWhere('e.status != :status', { status: DeploymentStatusEnum.TIMED_OUT })
+        .andWhere('d.current = true')
+        .andWhere('(d.healthy = false OR d.routed = false)')
+        .getMany()
+
+      await Promise.all(timedOutExecutions.map(async e => {
+        return await manager.update(Execution, e.id, { status: DeploymentStatusEnum.TIMED_OUT })
+      }))
+      return timedOutExecutions
+    })
+  }
+
+  public async listExecutionsAndRelations(pageSize: number, page: number, current?: boolean): Promise<[Execution[], number]> {
     let baseQuery = this.createQueryBuilder('e')
       .select('e.id, e.type, e.incoming_circle_id, e.status, e.notification_status, e.created_at, e.finished_at, count (*) over() as total_executions')
       .leftJoin(DeploymentEntity, 'd', 'd.id = e.deployment_id')
@@ -52,8 +74,7 @@ export class ExecutionRepository extends Repository<Execution> {
          'author_id', d.author_id,
          'callback_url', d.callback_url,
          'circle_id', d.circle_id,
-         'active', d.active,
-         'cd_configuration_id', d.cd_configuration_id,
+         'current', d.current,
          'created_at', d.created_at,
          'components', json_agg(
            json_build_object(
@@ -72,8 +93,8 @@ export class ExecutionRepository extends Repository<Execution> {
       .limit(pageSize)
       .offset(pageSize * (page))
 
-    if (active) {
-      baseQuery = baseQuery.andWhere('d.active = :active', { active: active })
+    if (current) {
+      baseQuery = baseQuery.andWhere('d.current = :current', { current: current })
     }
 
     // TODO leaving this here to discuss keyset pagination

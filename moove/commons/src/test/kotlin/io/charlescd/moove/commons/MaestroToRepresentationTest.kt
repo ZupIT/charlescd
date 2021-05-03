@@ -326,6 +326,7 @@ class MaestroToRepresentationTest {
         "user@zup.com.br",
         "https://user.com.br/image.jpg",
         false,
+        null,
         LocalDateTime.now()
     )
 }

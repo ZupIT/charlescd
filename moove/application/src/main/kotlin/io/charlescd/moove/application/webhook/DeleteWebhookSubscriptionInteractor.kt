@@ -17,5 +17,5 @@
 package io.charlescd.moove.application.webhook
 
 interface DeleteWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, id: String)
+    fun execute(workspaceId: String, authorization: String?, token: String?, id: String)
 }

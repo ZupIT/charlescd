@@ -16,7 +16,7 @@
 
 import { Ref } from 'react';
 import styled, { css } from 'styled-components';
-import Icon from 'core/components/Icon';
+import ComponentIcon from 'core/components/Icon';
 import Text from 'core/components/Text';
 
 interface InputProps {
@@ -98,7 +98,7 @@ const Tip = styled.div`
   bottom: 5px;
 `;
 
-const Loading = styled(Icon)`
+const Loading = styled(ComponentIcon)`
   position: absolute;
   display: block;
   right: 0;
@@ -110,11 +110,18 @@ const Error = styled(Text.h6)`
   top: 43px;
 `;
 
+const Icon = styled(ComponentIcon)`
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+`;
+
 export default {
   Wrapper,
   Input,
   Label,
   Tip,
   Loading,
-  Error
+  Error,
+  Icon
 };

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm'
-import { CdConfigurationEntity } from '../../configurations/entity'
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { ReadComponentDeploymentDto } from '../dto/read-component-deployment.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
-import { ReadModuleDeploymentDto } from '../dto/read-module-deployment.dto'
 import { Deployment } from '../interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
@@ -40,19 +39,29 @@ export class DeploymentEntityV2 implements Deployment {
   @Column()
   public priority!: number
 
-  @JoinColumn({ name: 'cd_configuration_id' })
-  @ManyToOne(() => CdConfigurationEntity, cdConfiguration => cdConfiguration.deployments)
-  public cdConfiguration!: CdConfigurationEntity
-
   @OneToMany(() => Execution, execution => execution.deployment)
   public executions!: Execution[]
 
   @Column({ name: 'circle_id', nullable: false, type: 'varchar' })
   public circleId!: string
 
+  @Column({ name: 'previous_deployment_id', nullable: false, type: 'varchar' })
+  public previousDeploymentId!: string | null
 
-  @Column({ name: 'active' })
-  public active!: boolean
+  @Column({ name: 'current' })
+  public current!: boolean
+
+  @Column({ name: 'namespace' })
+  public namespace: string
+
+  @Column({ name: 'healthy' })
+  public healthy!: boolean
+
+  @Column({ name: 'routed' })
+  public routed!: boolean
+
+  @Column({ name: 'timeout_in_seconds' })
+  public timeoutInSeconds: number
 
   @OneToMany(() => ComponentEntity, component => component.deployment, { cascade: ['insert', 'update'] })
   public components!: ComponentEntity[]
@@ -64,73 +73,41 @@ export class DeploymentEntityV2 implements Deployment {
     deploymentId: string,
     authorId: string,
     circleId: string,
-    cdConfiguration: CdConfigurationEntity,
     callbackUrl: string,
     components: ComponentEntity[],
-    defaultCircle: boolean
+    defaultCircle: boolean,
+    namespace: string,
+    timeoutInSeconds: number
   ) {
     this.id = deploymentId
     this.authorId = authorId
     this.circleId = circleId
-    this.cdConfiguration = cdConfiguration
     this.callbackUrl = callbackUrl
     this.components = components
     this.defaultCircle = defaultCircle
+    this.namespace = namespace
+    this.timeoutInSeconds = timeoutInSeconds
   }
 
   public toReadDto(): ReadDeploymentDto {
-    return this.defaultCircle ?
-      this.getDefaultDto() :
-      this.getCircleDto(this.circleId)
-  }
-
-  private getCircleDto(circleId: string): ReadDeploymentDto {
     return {
-      id: this.id,
-      applicationName: this.cdConfiguration.id,
-      authorId: this.authorId,
-      callbackUrl: this.callbackUrl,
-      circle: { headerValue: circleId },
-      createdAt: this.createdAt,
-      description: '',
-      modulesDeployments: [this.componentsToModules()],
-      defaultCircle: false
+      id: this.id
     }
   }
 
-  private getDefaultDto(): ReadDeploymentDto {
-    return {
-      id: this.id,
-      applicationName: this.cdConfiguration.id,
-      authorId: this.authorId,
-      callbackUrl: this.callbackUrl,
-      circle: undefined,
-      createdAt: this.createdAt,
-      description: '',
-      modulesDeployments: [this.componentsToModules()],
-      defaultCircle: true
-    }
-  }
-
-  public componentsToModules(): ReadModuleDeploymentDto {
-    // TODO returning dummy values on id and moduleId because we dont have the Module entity on v2
-    return {
-      id: 'dummy-id',
-      moduleId: 'dummy-module-id',
-      helmRepository: this.components[0].helmUrl,
-      createdAt: this.createdAt,
-      componentsDeployments: this.components.map(c => {
-        return {
-          id: c.id,
-          createdAt: this.createdAt,
-          buildImageTag: c.imageTag,
-          buildImageUrl: c.imageUrl,
-          componentId: c.componentId,
-          componentName: c.name,
-          hostValue: c.hostValue,
-          gatewayName: c.gatewayName
-        }
-      })
-    }
+  public formatComponents(): ReadComponentDeploymentDto[] {
+    return this.components.map(c => {
+      return {
+        id: c.id,
+        createdAt: this.createdAt,
+        buildImageTag: c.imageTag,
+        buildImageUrl: c.imageUrl,
+        componentId: c.componentId,
+        componentName: c.name,
+        hostValue: c.hostValue,
+        gatewayName: c.gatewayName,
+        helmRepository: c.helmUrl
+      }
+    })
   }
 }

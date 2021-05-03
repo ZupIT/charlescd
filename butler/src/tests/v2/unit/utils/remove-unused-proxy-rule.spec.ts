@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
 import { Component } from '../../../../app/v2/api/deployments/interfaces/component.interface'
 import { Deployment } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
 import { unusedComponentProxy } from '../../../../app/v2/core/integrations/utils/deployment.utils'
@@ -37,44 +36,16 @@ it('should not perform cleanup when no components where overriden', () => {
         circleId: 'circle-id',
         defaultCircle: false,
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox'
       }
     }
   ]
 
-  const deployment = {
+  const deployment : Deployment = {
     id: 'deployment-id',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
+    namespace: 'sandbox',
     circleId: 'another-circle-id',
     defaultCircle: false,
     createdAt: new Date(),
@@ -103,21 +74,7 @@ it('should not perform cleanup when no new component is deployed', () => {
     id: 'deployment-id',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
+    namespace: 'sandbox',
     defaultCircle: false,
     circleId: 'circle-id',
     createdAt: new Date(),
@@ -171,21 +128,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: false
       }
     },
@@ -205,21 +148,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         circleId: 'circle-id',
         defaultCircle: false,
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
       }
     },
     {
@@ -238,21 +167,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         circleId: 'circle-id',
         defaultCircle: false,
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
       }
     },
     {
@@ -270,21 +185,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     },
@@ -303,21 +204,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=7',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     },
@@ -336,21 +223,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     }
@@ -364,21 +237,7 @@ it('should perform override when there is only one component active in circle', 
     id: 'deployment-id',
     authorId: 'user-1',
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
+    namespace: 'sandbox',
     defaultCircle: false,
     circleId: 'circle-id',
     createdAt: new Date(),
@@ -412,21 +271,7 @@ it('should perform override when there is only one component active in circle', 
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: false
       }
     }

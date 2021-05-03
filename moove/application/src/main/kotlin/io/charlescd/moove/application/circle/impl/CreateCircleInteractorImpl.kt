@@ -39,8 +39,8 @@ open class CreateCircleInteractorImpl(
 ) : CreateCircleInteractor {
 
     @Transactional
-    override fun execute(request: CreateCircleRequest, workspaceId: String, authorization: String): CircleResponse {
-        val user = userService.findByAuthorizationToken(authorization)
+    override fun execute(request: CreateCircleRequest, workspaceId: String, authorization: String?, token: String?): CircleResponse {
+        val user = userService.findFromAuthMethods(authorization, token)
         val circle = circleService.save(createCircle(request, workspaceId, user))
         createCircleOnCircleMatcher(workspaceId, circle)
         return CircleResponse.from(circle)

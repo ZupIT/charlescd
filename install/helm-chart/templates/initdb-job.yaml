@@ -1,4 +1,4 @@
-{{ if not .Values.postgresql.enabled}}
+{{ if and (not .Values.postgresql.enabled) .Values.job.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job

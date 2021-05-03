@@ -27,6 +27,7 @@ import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
 import Module from './Module';
 import Styled from '../styled';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 
 const defaultValues = {
   modules: [MODULE],
@@ -58,6 +59,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     name: 'modules'
   });
   const isNotUnique = fields.length > ONE;
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (watchFields) {
@@ -91,6 +93,13 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     });
   };
 
+  const checkMaxLengthError = (hasError?: boolean) => {
+    if(hasError)
+      setError('Sum of component name and version name cannot be greater than 63 characters.');
+    else
+      setError('');
+  }
+
   return (
     <FormProvider {...form}>
       <Styled.Form
@@ -109,6 +118,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             index={index}
             module={module}
             onClose={() => remove(index)}
+            onError={checkMaxLengthError}
             isNotUnique={isNotUnique}
           />
         ))}
@@ -123,12 +133,17 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
+        {error && 
+          <ConnectionStatus
+            errorMessage={error}
+            status={"error"}
+          />}
         <Styled.Submit
           id="submit"
           type="submit"
           size="EXTRA_SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error)}
         >
           Deploy
         </Styled.Submit>

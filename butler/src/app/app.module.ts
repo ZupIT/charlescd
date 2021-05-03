@@ -23,9 +23,15 @@ import { Configuration } from './v2/core/config/configurations'
 import { AppConstants } from './v2/core/constants'
 import { IoCTokensConstants } from './v2/core/constants/ioc'
 import { CoreModule } from './v2/core/core.module'
+import { OperatorModule } from './v2/operator/operator.module'
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Global()
-@Module({})
+  @Module({
+    imports: [
+      ScheduleModule.forRoot(),
+    ]
+  })
 export class AppModule {
 
   public static async forRootAsync(): Promise<DynamicModule> {
@@ -40,6 +46,7 @@ export class AppModule {
       imports: [
         CoreModule,
         ApiModuleV2,
+        OperatorModule,
         TypeOrmModule.forRootAsync({
           useFactory: () => (
             DatabasesService.getPostgresConnectionOptions(envConfiguration)

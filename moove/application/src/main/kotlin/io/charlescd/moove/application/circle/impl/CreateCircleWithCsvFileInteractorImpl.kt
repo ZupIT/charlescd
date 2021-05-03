@@ -42,8 +42,8 @@ open class CreateCircleWithCsvFileInteractorImpl(
 ) : CreateCircleWithCsvFileInteractor {
 
     @Transactional
-    override fun execute(request: CreateCircleWithCsvRequest, workspaceId: String, authorization: String): CircleResponse {
-        val user = userService.findByAuthorizationToken(authorization)
+    override fun execute(request: CreateCircleWithCsvRequest, workspaceId: String, authorization: String?, token: String?): CircleResponse {
+        val user = userService.findFromAuthMethods(authorization, token)
         csvSegmentationService.validate(request.content, request.keyName)
         val circle = createCircle(request, workspaceId, user)
         val nodeList = csvSegmentationService.createJsonNodeList(request.content, request.keyName)

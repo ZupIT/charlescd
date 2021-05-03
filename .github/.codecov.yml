@@ -11,6 +11,7 @@ coverage:
           - moove
           - butler
           - ui
+          - gate
           - hermes
     patch:
       default:
@@ -23,6 +24,7 @@ coverage:
           - moove
           - butler
           - ui
+          - gate
           - hermes
       
 flags:
@@ -49,6 +51,10 @@ flags:
   ui:
     paths:
       - ui/
+    carryforward: true
+  gate:
+    paths:
+      - gate/
     carryforward: true
   hermes:
     paths:

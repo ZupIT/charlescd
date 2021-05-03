@@ -46,10 +46,11 @@ class WebhookController(
     @ResponseStatus(HttpStatus.CREATED)
     fun subscribe(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateWebhookSubscriptionRequest
     ): CreateWebhookSubscriptionResponse {
-        return createWebhookSubscriptionInteractor.execute(workspaceId, authorization, request)
+        return createWebhookSubscriptionInteractor.execute(workspaceId, authorization, token, request)
     }
 
     @ApiOperation(value = "Get a subscription webhook")
@@ -57,10 +58,11 @@ class WebhookController(
     @ResponseStatus(HttpStatus.OK)
     fun getSubscription(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("id") id: String
     ): WebhookSubscriptionResponse {
-        return getWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+        return getWebhookSubscriptionInteractor.execute(workspaceId, authorization, token, id)
     }
 
     @ApiOperation(value = "Update a subscription webhook")
@@ -74,11 +76,12 @@ class WebhookController(
     @ResponseStatus(HttpStatus.OK)
     fun updateSubscription(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("id") id: String,
         @Valid @RequestBody request: PatchWebhookSubscriptionRequest
     ): WebhookSubscriptionResponse {
-        return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, id, request)
+        return updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, token, id, request)
     }
 
     @ApiOperation(value = "Delete a subscription webhook")
@@ -86,10 +89,11 @@ class WebhookController(
     @ResponseStatus(HttpStatus.OK)
     fun deleteSubscription(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("id") id: String
     ) {
-        deleteWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+        deleteWebhookSubscriptionInteractor.execute(workspaceId, authorization, token, id)
     }
 
     @ApiOperation(value = "Health check from a subscription webhook")
@@ -97,10 +101,11 @@ class WebhookController(
     @ResponseStatus(HttpStatus.OK)
     fun healthCheck(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("id") id: String
     ): HealthCheckWebhookSubscriptionResponse {
-        return healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, id)
+        return healthCheckWebhookSubscriptionInteractor.execute(workspaceId, authorization, token, id)
     }
 
     @ApiOperation(value = "Webhook event history")
@@ -108,7 +113,8 @@ class WebhookController(
     @ResponseStatus(HttpStatus.OK)
     fun getSubscriptionEventHistory(
         @RequestHeader("x-workspace-id") workspaceId: String,
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @PathVariable("id") id: String,
         @RequestParam(value = "eventType", required = false) eventType: String?,
         @RequestParam(value = "eventStatus", required = false) eventStatus: String?,
@@ -119,6 +125,7 @@ class WebhookController(
         return eventHistoryWebhookSubscriptionInteractor.execute(
             workspaceId,
             authorization,
+            token,
             id,
             eventType,
             eventStatus,

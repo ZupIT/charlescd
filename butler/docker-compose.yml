@@ -24,13 +24,12 @@ services:
       - ./src/resources/stubby/integrations.yml:/usr/local/stubby.yml
 
   app:
-    image: node:12.17.0-alpine3.9
+    build:
+      context: ./
+      dockerfile: Dockerfile
     depends_on:
       - stubby4j
-    volumes:
-    - ./:/app
-    working_dir: /app
-    command: sh -c 'while sleep 3600; do :; done'
+    entrypoint: sh -c 'while sleep 3600; do :; done'
     environment:
         TZ: America/Sao_Paulo
         DEPLOYMENT_EXPIRE_TIME: 25
@@ -40,7 +39,5 @@ services:
         DARWIN_UNDEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/undeployment
         DARWIN_DEPLOYMENT_CALLBACK: http://stubby4j:8883/deploy/notifications/deployment
         DARWIN_ISTIO_DEPLOYMENT_CALLBACK:  http://stubby4j:8883/deploy/notifications/istio-deployment
-        SPINNAKER_URL: http://stubby4j:8883/spinnaker
         HELM_TEMPLATE_URL: http://stubby4j:8883/helm
         HELM_PREFIX_URL: http://stubby4j:8883/helm
-        OCTOPIPE_URL: http://stubby4j:8883/octopipe
