@@ -41,7 +41,7 @@ export const validFields = (fields: object) => {
   return status;
 };
 
-const createGithubApi = ({
+export const createGithubApi = ({
   helmUrl,
   helmOrganization,
   helmRepository,
@@ -131,6 +131,7 @@ const destructGitlab = (
   setValue('helmUrl', baseUrl, { shouldValidate: true });
   setValue('helmProjectId', projectId, { shouldValidate: true });
   setValue('helmBranch', branch, { shouldValidate: true });
+  console.log('path', path);
   setValue('helmPath', path, { shouldValidate: true });
 };
 
