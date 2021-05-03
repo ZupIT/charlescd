@@ -28,7 +28,7 @@ data:
     export PGUSER={{ .Values.postgresql.pguser }}
     export PGPASSWORD={{ .Values.postgresql.pgpassword }}
     {{- range .Values.CharlesApplications -}}
-    {{ if .database }}
+    {{ if and .database (ne .name "charlescd-gate") }}
     psql -h $PGHOST -U $PGUSER -c "CREATE DATABASE {{ .database.name }}"
     psql -h $PGHOST -U $PGUSER -c "CREATE USER {{ .database.user }} WITH PASSWORD '{{ .database.password }}'"
     psql -h $PGHOST -U $PGUSER -c "ALTER DATABASE {{ .database.name }} OWNER TO {{ .database.user }}"

@@ -544,11 +544,13 @@ envoy:
   keycloak:
     enabled: true
   octopipe:
-    enabled: false
+    enabled: true
   compass:
     enabled: true
   hermes:
     enabled: true
+  gate:
+    enabled: false
   cors:
     enabled: true
     hosts: []
