@@ -56,6 +56,7 @@ export interface FetchProps {
   save?: Function;
   update?: Function;
   remove?: Function;
+  status?: FetchStatuses;
 }
 
 const renewTokenByCb = (fn: () => Promise<Response>, isLoginRequest: boolean) =>

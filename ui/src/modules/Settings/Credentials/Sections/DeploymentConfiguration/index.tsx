@@ -32,11 +32,13 @@ interface Props {
 
 const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
-  const { responseRemove, loadingRemove, remove } = useCDConfiguration();
+  const { status, remove } = useCDConfiguration();
 
   useEffect(() => {
-    setIsAction(true);
-  }, [responseRemove]);
+    if (status === 'resolved') {
+      setIsAction(true);
+    }
+  }, [status]);
 
   useEffect(() => {
     if (data) setIsAction(false);
@@ -50,11 +52,11 @@ const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_CD_CONFIGURATION)}
       type="Required"
     >
-      {data && !responseRemove && (
+      {data && (
         <Card.Config
           icon="cd-configuration"
           description={data.name}
-          isLoading={loadingRemove}
+          isLoading={status === 'pending'}
           onClose={() => remove(data.id)}
         />
       )}
