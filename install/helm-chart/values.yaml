@@ -383,9 +383,8 @@ CharlesApplications:
       port: 8080
       initialDelay: 60
     image:
-      registry: fandrade
+      registry: zupcharles
       application: charlescd-gate
-      tag: release-darwin-a-v-2
     imagePullSecrets: false
     pullPolicy: Always
     service:
