@@ -1,20 +1,8 @@
 # Changelog
 
 ## 0.7.1 (27/04/2021)
-- [#1113](https://github.com/ZupIT/charlescd/pull/1113) Hotfix/webhook event error
-- [#1111](https://github.com/ZupIT/charlescd/pull/1111) Butler cluster roles to read all namespaces
-- [#1096](https://github.com/ZupIT/charlescd/pull/1096) Moove interactors tests with system token
-- [#1100](https://github.com/ZupIT/charlescd/pull/1100) Fix invalid operator url
-- [#1106](https://github.com/ZupIT/charlescd/pull/1106) Fixing lint
-- [#1095](https://github.com/ZupIT/charlescd/pull/1095) Fix availability and callbacks
-- [#1099](https://github.com/ZupIT/charlescd/pull/1099) Operator tests fix 
-- [#1104](https://github.com/ZupIT/charlescd/pull/1104) Fix error messages
-- [#1101](https://github.com/ZupIT/charlescd/pull/1101) Hotfix/moove cdconfiguration unique validation
-- [#1089](https://github.com/ZupIT/charlescd/pull/1089) Fix virtual service generation for non healthy deployments / Fix validations
-- [#1093](https://github.com/ZupIT/charlescd/pull/1093) Updating CHANGELOG.
-- [#1079](https://github.com/ZupIT/charlescd/pull/1079) [GATE] Personate system token
-- [#1092](https://github.com/ZupIT/charlescd/pull/1092) fixing lastused value
-
+Fixes
+- [#1113](https://github.com/ZupIT/charlescd/pull/1113) Webhook event error.
 ---
 
 ## 0.7.0 (22/04/2021)
