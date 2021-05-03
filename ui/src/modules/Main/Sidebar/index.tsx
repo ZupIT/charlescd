@@ -27,9 +27,9 @@ import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { setUserAbilities } from 'core/utils/abilities';
 import {
-  saveWorkspace,
   getWorkspaceId,
-  clearWorkspace
+  clearWorkspace,
+  saveWorkspace
 } from 'core/utils/workspace';
 import { Workspace } from 'modules/Users/interfaces/User';
 import { ExpandClick } from './Types';

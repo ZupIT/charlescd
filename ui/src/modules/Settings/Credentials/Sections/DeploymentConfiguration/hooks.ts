@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
-import { create, configPath } from 'core/providers/cdConfiguration';
+import { useCallback, useEffect, useState } from 'react';
+import { create, removeDeploymentConfiguration, configPath } from 'core/providers/deploymentConfiguration';
 import { addConfig, delConfig } from 'core/providers/workspace';
 import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import {
+  useFetchData,
+  FetchStatuses
+} from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { CDConfiguration, Response } from './interfaces';
+import { DeploymentConfiguration, Response } from './interfaces';
 
 export const useCDConfiguration = (): FetchProps => {
   const dispatch = useDispatch();
   const [createData, createCDConfiguration] = useFetch<Response>(create);
   const [addData, addCDConfiguration] = useFetch(addConfig);
-  const [delData, delCDConfiguration] = useFetch(delConfig);
+  const patchDeploymentConfig = useFetchData(delConfig);
+  const removeDeploymentConfig = useFetchData(removeDeploymentConfiguration);
+  const [status, setStatus] = useState<FetchStatuses>('idle');
   const {
     loading: loadingSave,
     response: responseSave,
@@ -37,14 +43,9 @@ export const useCDConfiguration = (): FetchProps => {
     response: responseAdd,
     error: errorAdd
   } = addData;
-  const {
-    loading: loadingRemove,
-    response: responseRemove,
-    error: errorRemove
-  } = delData;
 
   const save = useCallback(
-    (cdConfiguration: CDConfiguration) => {
+    (cdConfiguration: DeploymentConfiguration) => {
       createCDConfiguration(cdConfiguration);
     },
     [createCDConfiguration]
@@ -58,42 +59,48 @@ export const useCDConfiguration = (): FetchProps => {
     if (errorSave) {
       dispatch(
         toogleNotification({
-          text: `[${errorSave.status}] CD Configuration could not be saved.`,
+          text: `[${errorSave.status}] Deployment Configuration could not be saved.`,
           status: 'error'
         })
       );
     } else if (errorAdd) {
       dispatch(
         toogleNotification({
-          text: `[${errorAdd.status}] CD Configuration could not be patched.`,
+          text: `[${errorAdd.status}] Deployment Configuration could not be patched.`,
           status: 'error'
         })
       );
     }
   }, [errorSave, errorAdd, dispatch]);
 
-  const remove = useCallback(() => {
-    delCDConfiguration(configPath);
-  }, [delCDConfiguration]);
-
-  useEffect(() => {
-    if (errorRemove) {
-      dispatch(
-        toogleNotification({
-          text: `[${errorRemove.status}] CD Configuration could not be removed.`,
-          status: 'error'
-        })
-      );
+  const remove = useCallback(async (id: string) => {
+    try {
+      setStatus('pending');
+      await patchDeploymentConfig(configPath, id)
+      removeDeploymentConfig(id);
+      setStatus('resolved');
+    } catch (e) {
+      setStatus('rejected');
+      (async () => {
+        if (e) {
+          const error = await e.json();
+          dispatch(
+            toogleNotification({
+              text: `${error.status}: ${error?.message}`,
+              status: 'error'
+            })
+          );
+        }
+      })();
     }
-  }, [errorRemove, dispatch]);
+  }, [patchDeploymentConfig, removeDeploymentConfig, dispatch]);
 
   return {
     responseAdd,
     save,
-    responseRemove,
     remove,
+    status,
     loadingSave,
     loadingAdd,
-    loadingRemove
   };
 };

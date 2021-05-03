@@ -16,6 +16,8 @@
 
 import { RadioButtonProps } from 'core/components/Radio/Buttons';
 
+export const DEFAULT_BRANCH = 'main';
+
 export const FORM_CD_CONFIGURATION = 'cd-configuration';
 
 export const radios: RadioButtonProps[] = [
@@ -36,12 +38,8 @@ export const gitlabProvider = {
 };
 
 export const gitProviders = [
-  {
-    ...githubProvider
-  },
-  {
-    ...gitlabProvider
-  }
+  githubProvider,
+  gitlabProvider
 ];
 
 export const providers: RadioButtonProps[] = [

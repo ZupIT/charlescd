@@ -26,6 +26,7 @@ import {
   loadedWorkspaceAction,
   statusWorkspaceAction
 } from 'modules/Workspaces/state/actions';
+import { saveWorkspace } from 'core/utils/workspace';
 
 export const useWorkspace = (): [Workspace, Function, Function, Function] => {
   const getWorkspaceById = useFetchData<Workspace>(findById);
@@ -38,7 +39,7 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
       try {
         dispatch(statusWorkspaceAction('pending'));
         const response = await getWorkspaceById({ id });
-
+        saveWorkspace(response);
         dispatch(loadedWorkspaceAction(response));
         dispatch(statusWorkspaceAction('resolved'));
         setWorkspace(response);

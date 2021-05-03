@@ -48,13 +48,6 @@ test('Render Token Form in view mode and token never used', async () => {
   expect(MessageTokenNotUsedYet).toBeInTheDocument();
 });
 
-// test('Render Token Form in view mode and token have been used', async () => {
-//   render(<Form mode="view" data={{ ...token, last_used_at: '2021-04-12T22:16:26.359112Z'} } />);
-
-//   const MessageTokenNotUsedYet = await screen.findByText('Last used at 12/04/2021 • 19:16:26');
-//   expect(MessageTokenNotUsedYet).toBeInTheDocument();
-// });
-
 test('Render Token Form in create mode', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify({ name: 'token' }));
   render(<Form mode="create" />);
@@ -88,39 +81,3 @@ test('Render Token Form in create mode: Defining name', async () => {
   expect(ContentWorkspaces).toBeInTheDocument();
   expect(ContentScopes).not.toBeInTheDocument();
 });
-
-// test('Render Token Form in create mode: Defining name and workspaces', async () => {
-//   (fetch as FetchMock).mockResponseOnce(JSON.stringify(workspaces));
-//   render(<Form mode="create" />);
-
-//   const ContentToken = await screen.findByTestId('contentIcon-token');
-//   expect(ContentToken).toBeInTheDocument();
-
-//   const InputName = await screen.findByTestId('input-text-name');
-//   const ButtonSubmitName = await screen.findByTestId('button-default-submit');
-//   expect(InputName).toBeInTheDocument();
-//   expect(ButtonSubmitName).toBeInTheDocument();
-
-//   userEvent.type(InputName, 'Token 001');
-//   await act(async () => userEvent.click(ButtonSubmitName));
-
-//   const ContentWorkspaces = await screen.findByTestId('contentIcon-workspaces');
-//   expect(ContentWorkspaces).toBeInTheDocument();
-  
-//   const ButtonAddWorkspaces = await screen.findByTestId('button-iconRounded-plus-circle');
-//   expect(ButtonAddWorkspaces).toBeInTheDocument();
-
-//   await act(async () => userEvent.click(ButtonAddWorkspaces));
-  
-//   const ModalAddWorkspaces = await screen.findByTestId('modal-default');
-//   expect(ModalAddWorkspaces).toBeInTheDocument();
-  
-//   const Select = await screen.findByTestId('react-select');
-//   await act(() => selectEvent.select(Select, 'MANUAL'));
-  
-//   const WorkspaceItem = await screen.findByTestId('item-123');
-//   expect(WorkspaceItem).toBeInTheDocument();
-
-//   const ContentScopes = screen.queryByTestId('contentIcon-scopes');
-//   expect(ContentScopes).not.toBeInTheDocument();
-// });
