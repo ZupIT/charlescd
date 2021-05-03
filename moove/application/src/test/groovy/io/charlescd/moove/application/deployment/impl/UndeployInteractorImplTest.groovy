@@ -37,7 +37,9 @@ class UndeployInteractorImplTest extends Specification {
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private DeployService deployService = Mock(DeployService)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private HermesService hermesService = Mock(HermesService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
@@ -46,7 +48,7 @@ class UndeployInteractorImplTest extends Specification {
     def setup() {
         this.undeployInteractor = new  UndeployInteractorImpl(
                 new DeploymentService(deploymentRepository),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 deployService,
                 new WebhookEventService(hermesService, new BuildService(buildRepository)),
                 new WorkspaceService(workspaceRepository, userRepository),
@@ -61,7 +63,7 @@ class UndeployInteractorImplTest extends Specification {
         def authorization = TestUtils.authorization
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, id)
+        undeployInteractor.execute(workspaceId, authorization, null, id)
 
         then:
         1 * deploymentRepository.find(id, workspaceId) >> Optional.empty()
@@ -70,7 +72,7 @@ class UndeployInteractorImplTest extends Specification {
         thrown(NotFoundException)
     }
 
-    def 'when undeploy has successful should not throw exception and notify'() {
+    def 'should undeploy successfully and notify using authorization'() {
         given:
         def workspaceId = TestUtils.workspaceId
         def workspace = TestUtils.workspace
@@ -81,7 +83,7 @@ class UndeployInteractorImplTest extends Specification {
         def deploymentConfig = TestUtils.deploymentConfig
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, deploymentId)
+        undeployInteractor.execute(workspaceId, authorization, null, deploymentId)
 
         then:
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
@@ -97,6 +99,34 @@ class UndeployInteractorImplTest extends Specification {
        notThrown()
     }
 
+    def 'should undeploy successfully and notify using system token'() {
+        given:
+        def workspaceId = TestUtils.workspaceId
+        def workspace = TestUtils.workspace
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def author = TestUtils.user
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
+
+        when:
+        undeployInteractor.execute(workspaceId, null, systemTokenValue, deploymentId)
+
+        then:
+        1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * buildRepository.findById(buildId) >> Optional.of(build)
+        1 * deployService.undeploy(deploymentId, author.id, deploymentConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * hermesService.notifySubscriptionEvent(_)
+        1 * deploymentRepository.update(_)
+
+        notThrown()
+    }
+
     def 'when undeploy has error should throw exception and notify'() {
         given:
         def workspaceId = TestUtils.workspaceId
@@ -108,7 +138,7 @@ class UndeployInteractorImplTest extends Specification {
         def author = TestUtils.user
 
         when:
-        undeployInteractor.execute(workspaceId, authorization, deploymentId)
+        undeployInteractor.execute(workspaceId, authorization, null, deploymentId)
 
         then:
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)

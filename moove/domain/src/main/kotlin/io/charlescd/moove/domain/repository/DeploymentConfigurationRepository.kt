@@ -28,4 +28,6 @@ interface DeploymentConfigurationRepository {
     fun exists(workspaceId: String, id: String): Boolean
 
     fun existsAnyByWorkspaceId(workspaceId: String): Boolean
+
+    fun delete(id: String)
 }

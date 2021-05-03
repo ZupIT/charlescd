@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.configuration.impl
 
 import io.charlescd.moove.application.MetricConfigurationService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -25,6 +26,7 @@ import io.charlescd.moove.application.configuration.request.CreateMetricConfigur
 import io.charlescd.moove.domain.MetricConfiguration
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.MetricConfigurationRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -40,8 +42,10 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     private CreateMetricConfigurationInteractor interactor
@@ -52,7 +56,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
 
     def setup() {
         this.interactor = new CreateMetricConfigurationInteractorImpl(new WorkspaceService(workspaceRepository, userRepository),
-                new UserService(userRepository, managementUserSecurityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
+                new UserService(userRepository, systemTokenService, managementUserSecurityService), new MetricConfigurationService(metricConfigurationRepository, compassApi))
     }
 
     def 'when workspace does not exist should throw exception'() {
@@ -63,7 +67,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId, authorization)
+        interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> false
@@ -83,7 +87,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
                 'https://metric-provider.com.br')
 
         when:
-        interactor.execute(request, workspaceId, authorization)
+        interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
@@ -93,7 +97,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
-    def 'should create metric configuration successfully'() {
+    def 'should create metric configuration successfully using authorization'() {
         given:
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
@@ -106,7 +110,7 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         def emptyList = []
 
         when:
-        def response = interactor.execute(request, workspaceId, authorization)
+        def response = interactor.execute(request, workspaceId, authorization, null)
 
         then:
         1 * workspaceRepository.exists(workspaceId) >> true
@@ -144,4 +148,58 @@ class CreateMetricConfigurationInteractorImplTest extends Specification {
         response.id != null
         response.provider == request.provider.name()
     }
+
+    def 'should create metric configuration successfully using system token'() {
+        given:
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def request = new CreateMetricConfigurationRequest(MetricConfiguration.ProviderEnum.PROMETHEUS,
+                'https://metric-provider.com.br')
+        def datasourceResponseData = new DatasourceDataResponse(providerUrl)
+        def datasourceResponse = new CompassDatasourceResponse('b763c8d9-ddf6-4fc5-b495-5e9a68e89390', new Timestamp(1580157300L),
+                "prometheus", pluginId, health, datasourceResponseData)
+        def emptyList = []
+
+        when:
+        def response = interactor.execute(request, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * workspaceRepository.exists(workspaceId) >> true
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * compassApi.findDatasource(workspaceId, true) >> emptyList
+        1 * compassApi.saveHealthyDatasource(_, _) >> { arguments ->
+            def workspaceRule = arguments[0]
+            def datReq = arguments[1]
+            assert workspaceRule instanceof String
+            assert datReq instanceof CompassCreateDatasourceRequest
+
+            datasourceResponse
+        }
+        1 * metricConfigurationRepository.save(_) >> { arguments ->
+            def metricConfigurationSaved = arguments[0]
+            assert metricConfigurationSaved instanceof MetricConfiguration
+
+            metricConfigurationSaved.id != null
+            metricConfigurationSaved.provider == request.provider
+            metricConfigurationSaved.workspaceId == workspaceId
+            metricConfigurationSaved.createdAt != null
+            metricConfigurationSaved.author != null
+            metricConfigurationSaved.author.id == author.id
+            metricConfigurationSaved.author.name == author.name
+            metricConfigurationSaved.author.createdAt == author.createdAt
+            metricConfigurationSaved.author.email == author.email
+            metricConfigurationSaved.author.photoUrl == author.photoUrl
+            metricConfigurationSaved.author.workspaces == author.workspaces
+
+            metricConfigurationSaved
+        }
+
+        notThrown()
+        response.id != null
+        response.provider == request.provider.name()
+    }
+
 }

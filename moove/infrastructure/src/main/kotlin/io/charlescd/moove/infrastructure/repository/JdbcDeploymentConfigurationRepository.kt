@@ -117,6 +117,10 @@ class JdbcDeploymentConfigurationRepository(
         return checkIfAnyDeploymentConfigurationExistsByWorkspaceId(workspaceId)
     }
 
+    override fun delete(id: String) {
+        deleteDeploymentConfigurationById(id)
+    }
+
     private fun checkIfDeploymentConfigurationExistsByWorkspaceId(workspaceId: String, id: String): Boolean {
         val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
             .appendln("AND deployment_configurations.id = ?")
@@ -137,5 +141,15 @@ class JdbcDeploymentConfigurationRepository(
             params
         ) { rs, _ -> rs.getInt(1) }
         return count != null && count >= 1
+    }
+
+    private fun deleteDeploymentConfigurationById(id: String) {
+        val statement = """
+               DELETE
+                FROM deployment_configurations
+                WHERE id = ?
+            """
+
+        this.jdbcTemplate.update(statement, id)
     }
 }

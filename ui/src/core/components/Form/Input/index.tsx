@@ -49,6 +49,7 @@ export interface Props extends InputEvents {
   isLoading?: boolean;
   hasError?: boolean;
   error?: string;
+  icon?: string;
 }
 
 const Input = React.forwardRef(
@@ -69,6 +70,7 @@ const Input = React.forwardRef(
       isLoading,
       hasError,
       error,
+      icon,
       ...rest
     }: Props,
     ref: Ref<HTMLInputElement>
@@ -141,6 +143,7 @@ const Input = React.forwardRef(
         {error && <Styled.Error color="error" role="alert">{error}</Styled.Error>}
         {isLoading && <Styled.Loading name="ellipse-loading" color="light" />}
         {isTip && <Styled.Tip>{renderTip()}</Styled.Tip>}
+        {icon && <Styled.Icon name={icon} />}
       </Styled.Wrapper>
     );
   }

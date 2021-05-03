@@ -23,7 +23,7 @@ interface Props {
   children: React.ReactNode;
   className?: string;
   isOpen?: boolean;
-  onClose: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
+  onClose: () => void;
   isOutsideClick?: boolean;
 }
 

@@ -14,22 +14,28 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.7
+version: 0.7.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 
 dependencies:
+  - name: envoy
+    version: 0.3.10
+    condition: envoy.enabled
+  - name: metacontroller
+    version: 1.0.0
+    condition: CharlesApplications.butler.enabled
   - name: postgresql
-    version: 10.2.2
+    version: 10.4.1
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
   - name: redis
-    version: 12.6.0
+    version: 14.1.0
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: keycloak
-    version: 9.8.1
+    version: 10.3.1
     repository: https://codecentric.github.io/helm-charts
     condition: keycloak.enabled
   - name: ingress-nginx
@@ -37,7 +43,7 @@ dependencies:
     repository: https://kubernetes.github.io/ingress-nginx
     condition: nginx_ingress_controller.enabled
   - name: rabbitmq
-    version: 8.9.1
+    version: 8.12.2
     repository: https://charts.bitnami.com/bitnami
     condition: rabbitmq.enabled
 appVersion: 0.7.1

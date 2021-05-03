@@ -24,6 +24,9 @@ const login = `${auth}/login`;
 
 const workspaces = `/workspaces`;
 
+const tokens = `/tokens`;
+const tokensComparation = `/tokens/compare`;
+
 const users = `/users`;
 const usersComparation = `/users/compare`;
 
@@ -69,6 +72,8 @@ export default {
   error404,
   workspace,
   workspaces,
+  tokens,
+  tokensComparation,
   users,
   usersComparation,
   usersView,

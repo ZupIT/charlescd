@@ -35,3 +35,21 @@ test('render Placeholder default component', () => {
   expect(titleElement).toHaveTextContent(props.title);
   expect(subtitleElement).toHaveTextContent(props.subtitle);
 });
+
+test('render Placeholder with description', () => {
+  const props = {    
+    icon: "circles-empty",
+    title: "Title",
+    description: "Description"
+  }
+
+  render(
+    <Placeholder icon={props.icon} title={props.title} description={props.description} />
+  );
+
+  const titleElement = screen.getByText(props.title);
+  const descriptionElement = screen.getByText(props.description);
+  
+  expect(titleElement).toHaveTextContent(props.title);
+  expect(descriptionElement).toHaveTextContent(props.description);
+});

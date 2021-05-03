@@ -18,6 +18,8 @@ package io.charlescd.moove.application.webhook.impl
 
 import io.charlescd.moove.application.OpCodeEnum
 import io.charlescd.moove.application.PatchOperation
+import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WebhookService
 import io.charlescd.moove.application.webhook.UpdateWebhookSubscriptionInteractor
@@ -25,6 +27,7 @@ import io.charlescd.moove.application.webhook.request.PatchWebhookSubscriptionRe
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WebhookSubscription
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -37,15 +40,17 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
     private UpdateWebhookSubscriptionInteractor updateWebhookSubscriptionInteractor
     private HermesService hermesService = Mock(HermesService)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, managementUserSecurityService)), hermesService)
+        updateWebhookSubscriptionInteractor = new UpdateWebhookSubscriptionInteractorImpl(new WebhookService(new UserService(userRepository, systemTokenService, managementUserSecurityService)), hermesService)
     }
 
-    def "when trying to update subscription should do it successfully"() {
+    def "when trying to update subscription should do it successfully using authorization"() {
         when:
-        updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, subscriptionId, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute(workspaceId, authorization, null, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail
@@ -55,9 +60,25 @@ class UpdateWebhookSubscriptionInteractorImplTest extends Specification {
         notThrown()
     }
 
+    def "when trying to update subscription should do it successfully using system token"() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+
+        when:
+        updateWebhookSubscriptionInteractor.execute(workspaceId, null, systemTokenValue, subscriptionId, updateWebhookSubscriptionRequest())
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * this.userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * this.hermesService.getSubscription(authorEmail, subscriptionId) >> webhookSubscription
+        1 * this.hermesService.updateSubscription(authorEmail, subscriptionId, events) >> webhookSubscription
+        notThrown()
+    }
+
     def "when trying to update subscription and is wrong workspace should throw not found exception"() {
         when:
-        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, subscriptionId, updateWebhookSubscriptionRequest())
+        updateWebhookSubscriptionInteractor.execute("workspaceIdOther", authorization, null, subscriptionId, updateWebhookSubscriptionRequest())
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> authorEmail

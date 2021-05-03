@@ -124,6 +124,14 @@ data:
 # Source: charlescd/templates/charlescd-secrets.yaml
 apiVersion: v1
 data:
+  encryption-key: NjQ5NzE5MjNkMjFhNDg4N2EzYWNmMWFkMTU5NjFiYmM=
+kind: Secret
+metadata:
+  name: gate-aes256-key
+---
+# Source: charlescd/templates/charlescd-secrets.yaml
+apiVersion: v1
+data:
   encryption-key: Yjg0NDVkMDUtMzliOC00YTkxLWEwOWMtZDRhN2VkOGRlZmRj
 kind: Secret
 metadata:
@@ -216,6 +224,12 @@ data:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
                         disabled: true
+
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
               http_filters:
               
               - name: envoy.filters.http.cors
@@ -350,6 +364,21 @@ data:
                 address:
                   socket_address:
                     address: charlescd-hermes
+                    port_value: 8080
+
+      - name: charlescd-gate
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-gate
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-gate
                     port_value: 8080
     admin:
       access_log_path: "/dev/stdout"
@@ -5762,6 +5791,11 @@ data:
       psql -c "ALTER DATABASE charlescd_compass OWNER TO charlescd_compass"
       psql -d charlescd_compass -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
     
+      psql -c "CREATE DATABASE charlescd_moove"
+      psql -c "CREATE USER charlescd_moove WITH PASSWORD '7Qs2KuM9gYzw48BS'"
+      psql -c "ALTER DATABASE charlescd_moove OWNER TO charlescd_moove"
+      psql -d charlescd_moove -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+
       psql -c "CREATE DATABASE charlescd_hermes"
       psql -c "CREATE USER charlescd_hermes WITH PASSWORD 'aGVybWVz'"
       psql -c "ALTER DATABASE charlescd_hermes OWNER TO charlescd_hermes"

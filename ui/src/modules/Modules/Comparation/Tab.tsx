@@ -27,7 +27,7 @@ import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { Module } from '../interfaces/Module';
 import { Component } from '../interfaces/Component';
 import { useFindModule, useDeleteModule } from '../hooks/module';
-import { resolveParams, pathModuleById } from './helpers';
+import { resolveParams } from './helpers';
 import FormModule from './Form';
 import FormComponent from './Form/Component';
 import ViewModule from './View';
@@ -109,8 +109,8 @@ const Tab = ({ param }: Props) => {
         <Can I="read" a="modules" passThrough>
           <Dropdown.Item
             icon="copy"
-            name="Copy link"
-            onClick={() => copyToClipboard(pathModuleById(id))}
+            name="Copy ID"
+            onClick={() => copyToClipboard(id)}
           />
         </Can>
       </Dropdown>
@@ -122,7 +122,6 @@ const Tab = ({ param }: Props) => {
       {mode === 'view' && isEmpty(component) && (
         <ViewModule
           module={module}
-          mode={mode}
           onChange={updateModule}
           onSelectComponent={(c: Component) => setComponent(c)}
         />

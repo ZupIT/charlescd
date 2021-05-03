@@ -21,6 +21,7 @@ import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.representation.UserRepresentation
 import io.charlescd.moove.legacy.moove.request.user.ResetPasswordRequest
+import io.charlescd.moove.legacy.repository.SystemTokenRepository
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import spock.lang.Specification
@@ -36,6 +37,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             decodedEmail,
             "https://www.photos.com/johndoe",
             false,
+            null,
             LocalDateTime.now()
     )
 
@@ -45,6 +47,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
             decodedEmail,
             "https://www.photos.com/johndoe",
             true,
+            null,
             LocalDateTime.now()
     )
     private UserRepresentation representation = new UserRepresentation(
@@ -57,12 +60,13 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
     )
 
     private UserRepository repository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
     private Boolean idmEnabled = true
 
     def setup() {
-        service = new UserServiceLegacy(repository, keycloakService, idmEnabled)
+        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, idmEnabled)
     }
 
     def "should delete by id"() {
@@ -112,7 +116,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "shouldn't delete user cause using external idm"() {
         given:
-        service = new UserServiceLegacy(repository, keycloakService, false)
+        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, false)
 
         when:
         def response = service.delete(representation.id, authorization)

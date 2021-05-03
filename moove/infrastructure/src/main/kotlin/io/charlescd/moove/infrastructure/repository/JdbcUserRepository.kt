@@ -75,6 +75,10 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         return findUserByEmail(email)
     }
 
+    override fun findBySystemTokenId(systemTokenId: String): Optional<User> {
+        return findBySystemToken(systemTokenId)
+    }
+
     override fun findAll(name: String?, email: String?, page: PageRequest): Page<User> {
         return findAllUsers(name, email, page)
     }
@@ -171,6 +175,15 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
         )
     }
 
+    private fun findBySystemToken(systemTokenId: String): Optional<User> {
+        val statement = StringBuilder(BASE_QUERY_STATEMENT)
+            .appendln("AND users.system_token_id = ?")
+
+        return Optional.ofNullable(
+            this.jdbcTemplate.query(statement.toString(), arrayOf(systemTokenId), userExtractor)?.firstOrNull()
+        )
+    }
+
     private fun findUserById(id: String): Optional<User> {
         val statement = StringBuilder(BASE_QUERY_STATEMENT)
             .appendln("AND users.id = ?")
@@ -256,6 +269,7 @@ class JdbcUserRepository(private val jdbcTemplate: JdbcTemplate, private val use
                                              OR workspaces.status = 'COMPLETE')
                  LEFT JOIN users as workspace_user ON workspaces.user_id = workspace_user.id
         WHERE 1 = 1
+        AND users.system_token_id IS NULL
         ORDER BY users.name ASC
         """
     }
