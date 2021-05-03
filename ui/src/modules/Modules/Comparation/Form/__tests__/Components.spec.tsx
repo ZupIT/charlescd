@@ -46,7 +46,10 @@ jest.mock("react-hook-form", () => {
     __esModule: true,
     useFormContext: () => ({
       register: () => {},
-      unregister: () => {}
+      unregister: () => {},
+      formState: {
+        errors: {}
+      }
     })
   };
 });

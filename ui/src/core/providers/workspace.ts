@@ -72,8 +72,8 @@ export const updateName = (value: string) =>
 export const addConfig = (path: string, value: string) =>
   patchRequest(`${endpoint}/${getWorkspaceId()}`, 'replace', path, value);
 
-export const delConfig = (path: string) =>
-  patchRequest(`${endpoint}/${getWorkspaceId()}`, 'remove', path);
+export const delConfig = (path: string, value: string) =>
+  patchRequest(`${endpoint}/${getWorkspaceId()}`, 'remove', path, value);
 
 export const testGitConnection = (data: GitConnectionTest) =>
   baseRequest(`${mooveEndpoint}/configurations/git/connection-status`, data, {

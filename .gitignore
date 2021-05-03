@@ -34,3 +34,6 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+
+# Helm dependency charts
+install/helm-chart/charts/*.tgz

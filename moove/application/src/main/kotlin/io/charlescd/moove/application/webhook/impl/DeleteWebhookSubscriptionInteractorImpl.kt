@@ -28,12 +28,12 @@ class DeleteWebhookSubscriptionInteractorImpl @Inject constructor(
     private val webhookService: WebhookService,
     private val hermesService: HermesService
 ) : DeleteWebhookSubscriptionInteractor {
-    override fun execute(workspaceId: String, authorization: String, id: String) {
-        deleteSubscription(workspaceId, authorization, id)
+    override fun execute(workspaceId: String, authorization: String?, token: String?, id: String) {
+        deleteSubscription(workspaceId, authorization, token, id)
     }
 
-    private fun deleteSubscription(workspaceId: String, authorization: String, id: String) {
-        val author = webhookService.getAuthor(authorization)
+    private fun deleteSubscription(workspaceId: String, authorization: String?, token: String?, id: String) {
+        val author = webhookService.getAuthor(authorization, token)
         validateSubscription(workspaceId, author, id)
         hermesService.deleteSubscription(author.email, id)
     }

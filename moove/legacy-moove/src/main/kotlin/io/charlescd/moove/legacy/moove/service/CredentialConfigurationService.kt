@@ -60,10 +60,11 @@ class CredentialConfigurationService(
     fun createRegistryConfig(
         createRegistryConfigRequest: CreateRegistryConfigurationRequest,
         workspaceId: String,
-        authorization: String
+        authorization: String?,
+        token: String?
     ): CredentialConfigurationRepresentation {
 
-        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
+        val user: User = userServiceLegacy.findFromAuthMethods(authorization, token)
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
             buildVillagerRegistryConfigurationRequest(createRegistryConfigRequest, user.id)
@@ -81,10 +82,11 @@ class CredentialConfigurationService(
     fun createCdConfig(
         createCdConfigRequest: CreateCdConfigurationRequest,
         workspaceId: String,
-        authorization: String
+        authorization: String?,
+        token: String?
     ): CredentialConfigurationRepresentation {
 
-        val user: User = userServiceLegacy.findByAuthorizationToken(authorization)
+        val user: User = userServiceLegacy.findFromAuthMethods(authorization, token)
 
         val deployRequest: CreateDeployCdConfigurationRequest =
             buildDeployCdConfigurationRequest(createCdConfigRequest, user)
@@ -123,11 +125,12 @@ class CredentialConfigurationService(
     fun testRegistryConfiguration(
         workspaceId: String,
         request: CreateRegistryConfigurationRequest,
-        authorization: String
+        authorization: String?,
+        token: String?
     ) {
 
         val villagerRequest: CreateVillagerRegistryConfigurationRequest =
-            buildVillagerRegistryConfigurationRequest(request, userServiceLegacy.findByAuthorizationToken(authorization).id)
+            buildVillagerRegistryConfigurationRequest(request, userServiceLegacy.findFromAuthMethods(authorization, token).id)
 
         try {
             villagerApi.testRegistryConfiguration(villagerRequest, workspaceId)

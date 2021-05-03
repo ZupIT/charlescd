@@ -16,8 +16,18 @@
 
 export interface Helm {
   helmOrganization: string;
-  helmRepository: string;
+  helmRepository?: string;
+  helmProjectId?: string;
   helmPath?: string;
-  helmGitlabUrl?: string;
+  helmUrl?: string;
   helmBranch?: string;
+}
+
+export interface GitHelm {
+  baseUrl: string;
+  path?: string;
+  branch: string;
+  projectId?: string;
+  organization?: string;
+  repository?: string;
 }

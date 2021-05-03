@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
-import { copyToClipboard } from 'core/utils/clipboard';
 import { useWorkspace } from 'modules/Settings/hooks';
 import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
@@ -33,6 +32,7 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
+import { copyToClipboard } from 'core/utils/clipboard';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
@@ -61,7 +61,7 @@ const Credentials = ({ onClickHelp }: Props) => {
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
-
+  
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspace(name);
   };
@@ -130,10 +130,10 @@ const Credentials = ({ onClickHelp }: Props) => {
         setForm={setForm}
         data={workspace.registryConfiguration}
       />
-      <Section.CDConfiguration
+      <Section.DeploymentConfiguration
         form={form}
         setForm={setForm}
-        data={workspace.cdConfiguration}
+        data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}

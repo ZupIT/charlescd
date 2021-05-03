@@ -44,11 +44,10 @@ class CredentialConfigurationControllerUnitTest extends Specification {
         def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", "charlescd", "{}")
 
         when:
-        controller.createRegistryConfig(workspaceId, authorization, request)
+        controller.createRegistryConfig(workspaceId, authorization, null, request)
 
         then:
-        1 * service.createRegistryConfig(request, workspaceId, authorization)
-        notThrown()
+        1 * service.createRegistryConfig(request, workspaceId, authorization, null)
     }
 
     def "should create cd config"() {
@@ -61,10 +60,10 @@ class CredentialConfigurationControllerUnitTest extends Specification {
         def request = new CreateOctopipeCdConfigurationRequest(configData, "octopite")
 
         when:
-        controller.createCdConfig(workspaceId, authorization, request)
+        controller.createCdConfig(workspaceId, authorization, null, request)
 
         then:
-        1 * service.createCdConfig(request, workspaceId, authorization)
+        1 * service.createCdConfig(request, workspaceId, authorization, null)
         notThrown()
     }
 
@@ -95,7 +94,7 @@ class CredentialConfigurationControllerUnitTest extends Specification {
         def request = new CreateGCPRegistryConfigurationRequest("GCP", "https://gcp.com.io", "charlescd", "{}")
 
         when:
-        controller.configurationValidation(workspaceId, request, authorization)
+        controller.configurationValidation(workspaceId, request, null, authorization)
 
         then:
         notThrown()

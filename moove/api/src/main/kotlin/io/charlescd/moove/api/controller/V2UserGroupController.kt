@@ -53,10 +53,11 @@ class V2UserGroupController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateUserGroupRequest
     ): UserGroupResponse {
-        return this.createUserGroupInteractor.execute(request, authorization)
+        return this.createUserGroupInteractor.execute(request, authorization, token)
     }
 
     @ApiOperation(value = "Update a existing User Group")

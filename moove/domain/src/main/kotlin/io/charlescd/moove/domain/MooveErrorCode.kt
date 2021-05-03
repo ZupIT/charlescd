@@ -36,12 +36,13 @@ enum class MooveErrorCode(val key: String) {
     INTERNAL_SERVER_ERROR("internal.server.error"),
     INVALID_BUILD_STATUS("invalid.build.status"),
     INVALID_PAYLOAD("invalid.payload"),
+    CONFLICT("conflict"),
     MISSING_PARAMETER("missing.parameter"),
     MOVE_BUILD_INVALID_COLUMN("move.build.invalid.column"),
     FORBIDDEN("forbidden"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
     WORKSPACE_DOCKER_REGISTRY_CONFIGURATION_IS_MISSING("workspace.docker.registry.configuration.is.missing"),
-    WORKSPACE_CD_CONFIGURATION_IS_MISSING("workspace.cd.configuration.is.missing"),
+    WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING("workspace.deployment.configuration.is.missing"),
     SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO("some.of.informed.features.does.not.exist.or.are.not.ready.to.go"),
     CIRCLE_DEPLOYMENT_ACTIVE("circle.deployment.active"),
     CANNOT_UPDATE_DEFAULT_CIRCLE("cannot.update.default.circle"),
@@ -54,6 +55,7 @@ enum class MooveErrorCode(val key: String) {
     USER_ALREADY_DISASSOCIATED("user.already.disassociated"),
     MISSING_DEFAULT_CIRCLE("missing.default.circle"),
     INVALID_CIRCLE_MATCHER_URL_ERROR("invalid.circle.matcher.url.error"),
+    INVALID_BUTLER_URL_ERROR("invalid.butler.url.error"),
     MODULE_MUST_HAVE_AT_LEAST_ONE_COMPONENT("module.must.have.at.least.one.component"),
     CREATE_USER_ERROR_EMAIL_ALREADY_EXISTS("create.user.error.email.already.exists"),
     USER_PASSWORD_DOES_NOT_MATCH("user.password.does.not.match"),
@@ -61,5 +63,6 @@ enum class MooveErrorCode(val key: String) {
     EXTERNAL_IDM_FORBIDDEN("external.idm.forbidden"),
     LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED("limit.of.percentage.circles.exceeded"),
     IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
-    DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error")
+    DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error"),
+    DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED("deployment.configuration.already.registered")
 }

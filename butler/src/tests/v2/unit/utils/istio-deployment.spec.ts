@@ -1,78 +1,41 @@
-import { IstioDeploymentManifestsUtils } from '../../../../app/v2/core/integrations/utils/istio-deployment-manifests.utils'
-import { Component, Deployment } from '../../../../app/v2/api/deployments/interfaces'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums'
-import { DeploymentComponent } from '../../../../app/v2/api/deployments/interfaces/deployment.interface'
-import { noRepeatedDefaultCircleDr } from './fixtures/deployment/no-repeated-default-circle-dr'
-import { noRepeatedCircleDr } from './fixtures/deployment/no-repeated-circle-dr'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-it('must not insert two default circle subsets', () => {
-  const newComponent: DeploymentComponent = {
-    id: 'component-id',
-    helmUrl: 'http://localhost:2222/helm',
-    imageTag: 'v1',
-    imageUrl: 'https://repository.com/A:v1',
-    name: 'A',
-    running: false,
-    gatewayName: null,
-    hostValue: null
-  }
-  const deployment: Deployment = {
-    id: 'deployment-id',
-    authorId: 'user-1',
-    callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
-        namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
-    circleId: 'default-circle-id',
-    defaultCircle: true,
-    createdAt: new Date(),
-    components: [
-      newComponent
-    ]
-  }
+import { IstioDeploymentManifestsUtils } from '../../../../app/v2/core/integrations/utils/istio-deployment-manifests.utils'
+import { Component } from '../../../../app/v2/api/deployments/interfaces'
+import { twoSubsetsDr } from './fixtures/deployment/two-subsets-dr'
+
+it('should generate the correct destination rules manifest with one circle and one default circle subset', () => {
   const activeByName: Component[] = [
     {
-      id: 'component-id2',
+      id: 'component-id',
       helmUrl: 'http://localhost:2222/helm',
-      imageTag: 'v2',
-      imageUrl: 'https://repository.com/A:v2',
+      imageTag: 'v1',
+      imageUrl: 'https://repository.com/A:v1',
       name: 'A',
       running: false,
       gatewayName: null,
       hostValue: null,
       deployment: {
-        id: 'deployment-id2',
+        id: 'deployment-id1',
         authorId: 'user-1',
-        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
+        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
         circleId: 'default-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
+        namespace: 'sandbox',
         defaultCircle: true
       }
     },
@@ -91,138 +54,19 @@ it('must not insert two default circle subsets', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'normal-circle-id',
         createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: false
-      }
-    }
-  ]
-
-  expect(
-    IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
-  ).toEqual(noRepeatedDefaultCircleDr)
-})
-
-it('must not insert two subsets for the same circle', () => {
-  const newComponent: DeploymentComponent = {
-    id: 'component-id',
-    helmUrl: 'http://localhost:2222/helm',
-    imageTag: 'v1',
-    imageUrl: 'https://repository.com/A:v1',
-    name: 'A',
-    running: false,
-    gatewayName: null,
-    hostValue: null
-  }
-  const deployment: Deployment = {
-    id: 'deployment-id',
-    authorId: 'user-1',
-    callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
-    cdConfiguration: {
-      id: 'cd-configuration-id',
-      type: CdTypeEnum.SPINNAKER,
-      configurationData: {
-        gitAccount: 'github-artifact',
-        account: 'default',
         namespace: 'sandbox',
-        url: 'spinnaker-url'
-      },
-      name: 'spinnakerconfiguration',
-      authorId: 'user-2',
-      workspaceId: 'workspace-id',
-      createdAt: new Date(),
-      deployments: null
-    },
-    circleId: 'normal-circle-id',
-    defaultCircle: true,
-    createdAt: new Date(),
-    components: [
-      newComponent
-    ]
-  }
-  const activeByName: Component[] = [
-    {
-      id: 'component-id3',
-      helmUrl: 'http://localhost:2222/helm',
-      imageTag: 'v2',
-      imageUrl: 'https://repository.com/A:v2',
-      name: 'A',
-      running: false,
-      gatewayName: null,
-      hostValue: null,
-      deployment: {
-        id: 'deployment-id2',
-        authorId: 'user-1',
-        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
-        circleId: 'default-circle-id',
-        createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
-        defaultCircle: true
-      }
-    },
-    {
-      id: 'component-id4',
-      helmUrl: 'http://localhost:2222/helm',
-      imageTag: 'v3',
-      imageUrl: 'https://repository.com/A:v1',
-      name: 'A',
-      running: false,
-      gatewayName: null,
-      hostValue: null,
-      deployment: {
-        id: 'deployment-id',
-        authorId: 'user-1',
-        callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
-        circleId: 'normal-circle-id',
-        createdAt: new Date(),
-        cdConfiguration: {
-          id: 'cd-configuration-id',
-          type: CdTypeEnum.SPINNAKER,
-          configurationData: {
-            gitAccount: 'github-artifact',
-            account: 'default',
-            namespace: 'sandbox',
-            url: 'spinnaker-url'
-          },
-          name: 'spinnakerconfiguration',
-          authorId: 'user-2',
-          workspaceId: 'workspace-id',
-          createdAt: new Date(),
-          deployments: null
-        },
         defaultCircle: false
       }
     }
   ]
 
   expect(
-    IstioDeploymentManifestsUtils.getDestinationRulesManifest(deployment, newComponent, activeByName)
-  ).toEqual(noRepeatedCircleDr)
+    IstioDeploymentManifestsUtils.getDestinationRulesManifest('A', 'sandbox', activeByName)
+  ).toEqual(twoSubsetsDr)
 })
+
+// TODO generate destination rules with empty subsets
+
+// TODO generate correct virtual services
+
+// TODO generate virtual services with empty rules

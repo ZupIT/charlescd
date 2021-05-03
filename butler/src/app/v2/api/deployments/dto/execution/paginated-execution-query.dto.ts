@@ -37,11 +37,11 @@ export class ExecutionQuery {
   @ApiProperty()
   @IsOptional()
   @IsBooleanString()
-  public active?: boolean
+  public current: boolean
 
-  constructor(size = 50, page = 0, active?: boolean) {
+  constructor(size = 50, page = 0, current: boolean) {
     this.size = size
     this.page = page
-    this.active = active
+    this.current = current
   }
 }

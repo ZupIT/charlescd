@@ -12,6 +12,8 @@ compass:
   enabled: true
 hermes:
   enabled: true
+gate:
+  enabled: true
 cors:
   enabled: true
   hosts: []

@@ -32,8 +32,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // eslint-disable-next-line no-native-reassign
   window = originalWindow;
-
 });
 
 test('render Modules comparation', async () => {

@@ -183,7 +183,7 @@ class FeatureServiceTest {
     }
 
     private fun getUser(): User {
-        return User("userId", "username", "email", "url", true, LocalDateTime.now())
+        return User("userId", "username", "email", "url", true, null, LocalDateTime.now())
     }
 
     private fun getAuthorization(): String {

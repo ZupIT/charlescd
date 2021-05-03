@@ -18,5 +18,5 @@ package io.charlescd.moove.application.deployment
 
 interface UndeployInteractor {
 
-    fun execute(workspaceId: String, authorization: String, id: String)
+    fun execute(workspaceId: String, authorization: String?, token: String?, id: String)
 }

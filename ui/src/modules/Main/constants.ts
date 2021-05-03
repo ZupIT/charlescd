@@ -69,10 +69,10 @@ export const mainMenu: MenuType[] = [
     to: routes.workspaces
   },
   {
-    id: genMenuId(routes.account),
+    id: genMenuId(routes.accountProfile),
     icon: 'account',
     text: 'Account',
-    to: routes.account
+    to: routes.accountProfile
   }
 ];
 
@@ -82,6 +82,12 @@ export const rootMainMenu: MenuType[] = [
     icon: 'workspace',
     text: 'Workspaces',
     to: routes.workspaces
+  },
+  {
+    id: genMenuId(routes.tokens),
+    icon: 'token',
+    text: 'Access tokens',
+    to: routes.tokens
   },
   {
     id: genMenuId(routes.users),
@@ -96,9 +102,9 @@ export const rootMainMenu: MenuType[] = [
     to: routes.groups
   },
   {
-    id: genMenuId(routes.account),
+    id: genMenuId(routes.accountProfile),
     icon: 'account',
     text: 'Account',
-    to: routes.account
+    to: routes.accountProfile
   }
 ];
