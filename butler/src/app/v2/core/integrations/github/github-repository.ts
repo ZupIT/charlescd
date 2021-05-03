@@ -21,12 +21,9 @@ import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 import { ExceptionBuilder } from '../../utils/exception.utils'
 import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
-<<<<<<< HEAD
-=======
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../constants'
->>>>>>> 1578a3ac7c44d54bad96255bb7fd2b576b17bdb9
 
 @Injectable()
 export class GitHubRepository implements Repository {
