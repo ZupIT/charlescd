@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
@@ -22,7 +22,7 @@ import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { useCDConfiguration } from './hooks';
 import { FORM_CD_CONFIGURATION } from './constants';
-import FormCDConfiguration from './Form';
+import Form from './Form';
 
 interface Props {
   form: string;
@@ -30,13 +30,15 @@ interface Props {
   data: Configuration;
 }
 
-const SectionCDConfiguration = ({ form, setForm, data }: Props) => {
+const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
-  const { responseRemove, loadingRemove, remove } = useCDConfiguration();
+  const { status, remove } = useCDConfiguration();
 
   useEffect(() => {
-    setIsAction(true);
-  }, [responseRemove]);
+    if (status === 'resolved') {
+      setIsAction(true);
+    }
+  }, [status]);
 
   useEffect(() => {
     if (data) setIsAction(false);
@@ -44,17 +46,17 @@ const SectionCDConfiguration = ({ form, setForm, data }: Props) => {
 
   const renderSection = () => (
     <Section
-      name="CD Configuration"
+      name="Deployment Configuration"
       icon="cd-configuration"
       showAction={isAction}
       action={() => setForm(FORM_CD_CONFIGURATION)}
       type="Required"
     >
-      {data && !responseRemove && (
+      {data && status !== 'resolved' && (
         <Card.Config
           icon="cd-configuration"
           description={data.name}
-          isLoading={loadingRemove}
+          isLoading={status === 'pending'}
           onClose={() => remove(data.id)}
         />
       )}
@@ -64,11 +66,11 @@ const SectionCDConfiguration = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_CD_CONFIGURATION) && (
       <Layer action={() => setForm(null)}>
-        <FormCDConfiguration onFinish={() => setForm(null)} />
+        <Form onFinish={() => setForm(null)} />
       </Layer>
     );
 
   return form ? renderForm() : renderSection();
 };
 
-export default SectionCDConfiguration;
+export default SectionDeploymentConfiguration;
