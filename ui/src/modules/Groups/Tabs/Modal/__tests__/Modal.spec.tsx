@@ -31,6 +31,20 @@ test('render users Modal', async () => {
   expect(button).toBeInTheDocument();
 });
 
+test('should not show empty placeholder', async () => {
+  render(
+    <Modal users={users} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
+  );
+
+  const element = screen.getByTestId('modal-user');
+  const button = screen.getByTestId('button-default-undefined');
+  const placeholder = screen.queryByTestId('icon-user-not-found');
+
+  expect(element).toBeInTheDocument();
+  expect(button).toBeInTheDocument();
+  expect(placeholder).not.toBeInTheDocument();
+});
+
 test('testing on selected style', async () => {
   render(
     <Modal users={users} isOpen onSearch={jest.fn()} onSelected={jest.fn()} />
