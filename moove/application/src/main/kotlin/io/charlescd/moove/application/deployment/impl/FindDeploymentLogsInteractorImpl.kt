@@ -35,11 +35,11 @@ class FindDeploymentLogsInteractorImpl(
     private val deploymentConfigurationService: DeploymentConfigurationService,
     private val deployClient: DeployClient
 ) : FindDeploymentLogsInteractor {
-    override fun execute(workspaceId: String, authorization: String, deploymentId: String): LogResponse {
+    override fun execute(workspaceId: String, authorization: String?, token: String?, deploymentId: String): LogResponse {
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
-        this.userService.findByAuthorizationToken(authorization)
+        this.userService.findFromAuthMethods(authorization, token)
         return this.deployClient.getDeploymentLogs(URI.create(deploymentConfiguration.butlerUrl), workspaceId, deploymentId)
     }
 

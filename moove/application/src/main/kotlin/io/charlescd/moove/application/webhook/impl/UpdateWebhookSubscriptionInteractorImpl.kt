@@ -33,21 +33,23 @@ class UpdateWebhookSubscriptionInteractorImpl @Inject constructor(
 ) : UpdateWebhookSubscriptionInteractor {
     override fun execute(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         id: String,
         request: PatchWebhookSubscriptionRequest
     ): WebhookSubscriptionResponse {
-        val webhookSubscription = updateSubscription(workspaceId, authorization, id, request)
+        val webhookSubscription = updateSubscription(workspaceId, authorization, token, id, request)
         return WebhookSubscriptionResponse.from(webhookSubscription)
     }
 
     private fun updateSubscription(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         id: String,
         request: PatchWebhookSubscriptionRequest
     ): WebhookSubscription {
-        val author = webhookService.getAuthor(authorization)
+        val author = webhookService.getAuthor(authorization, token)
         val subscription = getSubscription(workspaceId, author, id)
         val patched = request.applyPatch(subscription)
         return hermesService.updateSubscription(author.email, id, patched.events)

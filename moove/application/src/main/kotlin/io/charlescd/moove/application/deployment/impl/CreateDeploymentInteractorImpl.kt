@@ -45,12 +45,13 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     override fun execute(
         request: CreateDeploymentRequest,
         workspaceId: String,
-        authorization: String
+        authorization: String?,
+        token: String?
     ): DeploymentResponse {
         val build: Build = getBuild(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val user = userService.findByAuthorizationToken(authorization)
+        val user = userService.findFromAuthMethods(authorization, token)
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         val deployment = createDeployment(request, workspaceId, user)
 

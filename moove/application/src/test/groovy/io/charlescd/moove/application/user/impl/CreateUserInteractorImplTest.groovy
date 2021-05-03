@@ -15,6 +15,7 @@
  */
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.CreateUserInteractor
@@ -22,6 +23,7 @@ import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.ForbiddenException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -35,10 +37,11 @@ class CreateUserInteractorImplTest extends Specification {
 
     private CreateUserInteractor createUserInteractor
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository, managementUserSecurityService), true)
+        createUserInteractor = new CreateUserInteractorImpl(new UserService(userRepository, systemTokenService, managementUserSecurityService), true)
     }
 
     def "when trying to create user should do it successfully"() {
@@ -219,7 +222,7 @@ class CreateUserInteractorImplTest extends Specification {
         def user = createUserRequest.toUser()
 
         createUserInteractor = new CreateUserInteractorImpl(
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 false)
 
         when:

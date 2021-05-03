@@ -57,10 +57,11 @@ class V2WorkspaceController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createWorkspace(
-        @RequestHeader(value = "Authorization") authorization: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @Valid @RequestBody request: CreateWorkspaceRequest
     ): WorkspaceResponse {
-        return createWorkspaceInteractor.execute(request, authorization)
+        return createWorkspaceInteractor.execute(request, authorization, token)
     }
 
     @ApiOperation(value = "Patch Workspace")

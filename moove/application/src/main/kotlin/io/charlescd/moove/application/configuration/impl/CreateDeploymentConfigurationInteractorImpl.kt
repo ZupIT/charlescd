@@ -21,11 +21,15 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.configuration.CreateDeploymentConfigurationInteractor
 import io.charlescd.moove.application.configuration.request.CreateDeploymentConfigurationRequest
 import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.exceptions.ConflictException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import io.charlescd.moove.infrastructure.service.DeployClientService
 import javax.inject.Named
+import org.springframework.dao.DuplicateKeyException
 
 @Named
 class CreateDeploymentConfigurationInteractorImpl(
@@ -36,6 +40,7 @@ class CreateDeploymentConfigurationInteractorImpl(
 ) : CreateDeploymentConfigurationInteractor {
 
     override fun execute(request: CreateDeploymentConfigurationRequest, workspaceId: String, authorization: String): DeploymentConfigurationResponse {
+
         workspaceService.checkIfWorkspaceExists(workspaceId)
 
         validateButlerUrl(request.butlerUrl)
@@ -44,9 +49,17 @@ class CreateDeploymentConfigurationInteractorImpl(
 
         checkIfDeploymentConfigurationExistsOnWorkspace(workspaceId)
 
-        val saved = this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
+        val saved = saveDeploymentConfiguration(request, workspaceId, author)
 
         return DeploymentConfigurationResponse(saved.id, saved.name, saved.gitProvider)
+    }
+
+    private fun saveDeploymentConfiguration(request: CreateDeploymentConfigurationRequest, workspaceId: String, author: User): DeploymentConfiguration {
+        return try {
+            this.deploymentConfigurationRepository.save(request.toDeploymentConfiguration(workspaceId, author))
+        } catch (duplicateKeyException: DuplicateKeyException) {
+            throw ConflictException("Butler url '${request.butlerUrl}' already registered with namespace '${request.namespace}' in another workspace")
+        }
     }
 
     private fun validateButlerUrl(butlerUrl: String) {

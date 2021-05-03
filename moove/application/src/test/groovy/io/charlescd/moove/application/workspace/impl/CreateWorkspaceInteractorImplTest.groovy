@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.workspace.impl
 
 import io.charlescd.moove.application.CircleService
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
@@ -28,6 +29,7 @@ import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -41,12 +43,14 @@ class CreateWorkspaceInteractorImplTest extends Specification {
 
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenRepository systemTokenRepository = Mock(SystemTokenRepository)
     private CircleRepository circleRepository = Mock(CircleRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(systemTokenRepository)
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
         createWorkspaceInteractor =
-                new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService),
+                new CreateWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 new CircleService(circleRepository))
     }
 
@@ -57,7 +61,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         def createWorkspaceRequest = new CreateWorkspaceRequest("Workspace name")
 
         when:
-        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
+        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> email
@@ -68,14 +72,14 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
-    def 'should create workspace successfully'() {
+    def 'should create workspace successfully using authorization'() {
         given:
         def authorization = TestUtils.authorization
         def author = TestUtils.user
         def expectedWorkspace = TestUtils.workspace
         def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
         when:
-        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, authorization)
+        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, authorization, null)
 
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
@@ -113,4 +117,52 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         workspaceResponse.registryConfiguration == null
         workspaceResponse.deploymentConfiguration == null
     }
+
+    def 'should create workspace successfully using system token'() {
+        given:
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def author = TestUtils.user
+        def expectedWorkspace = TestUtils.workspace
+        def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
+        when:
+        def workspaceResponse = createWorkspaceInteractor.execute(createWorkspaceRequest, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * workspaceRepository.save(_) >> { arguments ->
+            def workspace = arguments[0]
+            assert workspace instanceof Workspace
+
+            assert workspace.name == expectedWorkspace.name
+            assert workspace.author.id == expectedWorkspace.author.id
+            assert workspace.author.name == expectedWorkspace.author.name
+            assert workspace.author.photoUrl == expectedWorkspace.author.photoUrl
+            assert workspace.author.email == expectedWorkspace.author.email
+            assert workspace.author.workspaces == expectedWorkspace.author.workspaces
+            assert workspace.status == WorkspaceStatusEnum.INCOMPLETE
+
+            expectedWorkspace
+        }
+        1 * circleRepository.save(_) >> { arguments ->
+            def circle = arguments[0]
+            assert circle instanceof Circle
+
+            assert circle.name == "Default"
+            assert circle.defaultCircle
+            assert circle.workspaceId == expectedWorkspace.id
+        }
+
+        workspaceResponse != null
+        workspaceResponse.id == expectedWorkspace.id
+        workspaceResponse.status == expectedWorkspace.status.name()
+        workspaceResponse.createdAt == expectedWorkspace.createdAt
+        workspaceResponse.authorId == expectedWorkspace.author.id
+        workspaceResponse.deploymentConfiguration == null
+        workspaceResponse.circleMatcherUrl == expectedWorkspace.circleMatcherUrl
+        workspaceResponse.gitConfiguration == null
+        workspaceResponse.registryConfiguration == null
+    }
+
 }

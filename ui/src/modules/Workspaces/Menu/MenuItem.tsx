@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { saveWorkspace } from 'core/utils/workspace';
 import { setUserAbilities } from 'core/utils/abilities';
@@ -41,11 +40,12 @@ const MenuItem = ({ id, name, status, selectedWorkspace }: Props) => {
   const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
 
   const handleClick = () => {
-    saveWorkspace({ id, name });
+    const currentWorkspace = { ...workspace, id, name, status }
     selectedWorkspace(name);
-    setUserAbilities();
     dispatch(statusWorkspaceAction('idle'));
-    dispatch(loadedWorkspaceAction({ ...workspace, id, name, status }));
+    dispatch(loadedWorkspaceAction(currentWorkspace));
+    saveWorkspace(currentWorkspace);
+    setUserAbilities();
     history.push({
       pathname:
         status === WORKSPACE_STATUS.INCOMPLETE &&

@@ -45,7 +45,7 @@ class HypothesisServiceTest {
     private val deployedReleasesColumnId = "deployed-releases-column-id"
     private val workspaceId = "workspaceId"
 
-    private val user = User("userId", "username", "email", "url", false, LocalDateTime.now())
+    private val user = User("userId", "username", "email", "url", false, null, LocalDateTime.now())
 
     private val helmRepository = "http://github.com"
 

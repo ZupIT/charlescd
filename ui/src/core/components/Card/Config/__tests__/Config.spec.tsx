@@ -20,6 +20,12 @@ import { render, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import CardConfig from '../';
 
+
+const props = {
+  icon: 'git',
+  description: 'description'
+}
+
 test('render CardConfig default component', async () => {
 	const click = jest.fn();
   const props = {
@@ -31,7 +37,8 @@ test('render CardConfig default component', async () => {
     <CardConfig
       icon={props.icon}
       description={props.description}
-      onClose={click} />
+      onClose={click}
+    />
   );
 
   const btnAction = queryByTestId('icon-cancel');
@@ -42,4 +49,25 @@ test('render CardConfig default component', async () => {
 	expect(btnAction).toBeInTheDocument();
 	userEvent.click(btnAction);
 	await waitFor(() => expect(click).toBeCalled());
+});
+
+
+test('render CardConfig default component with dropdown actions', async () => {
+	const click = jest.fn();
+
+  const { getByText, queryByTestId } = render(
+    <CardConfig
+      icon={props.icon}
+      description={props.description}
+      actions={<></>}
+      onClick={click}
+    />
+  );
+
+  const btnAction = queryByTestId('icon-cancel');
+
+  expect(queryByTestId(`icon-${props.icon}`)).toBeInTheDocument();
+  expect(getByText(props.description)).toBeInTheDocument();
+
+	expect(btnAction).not.toBeInTheDocument();
 });

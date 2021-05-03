@@ -21,6 +21,7 @@ import { NotificationState } from 'core/components/Notification/interfaces/Notif
 import { UserGroupState } from 'modules/Groups/interfaces/UserGroupState';
 import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
 import { HypothesesState } from 'modules/Hypotheses/interfaces';
+import { TokensState } from 'modules/Tokens/state/reducer';
 
 export interface State {
   circles: CircleState;
@@ -30,4 +31,5 @@ export interface State {
   userGroups: UserGroupState;
   modules: ModuleState;
   hypothesis: HypothesesState;
+  tokens: TokensState;
 }

@@ -1,5 +1,6 @@
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ChangeUserPasswordInteractor
@@ -8,6 +9,7 @@ import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import io.charlescd.moove.domain.service.KeycloakService
@@ -19,11 +21,12 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
     private ChangeUserPasswordInteractor changeUserPasswordInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     void setup() {
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 true
         )
     }
@@ -72,7 +75,7 @@ class ChangeUserPasswordInteractorImplTest extends Specification {
         def request = new ChangeUserPasswordRequest("old-password", "new-password")
 
         this.changeUserPasswordInteractor = new ChangeUserPasswordInteractorImpl(
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 false
         )
 

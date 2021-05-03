@@ -41,6 +41,7 @@ import {
   hypothesesReducer,
   hypothesisInitialState
 } from 'modules/Hypotheses/state/reducer';
+import { tokensReducer, tokensInitialState } from 'modules/Tokens/state/reducer';
 import { CirclesActionTypes } from 'modules/Circles/state/actions';
 import { WorkspacesActionTypes } from 'modules/Workspaces/state/actions';
 import { UsersActionTypes } from 'modules/Users/state/actions';
@@ -49,6 +50,7 @@ import { Reducer } from './interfaces/Reducer';
 import { UserGroupsActionTypes } from 'modules/Groups/state/actions';
 import { ModulesActionTypes } from 'modules/Modules/state/actions';
 import { HypothesesActionTypes } from 'modules/Hypotheses/state/actions';
+import { TokensActionTypes } from 'modules/Tokens/state/actions';
 
 export type RootActionTypes =
   | CirclesActionTypes
@@ -57,7 +59,8 @@ export type RootActionTypes =
   | NotificationActionTypes
   | UserGroupsActionTypes
   | ModulesActionTypes
-  | HypothesesActionTypes;
+  | HypothesesActionTypes
+  | TokensActionTypes;
 
 export const rootState: State = {
   circles: circlesInitialState,
@@ -66,7 +69,8 @@ export const rootState: State = {
   notification: notificationInitialState,
   userGroups: userGroupInitialState,
   modules: modulesInitialState,
-  hypothesis: hypothesisInitialState
+  hypothesis: hypothesisInitialState,
+  tokens: tokensInitialState
 };
 
 export const reducers: Reducer = {
@@ -76,7 +80,8 @@ export const reducers: Reducer = {
   notification: notificationReducer,
   userGroups: userGroupReducer,
   modules: modulesReducer,
-  hypothesis: hypothesesReducer
+  hypothesis: hypothesesReducer,
+  tokens: tokensReducer
 };
 
 export const rootReducer = combineReducer(reducers);
