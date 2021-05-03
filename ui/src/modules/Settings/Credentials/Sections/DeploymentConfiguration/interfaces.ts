@@ -42,6 +42,7 @@ export interface CDConfiguration {
 }
 
 export interface DeploymentConfiguration {
+  id?: string;
   name: string;
   butlerUrl: string;
   namespace: string;

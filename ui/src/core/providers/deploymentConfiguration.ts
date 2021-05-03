@@ -15,10 +15,13 @@
  */
 
 import { DeploymentConfiguration } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
-import { postRequest } from './base';
+import { deleteRequest, postRequest } from './base';
 
 const endpoint = '/moove/v2/configurations/deployment';
 export const configPath = '/deploymentConfigurationId';
 
 export const create = (deploymentConfiguration: DeploymentConfiguration) =>
   postRequest(`${endpoint}`, deploymentConfiguration);
+
+export const removeDeploymentConfiguration = (id: string) =>
+  deleteRequest(`${endpoint}/${id}`);
