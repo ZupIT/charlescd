@@ -422,7 +422,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
         def deploymentConfigurationId = TestUtils.deploymentConfigId
         def deploymentConfiguration = TestUtils.deploymentConfig
 
