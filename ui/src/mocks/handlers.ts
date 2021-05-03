@@ -18,10 +18,12 @@ import auth from './handlers/auth';
 import users from './handlers/users';
 import circleMatcher from './handlers/circleMatcher';
 import workspaces from './handlers/workspaces';
+import gate from './handlers/gate';
 
 export const handlers = [
   ...auth,
   ...users,
   ...circleMatcher,
-  ...workspaces
+  ...workspaces,
+  ...gate
 ]

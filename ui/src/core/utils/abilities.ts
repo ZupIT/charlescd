@@ -24,12 +24,11 @@ export type Subjects =
   | 'maintenance'
   | 'deploy'
   | 'circles'
-  | 'modules'
-  | 'hypothesis';
+  | 'modules';
 type AppAbility = Ability<[Actions, Subjects]>;
 
-const actions = ['read', 'write'];
-const subjects = ['maintenance', 'deploy', 'circles', 'modules', 'hypothesis'];
+export const actions: Actions[] = ['write', 'read'];
+export const subjects: Subjects[] = ['modules', 'circles', 'deploy', 'maintenance'];
 
 const { build } = new AbilityBuilder<AppAbility>();
 const ability = build();

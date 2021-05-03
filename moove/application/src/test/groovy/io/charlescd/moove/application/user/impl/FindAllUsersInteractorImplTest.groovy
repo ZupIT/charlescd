@@ -16,11 +16,13 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindAllUsersInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.ForbiddenException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
@@ -30,11 +32,12 @@ import java.time.LocalDateTime
 class FindAllUsersInteractorImplTest extends Specification {
 
     private FindAllUsersInteractor findAllUsersInteractor
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
     private UserRepository userRepository = Mock(UserRepository)
 
     void setup() {
-        this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository, managementUserSecurityService))
+        this.findAllUsersInteractor = new FindAllUsersInteractorImpl(new UserService(userRepository, systemTokenService, managementUserSecurityService))
     }
 
     def "when there is no user should return an empty page"() {

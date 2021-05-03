@@ -38,12 +38,6 @@ export default interface IEnvConfiguration {
 
   darwinIstioDeploymentCallbackUrl: string
 
-  spinnakerUrl: string // TODO remove this
-
-  octopipeUrl: string
-
-  spinnakerGithubAccount: string
-
   helmTemplateUrl: string
 
   helmPrefixUrl: string
@@ -62,4 +56,6 @@ export default interface IEnvConfiguration {
   }
 
   butlerUrl: string
+
+  butlerNamespace: string
 }

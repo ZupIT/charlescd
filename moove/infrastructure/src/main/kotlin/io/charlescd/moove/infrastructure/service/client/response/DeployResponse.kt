@@ -16,42 +16,6 @@
 
 package io.charlescd.moove.infrastructure.service.client.response
 
-import java.time.LocalDateTime
-
 data class DeployResponse(
-    val id: String,
-    val modulesDeployments: List<DeployModuleResponse>,
-    val callbackUrl: String,
-    val applicationName: String,
-    val circle: DeployCircleResponse?,
-    val defaultCircle: Boolean,
-    val authorId: String,
-    val status: String?,
-    val createdAt: LocalDateTime
-)
-
-data class DeployModuleResponse(
-    val id: String,
-    val moduleId: String,
-    val componentsDeployments: List<DeployComponentResponse>,
-    val status: String?,
-    val createdAt: LocalDateTime
-)
-
-data class DeployComponentResponse(
-    val id: String,
-    val componentId: String,
-    val componentName: String,
-    val buildImageUrl: String,
-    val buildImageTag: String,
-    val contextPath: String?,
-    val healthCheck: String?,
-    val port: Int?,
-    val status: String?,
-    val createdAt: LocalDateTime
-)
-
-data class DeployCircleResponse(
-    val headerValue: String,
-    val removeCircle: Boolean? = null
+    val id: String
 )

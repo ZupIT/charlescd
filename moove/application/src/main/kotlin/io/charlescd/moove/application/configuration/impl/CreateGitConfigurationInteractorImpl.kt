@@ -33,10 +33,10 @@ class CreateGitConfigurationInteractorImpl(
     private val workspaceService: WorkspaceService
 ) : CreateGitConfigurationInteractor {
 
-    override fun execute(request: CreateGitConfigurationRequest, workspaceId: String, authorization: String): GitConfigurationResponse {
+    override fun execute(request: CreateGitConfigurationRequest, workspaceId: String, authorization: String?, token: String?): GitConfigurationResponse {
         workspaceService.checkIfWorkspaceExists(workspaceId)
 
-        val author = userService.findByAuthorizationToken(authorization)
+        val author = userService.findFromAuthMethods(authorization, token)
 
         val saved = this.gitConfigurationRepository.save(request.toGitConfiguration(workspaceId, author))
 

@@ -18,12 +18,14 @@
 
 package io.charlescd.moove.application.user.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserPasswordGeneratorService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.ResetUserPasswordInteractor
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.service.KeycloakService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -36,6 +38,8 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     private ResetUserPasswordInteractor resetUserPasswordInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
+
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
 
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
@@ -54,7 +58,7 @@ class ResetUserPasswordInteractorImplTest extends Specification {
     void setup() {
         resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(
                 new UserPasswordGeneratorService(),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 true)
     }
 
@@ -139,7 +143,7 @@ class ResetUserPasswordInteractorImplTest extends Specification {
 
         resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(
                 new UserPasswordGeneratorService(),
-                new UserService(userRepository, managementUserSecurityService),
+                new UserService(userRepository, systemTokenService, managementUserSecurityService),
                 false)
 
         when:

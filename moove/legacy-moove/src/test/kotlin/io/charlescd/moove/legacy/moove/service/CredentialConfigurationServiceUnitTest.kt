@@ -65,6 +65,7 @@ class CredentialConfigurationServiceUnitTest {
         email = "user@email.com.br",
         photoUrl = "www.google.com.br",
         isRoot = false,
+        systemTokenId = null,
         createdAt = LocalDateTime.now()
     )
 
@@ -101,6 +102,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val deployRequest = incomingRequest.toDeployRequest(user)
@@ -111,10 +113,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
+        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization(), null)
 
         assertEquals(expectedResponse, credentialConfiguration)
     }
@@ -143,10 +145,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns deployResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
+        val credentialConfiguration = credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization(), null)
 
         assertEquals(expectedResponse, credentialConfiguration)
     }
@@ -246,6 +248,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val authorization = getAuthorization()
@@ -258,10 +261,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException("Invalid url address")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(authorization)
+            userServiceLegacy.findFromAuthMethods(authorization, null)
         } returns user
 
-        credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization)
+        credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization, null)
     }
 
     @Test
@@ -294,6 +297,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val expectedResponse =
@@ -304,10 +308,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization(), null)
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -344,6 +348,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val expectedResponse =
@@ -354,10 +359,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization(), null)
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -390,10 +395,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns Unit
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -423,10 +428,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException("Invalid url address")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -456,10 +461,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException("")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -489,10 +494,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -522,10 +527,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -555,10 +560,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws Exception()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -594,6 +599,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val expectedResponse =
@@ -604,10 +610,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization(), null)
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -642,10 +648,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns Unit
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -677,10 +683,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -712,10 +718,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -747,10 +753,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -782,10 +788,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws Exception()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -821,6 +827,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
 
@@ -834,10 +841,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization, null)
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -993,10 +1000,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns Unit
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1027,10 +1034,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1061,10 +1068,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1095,10 +1102,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_UNEXPECTED_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1129,10 +1136,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1163,10 +1170,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws Exception()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1204,6 +1211,7 @@ class CredentialConfigurationServiceUnitTest {
             email = "user@email.com.br",
             photoUrl = "www.google.com.br",
             isRoot = false,
+            systemTokenId = null,
             createdAt = LocalDateTime.now()
         )
         val expectedResponse =
@@ -1214,10 +1222,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns villagerResponse
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization)
+        val credentialConfiguration = credentialConfigurationService.createRegistryConfig(request, workspaceId, authorization, null)
 
         assertEquals(expectedResponse.id, credentialConfiguration.id)
         assertEquals(expectedResponse.name, credentialConfiguration.name)
@@ -1251,10 +1259,10 @@ class CredentialConfigurationServiceUnitTest {
         } returns Unit
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1285,10 +1293,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IllegalArgumentException()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1319,10 +1327,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws IntegrationExceptionLegacy.of(MooveErrorCodeLegacy.VILLAGER_REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1353,10 +1361,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws ThirdPartyIntegrationExceptionLegacy.of(MooveErrorCodeLegacy.REGISTRY_INTEGRATION_ERROR, "")
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1387,10 +1395,10 @@ class CredentialConfigurationServiceUnitTest {
         } throws Exception()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
-        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization())
+        credentialConfigurationService.testRegistryConfiguration(workspaceId, request, getAuthorization(), null)
         verify(exactly = 1) { villagerApi.testRegistryConfiguration(villagerRequest, workspaceId) }
     }
 
@@ -1411,7 +1419,7 @@ class CredentialConfigurationServiceUnitTest {
             userServiceLegacy.findUser("authorId")
         } returns throw NotFoundExceptionLegacy("user", "authorID")
 
-        credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization())
+        credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization(), null)
     }
 
     @Test
@@ -1485,11 +1493,11 @@ class CredentialConfigurationServiceUnitTest {
         val incomingRequest = CreateCustomCdConfigurationRequest()
 
         every {
-            userServiceLegacy.findByAuthorizationToken(getAuthorization())
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
         } returns user
 
         val workspaceId = "workspaceId"
-        credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization())
+        credentialConfigurationService.createCdConfig(incomingRequest, workspaceId, getAuthorization(), null)
     }
 
     @Test(expected = NotFoundExceptionLegacy::class)

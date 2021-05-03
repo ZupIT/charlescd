@@ -33,14 +33,15 @@ class CreateWebhookSubscriptionInteractorImpl @Inject constructor(
 
     override fun execute(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         request: CreateWebhookSubscriptionRequest
     ): CreateWebhookSubscriptionResponse {
-        val webhookSubscriptionId = subscribe(authorization, request.toSimpleWebhookSubscription(workspaceId))
+        val webhookSubscriptionId = subscribe(authorization, token, request.toSimpleWebhookSubscription(workspaceId))
         return CreateWebhookSubscriptionResponse.from(webhookSubscriptionId)
     }
 
-    private fun subscribe(authorization: String, simpleWebhookSubscription: SimpleWebhookSubscription): String {
-        return hermesService.subscribe(webhookService.getAuthorEmail(authorization), simpleWebhookSubscription)
+    private fun subscribe(authorization: String?, token: String?, simpleWebhookSubscription: SimpleWebhookSubscription): String {
+        return hermesService.subscribe(webhookService.getAuthor(authorization, token).email, simpleWebhookSubscription)
     }
 }

@@ -29,9 +29,9 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
             "/name",
             "/gitConfigurationId",
             "/registryConfigurationId",
-            "/cdConfigurationId",
             "/circleMatcherUrl",
-            "/metricConfigurationId"
+            "/metricConfigurationId",
+            "/deploymentConfigurationId"
         )
         val operations = listOf(OpCodeEnum.REPLACE, OpCodeEnum.REMOVE)
     }

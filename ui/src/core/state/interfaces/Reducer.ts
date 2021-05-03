@@ -28,6 +28,8 @@ import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
 import { ModulesActionTypes } from 'modules/Modules/state/actions';
 import { HypothesesState } from 'modules/Hypotheses/interfaces';
 import { HypothesesActionTypes } from 'modules/Hypotheses/state/actions';
+import { TokensActionTypes } from 'modules/Tokens/state/actions';
+import { TokensState } from 'modules/Tokens/state/reducer';
 
 export interface Reducer {
   circles: (state: CircleState, action: CirclesActionTypes) => CircleState;
@@ -49,4 +51,8 @@ export interface Reducer {
     state: HypothesesState,
     action: HypothesesActionTypes
   ) => HypothesesState;
+  tokens: (
+    state: TokensState,
+    action: TokensActionTypes
+  ) => TokensState;
 }

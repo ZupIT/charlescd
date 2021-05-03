@@ -51,6 +51,7 @@ const Sidebar = ({ isExpanded, onClickExpand, selectedWorkspace }: Props) => {
   const pathname = navigate.location.pathname;
   const isRootMenu =
     includes(pathname, routes.workspaces) ||
+    includes(pathname, routes.tokens) ||
     includes(pathname, routes.users) ||
     includes(pathname, routes.account) ||
     includes(pathname, routes.groups);

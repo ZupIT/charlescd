@@ -37,6 +37,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     private val circleService: CircleService,
     private val deployService: DeployService,
     private val workspaceService: WorkspaceService,
+    private val deploymentConfigurationService: DeploymentConfigurationService,
     private val webhookEventService: WebhookEventService
 ) : CreateDeploymentInteractor {
 
@@ -44,17 +45,20 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     override fun execute(
         request: CreateDeploymentRequest,
         workspaceId: String,
-        authorization: String
+        authorization: String?,
+        token: String?
     ): DeploymentResponse {
         val build: Build = getBuild(request.buildId, workspaceId)
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
-        val user = userService.findByAuthorizationToken(authorization)
+        val user = userService.findFromAuthMethods(authorization, token)
+        val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         val deployment = createDeployment(request, workspaceId, user)
+
         if (build.canBeDeployed()) {
             checkIfCircleCanBeDeployed(deployment.circle)
             deploymentService.save(deployment)
-            deploy(deployment, build, workspace)
+            deploy(deployment, build, workspace, deploymentConfiguration)
             return DeploymentResponse.from(deployment, build)
         } else {
             notifyEvent(workspaceId, WebhookEventStatusEnum.FAIL, deployment)
@@ -78,7 +82,7 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
     }
 
     private fun validateWorkspace(workspace: Workspace) {
-        workspace.cdConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_CD_CONFIGURATION_IS_MISSING)
+        workspace.deploymentConfigurationId ?: throw BusinessException.of(MooveErrorCode.WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING)
     }
 
     private fun createDeployment(
@@ -100,9 +104,9 @@ open class CreateDeploymentInteractorImpl @Inject constructor(
             webhookEventService.notifyDeploymentEvent(workspaceId, WebhookEventTypeEnum.DEPLOY, WebhookEventSubTypeEnum.START_DEPLOY, status, deployment, error)
     }
 
-    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace) {
+    private fun deploy(deployment: Deployment, build: Build, workspace: Workspace, deploymentConfiguration: DeploymentConfiguration) {
         try {
-            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), workspace.cdConfigurationId!!)
+            deployService.deploy(deployment, build, deployment.circle.isDefaultCircle(), deploymentConfiguration)
             notifyEvent(workspace.id, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(workspace.id, WebhookEventStatusEnum.FAIL, deployment, ex.message)
