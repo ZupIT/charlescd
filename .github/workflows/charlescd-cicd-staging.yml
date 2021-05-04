@@ -481,7 +481,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: main
+          ref: charlescd-release-1.0.0
 
       - name: Get Major Version
         id: get_version
