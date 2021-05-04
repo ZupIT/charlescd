@@ -519,6 +519,7 @@ jobs:
           exec: helm upgrade -n staging bug-hunting ./install/helm-chart/ --install --wait --atomic --values=./values-charles-staging.yaml
           kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
 
+
   notify-team:
     runs-on: ubuntu-latest
     needs: [ deploy_staging ]
