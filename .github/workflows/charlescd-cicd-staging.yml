@@ -38,7 +38,7 @@ jobs:
 
     - name: Get Hash Version
       id: get_hash_version
-      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -88,7 +88,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -136,7 +136,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -188,7 +188,7 @@ jobs:
 
     - name: Get Hash Version
       id: get_hash_version
-      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -236,7 +236,7 @@ jobs:
 
     - name: Get Hash Version
       id: get_hash_version
-      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -293,7 +293,7 @@ jobs:
 
     - name: Get Hash Version
       id: get_hash_version
-      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -345,7 +345,7 @@ jobs:
 
     - name: Get Hash Version
       id: get_hash_version
-      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+      run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -393,7 +393,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -441,7 +441,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -489,7 +489,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
 
       - name: Update charts
         run: |
@@ -529,7 +529,7 @@ jobs:
 
       - name: Get Hash Version
         id: get_hash_version
-        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA:0:6})
+        run: echo ::set-output name=HASH_VERSION::$(echo ${GITHUB_SHA} | cut -c1-6)
         
       - name: ping
         run: |
