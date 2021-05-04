@@ -58,8 +58,8 @@ export const WizardItems = [
   {
     icon: 'empty-circles',
     name: 'cdConfig',
-    menu: 'CD configuration',
-    title: 'CD configuration',
+    menu: 'Deployment configuration',
+    title: 'Deployment configuration',
     backgroundColor: 'cdConfig',
     size: '220px',
     subtitle:
