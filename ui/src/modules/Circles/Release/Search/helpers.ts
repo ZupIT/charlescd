@@ -37,7 +37,6 @@ export const getMetadata = (build: Build) => {
   return metadatas;
 };
 
-
 export const toKeyValue = ({ content }: Metadata) => {
   let metadatas: any = {};
   
