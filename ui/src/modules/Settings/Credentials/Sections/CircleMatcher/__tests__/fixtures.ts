@@ -1,0 +1,2 @@
+export const title = 'Why we ask for Circle Matcher?';
+export const description = 'Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. Consult our documentation for further details.';
