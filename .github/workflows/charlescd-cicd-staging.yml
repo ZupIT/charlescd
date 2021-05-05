@@ -495,7 +495,7 @@ jobs:
         run: |
           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
-          echo -e "appVersion: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
+          echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
           rm -f ./install/helm-chart/Chart.old.yaml &&
           cat ./install/helm-chart/Chart.yaml
 
