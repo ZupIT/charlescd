@@ -18,7 +18,7 @@ import React from 'react';
 import { render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
-import { Plugins, title } from './fixtures';
+import { Plugins } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
@@ -30,10 +30,10 @@ beforeEach(() => {
 test('should render title and text to documentation', () => {
   render(<Form onFinish={jest.fn()} />);
 
-  expect(screen.getByText(title)).toBeInTheDocument();
-  expect(screen.getByText(/Consult our/)).toBeInTheDocument();
-  expect(screen.getByText(/documentation/)).toBeInTheDocument();
-  expect(screen.getByText(/for further details./)).toBeInTheDocument();
+  expect(screen.getByText('Add Datasource')).toBeInTheDocument();
+  expect(screen.getByText(/Consult our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
 });
 
 test('render button test connection', async () => {
