@@ -22,7 +22,6 @@ export const isAllowed = (allowedRoles: string[]) => {
   const rule = find(allowedRoles, (role: string) => {
     const [subject, action] = role.split('_') || ['', ''];
     return ability.relevantRuleFor(action as Actions, subject as Subjects);
-    
   });
 
   return !isEmpty(rule);

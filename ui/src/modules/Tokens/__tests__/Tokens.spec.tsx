@@ -25,6 +25,7 @@ import { server, rest } from 'mocks/server';
 import { DEFAULT_TEST_BASE_URL } from 'setupTests';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { act } from 'react-dom/test-utils';
+import { setUserAbilities } from 'core/utils/abilities';
 
 const originalWindow = window;
 
@@ -35,6 +36,8 @@ beforeAll(() => {
     email: 'charlesadmin@admin',
     root: true
   });
+  
+  setUserAbilities(); 
 
   Object.assign(window, originalWindow);
   const location = window.location;
@@ -64,10 +67,10 @@ test('render Token View mode', async () => {
   };
 
   server.use(
-    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+    rest.get(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
       return res(ctx.json({
         "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
-        "name":"TOKEN 2",
+        "name":"TOKEN Name",
         "permissions":[
           "maintenance_write",
           "deploy_write",
@@ -92,7 +95,7 @@ test('render Token View mode', async () => {
     </MemoryRouter>
   );
 
-  await waitFor(() => expect(screen.getByText('TOKEN 2')).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByText('TOKEN Name')).toBeInTheDocument());
   await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());
   expect(screen.getByText('Your token has access to all workspaces (including new ones)')).toBeInTheDocument();
 
@@ -117,7 +120,7 @@ test('should revoke token', async () => {
   };
 
   server.use(
-    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+    rest.get(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
       return res(ctx.json({
         "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
         "name":"TOKEN 2",
@@ -157,7 +160,7 @@ test('should regenerate token', async () => {
   };
 
   server.use(
-    rest.post(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
+    rest.get(`${DEFAULT_TEST_BASE_URL}/gate/api/v1/system-token/:token`, async (req, res, ctx) => {
       return res(ctx.json({
         "id":"abd6efc4-3b98-4049-8bdb-e8919c3d09f4",
         "name":"TOKEN 2",
