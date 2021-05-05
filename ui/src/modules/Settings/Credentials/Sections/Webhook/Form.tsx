@@ -101,7 +101,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         Consult our {' '}
           <DocumentationLink
             text="documentation"
-            documentationLink={`${CHARLES_DOC}/reference/webhooks`}
+            documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}
           />{' '}
         for further details.
       </Text.h5>
