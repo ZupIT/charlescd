@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen, fireEvent } from 'unit-test/testUtils';
 import Release from '../index';
 
