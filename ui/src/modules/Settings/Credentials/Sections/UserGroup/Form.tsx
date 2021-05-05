@@ -159,7 +159,7 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
         <Text.h4 color="dark" data-testid="user-group-help-text">
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
-          Consult the our{' '}
+          Consult our{' '}
           <Styled.DocumentationLink
             target="_blank"
             href={`${CHARLES_DOC}/reference/users-group`}
