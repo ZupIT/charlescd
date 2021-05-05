@@ -22,8 +22,10 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.deployment.UndeployInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
+import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.DeployService
 import java.time.LocalDateTime
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.transaction.annotation.Transactional
@@ -35,7 +37,10 @@ open class UndeployInteractorImpl @Inject constructor(
     private val deployService: DeployService,
     private val webhookEventService: WebhookEventService,
     private val workspaceService: WorkspaceService,
-    private val deploymentConfigurationService: DeploymentConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService,
+    private val circleMatcherService: CircleMatcherService,
+    private val circleService: CircleService,
+    private val keyValueRuleService: KeyValueRuleService
 ) : UndeployInteractor {
 
     @Transactional
@@ -47,6 +52,7 @@ open class UndeployInteractorImpl @Inject constructor(
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         undeploy(authorization, token, deployment, deploymentConfiguration)
         setNotDeployedStatus(deployment)
+        updateStatusInCircleMatcher(deployment.circle, workspace)
     }
 
     private fun getAuthorId(authorization: String?, token: String?): String {
@@ -84,6 +90,27 @@ open class UndeployInteractorImpl @Inject constructor(
             throw ex
         }
     }
+
+    private fun updateStatusInCircleMatcher(circle: Circle, workspace: Workspace) {
+        if (circle.matcherType == MatcherTypeEnum.SIMPLE_KV) {
+            this.updateImportOnMatcherAndSave(circle, workspace.circleMatcherUrl!!, active = false)
+        } else {
+            this.circleMatcherService.update(circle, circle.reference, workspace.circleMatcherUrl!!, active = false)
+        }
+    }
+
+    private fun updateImportOnMatcherAndSave(circle: Circle, matcherUrl: String, active: Boolean) {
+        val updatedCircle = updateCircleMetadata(circle)
+        val rules = keyValueRuleService.findByCircle(circle.id)
+        rules.map {
+            it.rule }.chunked(100).forEach {
+            this.circleMatcherService.updateImport(updatedCircle, circle.reference, it, matcherUrl, active)
+        }
+    }
+
+    private fun updateCircleMetadata(circle: Circle) = circleService.update(circle.copy(
+        reference = UUID.randomUUID().toString()
+    ))
 
     private fun getDeployment(deploymentId: String, workspaceId: String): Deployment {
         try {
