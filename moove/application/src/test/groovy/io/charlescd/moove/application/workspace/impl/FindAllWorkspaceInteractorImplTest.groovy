@@ -23,8 +23,6 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-
 class FindAllWorkspaceInteractorImplTest extends Specification {
 
     private FindAllWorkspaceInteractor findAllWorkspaceInteractor
@@ -82,32 +80,11 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
 
         assert response != null
         assert response.page == 0
-<<<<<<< HEAD
         assert response.size == 1
         assert response.content.size() == 1
         assert response.content[0].id == workspace.id
         assert response.content[0].name == workspace.name
         assert response.content[0].status == workspace.status.toString()
-=======
-        assert response.size == 2
-        assert response.content.size() == 2
-        assert response.content[0].id == completeWorkspace.id
-        assert response.content[0].name == completeWorkspace.name
-        assert response.content[0].status == completeWorkspace.status.toString()
-        assert response.content[0].circleMatcherUrl == completeWorkspace.circleMatcherUrl
-        assert response.content[0].registryConfiguration == null
-        assert response.content[0].gitConfiguration == null
-        assert response.content[0].deploymentConfiguration == null
-        assert response.content[0].createdAt == completeWorkspace.createdAt
-        assert response.content[0].authorId == completeWorkspace.author.id
-        assert response.content[0].createdAt == completeWorkspace.createdAt
-        assert response.content[0].circleMatcherUrl == completeWorkspace.circleMatcherUrl
-        assert response.content[0].authorId == completeWorkspace.author.id
-        assert response.content[0].status == WorkspaceStatusEnum.COMPLETE.name()
-        assert response.content[1].status == WorkspaceStatusEnum.INCOMPLETE.name()
-        assert response.totalPages == 1
-        assert response.isLast
->>>>>>> 5d701bd233704be451ae53e5d632001e84813963
     }
 
 }

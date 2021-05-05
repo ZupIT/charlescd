@@ -134,49 +134,11 @@ class JdbcWorkspaceRepository(
         return """
             SELECT workspaces.id                          AS workspace_id,
                    workspaces.name                        AS workspace_name,
-<<<<<<< HEAD
                    workspaces.status                      AS workspace_status
             FROM workspaces WHERE 1 = 1 $innerQueryStatement
             ORDER BY workspaces.name, workspaces.id ASC
             LIMIT ${pageRequest.size}
             OFFSET ${pageRequest.offset()}
-=======
-                   workspaces.status                      AS workspace_status,
-                   workspaces.created_at                  AS workspace_created_at,
-                   workspaces.git_configuration_id        AS workspace_git_configuration_id,
-                   workspaces.registry_configuration_id   AS workspace_registry_configuration_id,
-                   workspaces.cd_configuration_id         AS workspace_cd_configuration_id,
-                   workspaces.circle_matcher_url          AS workspace_circle_matcher_url,
-                   workspaces.metric_configuration_id     AS workspace_metric_configuration_id,
-                   workspaces.deployment_configuration_id AS workspace_deployment_configuration_id,
-                   workspace_author.id                    AS workspace_author_id,
-                   workspace_author.name                  AS workspace_author_name,
-                   workspace_author.email                 AS workspace_author_email,
-                   workspace_author.photo_url             AS workspace_author_photo_url,
-                   workspace_author.created_at            AS workspace_author_created_at,
-                   user_groups.id                         AS workspace_user_group_id,
-                   user_groups.name                       AS workspace_user_group_name,
-                   user_groups.created_at                 AS workspace_user_group_created_at,
-                   user_group_author.id                   AS workspace_user_group_author_id,
-                   user_group_author.name                 AS workspace_user_group_author_name,
-                   user_group_author.email                AS workspace_user_group_author_email,
-                   user_group_author.photo_url            AS workspace_user_group_author_photo_url,
-                   user_group_author.created_at           AS workspace_user_group_author_created_at,
-                   user_group_member.id                   AS workspace_user_group_member_id,
-                   user_group_member.name                 AS workspace_user_group_member_name,
-                   user_group_member.email                AS workspace_user_group_member_email,
-                   user_group_member.photo_url            AS workspace_user_group_member_photo_url,
-                   user_group_member.created_at           AS workspace_user_group_member_created_at
-            FROM ( $innerQueryStatement ) workspaces
-                     INNER JOIN users workspace_author ON workspaces.user_id = workspace_author.id
-                     LEFT JOIN workspaces_user_groups ON workspaces.id = workspaces_user_groups.workspace_id
-                     LEFT JOIN user_groups ON workspaces_user_groups.user_group_id = user_groups.id
-                     LEFT JOIN users user_group_author ON user_groups.user_id = user_group_author.id
-                     LEFT JOIN user_groups_users on user_groups.id = user_groups_users.user_group_id
-                     LEFT JOIN users user_group_member ON user_groups_users.user_id = user_group_member.id
-            WHERE 1 = 1 
-            ORDER BY workspaces.name ASC
->>>>>>> 5d701bd233704be451ae53e5d632001e84813963
         """
     }
 
