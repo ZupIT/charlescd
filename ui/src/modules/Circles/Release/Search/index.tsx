@@ -26,7 +26,7 @@ import Styled from '../styled';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { Scope } from '../Metadata/interfaces';
 
-interface Props {
+export interface Props {
   circleId: string;
   onDeployed: (deploy: Deployment) => void;
 }
@@ -121,7 +121,12 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
           />
         </Styled.SearchWrapper>
         {metadata && <Metadata fieldArray={metadataFields} />}
-        <Styled.Submit size="EXTRA_SMALL" type="submit" isDisabled={!isValid}>
+        <Styled.Submit
+          id="submit"
+          size="EXTRA_SMALL"
+          type="submit"
+          isDisabled={!isValid}
+        >
           Deploy
         </Styled.Submit>
       </Styled.Form>

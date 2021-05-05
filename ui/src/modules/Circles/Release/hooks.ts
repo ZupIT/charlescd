@@ -35,8 +35,6 @@ import { Deployment } from '../interfaces/Circle';
 import { Tag } from './interfaces/Tag';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
-import { Scope } from './Metadata/interfaces';
 
 export const useComponentTags = (): {
   getComponentTag: Function;

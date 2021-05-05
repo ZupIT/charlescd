@@ -94,7 +94,6 @@ export const useWebhook = (): Props => {
         setStatus('resolved');
         return response;
       } catch (e) {
-        console.log('e', e);
         setStatus('rejected');
         const error = await e.json();
         dispatch(

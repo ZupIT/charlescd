@@ -18,7 +18,7 @@ import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { Module } from 'modules/Modules/interfaces/Module';
 
-interface Feature {
+export interface Feature {
   id: string;
   name: string;
   branchName: string;

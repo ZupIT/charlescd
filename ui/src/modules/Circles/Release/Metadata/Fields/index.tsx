@@ -27,9 +27,7 @@ interface Props {
 }
 
 const Fields = ({ remove, field, index }: Props) => {
-  const { register, errors } = useFormContext();
-
-  console.log('errors', errors);
+  const { register } = useFormContext();
 
   return (
     <Styled.Field
