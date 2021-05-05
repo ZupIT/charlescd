@@ -98,7 +98,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         each of the URLs you provide.
       </Text.h5>
       <Text.h5 color="dark">
-        Consult our {' '}
+        See our {' '}
           <DocumentationLink
             text="documentation"
             documentationLink={`${CHARLES_DOC}/reference/webhooks`}
