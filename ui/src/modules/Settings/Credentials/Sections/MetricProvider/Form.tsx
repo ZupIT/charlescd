@@ -163,7 +163,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       <Text.h2 color="light">Add Datasource</Text.h2>
       <Text.h4 color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to do metrics generation since
-        this can vary from workspace to another. Consult our{' '}
+        this can vary from workspace to another. See our{' '}
         <DocumentationLink
           text="documentation"
           documentationLink={`${CHARLES_DOC}/reference/metrics`}

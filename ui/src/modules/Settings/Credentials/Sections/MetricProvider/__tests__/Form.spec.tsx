@@ -31,7 +31,7 @@ test('should render title and text to documentation', () => {
   render(<Form onFinish={jest.fn()} />);
 
   expect(screen.getByText('Add Datasource')).toBeInTheDocument();
-  expect(screen.getByText(/Consult our/i)).toBeInTheDocument();
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
   expect(screen.getByText(/documentation/i)).toBeInTheDocument();
   expect(screen.getByText(/for further details./i)).toBeInTheDocument();
 });
