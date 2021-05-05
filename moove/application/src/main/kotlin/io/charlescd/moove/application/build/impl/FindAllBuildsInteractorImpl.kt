@@ -53,8 +53,8 @@ class FindAllBuildsInteractorImpl @Inject constructor(
 
     private fun sortByLastDeployment(build: Build): Build {
         return build.copy(
-            deployments = build.deployments.
-                takeIf{ deployments -> deployments.isNotEmpty() }
+            deployments = build.deployments
+                .takeIf { deployments -> deployments.isNotEmpty() }
                 ?.sortedByDescending { it.deployedAt }
                 ?.let {
                 listOf(
