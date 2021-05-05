@@ -104,7 +104,7 @@ const Account = () => {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
-                defaultValue={currentUser.name}
+                defaultValue={user.name}
                 onClickSave={handleSubmit(onSubmit)}
                 isDisabled={!isValid}
               />
