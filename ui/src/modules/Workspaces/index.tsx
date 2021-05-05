@@ -22,7 +22,6 @@ import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import routes from 'core/constants/routes';
-import { saveWorkspace } from 'core/utils/workspace';
 import { isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
@@ -56,7 +55,6 @@ const Workspaces = () => {
   useEffect(() => {
     if (saveWorkspaceResponse) {
       removeWizard();
-      saveWorkspace(saveWorkspaceResponse);
       history.push(routes.credentials);
     }
   }, [saveWorkspaceResponse, history]);

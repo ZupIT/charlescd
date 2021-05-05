@@ -19,6 +19,7 @@ class RateLimitInterceptor(private val rateLimitService: RateLimitService) : Han
 
     companion object {
         const val AUTHORIZATION = "Authorization"
+        const val SYSTEM_TOKEN = "X-Charles-Token"
         const val RATE_LIMIT_REMAINING = "X-Rate-Limit-Remaining"
         const val RATE_LIMIT_TRY_AGAIN = "X-Rate-Limit-Retry-After-milliseconds"
     }
@@ -33,7 +34,13 @@ class RateLimitInterceptor(private val rateLimitService: RateLimitService) : Han
             return true
         }
 
-        val apiKey: String = request.getHeader(AUTHORIZATION)
+        var apiKey = ""
+
+        when {
+            !(request.getHeader(AUTHORIZATION).isNullOrBlank()) -> apiKey = request.getHeader(AUTHORIZATION)
+            !(request.getHeader(SYSTEM_TOKEN).isNullOrBlank()) -> apiKey = request.getHeader(SYSTEM_TOKEN)
+        }
+
         val tokenBucket: Bucket = rateLimitService.resolveBucket(apiKey)
         val probe: ConsumptionProbe = tokenBucket.tryConsumeAndReturnRemaining(1)
         return if (probe.isConsumed) {

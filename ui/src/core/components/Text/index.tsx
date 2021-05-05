@@ -29,6 +29,7 @@ interface Props {
   className?: string;
   title?: string;
   onClick?: () => void;
+  role?: string;
 }
 
 const Text = (props: Props) => {
@@ -41,7 +42,8 @@ const Text = (props: Props) => {
     lineHeight,
     children,
     className,
-    onClick
+    onClick,
+    role = ''
   } = props;
 
   return (
@@ -55,6 +57,7 @@ const Text = (props: Props) => {
       fontStyle={fontStyle}
       className={className}
       lineHeight={lineHeight}
+      role={role}
     >
       {children}
     </Styled.Text>

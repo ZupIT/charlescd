@@ -17,6 +17,7 @@
 import { PrimaryColumn, Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
 import { DeploymentEntityV2 as DeploymentEntity } from './deployment.entity'
 import { Component } from '../interfaces'
+import { KubernetesManifest } from '../../../core/integrations/interfaces/k8s-manifest.interface'
 
 @Entity('v2components')
 export class ComponentEntityV2 implements Component {
@@ -55,6 +56,9 @@ export class ComponentEntityV2 implements Component {
   @ManyToOne(() => DeploymentEntity, deployment => deployment.components)
   public deployment!: DeploymentEntity
 
+  @Column({ name: 'manifests', type: 'jsonb', array: true })
+  public manifests!: KubernetesManifest[]
+
   constructor(
     helmUrl: string,
     buildImageTag: string,
@@ -63,6 +67,7 @@ export class ComponentEntityV2 implements Component {
     componentId: string,
     hostValue: string | null,
     gatewayName: string | null,
+    manifests: KubernetesManifest[],
     merged = false
   ) {
     this.helmUrl = helmUrl
@@ -73,6 +78,7 @@ export class ComponentEntityV2 implements Component {
     this.hostValue = hostValue
     this.gatewayName = gatewayName
     this.merged = merged
+    this.manifests = manifests
   }
 
   public clone(): ComponentEntityV2 {
@@ -84,6 +90,7 @@ export class ComponentEntityV2 implements Component {
       this.componentId,
       this.hostValue,
       this.gatewayName,
+      this.manifests,
       true
     )
   }

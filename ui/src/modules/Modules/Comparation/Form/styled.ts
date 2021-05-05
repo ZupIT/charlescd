@@ -22,6 +22,7 @@ import ComponentPopover, {
 import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
 import Text from 'core/components/Text';
+import { slideInRight } from 'core/assets/style/animate';
 
 const Title = styled(Text.h2)`
   display: flex;
@@ -33,7 +34,11 @@ const Title = styled(Text.h2)`
 `;
 
 const Subtitle = styled(Text.h5)`
-  margin: 10px 0px;
+  margin: 20px 0px 5px;
+`;
+
+const Options = styled(Text.h5)`
+  margin: 16px 0px;
 `;
 
 const MinorTitle = styled(Text.h3)`
@@ -47,11 +52,9 @@ const Content = styled.div`
   margin-left: 8px;
 `;
 
-const Form = styled.form``;
-
-const Input = styled(FormComponent.Input)`
-  width: 271px;
-  margin-bottom: 12px;
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
 `;
 
 const Number = styled(FormComponent.Number)`
@@ -59,13 +62,18 @@ const Number = styled(FormComponent.Number)`
   margin-bottom: 12px;
 `;
 
-const HelmWrapper = styled.div`
+const Input = styled(FormComponent.Input)`
+  width: 271px;
+  margin-bottom: 5px;
+`;
+
+const Helm = styled.div`
   margin-top: 40px;
   margin-bottom: 12px;
   width: 271px;
 `;
 
-const FieldWrapper = styled.div`
+const Fields = styled.div`
   margin-bottom: 12px;
   width: 271px;
 `;
@@ -86,6 +94,8 @@ const Button = styled(ButtonComponent.Default)`
 `;
 
 const Icon = styled(IconComponent)`
+  width: 50px;
+  animation: ${slideInRight} 1s forwards;
   margin-bottom: 30px;
 `;
 
@@ -102,7 +112,7 @@ const ComponentsWrapper = styled.div`
 `;
 
 const ComponentInput = styled(FormComponent.Input)`
-  width: 155px;
+  width: 165px;
   margin-right: 20px;
 `;
 
@@ -157,11 +167,12 @@ export default {
   Input,
   Number,
   FieldPopover,
-  FieldWrapper,
-  HelmWrapper,
+  Helm,
+  Fields,
   Popover,
   Icon,
   Button,
+  Options,
   Components: {
     Wrapper: ComponentsWrapper,
     ColumnWrapper: ComponentsColumnWrapper,

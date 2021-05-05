@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import { copyToClipboard } from 'core/utils/clipboard';
@@ -58,7 +58,7 @@ const Credentials = ({ workspace, onClickHelp }: Props) => {
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
-
+  
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspaceName(name);
   };
@@ -124,10 +124,10 @@ const Credentials = ({ workspace, onClickHelp }: Props) => {
         setForm={setForm}
         data={workspace?.registryConfiguration}
       />
-      <Section.CDConfiguration
+      <Section.DeploymentConfiguration
         form={form}
         setForm={setForm}
-        data={workspace.cdConfiguration}
+        data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}

@@ -23,6 +23,7 @@ import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
+import io.charlescd.moove.legacy.repository.SystemTokenRepository
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
 import javax.transaction.Transactional
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserServiceLegacy(
     private val userRepository: UserRepository,
+    private val systemTokenRepository: SystemTokenRepository,
     private val keycloakServiceLegacy: KeycloakServiceLegacy,
     @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
 ) {
@@ -60,10 +62,25 @@ class UserServiceLegacy(
         this.userRepository.findById(id)
             .orElseThrow { NotFoundExceptionLegacy("user", id) }
 
+    fun findFromAuthMethods(authorization: String?, token: String?): User {
+        return when {
+            !authorization.isNullOrBlank() -> findByAuthorizationToken(authorization)
+            !token.isNullOrBlank() -> findBySystemToken(token)
+            else -> throw NotFoundExceptionLegacy("user", null)
+        }
+    }
+
     fun findByAuthorizationToken(authorization: String): User {
         val email = keycloakServiceLegacy.getEmailByAuthorizationToken(authorization)
         return userRepository.findByEmail(email).orElseThrow {
             NotFoundExceptionLegacy("user", email)
+        }
+    }
+
+    fun findBySystemToken(token: String): User {
+        val systemToken = systemTokenRepository.findByToken(token).orElseThrow { NotFoundExceptionLegacy("system_token", token) }
+        return userRepository.findBySystemTokenId(systemToken.id).orElseThrow {
+            NotFoundExceptionLegacy("user", systemToken.id)
         }
     }
 

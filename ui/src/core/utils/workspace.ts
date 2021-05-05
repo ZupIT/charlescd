@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { Workspace } from 'modules/Users/interfaces/User';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
-const WORKSPACE_KEY = 'workspace';
+const WORKSPACE = 'workspace';
+
+export const clearWorkspace = () => {
+  localStorage.removeItem(WORKSPACE);
+}
 
 export const getWorkspace = (): Workspace => {
   const ws = {
@@ -24,7 +28,7 @@ export const getWorkspace = (): Workspace => {
   } as Workspace;
 
   try {
-    const workspace : Workspace = JSON.parse(localStorage.getItem(WORKSPACE_KEY));
+    const workspace : Workspace = JSON.parse(localStorage.getItem(WORKSPACE));
     return workspace || ws;
   
   } catch (e) {
@@ -37,12 +41,10 @@ export const getWorkspaceId = () => {
   return workspace.id;
 }
 
-export const clearWorkspace = () => localStorage.removeItem(WORKSPACE_KEY);
-
 export const saveWorkspace = (workspace: Workspace) => {
   clearWorkspace();
 
   if (workspace) {
-    localStorage.setItem(WORKSPACE_KEY, JSON.stringify(workspace));
+    localStorage.setItem(WORKSPACE, JSON.stringify(workspace));
   }
 };

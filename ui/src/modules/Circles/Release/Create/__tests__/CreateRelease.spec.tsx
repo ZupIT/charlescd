@@ -20,6 +20,7 @@ import userEvent from '@testing-library/user-event';
 import selectEvent from 'react-select-event';
 import { FetchMock } from 'jest-fetch-mock';
 import CreateRelease from '../index';
+import { dark as inputTheme } from 'core/assets/themes/input';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
@@ -34,17 +35,30 @@ const mockGetModules = JSON.stringify({
         {
           id: 'component-1',
           name: 'component-1'
+        },
+        {
+          id: 'component-1component-1component-1component-1component-1',
+          name: 'component-1component-1component-1component-1component-1'
         }
       ]
     }
   ]
 });
 
-const mockGetTags = JSON.stringify(
+const mockGetTags1 = JSON.stringify(
   [
     {
       name: 'image-1.0.0',
-      artifact: 'domain.com:image-1.0.0'
+      artifact: 'module-1/component-1:image-1.0.0'
+    }
+  ]
+);
+
+const mockGetTags2 = JSON.stringify(
+  [
+    {
+      name: 'image-1.0.0',
+      artifact: 'module-1/component-1component-1component-1component-1component-1:image-1.0.0'
     }
   ]
 );
@@ -52,7 +66,7 @@ const mockGetTags = JSON.stringify(
 test('form should be valid', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(mockGetModules)
-    .mockResponseOnce(mockGetTags)
+    .mockResponseOnce(mockGetTags1)
     .mockResponse(JSON.stringify([]));
 
   render(
@@ -60,7 +74,7 @@ test('form should be valid', async () => {
   );
 
   const nameInput = screen.getByTestId('input-text-releaseName');
-  await act(() => userEvent.type(nameInput, 'release-name'));
+  await act(async () => userEvent.type(nameInput, 'release-name'));
 
   const moduleLabel = screen.getByText('Select a module');
   await act(async () => selectEvent.select(moduleLabel, 'module-1'));
@@ -69,10 +83,44 @@ test('form should be valid', async () => {
   await act(async () => selectEvent.select(componentLabel, 'component-1'));
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
-  await act(() => userEvent.type(versionInput, 'image-1.0.0'));
+  await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
   await waitFor(() =>
     expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
+    { timeout: 700 }
+  );
+});
+
+test('should validate form when max lenght is greater than the limit', async () => {
+  const errorMessage = 'Sum of component name and version name cannot be greater than 63 characters.';
+  (fetch as FetchMock)
+    .mockResponseOnce(mockGetModules)
+    .mockResponseOnce(mockGetTags2)
+    .mockResponse(JSON.stringify([]));
+
+  render(
+    <CreateRelease circleId="123" onDeployed={() => { }} />
+  );
+
+  const nameInput = screen.getByTestId('input-text-releaseName');
+  await act(async () => userEvent.type(nameInput, 'release-name'));
+
+  const moduleLabel = screen.getByText('Select a module');
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
+
+  const componentLabel = screen.getByText('Select a component');
+  await act(async () => selectEvent.select(componentLabel, 'component-1component-1component-1component-1component-1'));
+
+  const versionInput = screen.getByTestId('input-text-modules[0].version');
+  await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
+
+  expect(await screen.findByText(errorMessage)).toBeInTheDocument();
+
+  const versionNameLabel = screen.getByTestId('label-text-modules[0].version');
+  expect(versionNameLabel).toHaveStyle(`color: ${inputTheme.error.color};`);
+
+  await waitFor(() =>
+    expect(screen.getByTestId('button-default-submit')).toBeDisabled(),
     { timeout: 700 }
   );
 });

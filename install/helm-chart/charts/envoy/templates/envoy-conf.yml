@@ -48,6 +48,10 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-octopipe
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
                   {{- end}}
                   {{ if .Values.circlematcher.enabled }}
                   - match:
@@ -76,6 +80,10 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
                   {{- end}}
                   {{ if .Values.hermes.enabled }}
                   - match:
@@ -83,6 +91,17 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-hermes
+                    typed_per_filter_config:
+                      envoy.filters.http.lua:
+                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                        disabled: true
+                  {{- end}}
+                  {{ if .Values.gate.enabled }}
+                  - match:
+                      prefix: "/gate/"
+                    route:
+                      prefix_rewrite: "/"
+                      cluster: charlescd-gate
                   {{- end}}
                   {{ if .Values.ui.enabled }}
                   - match:
@@ -104,22 +123,86 @@ data:
                   "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
                   inline_code: |
                     function envoy_on_request(request_handle)
-                      local token = request_handle:headers():get("authorization")
-                      local request = require("luajit-init")
-                      local response = request.send(
-                        "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
-                        {
-                          headers = {
-                            authorization = token
-                          }
-                        }
-                      )
-                      request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
-                      request_handle:logInfo(response.code)
-                      if response.code ~= 200 then
+                      local user_token = request_handle:headers():get("authorization")
+                      local system_token = request_handle:headers():get("x-charles-token")
+                      if user_token ~= nil and system_token ~= nil then
+                        request_handle:logInfo("LUASCRIPT:DOUBLE_TOKEN_HEADER")
                         request_handle:respond({
-                          [":status"] = response.code
-                        }, response.body)
+                          [":status"] = "400"
+                        }, "You must not use Authorization and X-Charles-Token on the same request")
+                      end
+                    end
+              - name: envoy.filters.http.lua
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                  inline_code: |
+                    function envoy_on_request(request_handle)
+                      local user_token = request_handle:headers():get("authorization")
+                      if user_token ~= nil then
+                        local request = require("luajit-init")
+                        local response = request.send(
+                          "{{ .Values.idm.protocol }}://{{ .Values.idm.endpoint }}{{ .Values.idm.path }}",
+                          {
+                            headers = {
+                              authorization = user_token
+                            }
+                          }
+                        )
+                        request_handle:logInfo("LUASCRIPT:CHECK_TOKEN")
+                        request_handle:logInfo("IDM user validation response: "..response.code)
+                        if response.code ~= 200 then
+                          request_handle:respond({
+                            [":status"] = response.code
+                          }, response.body)
+                        end
+                      end
+                    end
+              - name: envoy.filters.http.lua
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+                  inline_code: |
+                    function envoy_on_request(request_handle)
+                      request_handle:logInfo("LUASCRIPT:AUTHORIZATION_SERVICE")
+                      local user_token = request_handle:headers():get("authorization")
+                      local system_token = request_handle:headers():get("x-charles-token")
+                      local workspace_id = request_handle:headers():get("x-workspace-id")
+                      local method = request_handle:headers():get(":method")
+
+                      local url_encoded = request_handle:headers():get(":path")
+                      url_encoded = string.gsub(url_encoded, "+", " ")
+                      local url_decoded = string.gsub(url_encoded, "%%(%x%x)", function (hex) return string.char(tonumber(hex,16)) end)
+                      local path_without_params = url_decoded:match("([^,]+)?([^,]+)")
+
+                      local path = ""
+
+                      if path_without_params == nil then
+                        path = url_decoded
+                      else
+                        path = path_without_params
+                      end
+
+                      local headers, body = request_handle:httpCall(
+                      "charlescd-gate",
+                      {
+                        [":method"] = "POST",
+                        [":path"] = "/api/v1/authorize",
+                        [":authority"] = "charlescd-gate",
+                        ["content-type"] = "application/json",
+                        ["authorization"] = user_token,
+                        ["x-charles-token"] = system_token,
+                        ["x-workspace-id"] = workspace_id
+                      },
+                      "{\"path\": \"" ..path.. "\", \"method\": \"" ..method.. "\"}",
+                      2000,
+                      false
+                      )
+
+                      request_handle:logInfo("Authorization service response status: "..headers[":status"])
+                      if headers[":status"] ~= "204" then
+                        request_handle:logInfo("Denying request ["..method.."] "..path)
+                        request_handle:respond({
+                          [":status"] = 403
+                        }, "Forbidden")
                       end
                     end
               - name: envoy.filters.http.router
@@ -234,6 +317,22 @@ data:
                 address:
                   socket_address:
                     address: charlescd-hermes
+                    port_value: 8080
+      {{- end}}
+      {{ if .Values.gate.enabled }}
+      - name: charlescd-gate
+        connect_timeout: 0.25s
+        type: strict_dns
+        lb_policy: round_robin
+        http_protocol_options: {}
+        load_assignment:
+          cluster_name: charlescd-gate
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: charlescd-gate
                     port_value: 8080
       {{- end}}
     admin:

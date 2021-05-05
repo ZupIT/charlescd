@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20210301151000-1
+      author: lucas.fernandes
+      comment: "Create table deployment_configurations"
+      changes:
+        - createTable:
+            tableName: deployment_configurations
+            columns:
+              - column:
+                  name: id
+                  type: varchar(36)
+                  autoIncrement: false
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_deployment_configurations_users
+                    references: users(id)
+                    nullable: false
+              - column:
+                  name: workspace_id
+                  type: varchar(36)
+                  constraints:
+                    foreignKeyName: fk_deployment_configurations_workspace_id
+                    references: workspaces(id)
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: butler_url
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: namespace
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: git_token
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: git_provider
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            columnNames: butler_url, namespace
+            constraintName: unique_deployment_configurations_butler_url_namespace
+            tableName: deployment_configurations

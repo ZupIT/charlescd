@@ -16,11 +16,13 @@
 
 package io.charlescd.moove.application.workspace.impl
 
+import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.FindAllWorkspaceUsersInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
+import io.charlescd.moove.domain.repository.SystemTokenRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
@@ -35,10 +37,11 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
 
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private UserRepository userRepository = Mock(UserRepository)
+    private SystemTokenService systemTokenService = new SystemTokenService(Mock(SystemTokenRepository))
     private ManagementUserSecurityService managementUserSecurityService = Mock(ManagementUserSecurityService)
 
     def setup() {
-        this.findAllWorkspaceUsersInteractor = new FindAllWorkspaceUsersInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, managementUserSecurityService))
+        this.findAllWorkspaceUsersInteractor = new FindAllWorkspaceUsersInteractorImpl(new WorkspaceService(workspaceRepository, userRepository), new UserService(userRepository, systemTokenService, managementUserSecurityService))
     }
 
     def "when the workspace is not found should return an empty page of users"() {

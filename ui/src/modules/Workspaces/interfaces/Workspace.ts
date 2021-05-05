@@ -15,17 +15,18 @@
  */
 
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
+import { GitProviders } from 'modules/Settings/Credentials/Sections/DeploymentConfiguration/interfaces';
 import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interfaces';
 
 export interface Workspace {
   id: string;
   name: string;
   status?: string;
-  createdAt: string;
+  createdAt?: string;
   circleMatcherUrl?: string;
   gitConfiguration?: Configuration;
   userGroups?: UserGroup[];
-  cdConfiguration?: Configuration;
+  deploymentConfiguration?: DeploymentConfiguration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
   permissions?: string[];
@@ -35,6 +36,10 @@ export interface Workspace {
 export interface Configuration {
   id: string;
   name: string;
+}
+
+export interface DeploymentConfiguration extends Configuration {
+  gitProvider: GitProviders;
 }
 
 export interface MetricConfiguration {

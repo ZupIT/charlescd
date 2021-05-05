@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Styled from './styled';
 import { useFormContext, ArrayField } from 'react-hook-form';
 import { Component } from 'modules/Modules/interfaces/Component';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 import filter from 'lodash/filter';
 
 interface Props {
@@ -52,6 +52,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           error={errors?.components?.[index]?.name.message}
           ref={register({
             ...isRequiredAndNotBlank,
+            maxLength: maxLength(50),
             validate: {
               ...isRequiredAndNotBlank.validate,
               duplicatedComponent
@@ -72,11 +73,11 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           defaultValue={field.errorThreshold}
         />
       </Styled.Components.Wrapper>
-      <Styled.Subtitle onClick={() => handleMoreOptions(index)} color="dark">
+      <Styled.Options onClick={() => handleMoreOptions(index)} color="dark">
         {editMoreOptions ? 'Hide and clean ' : 'Show '}
         advanced options (be careful, do not change this if you are not using
         istio gateway)
-      </Styled.Subtitle>
+      </Styled.Options>
       {editMoreOptions && (
         <>
           <Styled.FieldPopover>

@@ -20,5 +20,5 @@ import io.charlescd.moove.application.webhook.request.CreateWebhookSubscriptionR
 import io.charlescd.moove.application.webhook.response.CreateWebhookSubscriptionResponse
 
 interface CreateWebhookSubscriptionInteractor {
-    fun execute(workspaceId: String, authorization: String, request: CreateWebhookSubscriptionRequest): CreateWebhookSubscriptionResponse
+    fun execute(workspaceId: String, authorization: String?, token: String?, request: CreateWebhookSubscriptionRequest): CreateWebhookSubscriptionResponse
 }

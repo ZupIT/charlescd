@@ -1,24 +1,24 @@
-import { CdConfigurationEntity } from '../../../../app/v2/api/configurations/entity/cd-configuration.entity'
-import { CdTypeEnum } from '../../../../app/v2/api/configurations/enums/cd-type.enum'
+/*
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
-import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces/git-providers.type'
-import { ClusterProviderEnum } from '../../../../app/v2/core/integrations/octopipe/interfaces/octopipe-payload.interface'
 import { componentsToBeRemoved } from '../../../../app/v2/core/integrations/utils/deployment.utils'
 
 it('new deployment with active components on default circle', async() => {
-  const cdConfiguration = new CdConfigurationEntity(
-    CdTypeEnum.OCTOPIPE,
-    {
-      provider: ClusterProviderEnum.DEFAULT,
-      gitProvider: GitProvidersEnum.GITHUB,
-      gitToken: '123',
-      namespace: 'default'
-    },
-    'some-config',
-    'author-id',
-    'workspace-id'
-  )
 
   let activeOnCircle = [
     new ComponentEntityV2(
@@ -28,7 +28,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-1',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -37,7 +38,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-2',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -46,7 +48,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-33',
       null,
-      null
+      null,
+      []
     )
   ]
 
@@ -58,7 +61,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-3',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -67,7 +71,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-4',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -76,7 +81,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-5',
       null,
-      null
+      null,
+      []
     )
   ]
 
@@ -86,19 +92,21 @@ it('new deployment with active components on default circle', async() => {
     'deployment-id',
     'author-id',
     'circle-id',
-    cdConfiguration,
     'www.callback.com',
     activeOnCircle,
-    false
+    false,
+    'default',
+    5
   )
   const defaultDeployment = new DeploymentEntityV2(
     'deployment-id-2',
     'author-id',
     'default-circle-id',
-    cdConfiguration,
     'www.callback.com',
     activeOnDefault,
-    true
+    true,
+    'default',
+    5
   )
 
   activeOnDefault = activeOnDefault.map(c => {
@@ -119,7 +127,8 @@ it('new deployment with active components on default circle', async() => {
       'component-a',
       'component-a-id-11',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -128,7 +137,8 @@ it('new deployment with active components on default circle', async() => {
       'component-b',
       'component-b-id-22',
       null,
-      null
+      null,
+      []
     ),
     new ComponentEntityV2(
       'helm.url',
@@ -137,7 +147,8 @@ it('new deployment with active components on default circle', async() => {
       'component-c',
       'component-c-id-33',
       null,
-      null
+      null,
+      []
     )
   ]
 
@@ -145,10 +156,11 @@ it('new deployment with active components on default circle', async() => {
     'new-deployment-id',
     'author-id',
     'circle-id',
-    cdConfiguration,
     'www.callback.com',
     newComponents,
-    false
+    false,
+    'default',
+    5
   )
 
   newComponents = newComponents.map(c => {

@@ -1,0 +1,9 @@
+{{- if .Values.CharlesApplications.butler.enabled -}}
+apiVersion: charlescd.io/v1
+kind: CharlesRoutes
+metadata:
+  name: {{ .Release.Namespace }}-routes
+  namespace: {{ .Release.Namespace }}
+spec:
+  circles: []
+{{- end }}

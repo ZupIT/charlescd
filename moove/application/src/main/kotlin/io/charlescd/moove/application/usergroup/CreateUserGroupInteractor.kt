@@ -21,5 +21,5 @@ import io.charlescd.moove.application.usergroup.response.UserGroupResponse
 
 interface CreateUserGroupInteractor {
 
-    fun execute(request: CreateUserGroupRequest, authorization: String): UserGroupResponse
+    fun execute(request: CreateUserGroupRequest, authorization: String?, token: String?): UserGroupResponse
 }

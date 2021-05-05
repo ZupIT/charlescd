@@ -24,7 +24,7 @@ export interface Author {
 }
 
 export interface Module {
-  id: string;
+  id?: string;
   name: string;
   author?: Author;
   components?: Component[];

@@ -21,5 +21,5 @@ import io.charlescd.moove.application.build.response.BuildResponse
 
 interface CreateBuildInteractor {
 
-    fun execute(request: CreateBuildRequest, workspaceId: String, authorization: String): BuildResponse
+    fun execute(request: CreateBuildRequest, workspaceId: String, authorization: String?, token: String?): BuildResponse
 }

@@ -31,17 +31,18 @@ class HealthCheckWebhookSubscriptionInteractorImpl @Inject constructor(
     private val hermesService: HermesService
 ) : HealthCheckWebhookSubscriptionInteractor {
 
-    override fun execute(workspaceId: String, authorization: String, id: String): HealthCheckWebhookSubscriptionResponse {
-        val healthCheckWebhookSubscription = healthCheckSubscription(workspaceId, authorization, id)
+    override fun execute(workspaceId: String, authorization: String?, token: String?, id: String): HealthCheckWebhookSubscriptionResponse {
+        val healthCheckWebhookSubscription = healthCheckSubscription(workspaceId, authorization, token, id)
         return HealthCheckWebhookSubscriptionResponse.from(healthCheckWebhookSubscription)
     }
 
     private fun healthCheckSubscription(
         workspaceId: String,
-        authorization: String,
+        authorization: String?,
+        token: String?,
         id: String
     ): WebhookSubscriptionHealthCheck {
-        val author = webhookService.getAuthor(authorization)
+        val author = webhookService.getAuthor(authorization, token)
         validateSubscription(workspaceId, author, id)
         return hermesService.healthCheckSubscription(author.email, id)
     }

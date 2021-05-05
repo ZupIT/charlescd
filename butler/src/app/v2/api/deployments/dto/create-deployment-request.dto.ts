@@ -14,106 +14,92 @@
  * limitations under the License.
  */
 
-import { Type } from 'class-transformer'
-import { IsBoolean, IsNotEmpty, IsString, IsUUID, ValidateNested } from 'class-validator'
-import { flatten } from 'lodash'
-import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
-import { CreateCircleDeploymentDto } from './create-circle-request.dto'
-import { CreateModuleDeploymentDto } from './create-module-request.dto'
-import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { ApiProperty } from '@nestjs/swagger'
-import { CdConfigurationEntity } from '../../configurations/entity/cd-configuration.entity'
+import { Type } from 'class-transformer'
+import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
+import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
+import { CreateCircleDeploymentDto } from './create-circle-request.dto'
+import { CreateComponentRequestDto } from './create-component-request.dto'
+import { CreateGitDeploymentDto } from './create-git-request.dto'
+
 
 export class CreateDeploymentRequestDto {
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public deploymentId: string
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
   public authorId: string
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   public callbackUrl: string
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  public cdConfigurationId: string
-
-  public cdConfiguration!: CdConfigurationEntity
-
-  @ApiProperty({ type: () => CreateCircleDeploymentDto })
-  @ValidateNested({ each: true })
-  @IsNotEmpty()
   @Type(() => CreateCircleDeploymentDto)
   public circle: CreateCircleDeploymentDto
 
+  @ApiProperty()
+  @Type(() => CreateGitDeploymentDto)
+  public git: CreateGitDeploymentDto
+
+  @ApiProperty()
+  public namespace: string
+
+  @ApiProperty()
+  public timeoutInSeconds: number
+
   public status: DeploymentStatusEnum
 
-  @IsBoolean()
-  @ApiProperty()
-  public defaultCircle: boolean
-
-  @ApiProperty({ type: () => [CreateModuleDeploymentDto] })
-  @IsNotEmpty()
-  @ValidateNested({ each: true })
-  @Type(() => CreateModuleDeploymentDto)
-  public readonly modules: CreateModuleDeploymentDto[]
+  @ApiProperty({ type: () => [CreateComponentRequestDto] })
+  @Type(() => CreateComponentRequestDto)
+  public readonly components: CreateComponentRequestDto[]
 
   constructor(
     deploymentId: string,
     authorId: string,
     callbackUrl: string,
-    cdConfigurationId: string,
     circle: CreateCircleDeploymentDto,
     status: DeploymentStatusEnum,
-    modules: CreateModuleDeploymentDto[],
-    defaultCircle: boolean
+    components: CreateComponentRequestDto[],
+    namespace: string,
+    git: CreateGitDeploymentDto,
+    timeoutInSeconds: number
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
     this.callbackUrl = callbackUrl
-    this.cdConfigurationId = cdConfigurationId
     this.circle = circle
     this.status = status
-    this.modules = modules
-    this.defaultCircle = defaultCircle
+    this.components = components
+    this.namespace = namespace
+    this.git = git
+    this.timeoutInSeconds = timeoutInSeconds
   }
 
-  public toCircleEntity(): DeploymentEntity {
+  public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle.headerValue,
-      this.cdConfiguration,
+      this.circle.id,
       this.callbackUrl,
-      this.getDeploymentComponents(),
-      this.defaultCircle
+      newComponents,
+      this.circle.default,
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 
-  public toDefaultEntity(activeComponents: ComponentEntity[]): DeploymentEntity {
+  public toDefaultEntity(activeComponents: ComponentEntity[], newComponents: ComponentEntity[]): DeploymentEntity {
     return new DeploymentEntity(
       this.deploymentId,
       this.authorId,
-      this.circle.headerValue,
-      this.cdConfiguration,
+      this.circle.id,
       this.callbackUrl,
-      [ ...activeComponents, ...this.getDeploymentComponents()],
-      this.defaultCircle
-    )
-  }
-
-  private getDeploymentComponents(): ComponentEntity[] {
-    return flatten(
-      this.modules.map(module => module.components.map(component => component.toEntity(module.helmRepository)))
+      [ ...activeComponents, ...newComponents],
+      this.circle.default,
+      this.namespace,
+      this.timeoutInSeconds
     )
   }
 }
