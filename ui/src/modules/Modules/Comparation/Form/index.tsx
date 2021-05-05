@@ -216,7 +216,7 @@ const FormModule = ({ module, onChange }: Props) => {
           description="To configure a module you need to register a Git URL and enter the Helm repository URL. You will need to insert the components in the next step. See our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle isEditing={isEditing} color="dark">
+      <Styled.Subtitle color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
       <FormProvider {...form}>

@@ -18,7 +18,7 @@ import React, { ReactNode } from 'react';
 import Styled from './styled';
 import { HEADINGS_FONT_SIZE } from './enums';
 
-export interface Props {
+interface Props {
   fontSize?: HEADINGS_FONT_SIZE;
   color?: string;
   fontStyle?: 'normal' | 'italic' | 'oblique';
