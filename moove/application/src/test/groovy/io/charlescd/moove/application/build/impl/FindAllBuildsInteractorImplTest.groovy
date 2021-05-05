@@ -117,6 +117,100 @@ class FindAllBuildsInteractorImplTest extends Specification {
         assert !buildPageResponse.content[0].features.isEmpty()
     }
 
+    def "should return the correct response when build deployments are empty"() {
+        given:
+        def tagName = "dummy-tag-name"
+        def status = BuildStatusEnum.BUILT
+        def pageRequest = new PageRequest()
+
+        def workspaceId = "b49c3575-c842-4cbb-8d41-bcad7c42091f"
+        def authorId = "7bdbca7a-a0dc-4721-a861-198b238c0e32"
+
+        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def build = getBuildWithoutDeployment(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED)
+
+        def page = new Page<Build>([build], pageRequest.page, pageRequest.size, 1)
+
+        when:
+        def buildPageResponse = this.findAllBuildsInteractor.execute(tagName, status, workspaceId, pageRequest)
+
+        then:
+        1 * this.buildRepository.find(_, _, _, _) >> { arguments ->
+            def tagNameArg = arguments[0]
+            def statusArg = arguments[1]
+            def workspaceIdArg = arguments[2]
+            def pageRequestArg = arguments[3]
+
+            assert tagNameArg == tagName
+            assert statusArg == status
+            assert workspaceIdArg == workspaceId
+            assert pageRequestArg == pageRequest
+
+            return page
+        }
+
+
+        assert buildPageResponse != null
+        assert buildPageResponse.last
+        assert buildPageResponse.totalPages == 1
+        assert !buildPageResponse.content.isEmpty()
+        assert buildPageResponse.page == 0
+        assert buildPageResponse.content[0].status == build.status.name()
+        assert buildPageResponse.content[0].createdAt == build.createdAt
+        assert buildPageResponse.content[0].id == build.id
+        assert buildPageResponse.content[0].tag == build.tag
+        assert buildPageResponse.content[0].deployments.isEmpty()
+        assert !buildPageResponse.content[0].features.isEmpty()
+    }
+
+    def "should return the last deployment associated with the build "() {
+        given:
+        def tagName = "dummy-tag-name"
+        def status = BuildStatusEnum.BUILT
+        def pageRequest = new PageRequest()
+
+        def workspaceId = "b49c3575-c842-4cbb-8d41-bcad7c42091f"
+        def authorId = "7bdbca7a-a0dc-4721-a861-198b238c0e32"
+
+        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def build = getBuildWithTwoDeployment(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
+
+        def page = new Page<Build>([build], pageRequest.page, pageRequest.size, 1)
+
+        when:
+        def buildPageResponse = this.findAllBuildsInteractor.execute(tagName, status, workspaceId, pageRequest)
+
+        then:
+        1 * this.buildRepository.find(_, _, _, _) >> { arguments ->
+            def tagNameArg = arguments[0]
+            def statusArg = arguments[1]
+            def workspaceIdArg = arguments[2]
+            def pageRequestArg = arguments[3]
+
+            assert tagNameArg == tagName
+            assert statusArg == status
+            assert workspaceIdArg == workspaceId
+            assert pageRequestArg == pageRequest
+
+            return page
+        }
+
+
+        assert buildPageResponse != null
+        assert buildPageResponse.last
+        assert buildPageResponse.totalPages == 1
+        assert !buildPageResponse.content.isEmpty()
+        assert buildPageResponse.page == 0
+        assert buildPageResponse.content[0].status == build.status.name()
+        assert buildPageResponse.content[0].createdAt == build.createdAt
+        assert buildPageResponse.content[0].id == build.id
+        assert buildPageResponse.content[0].tag == build.tag
+        assert !buildPageResponse.content[0].deployments.isEmpty()
+        assert !buildPageResponse.content[0].features.isEmpty()
+        assert buildPageResponse.content[0].deployments[0].id == getNewDeployment().id
+        assert buildPageResponse.content[0].deployments[0].deployedAt == getNewDeployment().deployedAt
+    }
+
     private static Build getDummyBuild(String workspaceId, User author, BuildStatusEnum buildStatusEnum, DeploymentStatusEnum deploymentStatusEnum) {
         def componentSnapshotList = new ArrayList<ComponentSnapshot>()
         componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
@@ -145,5 +239,88 @@ class FindAllBuildsInteractorImplTest extends Specification {
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,
                 workspaceId, deploymentList)
         build
+    }
+
+    private static Build getBuildWithoutDeployment(String workspaceId, User author, BuildStatusEnum buildStatusEnum, DeploymentStatusEnum deploymentStatusEnum) {
+        def componentSnapshotList = new ArrayList<ComponentSnapshot>()
+        componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
+                'Component snapshot name', LocalDateTime.now(), null,
+                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway'))
+
+        def moduleSnapshotList = new ArrayList<ModuleSnapshot>()
+        moduleSnapshotList.add(new ModuleSnapshot('3e1f3969-c6ec-4a44-96a0-101d45b668e7', '000f3969-c6ec-4a44-96a0-101d45b668e7',
+                'Module Snapshot Name', 'https://git-repository-address.com', LocalDateTime.now(), 'https://helm-repository.com',
+                componentSnapshotList, workspaceId, '3e25a77e-5f14-45f3-9ae7-c25c00ad9ca6'
+        ))
+
+        def featureSnapshotList = new ArrayList<FeatureSnapshot>()
+        featureSnapshotList.add(new FeatureSnapshot('3e25a77e-5f14-45f3-9ae7-c25c00ad9ca6', 'cc869c36-311c-4523-ba5b-7b69286e0df4',
+                'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
+
+        def circle = new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
+                author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
+
+        def deploymentList = new ArrayList<Deployment>()
+
+        def build = new Build('23f1eabd-fb57-419b-a42b-4628941e34ec', author, LocalDateTime.now(), featureSnapshotList,
+                'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,
+                workspaceId, deploymentList)
+        build
+    }
+
+    private  static Deployment getOldDeployment() {
+        new Deployment(
+                "qwerty-12345-asdf-98760",
+                getDummyUser(),
+                LocalDateTime.of(2020,5,5,13,44),
+                LocalDateTime.of(2020,5,5,13,44),
+                DeploymentStatusEnum.DEPLOYED,
+                getDummyCircle(),  "buildId", "workspaceId", null,
+                null
+        )
+    }
+    private static Deployment getNewDeployment() {
+        new Deployment(
+                "qwerty-12345-asdf-98653",
+                getDummyUser(),
+                LocalDateTime.of(2021,5,5,13,44),
+                LocalDateTime.of(2021,5,5,13,44),
+                DeploymentStatusEnum.DEPLOYED,
+                getDummyCircle(),  "buildId", "workspaceId",
+                null,
+                null,
+        )
+    }
+
+    private static Build getBuildWithTwoDeployment(String workspaceId, User author, BuildStatusEnum buildStatusEnum, DeploymentStatusEnum deploymentStatusEnum) {
+        def componentSnapshotList = new ArrayList<ComponentSnapshot>()
+        componentSnapshotList.add(new ComponentSnapshot('70189ffc-b517-4719-8e20-278a7e5f9b33', '20209ffc-b517-4719-8e20-278a7e5f9b00',
+                'Component snapshot name', LocalDateTime.now(), null,
+                workspaceId, '3e1f3969-c6ec-4a44-96a0-101d45b668e7', 'host', 'gateway'))
+
+        def moduleSnapshotList = new ArrayList<ModuleSnapshot>()
+        moduleSnapshotList.add(new ModuleSnapshot('3e1f3969-c6ec-4a44-96a0-101d45b668e7', '000f3969-c6ec-4a44-96a0-101d45b668e7',
+                'Module Snapshot Name', 'https://git-repository-address.com', LocalDateTime.now(), 'https://helm-repository.com',
+                componentSnapshotList, workspaceId, '3e25a77e-5f14-45f3-9ae7-c25c00ad9ca6'
+        ))
+
+        def featureSnapshotList = new ArrayList<FeatureSnapshot>()
+        featureSnapshotList.add(new FeatureSnapshot('3e25a77e-5f14-45f3-9ae7-c25c00ad9ca6', 'cc869c36-311c-4523-ba5b-7b69286e0df4',
+                'Feature name', 'feature-branch-name', LocalDateTime.now(), author.name, author.id, moduleSnapshotList, '23f1eabd-fb57-419b-a42b-4628941e34ec'))
+
+        def deploymentList = Arrays.asList(getOldDeployment(), getNewDeployment())
+        def build = new Build('23f1eabd-fb57-419b-a42b-4628941e34ec', author, LocalDateTime.now(), featureSnapshotList,
+                'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', buildStatusEnum,
+                workspaceId, deploymentList)
+        build
+    }
+
+    private  static Circle getDummyCircle() {
+        new Circle("qwerty-12345-asdf-98760", "charles", "reference", getDummyUser(),
+                LocalDateTime.now(), MatcherTypeEnum.REGULAR, null, null, null, true, "worspaceId", false, null)
+    }
+
+    private static User getDummyUser() {
+        new User("qwerty-12345-asdf-98760", "charles", "email@email.com", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
     }
 }
