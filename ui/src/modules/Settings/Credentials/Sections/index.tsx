@@ -17,7 +17,7 @@
 import Registry from './Registry';
 import CircleMatcher from './CircleMatcher';
 import MetricProvider from './MetricProvider';
-import CDConfiguration from './CDConfiguration';
+import DeploymentConfiguration from './DeploymentConfiguration';
 import UserGroup from './UserGroup';
 import MetricAction from './MetricAction';
 import Webhook from './Webhook';
@@ -26,7 +26,7 @@ export default {
   Registry,
   CircleMatcher,
   MetricProvider,
-  CDConfiguration,
+  DeploymentConfiguration,
   UserGroup,
   MetricAction,
   Webhook

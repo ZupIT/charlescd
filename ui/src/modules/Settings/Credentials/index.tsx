@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
 import isNull from 'lodash/isNull';
@@ -130,10 +130,10 @@ const Credentials = ({ onClickHelp }: Props) => {
         setForm={setForm}
         data={workspace.registryConfiguration}
       />
-      <Section.CDConfiguration
+      <Section.DeploymentConfiguration
         form={form}
         setForm={setForm}
-        data={workspace.cdConfiguration}
+        data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}
