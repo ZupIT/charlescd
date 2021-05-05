@@ -21,28 +21,6 @@ import 'unit-test/setup-msw';
 import Tab from '../Tab';
 import userEvent from '@testing-library/user-event';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
-import { setUserAbilities } from 'core/utils/abilities';
-import { saveProfile } from 'core/utils/profile';
-
-const originalWindow = window;
-
-beforeAll(() => {
-  saveProfile({
-    id: '123',
-    name: 'charles admin',
-    email: 'charlesadmin@admin',
-    root: true
-  });
-  
-  setUserAbilities(); 
-
-  Object.assign(window, originalWindow);
-  const location = window.location;
-
-  delete global.window.location;
-
-  global.window.location = Object.assign({}, location);
-});
 
 test('render Token View mode', async () => {
   const tokenID = 'abd6efc4-3b98-4049-8bdb-e8919c3d09f4';
