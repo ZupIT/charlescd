@@ -15,15 +15,12 @@
  */
 
 import { render, screen } from 'unit-test/testUtils';
-import userEvent from '@testing-library/user-event';
 import Form from '../Form';
 
 test('should show text to documentation', () => {
   render(<Form onFinish={jest.fn()} />);
 
-  const infoIcon = screen.getByTestId('icon-info');
-  userEvent.click(infoIcon);
-
-  expect(screen.getByText(/See our documentation/i)).toBeInTheDocument();
-  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details/i)).toBeInTheDocument();
 });
