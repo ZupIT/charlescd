@@ -32,8 +32,8 @@ data class Workspace(
     val deploymentConfigurationId: String? = null
 ) {
     fun checkCurrentWorkspaceStatus(): WorkspaceStatusEnum {
-        return if (deploymentConfigurationId != null && registryConfigurationId != null
-            && circleMatcherUrl != null
+        return if (deploymentConfigurationId != null && registryConfigurationId != null &&
+            circleMatcherUrl != null
         ) {
             WorkspaceStatusEnum.COMPLETE
         } else {
