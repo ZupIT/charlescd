@@ -491,13 +491,13 @@ jobs:
         id: get_hash_version
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
-      - name: Update charts
-        run: |
-          mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
-          cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
-          echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
-          rm -f ./install/helm-chart/Chart.old.yaml &&
-          cat ./install/helm-chart/Chart.yaml
+#       - name: Update charts
+#         run: |
+#           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
+#           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
+#           echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
+#           rm -f ./install/helm-chart/Chart.old.yaml &&
+#           cat ./install/helm-chart/Chart.yaml
 
       - name: Update helm dependencies
         uses: WyriHaximus/github-action-helm3@v2.1.3
