@@ -90,7 +90,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
             icon="info"
             link={`${CHARLES_DOC}/reference/circle-matcher`}
             linkLabel="View documentation"
-            description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. Consult our documentation for further details."
+            description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. See our documentation for further details."
           />
         </Text.h2>
         {renderForm()}

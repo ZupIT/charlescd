@@ -17,14 +17,12 @@
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Form from '../Form';
-import {title, description} from './fixtures';
 
-test('should show popover text', () => {
+test('should show text to documentation', () => {
   render(<Form onFinish={jest.fn()} />);
 
   const infoIcon = screen.getByTestId('icon-info');
   userEvent.click(infoIcon);
 
-  expect(screen.getByText(title)).toBeInTheDocument();
-  expect(screen.getByText(description)).toBeInTheDocument();
+  expect(screen.getByText(/See our documentation/i)).toBeInTheDocument();
 });
