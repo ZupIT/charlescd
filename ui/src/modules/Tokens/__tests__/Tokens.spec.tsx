@@ -19,28 +19,6 @@ import { MemoryRouter } from 'react-router-dom';
 import Token from '../index';
 import 'unit-test/setup-msw';
 import routes from 'core/constants/routes';
-import { saveProfile } from 'core/utils/profile';
-import { setUserAbilities } from 'core/utils/abilities';
-
-const originalWindow = window;
-
-beforeAll(() => {
-  saveProfile({
-    id: '123',
-    name: 'charles admin',
-    email: 'charlesadmin@admin',
-    root: true
-  });
-  
-  setUserAbilities(); 
-
-  Object.assign(window, originalWindow);
-  const location = window.location;
-
-  delete global.window.location;
-
-  global.window.location = Object.assign({}, location);
-})
 
 test('render Token PlaceHolder', async () => {
   render(
