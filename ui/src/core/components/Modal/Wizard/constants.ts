@@ -36,16 +36,6 @@ export const WizardItems = [
       'You can link one or more groups to a workspace. When linking a group you will be asked what permissions it will have on this workspace.'
   },
   {
-    icon: 'empty-hypothesis',
-    name: 'git',
-    menu: 'Git',
-    title: 'Git',
-    backgroundColor: 'git',
-    size: '200px',
-    subtitle:
-      'Adding a Git allows Charles to create, delete and merge branches as well as view repositories and generate releases. '
-  },
-  {
     icon: 'empty-modules',
     name: 'registry',
     menu: 'Registry',
