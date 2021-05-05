@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { ReactElement } from 'react';
-import { render, screen, act, waitFor } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Form from '../Form';
 import {title, description} from './fixtures';
