@@ -147,7 +147,7 @@ test('should render title and description', () => {
   render(<FormUserGroup onFinish={jest.fn()} />);
 
   expect(screen.getByText('Add user group')).toBeInTheDocument();
-  expect(screen.getByText(/Consult our/i)).toBeInTheDocument();
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
   expect(screen.getByText(/documentation/i)).toBeInTheDocument();
   expect(screen.getByText(/for further details./i)).toBeInTheDocument();
 });
