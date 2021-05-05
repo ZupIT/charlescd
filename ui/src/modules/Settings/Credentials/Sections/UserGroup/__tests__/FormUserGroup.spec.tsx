@@ -25,7 +25,6 @@ beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
-
 test('If the user group response is not empty, it must be possible to choose an option in the select component.', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify({
@@ -142,4 +141,13 @@ test('onSubmit and onFinish should be called', async () => {
     expect(mockSaveMethod).toBeCalled();
     expect(mockOnFinish).toBeCalled();
   })
+});
+
+test('should render title and description', () => {
+  render(<FormUserGroup onFinish={jest.fn()} />);
+
+  expect(screen.getByText('Add user group')).toBeInTheDocument();
+  expect(screen.getByText(/Consult our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
 });
