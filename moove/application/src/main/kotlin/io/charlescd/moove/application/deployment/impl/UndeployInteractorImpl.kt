@@ -20,16 +20,15 @@ package io.charlescd.moove.application.deployment.impl
 
 import io.charlescd.moove.application.*
 import io.charlescd.moove.application.deployment.UndeployInteractor
-import io.charlescd.moove.application.deployment.request.DeploymentRequestStatus
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.DeployService
 import java.time.LocalDateTime
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Named
 open class UndeployInteractorImpl @Inject constructor(
