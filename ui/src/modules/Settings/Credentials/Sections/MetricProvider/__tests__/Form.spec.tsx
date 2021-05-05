@@ -18,13 +18,22 @@ import React from 'react';
 import { render, screen, act } from 'unit-test/testUtils';
 import Form from '../Form';
 import * as MetricProviderHooks from '../../../Sections/MetricProvider/hooks';
-import { Plugins } from './fixtures';
+import { Plugins, title } from './fixtures';
 import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 
 beforeEach(() => {
   (fetch as FetchMock).resetMocks();
+});
+
+test('should render title and text to documentation', () => {
+  render(<Form onFinish={jest.fn()} />);
+
+  expect(screen.getByText(title)).toBeInTheDocument();
+  expect(screen.getByText(/Consult our/)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./)).toBeInTheDocument();
 });
 
 test('render button test connection', async () => {

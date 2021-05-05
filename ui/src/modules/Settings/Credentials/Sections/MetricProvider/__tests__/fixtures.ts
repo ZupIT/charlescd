@@ -68,3 +68,5 @@ export const Plugins: Plugin[] = [
     }
   }
 ]
+
+export const title = 'Add Datasource';
