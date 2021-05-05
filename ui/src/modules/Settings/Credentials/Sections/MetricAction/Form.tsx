@@ -25,7 +25,13 @@ import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
 import DocumentationLink from 'core/components/DocumentationLink';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { 
+  isRequired,
+  urlPattern,
+  isRequiredAndNotBlank,
+  isNotBlank,
+  trimValue
+} from 'core/utils/validations';
 
 const actionPlaceholder = 'charlescd-custom-path-example';
 
@@ -46,6 +52,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     register,
     control,
     watch,
+    errors,
     formState: { isValid }
   } = formMethods;
   const nickname = watch('nickname') as string;
@@ -113,7 +120,15 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         <Styled.Wrapper>
           <Styled.Input
             name="configuration"
-            ref={register(isRequiredAndNotBlank)}
+            ref={register({
+              required: isRequired(),
+              validate: {
+                notBlank: isNotBlank
+              },
+              setValueAs: trimValue,
+              pattern: urlPattern()
+            })}
+            error={errors?.configuration?.message}
             label="Enter a action configuration"
           />
           {showPlaceholder && (
@@ -173,7 +188,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         You can create an action and add a trigger to perform an automatic task.
         Consult our{' '}
         <DocumentationLink
-          documentationLink="https://docs.charlescd.io/reference/metrics/metrics-actions"
+          documentationLink="https://docs.charlescd.io/reference/metrics/action"
           text="documentation"
         />
         for further details.
