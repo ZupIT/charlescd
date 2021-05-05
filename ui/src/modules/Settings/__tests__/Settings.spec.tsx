@@ -38,8 +38,6 @@ test('render settings wizard', () => {
   fireEvent.click(nextButton);
   expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument();
   fireEvent.click(nextButton);
-  expect(screen.getByTestId('modal-wizard-info-git')).toBeInTheDocument();
-  fireEvent.click(nextButton);
   expect(screen.getByTestId('modal-wizard-info-registry')).toBeInTheDocument();
   fireEvent.click(nextButton);
   expect(screen.getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument();
