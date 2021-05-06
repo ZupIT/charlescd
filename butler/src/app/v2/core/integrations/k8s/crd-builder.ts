@@ -22,13 +22,14 @@ import {
   CharlesRoutes
 } from './interfaces/charles-routes.interface'
 import { uniqBy } from 'lodash'
+import {AppConstants} from "../../constants";
 
 export class CrdBuilder {
 
   public static buildDeploymentCrdManifest(deployment: Deployment, namespace: string): CharlesDeployment {
     return {
       apiVersion: 'charlescd.io/v1',
-      kind: 'CharlesDeployment',
+      kind: AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND,
       metadata: {
         name: deployment.circleId,
         namespace: namespace
@@ -46,7 +47,7 @@ export class CrdBuilder {
   public static buildRoutingCrdManifest(activeComponents: Component[], namespace: string): CharlesRoutes {
     return {
       apiVersion: 'charlescd.io/v1',
-      kind: 'CharlesRoutes',
+      kind: AppConstants.CHARLES_CUSTOM_RESOURCE_ROUTES_KIND,
       metadata: {
         name: `${namespace}-routes`,
         namespace: namespace

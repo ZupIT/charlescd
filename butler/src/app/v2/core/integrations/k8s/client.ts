@@ -162,7 +162,8 @@ export class K8sClient {
       this.consoleLoggerService.log('START:READ_RESOURCE_MANIFEST')
       return await this.objectApi.read(manifest)
     } catch(error) {
-      this.consoleLoggerService.error('ERROR:READ_RESOURCE_MANIFEST', { error })
+
+      this.consoleLoggerService.error('ERROR:READ_RESOURCE_MANIFEST', error )
       throw error
     }
   }

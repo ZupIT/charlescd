@@ -24,6 +24,11 @@ import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
+import { AppConstants } from '../../core/constants'
+import { CoreV1Event, V1ObjectReference } from '@kubernetes/client-node'
+import {plainToClass} from "class-transformer";
+import {V1ObjectMeta} from "@kubernetes/client-node/dist/api";
+import {type} from "os";
 
 @Injectable()
 export class EventsLogsAggregator {
@@ -48,12 +53,18 @@ export class EventsLogsAggregator {
   }
 
   public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
-    const involvedObject = coreEvent.involvedObject
+    return this.isMetaControllerEvent(coreEvent.involvedObject) 
+      ? this.saveMetaControllerEvent(coreEvent, since) : this.saveResourceEvent(coreEvent, since)
 
+  }
+  
+  private async saveResourceEvent(coreEvent: k8s.CoreV1Event, since?: Date) {
+    
+    const involvedObject = coreEvent.involvedObject
     if (!involvedObject.namespace
-      || !involvedObject.kind
-      || !involvedObject.apiVersion
-      || !involvedObject.name) {
+        || !involvedObject.kind
+        || !involvedObject.apiVersion
+        || !involvedObject.name) {
       this.consoleLoggerService.log('"event.involvedObject" does not has the necessary data to identify the target resource! Discarding event...', involvedObject)
       return
     }
@@ -100,7 +111,6 @@ export class EventsLogsAggregator {
 
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
-
   }
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
@@ -135,6 +145,21 @@ export class EventsLogsAggregator {
     }
   }
 
+  private async customResourceFor( name: string, kind: string, apiVersion: string, namespace?: string): Promise<k8s.KubernetesObject | undefined> {
+    try {
+      const response = await this.cachedCustomResourceFor(
+        name,
+        kind,
+        apiVersion,
+        namespace
+      )
+      return response.body
+    } catch (error) {
+      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, error)
+      return undefined
+    }
+  }
+
   private async cachedResourceFor(namespace: string, kind: string, apiVersion: string, name: string):
     Promise<{
       body: k8s.KubernetesObject,
@@ -156,6 +181,34 @@ export class EventsLogsAggregator {
         name: name
       }
     }
+    this.consoleLoggerService.log("SPEC", spec)
+    const response = this.k8sClient.readResource(spec)
+
+    this.cache.set(cacheKey, response)
+
+    return response
+  }
+
+  private async cachedCustomResourceFor( name: string,  kind: string, apiVersion: string, namespace?: string):
+      Promise<{
+        body: k8s.KubernetesObject,
+        response: http.IncomingMessage
+      }> {
+
+    const spec = {
+      kind: kind,
+      apiVersion: apiVersion,
+      metadata: {
+        name: name
+      }
+    }
+    this.consoleLoggerService.log('SPEC',spec)
+    const cacheKey = this.createCustomResourceCacheKey( kind, name)
+    const cachedResponse = this.cache.get(cacheKey)
+    this.consoleLoggerService.log('CACHEDRESPONSE', cachedResponse)
+    // if (cachedResponse) {
+    //   return cachedResponse
+    // }
 
     const response = this.k8sClient.readResource(spec)
 
@@ -164,9 +217,63 @@ export class EventsLogsAggregator {
     return response
   }
 
+
   private createCacheKey(namespace: string, kind: string, name: string): string {
     return `${namespace}:${kind}:${name}`
   }
+
+  private createCustomResourceCacheKey(kind: string, name: string): string {
+    return `${kind}:${name}`
+  }
+
+  private isMetaControllerEvent(involvedObject: V1ObjectReference) {
+    this.consoleLoggerService.log('CHECKING OBJECT', involvedObject)
+    return (involvedObject.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND
+          || involvedObject.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_ROUTES_KIND)
+  }
+
+  private async saveMetaControllerEvent(coreEvent: k8s.CoreV1Event, since: Date | undefined) {
+
+    const involvedObject = coreEvent.involvedObject
+    if (!involvedObject.name || !involvedObject.kind || ! involvedObject.apiVersion) {
+      return
+    }
+    const event = new Event(coreEvent)
+    const resource = await this.customResourceFor(
+      involvedObject.name,
+      involvedObject.kind,
+      involvedObject.apiVersion,
+      involvedObject.namespace
+    )
+    this.consoleLoggerService.log('GETTING META_CONTROLLER_RESOURCE', resource)
+    if (!resource) {
+      this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace}`)
+      return
+    }
+    if (this.isEventOlderThan(event, since)) {
+      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
+      return
+    }
+    const typedResource = plainToClass(K8sResource, resource)
+    if(!typedResource ) {
+      this.consoleLoggerService.log(`Failed to parse ${involvedObject.kind}/${involvedObject.name} object.Discarding event `)
+      return
+    }
+
+    if(!typedResource.spec || !typedResource.spec.deploymentId  ) {
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} does not have deploymentId.Discarding event `)
+      return
+    }
+    const log = {
+      type: event.type,
+      title: event.title,
+      timestamp: moment(event.timestamp).format(),
+      details: event.details
+    }
+    this.saveLogs(`${typedResource.spec.deploymentId}`, log)
+
+  }
+  
 }
 
 class Event {
@@ -217,4 +324,13 @@ class Event {
   public isAfter(timestamp: Date): boolean {
     return this.timestamp >= timestamp
   }
+
+
+}
+class K8sResource {
+  apiVersion?: string;
+  kind?: string;
+  metadata?: V1ObjectMeta;
+  spec?: Record<string, unknown>
+}
 }
