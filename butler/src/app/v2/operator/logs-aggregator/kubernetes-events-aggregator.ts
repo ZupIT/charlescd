@@ -87,6 +87,7 @@ export class EventsLogsAggregator {
 
     if (await this.alreadyLogged(log, deploymentId)) {
       this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
     }
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
@@ -170,7 +171,7 @@ export class EventsLogsAggregator {
   private isSameLog(logRequest: Log, logDatabase: Log) {
     return logRequest.title === logDatabase.title
         &&  logRequest.timestamp === logDatabase.timestamp
-        && logRequest.details === logDatabase.title
+        && logRequest.details === logDatabase.details
   }
 
   private validateAndCreateEvent(coreEvent: k8s.CoreV1Event, since?: Date) {
@@ -197,9 +198,9 @@ export class EventsLogsAggregator {
   private getDeploymentIdLabel(resource: k8s.KubernetesObject) {
     const deploymentIdResource = resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
     if (!deploymentIdResource) {
-      if(resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND) {
+      if (resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND) {
         const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
-        if(!resourceWithSpec || !resourceWithSpec.spec) {
+        if (!resourceWithSpec || !resourceWithSpec.spec) {
           return
         }
         return resourceWithSpec.spec.deploymentId as string  
