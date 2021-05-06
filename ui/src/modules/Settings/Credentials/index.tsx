@@ -17,12 +17,11 @@
 import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
-import isNull from 'lodash/isNull';
-import { useWorkspace } from 'modules/Settings/hooks';
+import { copyToClipboard } from 'core/utils/clipboard';
+import { useWorkspaceUpdateName } from 'modules/Settings/hooks';
 import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
-import { useGlobalState } from 'core/state/hooks';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
@@ -32,20 +31,21 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { copyToClipboard } from 'core/utils/clipboard';
+import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
+  workspace: Workspace;
 }
 
 type FormState = {
   name: string;
 }
 
-const Credentials = ({ onClickHelp }: Props) => {
+const Credentials = ({ workspace, onClickHelp }: Props) => {
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
-  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { updateWorkspaceName } = useWorkspaceUpdateName();
   const {
     responseAll: datasources,
     getAll: getAllDatasources
@@ -55,15 +55,12 @@ const Credentials = ({ onClickHelp }: Props) => {
     actionResponse,
     status: actionDataStatus
   } = useActionData();
-  const { item: workspace, status } = useGlobalState(
-    ({ workspaces }) => workspaces
-  );
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
   
   const handleSaveClick = ({ name }: Record<string, string>) => {
-    updateWorkspace(name);
+    updateWorkspaceName(name);
   };
 
   const getActions = () => getActionData();
@@ -77,11 +74,8 @@ const Credentials = ({ onClickHelp }: Props) => {
   }, [getActionData, actionDataStatus]);
 
   useEffect(() => {
-    if (isNull(form)) {
-      loadWorkspace(id);
-    }
     getAllDatasources();
-  }, [id, form, loadWorkspace, getAllDatasources]);
+  }, [getAllDatasources]);
 
   const renderContent = () => (
     <Layer>
@@ -128,7 +122,7 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.Registry
         form={form}
         setForm={setForm}
-        data={workspace.registryConfiguration}
+        data={workspace?.registryConfiguration}
       />
       <Section.DeploymentConfiguration
         form={form}
@@ -169,7 +163,7 @@ const Credentials = ({ onClickHelp }: Props) => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || isEmpty(workspace.id) || !datasources ? (
+      {isEmpty(workspace?.id) || !datasources ? (
         <Loader.Tab />
       ) : (
         renderPanel()

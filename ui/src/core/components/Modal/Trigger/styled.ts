@@ -60,12 +60,16 @@ const Content = styled.div`
 
 const Title = styled(Text.h2)`
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+`;
+
+const Description = styled.div`
+  margin: 20px 0 20px 0;
 `;
 
 const ContinueButton = styled(DefaultButton)`
   padding: 5px;
-  margin-top: 15px;
+  margin-top: 0;
   margin-left: 15px;
   align-items: center;
   height: 40px;
@@ -79,18 +83,18 @@ const ContinueButton = styled(DefaultButton)`
 const DismissButton = styled(DefaultButton)`
   cursor: pointer;
   padding: 5px;
-  margin-top: 15px;
+  margin-top: 0;
   align-items: center;
   height: 40px;
   width: 160px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
+  border: 0.1rem solid ${({ theme }) => theme.modal.trigger.border};
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.modal.trigger.dismiss};
 
-  > * {
-    color: ${({ theme }) => theme.modal.trigger.dismiss};
+  span {
+    color: ${({ theme }) => theme.modal.trigger.border};
   }
 `;
 
@@ -108,5 +112,6 @@ export default {
   Content,
   Background,
   Title,
+  Description,
   Wrapper
 };

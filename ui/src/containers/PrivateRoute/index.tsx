@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
-import { useGlobalState } from 'core/state/hooks';
 import routes from 'core/constants/routes';
-import { isRoot, hasPermission } from 'core/utils/auth';
-import { useWorkspace } from 'modules/Settings/hooks';
-import { getWorkspaceId } from 'core/utils/workspace';
 import { isAllowed } from './helpers';
 
 export interface Props extends RouteProps {
@@ -35,25 +31,8 @@ const PrivateRoute = ({
   render,
   ...rest
 }: Props) => {
-  const workspaceId = getWorkspaceId();
-  const [, loadWorkspace] = useWorkspace();
-  const { item: workspace, status } = useGlobalState(
-    ({ workspaces }) => workspaces
-  );
+  const isAuthorizedByUser = allowedRoute || isAllowed(allowedRoles);
 
-  useEffect(() => {
-    if (
-      workspaceId &&
-      hasPermission('maintenance_write') &&
-      (status === 'idle' ||
-        (status === 'resolved' && workspaceId !== workspace?.id))
-    ) {
-      loadWorkspace(workspaceId);
-    }
-  }, [workspaceId, loadWorkspace, status, workspace]);
-
-  const isAuthorizedByUser =
-    allowedRoute || isAllowed(allowedRoles) || isRoot();
   return (
     <Route
       {...rest}

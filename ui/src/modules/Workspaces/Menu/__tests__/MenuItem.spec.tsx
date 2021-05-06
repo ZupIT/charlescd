@@ -17,39 +17,40 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import { workspaceItem } from './fixtures';
 import WorkspaceItem from '../MenuItem';
+import { getWorkspace } from 'core/utils/workspace';
 
 test('render Workspace item', async () => {
   render(
     <WorkspaceItem  
-      id={workspaceItem.id}
-      name={workspaceItem.name}
-      status={workspaceItem.status}
-      selectedWorkspace={null}
+      workspace={{
+        id: '1',
+        name: 'ws1',
+        createdAt: '',
+        permissions: []
+      }}
     />
   );
 
-  const workspaceName = screen.getByText('workspace');
-
-  expect(workspaceName).toBeInTheDocument();
+  const workspace = await screen.findByText('ws1');
+  expect(workspace).toBeInTheDocument();
 });
 
 test('render Workspace item and click', async () => {
-  const selectedWorkspace = jest.fn();
-
   render(
     <WorkspaceItem  
-      id={workspaceItem.id}
-      name={workspaceItem.name}
-      status={workspaceItem.status}
-      selectedWorkspace={selectedWorkspace}
+      workspace={{
+        id: '1',
+        name: 'ws1',
+        createdAt: '',
+        permissions: []
+      }}
     />
   );
 
-  const workspaceName = screen.getByText('workspace');
+  const ws1 = await screen.findByText('ws1');
+  userEvent.click(ws1);
 
-  userEvent.click(workspaceName);
-
-  expect(selectedWorkspace).toHaveBeenCalled();
+  const workspace = getWorkspace();
+  expect(workspace.name).toEqual('ws1');
 });
