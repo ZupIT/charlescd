@@ -29,12 +29,14 @@ import { CoreV1Event, V1ObjectReference } from '@kubernetes/client-node'
 import {plainToClass} from "class-transformer";
 import {V1ObjectMeta} from "@kubernetes/client-node/dist/api";
 import {type} from "os";
+import {time} from "cron";
+import {K8sManifestWithSpec} from "../../core/integrations/interfaces/k8s-manifest.interface";
 
 @Injectable()
 export class EventsLogsAggregator {
 
   private static readonly KUBE_SYSTEM_NS_PREFIX = 'kube-'
-  
+
   private readonly MAX_CACHE_SIZE = 100
   private readonly MAX_CACHE_AGE_ONE_HOUR = 1000 * 60 * 60
 
@@ -46,14 +48,14 @@ export class EventsLogsAggregator {
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
     private consoleLoggerService: ConsoleLoggerService) {
-    this.cache = new LRUCache({ 
-      max: this.MAX_CACHE_SIZE, 
-      maxAge: this.MAX_CACHE_AGE_ONE_HOUR 
+    this.cache = new LRUCache({
+      max: this.MAX_CACHE_SIZE,
+      maxAge: this.MAX_CACHE_AGE_ONE_HOUR
     })
   }
 
   public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
-    return this.isMetaControllerEvent(coreEvent.involvedObject) 
+    return this.isMetaControllerEvent(coreEvent.involvedObject)
       ? this.saveMetaControllerEvent(coreEvent, since) : this.saveResourceEvent(coreEvent, since)
 
   }
@@ -145,17 +147,16 @@ export class EventsLogsAggregator {
     }
   }
 
-  private async customResourceFor( name: string, kind: string, apiVersion: string, namespace?: string): Promise<k8s.KubernetesObject | undefined> {
+  private async customResourceFor( name: string, kind: string, apiVersion: string): Promise<k8s.KubernetesObject | undefined> {
     try {
       const response = await this.cachedCustomResourceFor(
         name,
         kind,
-        apiVersion,
-        namespace
+        apiVersion
       )
       return response.body
     } catch (error) {
-      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, error)
+      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${kind}/${name}`, error)
       return undefined
     }
   }
@@ -181,7 +182,6 @@ export class EventsLogsAggregator {
         name: name
       }
     }
-    this.consoleLoggerService.log("SPEC", spec)
     const response = this.k8sClient.readResource(spec)
 
     this.cache.set(cacheKey, response)
@@ -189,7 +189,7 @@ export class EventsLogsAggregator {
     return response
   }
 
-  private async cachedCustomResourceFor( name: string,  kind: string, apiVersion: string, namespace?: string):
+  private async cachedCustomResourceFor( name: string,  kind: string, apiVersion: string):
       Promise<{
         body: k8s.KubernetesObject,
         response: http.IncomingMessage
@@ -202,13 +202,12 @@ export class EventsLogsAggregator {
         name: name
       }
     }
-    this.consoleLoggerService.log('SPEC',spec)
+    this.consoleLoggerService.log('SPEC', spec)
     const cacheKey = this.createCustomResourceCacheKey( kind, name)
     const cachedResponse = this.cache.get(cacheKey)
-    this.consoleLoggerService.log('CACHEDRESPONSE', cachedResponse)
-    // if (cachedResponse) {
-    //   return cachedResponse
-    // }
+    if (cachedResponse) {
+      return cachedResponse
+    }
 
     const response = this.k8sClient.readResource(spec)
 
@@ -243,37 +242,56 @@ export class EventsLogsAggregator {
       involvedObject.name,
       involvedObject.kind,
       involvedObject.apiVersion,
-      involvedObject.namespace
     )
-    this.consoleLoggerService.log('GETTING META_CONTROLLER_RESOURCE', resource)
+    this.consoleLoggerService.log('START:GET_CHARLES_CUSTOM_RESOURCE', resource)
     if (!resource) {
-      this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace}`)
+      this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} `)
       return
     }
     if (this.isEventOlderThan(event, since)) {
       this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
       return
     }
-    const typedResource = plainToClass(K8sResource, resource)
-    if(!typedResource ) {
+
+    const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
+
+    if (!resourceWithSpec ) {
       this.consoleLoggerService.log(`Failed to parse ${involvedObject.kind}/${involvedObject.name} object.Discarding event `)
       return
     }
 
-    if(!typedResource.spec || !typedResource.spec.deploymentId  ) {
+    if (!resourceWithSpec.spec || !resourceWithSpec.spec.deploymentId  ) {
       this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} does not have deploymentId.Discarding event `)
       return
     }
+
+    const deploymentId = resourceWithSpec.spec.deploymentId as string
     const log = {
       type: event.type,
       title: event.title,
       timestamp: moment(event.timestamp).format(),
       details: event.details
     }
-    this.saveLogs(`${typedResource.spec.deploymentId}`, log)
 
+    if (await this.alreadyLogged(log.title, log.timestamp, log.details, deploymentId)) {
+      this.consoleLoggerService.log('Log already saved.Discarding... ', log)
+      return
+    }
+
+    this.saveLogs(deploymentId, log)
   }
-  
+
+  private async alreadyLogged(title: string, timestamp: string, details: string, deploymentId: string): Promise<Log | undefined> {
+    const logEntity = await this.logsRepository.findDeploymentLogs(deploymentId)
+    return logEntity?.logs.find(
+      log => this.isSameLog(log, title, timestamp, details)
+    )
+  }
+
+  private isSameLog(log: Log, title: string, timestamp: string, details: string) {
+    return log.title === title &&  log.timestamp === timestamp && log.details === details
+  }
+
 }
 
 class Event {
@@ -326,11 +344,4 @@ class Event {
   }
 
 
-}
-class K8sResource {
-  apiVersion?: string;
-  kind?: string;
-  metadata?: V1ObjectMeta;
-  spec?: Record<string, unknown>
-}
 }

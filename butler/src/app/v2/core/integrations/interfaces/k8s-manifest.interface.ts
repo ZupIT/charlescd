@@ -15,6 +15,7 @@
  */
 
 import { KubernetesObject } from '@kubernetes/client-node'
+import { V1ObjectMeta } from '@kubernetes/client-node/dist/api';
 
 interface Cookie {
   regex: string
@@ -95,3 +96,11 @@ export type SpecTemplateManifest = {
 }
 
 export type KubernetesManifest = KubernetesObject
+
+
+export class K8sManifestWithSpec {
+  public apiVersion?: string;
+  public kind?: string;
+  public metadata?: V1ObjectMeta;
+  public spec?: Record<string, unknown>
+}

@@ -24,6 +24,10 @@ import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/
 import { CoreV1Event, KubernetesObject } from '@kubernetes/client-node'
 import { LogRepository } from '../../../../app/v2/api/deployments/repository/log.repository'
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
+import {DeploymentEntityV2} from "../../../../app/v2/api/deployments/entity/deployment.entity";
+import {UrlConstants} from "../../integration/test-constants";
+import {ComponentEntityV2} from "../../../../app/v2/api/deployments/entity/component.entity";
+import * as moment from "moment";
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -261,5 +265,56 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     expect(readSpy).toBeCalledTimes(0)
     expect(logRepositorySpy).toBeCalledTimes(0)
+  })
+
+  it('should not save duplicated metacontroller logs', async() => {
+
+    const body = {
+      apiVersion: 'charlescd.io/v1',
+      kind: 'CharlesDeployment',
+      name: 'circle',
+      spec: {
+        'deploymentId': '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3'
+      }
+    }
+    const timestamp = new Date()
+    const eventMessage =
+        `Sync error: invalid labels on desired child Deployment charles/null-release-darwin-test-schu-v-1
+          -952e581c-54a8-4fda-8669-05be755cc697: .metadata.labels accessor error: contains non-string key in the map`
+    const corev1Event = new CoreV1Event()
+    corev1Event.involvedObject = {
+      apiVersion: 'charlescd.io/v1',
+      kind: 'CharlesDeployment',
+      name: 'circle'
+    }
+    corev1Event.metadata = {
+      creationTimestamp : timestamp
+    }
+    corev1Event.message = eventMessage
+    corev1Event.reason = 'SyncError'
+
+    jest.spyOn(k8sClient, 'readResource').mockImplementation(
+      async() => Promise.resolve({ body: body, response: {} as http.IncomingMessage })
+    )
+
+    const log = {
+      type: 'WARN',
+      title: 'SyncError',
+      details: JSON.stringify({
+        message: eventMessage,
+        object: `${corev1Event.involvedObject.kind}/${corev1Event.involvedObject.name}`
+      }),
+      timestamp: moment(timestamp).format()
+    }
+    const logEntity = new LogEntity('6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3', [log])
+    jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
+      async() => Promise.resolve(logEntity)
+    )
+
+    const logAgreggator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+
+    await logAgreggator.aggregate(corev1Event, timestamp)
+    const spySaveLogs = jest.spyOn(logRepository, 'save')
+    expect(spySaveLogs).not.toBeCalled()
   })
 })
