@@ -47,7 +47,7 @@ test('render add Metric Action form', async () => {
   expect(actionInformationPart3).toBeInTheDocument();
 });
 
-test.only('render add Metric Action form and add an action', async () => {
+test('render add Metric Action form and add an action', async () => {
   (fetch as FetchMock).mockResponseOnce(
     JSON.stringify(pluginsData)
   );
