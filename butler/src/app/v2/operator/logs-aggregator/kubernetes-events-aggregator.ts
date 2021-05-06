@@ -81,10 +81,10 @@ export class EventsLogsAggregator {
     }
 
     const resource = await this.resourceFor(
-      involvedObject.namespace,
       involvedObject.kind,
       involvedObject.apiVersion,
-      involvedObject.name
+      involvedObject.name,
+      involvedObject.namespace
     )
 
     if (!resource) {
@@ -129,13 +129,13 @@ export class EventsLogsAggregator {
     return !event.isAfter(since)
   }
 
-  private async resourceFor(namespace: string, kind: string, apiVersion: string, name: string): Promise<k8s.KubernetesObject | undefined> {
+  private async resourceFor(kind: string, apiVersion: string, name: string, namespace?: string): Promise<k8s.KubernetesObject | undefined> {
     try {
       const response = await this.cachedResourceFor(
-        namespace,
         kind,
         apiVersion,
-        name
+        name,
+        namespace
       )
       return response.body
     } catch (error) {
@@ -144,27 +144,13 @@ export class EventsLogsAggregator {
     }
   }
 
-  private async customResourceFor( name: string, kind: string, apiVersion: string): Promise<k8s.KubernetesObject | undefined> {
-    try {
-      const response = await this.cachedCustomResourceFor(
-        name,
-        kind,
-        apiVersion
-      )
-      return response.body
-    } catch (error) {
-      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${kind}/${name}`, error)
-      return undefined
-    }
-  }
-
-  private async cachedResourceFor(namespace: string, kind: string, apiVersion: string, name: string):
+  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,):
     Promise<{
       body: k8s.KubernetesObject,
       response: http.IncomingMessage
     }> {
     
-    const cacheKey = this.createCacheKey(namespace, kind, name)
+    const cacheKey = this.createCacheKey(kind, name, namespace)
 
     const cachedResponse = this.cache.get(cacheKey)
     if (cachedResponse) {
@@ -179,32 +165,6 @@ export class EventsLogsAggregator {
         name: name
       }
     }
-    const response = this.k8sClient.readResource(spec)
-
-    this.cache.set(cacheKey, response)
-
-    return response
-  }
-
-  private async cachedCustomResourceFor( name: string,  kind: string, apiVersion: string):
-      Promise<{
-        body: k8s.KubernetesObject,
-        response: http.IncomingMessage
-      }> {
-
-    const spec = {
-      kind: kind,
-      apiVersion: apiVersion,
-      metadata: {
-        name: name
-      }
-    }
-    this.consoleLoggerService.log('SPEC', spec)
-    const cacheKey = this.createCustomResourceCacheKey( kind, name)
-    const cachedResponse = this.cache.get(cacheKey)
-    if (cachedResponse) {
-      return cachedResponse
-    }
 
     const response = this.k8sClient.readResource(spec)
 
@@ -214,12 +174,8 @@ export class EventsLogsAggregator {
   }
 
 
-  private createCacheKey(namespace: string, kind: string, name: string): string {
-    return `${namespace}:${kind}:${name}`
-  }
-
-  private createCustomResourceCacheKey(kind: string, name: string): string {
-    return `${kind}:${name}`
+  private createCacheKey(kind: string, name: string, namespace?: string): string {
+    return  namespace ? `${namespace}:${kind}:${name}` : `${kind}:${name}`
   }
 
   private isMetaControllerEvent(involvedObject: V1ObjectReference) {
@@ -235,10 +191,11 @@ export class EventsLogsAggregator {
       return
     }
     const event = new Event(coreEvent)
-    const resource = await this.customResourceFor(
+    const resource = await this.resourceFor(
       involvedObject.name,
       involvedObject.kind,
       involvedObject.apiVersion,
+      involvedObject.namespace
     )
     this.consoleLoggerService.log('START:GET_CHARLES_CUSTOM_RESOURCE', resource)
     if (!resource) {
