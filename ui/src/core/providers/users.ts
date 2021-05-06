@@ -84,9 +84,9 @@ export const patchProfileById = (id: string, name: string) =>
   patchRequest(`${endpoint}/${id}`, 'replace', '/name', name);
 
 export const findUserByEmail = (email: string) => {
-  const decodeEmail = btoa(email);
+  const encodedEmail = btoa(email);
 
-  return baseRequest(`${endpoint}/${decodeEmail}`);
+  return baseRequest(`${endpoint}/${encodedEmail}`);
 };
 
 export const findWorkspacesByUserId = (id: string, { name }: { name: string }) => {
