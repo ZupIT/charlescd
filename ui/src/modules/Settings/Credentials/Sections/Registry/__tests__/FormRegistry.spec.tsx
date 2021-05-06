@@ -782,3 +782,11 @@ test('should clean test connection message after change form', async () => {
   expect(errorMessage).not.toBeInTheDocument();
 });
 
+test('should show text to documentation', () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
+});
+

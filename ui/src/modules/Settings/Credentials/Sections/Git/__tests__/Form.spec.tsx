@@ -46,3 +46,12 @@ test('should test a git connection', async () => {
   })
   const connectionMessageElement = await screen.findByText('Successful connection with git.');
 });
+
+test('should show text to documentation', () => {
+  const handleOnFinish = jest.fn();
+  render(<FormGit onFinish={handleOnFinish}/>);
+
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
+});

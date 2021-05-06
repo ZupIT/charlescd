@@ -22,4 +22,5 @@ export interface WorkspaceState {
   list: WorkspacePagination;
   item: Workspace;
   status: FetchStatuses;
+  permissions: string[];
 }

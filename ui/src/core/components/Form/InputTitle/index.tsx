@@ -67,14 +67,14 @@ const InputTitle = React.forwardRef(
     };
 
     return (
-      <Styled.Wrapper ref={wrapperRef}>
+      <Styled.Wrapper ref={wrapperRef} className={className}>
         <Styled.Field>
           <Styled.InputTitle
             readOnly={readOnly}
             name={name}
             ref={inputRef}
             resume={isResumed || readOnly}
-            className={className}
+            className="input-title"
             onClick={() => setIsResumed(false)}
             placeholder={placeholder}
             defaultValue={defaultValue}

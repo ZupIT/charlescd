@@ -121,7 +121,7 @@ const FormToken = ({ mode, data }: Props) => {
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <ContentIcon icon="token">
-            <Form.InputTitle
+            <Styled.InputTitle
               name="name"
               placeholder="Type a name"
               ref={self => {

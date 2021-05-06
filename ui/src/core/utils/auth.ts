@@ -15,16 +15,16 @@
  */
 
 import JwtDecode from 'jwt-decode';
-import find from 'lodash/find';
 import includes from 'lodash/includes';
-import { getWorkspaceId } from 'core/utils/workspace';
+import isEmpty from 'lodash/isEmpty';
 import { clearCircleId } from './circle';
 import { clearProfile } from './profile';
-import { clearWorkspace } from './workspace';
+import { clearWorkspace, getWorkspace } from './workspace';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { redirectTo } from './routes';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
+import { ability, Actions, Subjects } from './abilities';
 
 type AccessToken = {
   id?: string;
@@ -68,22 +68,23 @@ export const isRoot = () => {
   return isRoot || false;
 };
 
+export const getPermissions = (): string[] => {
+  const workspace = getWorkspace();
+  return workspace?.permissions || [];
+};
+
 export const isRootRoute = (route: string) => includes(route, 'root');
 
-export const getRoles = () => {
-  try {
-    const id = getWorkspaceId();
-    const workspaces = getProfileByKey('workspaces');
-    const { permissions } = find(workspaces, ['id', id]) || { permissions: [] };
-    return permissions;
-  } catch (e) {
-    return [];
-  }
+export const getRoles = (): string[] => {
+  const workspace = getWorkspace();
+
+  return workspace?.permissions || [];
 };
 
 export const hasPermission = (role: string) => {
-  const roles = getRoles();
-  return isRoot() || includes(roles, role);
+  const [subject, action] = role.split('_') || ['', ''];
+  const rule = ability.relevantRuleFor(action as Actions, subject as Subjects);
+  return !isEmpty(rule);
 };
 
 export const getRefreshToken = () => localStorage.getItem(refreshTokenKey);

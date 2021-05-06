@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import FormComponent from 'core/components/Form';
 import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
@@ -27,6 +27,12 @@ const Title = styled(Text.h2)`
   > :last-child {
     margin-left: 10px;
   }
+`;
+
+const InputTitle = styled(FormComponent.InputTitle)`
+  ${({ resume }) => !resume && css`
+    margin-top: -4px;
+  `}
 `;
 
 const Info = styled.div`
@@ -64,6 +70,7 @@ const Icon = styled(IconComponent)`
 export default {
   Content,
   Title,
+  InputTitle,
   Info,
   Form,
   Input,

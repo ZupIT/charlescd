@@ -1,0 +1,536 @@
+name: charlescd-ci-staging
+
+# Charles branchs of beta images, pre-release must have name in format of version starting at patch .0 charlescd-release-<VERSION>.0
+# ex: charlescd-release-1.1.0
+on:
+  push:
+    branches: [ charlescd-release-*.0 ]
+
+jobs:
+  build_and_push_beta_butler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - run: npm ci
+        working-directory: ./butler
+
+      - run: npm run build --if-present
+        working-directory: ./butler
+        env:
+          CI: true
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-butler
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd butler
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_circle_matcher:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up GraalVM
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '21.0.0.java11'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        working-directory: ./circle-matcher
+        run: mvn -B clean install -Djfr.unsupported.vm=true
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-circle-matcher
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd circle-matcher
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_compass:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "^1.14.2"
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-compass
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd compass
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+#   build_and_push_beta_moove:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: Set up JDK 1.11
+#         uses: actions/setup-java@v1
+#         with:
+#           java-version: 1.11
+
+#       - uses: actions/cache@v1
+#         with:
+#           path: ~/.m2/repository
+#           key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
+#           restore-keys: |
+#             ${{ runner.os }}-maven-
+
+#       - name: Build with Maven
+#         working-directory: ./moove
+#         run: mvn -B clean install
+
+#       - name: Get Major Version
+#         id: get_version
+#         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+#       - name: Get Hash Version
+#         id: get_hash_version
+#         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
+
+#       - name: Build, tag, and push image to Amazon ECR
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           ECR_REPOSITORY: charlescd-moove
+#           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+#         run: |
+#           cd moove/web
+#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+#           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_octopipe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.2'
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-octopipe
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd octopipe
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - run: yarn install
+        working-directory: ./ui
+      - run: yarn build
+        working-directory: ./ui
+      - run: yarn test
+        working-directory: ./ui
+        env:
+          CI: true
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-ui
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd ui
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_villager:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.11
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        working-directory: ./villager
+        run: mvn -B clean install
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-villager
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd villager
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_hermes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.15"
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-hermes
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd hermes
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  build_and_push_beta_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.15"
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-gate
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+        run: |
+          cd gate
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:beta-latest
+
+  deploy_staging:
+    runs-on: ubuntu-latest
+    needs: [ build_and_push_beta_butler,
+             build_and_push_beta_circle_matcher,
+             build_and_push_beta_octopipe,
+             build_and_push_beta_ui,
+             build_and_push_beta_villager,
+             build_and_push_beta_compass,
+             build_and_push_beta_hermes,
+             build_and_push_beta_gate
+    ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: charlescd-release-1.0.0
+
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+#       - name: Update charts
+#         run: |
+#           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
+#           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
+#           echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
+#           rm -f ./install/helm-chart/Chart.old.yaml &&
+#           cat ./install/helm-chart/Chart.yaml
+
+      - name: Update helm dependencies
+        uses: WyriHaximus/github-action-helm3@v2.1.3
+        with:
+          exec: helm dependency update ./install/helm-chart
+
+      - name: Zup Settings staging
+        run: |
+          cat <<-EOF > values-charles-staging.yaml
+          ${{ secrets.VALUES_CHARLES_STAGING }}
+          EOF
+          cat <<-EOF > ./install/helm-chart/templates/nginx-cert.yaml
+          ${{ secrets.NGINX_CERT }}
+          EOF
+
+      - name: Deploy staging
+        uses: WyriHaximus/github-action-helm3@v2.1.3
+        with:
+          exec: helm upgrade -n staging bug-hunting ./install/helm-chart/ --values=./values-charles-staging.yaml --set CharlesApplications.butler.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.moove.image.tag=beta-1.0.0-c351669 --set CharlesApplications.villager.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.octopipe.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.compass.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.ui.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.circleMatcher.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
+          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+
+
+  notify-team:
+    runs-on: ubuntu-latest
+    needs: [ deploy_staging ]
+    steps:
+      - name: Get Major Version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3 | cut -d "-" -f 3)
+
+      - name: Get Hash Version
+        id: get_hash_version
+        run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
+
+      - name: ping
+        run: |
+          curl -X POST -H "Content-Type: Application/json" -d '{"text":"New beta release applied on Staging, beta images builded with tag: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} and beta-latest"}' ${{ secrets.GCHAT_SRE_WEBHOOK }}

@@ -30,7 +30,7 @@ import { useWebhook } from './hooks';
 import Styled from './styled';
 import { CHARLES_DOC } from 'core/components/Popover';
 import DocumentationLink from 'core/components/DocumentationLink';
-import { isRequired, maxLength, urlPattern } from 'core/utils/validations';
+import { isRequired, maxLength, minLength, urlPattern } from 'core/utils/validations';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
   const { status, save, edit } = useWebhook();
@@ -98,10 +98,10 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         each of the URLs you provide.
       </Text.h5>
       <Text.h5 color="dark">
-        Consult our {' '}
+        See our {' '}
           <DocumentationLink
             text="documentation"
-            documentationLink={`${CHARLES_DOC}/reference/webhooks`}
+            documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}
           />{' '}
         for further details.
       </Text.h5>
@@ -109,6 +109,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         <Form.Input
           ref={register({
             required: isRequired(),
+            minLength: minLength(4),
             maxLength: maxLength(255),
           })}
           name="description"

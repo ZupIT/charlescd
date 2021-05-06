@@ -18,9 +18,9 @@ import React from 'react';
 import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Menu from '../index';
-import * as StateHooks from 'core/state/hooks';
-import * as authUtils from 'core/utils/auth';
-import * as WorkspaceHooks from '../../hooks';
+import fetch, { FetchMock } from 'jest-fetch-mock';
+import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import { getWorkspace } from 'core/utils/workspace';
 
 const props = {
   onCreate: jest.fn(),
@@ -28,120 +28,64 @@ const props = {
 };
 
 test('renders Workspace menu', async () => {
-  const workspaceRequest = jest.fn();
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValue({
-      list: {
-        content: [
-          {
-            id: 1,
-            name: 'ws1'
-          },
-          {
-            id: 2,
-            name: 'ws2'
-          }
-        ]
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify([
+      {
+        id: '1',
+        name: 'ws1',
+        status: WORKSPACE_STATUS.COMPLETE
+      },
+      {
+        id: '2',
+        name: 'ws2',
+        status: WORKSPACE_STATUS.COMPLETE
       }
-    })
-
-  render(
-    <Menu
-      onCreate={props.onCreate}
-      selectedWorkspace={props.selectedWorkspace}
-    />
-  );
+    ]));
   
-  expect(screen.getByTestId('labeledIcon-plus-circle')).toBeInTheDocument();
-  expect(screen.getByText('Create workspace')).toBeInTheDocument();
-  expect(screen.getByTestId('input-text-search')).toBeInTheDocument();
+  render(<Menu onCreate={props.onCreate} />);
 
-  const workspacesArray = screen.getAllByText(/ws/);
-  expect(workspacesArray.length).toBe(2);
+  const workspaces = await screen.findAllByText(/ws/);
+  expect(workspaces.length).toBe(2);
 });
 
 test('renders Workspace menu without any results', async () => {
-  const workspaceRequest = jest.fn();
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValue({
-      list: {
-        content: []
-      }
-    })
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify([]));
 
-  render(
-    <Menu
-      onCreate={props.onCreate}
-      selectedWorkspace={props.selectedWorkspace}
-    />
-  );
+  render(<Menu onCreate={props.onCreate} />);
 
   await waitFor(() => expect(screen.getByText('No workspace was found')).toBeInTheDocument());
 });
 
 test('renders Workspace menu on loading', async () => {
-  const workspaceRequest = jest.fn();
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), true]);
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValue({
-      list: {
-        content: [
-          {
-            id: 1,
-            name: 'ws1'
-          },
-          {
-            id: 2,
-            name: 'ws2'
-          }
-        ]
-      }
-    })
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify([]));
 
-  render(
-    <Menu
-      onCreate={props.onCreate}
-      selectedWorkspace={props.selectedWorkspace}
-    />
-  );
+  render(<Menu onCreate={props.onCreate} />);
 
   await waitFor(() => expect(screen.getByText('Loading...')).toBeInTheDocument());
 });
 
 test('should click Workspace item', async () => {
-  const selectedWorkspace = jest.fn();
-  const workspaceRequest = jest.fn();
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValue({
-      list: {
-        content: [
-          {
-            id: 1,
-            name: 'ws1'
-          },
-          {
-            id: 2,
-            name: 'ws2'
-          }
-        ]
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify([
+      {
+        id: '1',
+        name: 'ws1',
+        status: WORKSPACE_STATUS.COMPLETE
+      },
+      {
+        id: '2',
+        name: 'ws2',
+        status: WORKSPACE_STATUS.COMPLETE
       }
-    })
+    ]));
 
-  render(
-    <Menu
-      onCreate={props.onCreate}
-      selectedWorkspace={selectedWorkspace}
-    />
-  );
+  render(<Menu onCreate={props.onCreate} />);
 
-  const item = await screen.findByTestId('workspace-ws1');
-  await act(async () => userEvent.click(item));
+  const item = await screen.findByTestId('workspace-ws2');
+  userEvent.click(item);
 
-  await waitFor(() => expect(selectedWorkspace).toHaveBeenCalled());
+  const workspace = getWorkspace();
+  expect(workspace?.name).toEqual('ws2');
 });

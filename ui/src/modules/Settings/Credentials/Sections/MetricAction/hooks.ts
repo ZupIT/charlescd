@@ -119,6 +119,7 @@ export const useCreateAction = () => {
   const createActionPayload = useFetchData<ActionPayload>(createActionRequest);
   const status = useFetchStatus();
   const [validationError, setValidationError] = useState<ValidationError>();
+  const dispatch = useDispatch();
 
   const createAction = useCallback(
     async (actionPayload: ActionPayload) => {
@@ -134,10 +135,16 @@ export const useCreateAction = () => {
         e.text().then((errorMessage: string) => {
           const parsedError = JSON.parse(errorMessage);
           setValidationError(parsedError);
+          dispatch(
+            toogleNotification({
+              text: parsedError,
+              status: 'error'
+            })
+          );
         });
       }
     },
-    [createActionPayload, status]
+    [createActionPayload, status, dispatch]
   );
 
   return {

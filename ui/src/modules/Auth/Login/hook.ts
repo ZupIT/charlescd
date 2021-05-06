@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useFetch, useFetchData } from 'core/providers/base/hooks';
 import { login, circleMatcher } from 'core/providers/auth';
 import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
-import { useUser, useWorkspacesByUser } from 'modules/Users/hooks';
+import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
-import { useWorkspaces } from 'modules/Settings/hooks';
 
 interface CircleMatcherResponse {
   circles: {
@@ -66,27 +65,9 @@ export const useLogin = (): {
 } => {
   const [, , getSession] = useFetch<AuthResponse>(login);
   const { getCircleId } = useCircleMatcher();
-  const { findByEmail, user } = useUser();
-  const { findWorkspacesByUser, workspaces } = useWorkspacesByUser();
-  const [, loadWorkspaces, loadWorkspacesResponse] = useWorkspaces();
+  const { findByEmail } = useUser();
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (workspaces) {
-      saveProfile({ ...user, workspaces });
-
-      setStatus('resolved');
-    }
-  }, [user, workspaces]);
-
-  useEffect(() => {
-    if (loadWorkspacesResponse) {
-      saveProfile({ ...user, workspaces: loadWorkspacesResponse?.content });
-
-      setStatus('resolved');
-    }
-  }, [user, loadWorkspacesResponse]);
 
   const doLogin = useCallback(
     async (email: string, password: string) => {
@@ -96,19 +77,20 @@ export const useLogin = (): {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
         await getCircleId({ username: email });
-        const { id, root } = await findByEmail(email);
-        if (root) {
-          await loadWorkspaces();
-        } else {
-          await findWorkspacesByUser(id);
+        const user = await findByEmail(email);
+
+        if (user) {
+          saveProfile({ ...user });
+          setStatus('resolved');
         }
+
       } catch (e) {
         const errorMessage = e.message || `${e.status}: ${e.statusText}`;
         setError(errorMessage);
         setStatus('rejected');
       }
     },
-    [getSession, getCircleId, findByEmail, findWorkspacesByUser, loadWorkspaces]
+    [getSession, getCircleId, findByEmail]
   );
 
   return {
