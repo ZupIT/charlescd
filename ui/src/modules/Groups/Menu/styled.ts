@@ -20,7 +20,7 @@ import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
 import ButtonComponent from 'core/components/Button';
 import Form from 'core/components/Form';
-import Text from 'core/components/Text';
+import ComponentText from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 import LoaderMenuComponent from './Loaders';
 
@@ -34,6 +34,12 @@ const ListItem = styled(LabeledIcon)`
   cursor: pointer;
   display: flex;
 `;
+
+const Item = styled(ComponentText.h4)`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 240px;
+`
 
 const Content = styled.div`
   height: calc(100vh - 250px);
@@ -80,7 +86,7 @@ const ModalInput = styled(Form.Input)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(ComponentText.h2)`
   margin-bottom: 20px;
 `;
 
@@ -101,6 +107,7 @@ const Empty = styled.div`
 export default {
   SearchInput,
   ListItem,
+  Item,
   Content,
   Actions,
   Icon,
