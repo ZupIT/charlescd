@@ -21,7 +21,6 @@ import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import map from 'lodash/map';
-import Form from 'core/components/Form';
 import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
