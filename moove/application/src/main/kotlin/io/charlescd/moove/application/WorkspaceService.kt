@@ -35,7 +35,7 @@ class WorkspaceService(
             .orElseThrow { NotFoundException("workspace", workspaceId) }
     }
 
-    fun findAll(pageRequest: PageRequest, name: String?): Page<Workspace> {
+    fun findAll(pageRequest: PageRequest, name: String?): Page<SimpleWorkspace> {
         return workspaceRepository.find(pageRequest, name)
     }
 

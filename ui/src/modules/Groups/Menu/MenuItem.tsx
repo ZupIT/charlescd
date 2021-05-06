@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Text from 'core/components/Text';
 import Styled from './styled';
 
 interface Props {
@@ -32,7 +30,7 @@ const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
     data-testid={`group-menu-item-${id}`}
   >
     <Styled.ListItem icon="users" marginContent="8px">
-      <Text.h4 color="light">{name}</Text.h4>
+      <Styled.Item color="light">{name}</Styled.Item>
     </Styled.ListItem>
   </Styled.Link>
 );

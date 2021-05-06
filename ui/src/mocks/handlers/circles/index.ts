@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { WorkspacePagination } from './WorkspacePagination';
-import { Workspace } from './Workspace';
-import { FetchStatuses } from 'core/providers/base/hooks';
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import { CIRCLES_SUCCESS } from './responses';
 
-export interface WorkspaceState {
-  list: WorkspacePagination;
-  item: Workspace;
-  status: FetchStatuses;
-  permissions: string[];
-}
+export default [
+  rest.post(`${basePath}/moove/v2/circles`, (req, res, ctx) => {
+    return res(
+      ctx.json(CIRCLES_SUCCESS),
+    )
+  }),
+]

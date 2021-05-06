@@ -84,13 +84,20 @@ export const patchProfileById = (id: string, name: string) =>
   patchRequest(`${endpoint}/${id}`, 'replace', '/name', name);
 
 export const findUserByEmail = (email: string) => {
-  const decodeEmail = btoa(email);
+  const encodedEmail = btoa(email);
 
-  return baseRequest(`${endpoint}/${decodeEmail}`);
+  return baseRequest(`${endpoint}/${encodedEmail}`);
 };
 
-export const findWorkspacesByUserId = (id: string) => {
-  return baseRequest(`${endpoint}/${id}/workspaces`);
+export const findWorkspacesByUserId = (id: string, { name }: { name: string }) => {
+  const params = new URLSearchParams({
+    size: `${DEFAULT_PAGE_SIZE}`,
+    name: name || '',
+    page: '0',
+    sort: 'createdAt,desc'
+  });
+
+  return baseRequest(`${endpoint}/${id}/workspaces?${params}`);
 };
 
 export const deleteUserById = (id: string) =>

@@ -14,13 +14,4 @@
  * limitations under the License.
  */
 
-import { WorkspacePagination } from './WorkspacePagination';
-import { Workspace } from './Workspace';
-import { FetchStatuses } from 'core/providers/base/hooks';
-
-export interface WorkspaceState {
-  list: WorkspacePagination;
-  item: Workspace;
-  status: FetchStatuses;
-  permissions: string[];
-}
+export const CIRCLES_SUCCESS = [{ id: '123', name: 'circle' }];

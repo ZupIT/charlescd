@@ -20,6 +20,7 @@ import { fadeIn } from 'core/assets/style/animate';
 
 interface Props {
   fontSize?: string;
+  lineHeight?: number;
   fontStyle?: string;
   weight?: string;
   align?: string;
@@ -35,7 +36,7 @@ const Text = styled.span<Props>`
   font-weight: ${({ weight }) => weight};
   color: ${({ theme, color }) => theme.text[color]};
   text-align: ${({ align }) => align};
-  line-height: ${({ fontSize }) => fontSize};
+  line-height: ${({ lineHeight, fontSize }) => lineHeight || fontSize};
 `;
 
 export default {

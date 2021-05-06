@@ -15,24 +15,26 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
-import * as StateHooks from 'core/state/hooks';
+import fetch, { FetchMock } from 'jest-fetch-mock';
 import Settings from '..';
+import userEvent from '@testing-library/user-event';
 
-test('render settings wizard', () => {
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValueOnce({
-      item: {
-        id: 'workspace-id',
-        status: WORKSPACE_STATUS.INCOMPLETE
-      },
-      status: 'resolved'
-    });
+test('render settings wizard', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      id: '1',
+      name: 'ws1',
+      status: WORKSPACE_STATUS.INCOMPLETE,
+      createdAt: ''
+    }));
   render(<Settings />);
 
-  const nextButton = screen.getByTestId('button-iconRounded-next');
+  await screen.findByTestId('modal-wizard');
 
+  const nextButton = await screen.findByTestId('button-iconRounded-next');
+        
   expect(screen.getByTestId('modal-wizard')).toBeInTheDocument();
   expect(screen.getByTestId('modal-wizard-menu-item-welcome')).toBeInTheDocument();
   fireEvent.click(nextButton);
