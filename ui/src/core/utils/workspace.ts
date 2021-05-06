@@ -18,11 +18,6 @@ import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
 
 const WORKSPACE = 'workspace';
 
-export const getWorkspaceId = () => {
-  const workspace = JSON.parse(localStorage.getItem(WORKSPACE)) as Workspace;
-  return workspace?.id;
-};
-
 export const clearWorkspace = () => {
   localStorage.removeItem(WORKSPACE);
 }
@@ -35,10 +30,15 @@ export const getWorkspace = (): Workspace => {
   try {
     const workspace : Workspace = JSON.parse(localStorage.getItem(WORKSPACE));
     return workspace || ws;
-
+  
   } catch (e) {
     return ws;
   }
+}
+
+export const getWorkspaceId = () => {
+  const workspace = getWorkspace();
+  return workspace.id;
 }
 
 export const saveWorkspace = (workspace: Workspace) => {

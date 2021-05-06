@@ -541,7 +541,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
         0 * deployService.deploy(_, _, false, _) >> {}
 
         def ex = thrown(BusinessException)
-        println(ex)
         ex.message == 'limit.of.percentage.circles.exceeded'
     }
 

@@ -290,7 +290,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
       <Text.h5 color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
-        deploy them. Consult our{' '}
+        deploy them. See our{' '}
         <DocumentationLink
           text="documentation"
           documentationLink={`${CHARLES_DOC}/reference/registry`}

@@ -84,6 +84,22 @@ beforeAll(() => {
   });
 });
 
+test('should show text to documentation', () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={mockOnChange}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>);
+
+  const infoIcon = screen.getByTestId('icon-info');
+  userEvent.click(infoIcon);
+
+  expect(screen.getByText(/See our documentation for further details./i)).toBeInTheDocument();
+});
+
 test("component for edit mode render", async () => {
   const { container } = render(
     <AllTheProviders>

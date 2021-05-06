@@ -33,6 +33,7 @@ const Login = () => {
   const { doLogin, status, error } = useLogin();
   const history = useHistory();
   const watchFields = watch();
+  const errorMessage = 'The email address or password is incorrect.';
 
   useEffect(() => {
     setIsDisabled(!validFields(getValues()));
@@ -54,7 +55,7 @@ const Login = () => {
         <Styled.Title color="light">
           Sign in with your Charles Account
         </Styled.Title>
-        <Styled.Error color="error">{error}</Styled.Error>
+        {error && <Styled.Error color="error">{errorMessage}</Styled.Error>}
         <Styled.Field>
           <Form.Input
             type="email"

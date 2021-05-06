@@ -14,36 +14,79 @@
  * limitations under the License.
  */
 
-import { useEffect, useCallback } from 'react';
-import { useFetch } from 'core/providers/base/hooks';
+import { useEffect, useCallback, useState, useRef } from 'react';
+import { FetchStatuses, useFetch, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { findAll, saveWorkspaceName } from 'core/providers/workspace';
+import { findWorkspacesByUserId } from 'core/providers/users';
 import { useDispatch } from 'core/state/hooks';
-import { loadedWorkspacesAction } from './state/actions';
 import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
+import { isRoot } from 'core/utils/auth';
+import { getProfileByKey } from 'core/utils/profile';
 
-export const useWorkspaces = (): [Function, Function, boolean] => {
-  const dispatch = useDispatch();
-  const [workspacesData, getWorkspace] = useFetch<WorkspacePagination>(findAll);
-  const { response, error, loading } = workspacesData;
+type WorkspaceResponse = {
+  workspaces: Workspace[],
+  status: FetchStatuses,
+  last: boolean
+}
 
-  const filterWorkspace = useCallback(
-    (name: string, page = 0) => {
-      getWorkspace({ name, page });
-    },
-    [getWorkspace]
-  );
+export const useWorkspaces = (): {
+  getWorkspaces: Function,
+  resetWorkspaces: Function,
+  data: WorkspaceResponse,
+} => {
+  const findWorkspaces = useFetchData<WorkspacePagination>(findAll);
+  const findWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const reset = useRef<boolean>(false);
+  const [data, setData] = useState<WorkspaceResponse>({
+    workspaces: [],
+    status: 'idle',
+    last: true
+  });
 
-  useEffect(() => {
-    if (!error) {
-      dispatch(loadedWorkspacesAction(response));
-    } else {
-      console.error(error);
-    }
-  }, [dispatch, response, error]);
+  const resetWorkspaces = () => reset.current = true;
 
-  return [filterWorkspace, getWorkspace, loading];
+  const getWorkspaces = useCallback(
+    async (name: string, page: string) => {
+      try {
+        setData({ ...data, status: 'pending' });
+
+        if (isRoot()) {
+          const res = await findWorkspaces({ name, page });
+          setData({
+            workspaces: reset.current
+              ? res.content
+              : [...data.workspaces, ...res.content],
+            last: res.last,
+            status: 'resolved'
+          });
+
+        } else {
+          const userId = getProfileByKey('id');
+          const res = await findWorkspacesByUser(userId, { name });
+          setData({
+            workspaces: reset.current ? res : [...data.workspaces, ...res],
+            last: true,
+            status: 'resolved'
+          });
+        }
+
+        reset.current = false;
+
+      }
+      catch (e) {
+        setData({ ...data, status: 'rejected' });
+      
+      }
+
+    }, [findWorkspaces, findWorkspacesByUser, data]);
+  
+  return {
+    getWorkspaces,
+    resetWorkspaces,
+    data
+  }
 };
 
 export const useSaveWorkspace = (): {

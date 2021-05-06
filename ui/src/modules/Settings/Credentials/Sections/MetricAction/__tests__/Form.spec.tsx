@@ -38,7 +38,7 @@ test('render add Metric Action form', async () => {
   const actionForm = await screen.findByText('Add Metric Action');
   expect(actionForm).toBeInTheDocument();
 
-  const actionInformationPart1 = screen.getByText(/You can create an action and add a trigger to perform an automatic task. Consult our/);
+  const actionInformationPart1 = screen.getByText(/You can create an action and add a trigger to perform an automatic task. See our/);
   const actionInformationPart2 = screen.getByText(/documentation/);
   const actionInformationPart3 = screen.getByText(/for further details./);
 

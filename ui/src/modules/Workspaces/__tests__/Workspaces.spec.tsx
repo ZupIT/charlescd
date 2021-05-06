@@ -18,11 +18,10 @@ import React from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as authUtils from 'core/utils/auth';
-import * as WorkspaceHooks from '../hooks';
-import {user} from './fixtures';
-import * as StateHooks from 'core/state/hooks';
 import Workspaces from '../';
 import { saveProfile } from 'core/utils/profile';
+import fetch, { FetchMock } from 'jest-fetch-mock';
+import { WORKSPACE_STATUS } from '../enums';
 
 const originalWindow = { ...window };
 
@@ -36,6 +35,16 @@ beforeAll(() => {
     hostname: 'charles.hostname'
   };
 });
+
+const setProfile = (profile: { root?: boolean, name?: string, email?: string }) => {
+  authUtils.setAccessToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1ODkzMjg2NDEsImlhdCI6MTU4OTMyNTA0MSwianRpIjoiZWMwYzZmODMtNzJlOC00YjAxLWE1NjctZTk2Mjg3Y2FlYzdkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzUm9vdCI6dHJ1ZSwibmFtZSI6IkNoYXJsZXMgQWRtaW4iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJjaGFybGVzQGFkbWluIiwiZ2l2ZW5fbmFtZSI6ImNoYXJsZXNhZG1pbiIsImVtYWlsIjoiY2hhcmxlc0BhZG1pbiJ9.b3x_QR2PunpKpsfHlPV-dPhaAI82llcHGksu2UEWu1g');
+  saveProfile({
+    id: '1',
+    name: profile?.name || 'Charles Admin',
+    email: profile?.email || 'charles@admin',
+    root: profile?.root || false
+  });
+}
 
 afterAll(() => {
   Object.assign(window, originalWindow);
@@ -54,9 +63,9 @@ jest.mock('react-cookies', () => {
 });
 
 test('render Workspace modal', async () => {
-  saveProfile({id: '1', name: 'Charles Admin', email: 'charlesadmin@admin', root: true});
-  
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
+  setProfile({ root: true });
+
+  render(<Workspaces />);
   
   const button = screen.getByText('Create workspace');
   userEvent.click(button);
@@ -69,8 +78,9 @@ test('render Workspace modal', async () => {
 });
 
 test('render Workspace and see a placeholder', async () => {
-  saveProfile({id: '1', name: 'Charles Admin', email: 'charlesadmin@admin', root: true});
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
+  setProfile({});
+  
+  render(<Workspaces />);
 
   expect(await screen.findByTestId('icon-empty-workspaces')).toBeInTheDocument();
   expect(screen.getByText('Hello, Charles Admin!')).toBeInTheDocument();
@@ -78,10 +88,8 @@ test('render Workspace and see a placeholder', async () => {
 });
 
 test('render Workspace modal and add new workspace', async () => {
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
-
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
+  setProfile({ root: true });
+  render(<Workspaces />);
 
   const createWorkspaceButton = screen.getByText('Create workspace');
   userEvent.click(createWorkspaceButton);
@@ -96,72 +104,53 @@ test('render Workspace modal and add new workspace', async () => {
   expect(screen.getByTestId('modal-default')).toBeInTheDocument();
 });
 
-test('render Workspace with isIDMEnabled disabled and search', async () => {
-  const workspaceRequest = jest.fn();
+test('render Workspace with search disabled', async () => {
+  setProfile({ root: false });
 
-  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => false);
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
-  const useWorkspaceSpy = jest.spyOn(WorkspaceHooks, 'useWorkspaces')
-    .mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-  
-  useWorkspaceSpy.mockRestore();
-
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
-
-  const search = screen.getByTestId('input-text-search');
-
-  await act(async () => userEvent.type(search , 'workspace'));
-
-  await waitFor(() => expect(workspaceRequest).not.toHaveBeenCalled());
-});
-
-test('render Workspace with isIDMEnabled enabled and search', async () => {
-  const workspaceRequest = jest.fn();
-
-  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
+  render(<Workspaces />);
 
   const search = await screen.findByTestId('input-text-search');
-  await act(async () => userEvent.type(search , 'ws2'));
+  expect(search).toBeDisabled();
+});
 
-  await waitFor(() => expect(workspaceRequest).toHaveBeenCalled());
+test('render Workspace with and search enabled', async () => {
+  setProfile({ root: true });
+
+  render(<Workspaces />);
+
+  const search = await screen.findByTestId('input-text-search');
+  expect(search).not.toBeDisabled();
 });
 
 test('should search a workspace by name', async () => {
-  const workspaceRequest = jest.fn();
+  setProfile({ root: true });
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify({
+      content: [
+        {
+          id: '1',
+          name: 'ws1',
+          status: WORKSPACE_STATUS.COMPLETE
+        }
+      ]
+    }))
+    .mockResponseOnce(JSON.stringify({
+      content: [
+        {
+          id: '2',
+          name: 'ws2',
+          status: WORKSPACE_STATUS.COMPLETE
+        }
+      ]
+    }));
 
-  jest.spyOn(authUtils, 'isIDMEnabled').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'isRoot').mockImplementation(() => true);
-  jest.spyOn(authUtils, 'getAccessTokenDecoded').mockReturnValue(user);
-  jest.spyOn(WorkspaceHooks, 'useWorkspaces').mockImplementation(() => [workspaceRequest, jest.fn(), false]);
-
-  jest.spyOn(StateHooks, 'useGlobalState')
-    .mockReturnValue({
-      list: {
-        content: [
-          {
-            id: 1,
-            name: 'ws1'
-          },
-          {
-            id: 2,
-            name: 'ws2'
-          }
-        ]
-      }
-    })
-
-  render(<Workspaces selectedWorkspace={jest.fn()} />);
+  render(<Workspaces />);
 
   await waitFor(() => expect(screen.getByText('ws1')).toBeInTheDocument());
-  expect(screen.getByText('ws2')).toBeInTheDocument();
+  expect(screen.queryByText('ws2')).not.toBeInTheDocument();
 
-  const search = screen.getByTestId('input-text-search');
-  await act(async () => userEvent.type(search , 'ws2'));
-  expect(workspaceRequest).toHaveBeenCalled();
+  const search = await screen.findByTestId('input-text-search');
+  userEvent.type(search , 'ws2');
+  await waitFor(() => expect(screen.getByText('ws2')).toBeInTheDocument(), { timeout: 700 });
+  expect(screen.queryByText('ws1')).not.toBeInTheDocument();
 });

@@ -171,7 +171,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
       <Styled.Title color="light">Add Metric Action</Styled.Title>
       <Styled.Info color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
-        Consult our{' '}
+        See our{' '}
         <DocumentationLink
           documentationLink="https://docs.charlescd.io/reference/metrics/metrics-actions"
           text="documentation"

@@ -97,10 +97,10 @@ test('should get workspaces of some user', async () => {
     JSON.stringify({ status: 200 })
   );
 
-  const response = await findWorkspacesByUserId(user.id)({});
+  const response = await findWorkspacesByUserId(user.id, { name: '' })({});
   const data = await response.json();
 
-  expect(data).toEqual({ status: 200});
+  expect(data).toEqual({ status: 200 });
 });
 
 test('should find a user by email', async () => {
