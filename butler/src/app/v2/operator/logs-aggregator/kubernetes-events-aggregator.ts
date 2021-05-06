@@ -85,6 +85,9 @@ export class EventsLogsAggregator {
       details: event.details
     }
 
+    if (await this.alreadyLogged(log, deploymentId)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+    }
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
   }
@@ -157,15 +160,17 @@ export class EventsLogsAggregator {
   }
 
 
-  private async alreadyLogged(title: string, timestamp: string, details: string, deploymentId: string): Promise<Log | undefined> {
-    const logEntity = await this.logsRepository.findDeploymentLogs(deploymentId)
+  private async alreadyLogged(logRequest: Log, deploymentId: string): Promise<Log | undefined> {
+    const logEntity= await this.logsRepository.findDeploymentLogs(deploymentId)
     return logEntity?.logs.find(
-      log => this.isSameLog(log, title, timestamp, details)
+      logDatabase => this.isSameLog(logRequest, logDatabase)
     )
   }
 
-  private isSameLog(log: Log, title: string, timestamp: string, details: string) {
-    return log.title === title &&  log.timestamp === timestamp && log.details === details
+  private isSameLog(logRequest: Log, logDatabase: Log) {
+    return logRequest.title === logDatabase.title
+        &&  logRequest.timestamp === logDatabase.timestamp
+        && logRequest.details === logDatabase.title
   }
 
   private validateAndCreateEvent(coreEvent: k8s.CoreV1Event, since?: Date) {
