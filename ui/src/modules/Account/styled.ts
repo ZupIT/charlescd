@@ -22,6 +22,7 @@ import Text from 'core/components/Text';
 import FormComponent from 'core/components/Form';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import CheckPass from 'core/components/CheckPassword';
+import ComponentModal from 'core/components/Modal';
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -63,6 +64,18 @@ const Actions = styled.div`
 
   > :last-child {
     margin-left: 36px;
+  }
+`;
+
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    max-height: 550px;
+    bottom: 100px;
+  }
+
+  .modal-content {
+    overflow-y: auto;
+    max-height: 500px;
   }
 `;
 
@@ -116,6 +129,7 @@ export default {
   ChangePassword,
   Password,
   Modal: {
+    Default: Modal,
     Subtitle: ModalSubtitle,
     Info: ModalInfo
   },
