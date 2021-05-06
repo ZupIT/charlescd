@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const LOGIN_SUCCESS = [{ id: '123', name: 'circle' }];
+export const CIRCLES_SUCCESS = [{ id: '123', name: 'circle' }];

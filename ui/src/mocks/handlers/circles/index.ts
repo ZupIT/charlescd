@@ -16,12 +16,12 @@
 
 import { basePath } from 'core/providers/base';
 import { rest } from 'msw';
-import { LOGIN_SUCCESS } from './responses';
+import { CIRCLES_SUCCESS } from './responses';
 
 export default [
   rest.post(`${basePath}/moove/v2/circles`, (req, res, ctx) => {
     return res(
-      ctx.json(LOGIN_SUCCESS),
+      ctx.json(CIRCLES_SUCCESS),
     )
   }),
 ]
