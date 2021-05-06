@@ -70,11 +70,13 @@ const Actions = styled.div`
 const Modal = styled(ComponentModal.Default)`
   .modal-container {
     max-height: 550px;
+    padding-right: 25px;
     bottom: 100px;
   }
 
   .modal-content {
     overflow-y: auto;
+    padding-right: 10px;
     max-height: 500px;
   }
 `;
