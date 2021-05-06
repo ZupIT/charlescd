@@ -18,7 +18,10 @@
 
 package io.charlescd.moove.application.circle.request
 
+import io.charlescd.moove.application.CircleService
+import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.commons.extension.toJsonNode
+import io.charlescd.moove.commons.validator.Unique
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
 import io.charlescd.moove.domain.User
@@ -34,6 +37,7 @@ class CreateCircleRequest(
 
     @field:NotBlank
     @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
+    @Unique(message = "Circle already registered", fieldName="name", service =  CircleService::class)
     val name: String,
 
     @field:Valid

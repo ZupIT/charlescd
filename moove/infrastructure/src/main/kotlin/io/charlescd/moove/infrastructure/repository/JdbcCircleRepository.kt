@@ -121,6 +121,32 @@ class JdbcCircleRepository(
         deleteCircleById(id)
     }
 
+    override fun existsByParam(paramName: String, paramValue: String ): Boolean {
+        return checkIfCircleExistsByParam(paramName, paramValue)
+    }
+
+    private fun checkIfCircleExistsByParam(paramName: String, paramValue: String ): Boolean {
+
+        val baseCountQuery = """
+                SELECT count(*) AS total
+                FROM circles 
+                WHERE 1 = 1
+                """
+        val countStatement = StringBuilder(baseCountQuery)
+            .appendln("AND circles.$paramName= ?")
+            .toString()
+        return applyCountQuery(
+            countStatement, arrayOf(paramValue))
+    }
+
+    private fun applyCountQuery(statement: String, params: Array<String>): Boolean {
+        val count = this.jdbcTemplate.queryForObject(
+            statement,
+            params
+        ) { rs, _ -> rs.getInt(1) }
+        return count != null && count >= 1
+    }
+
     private fun createParametersArray(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest? = null): Array<Any> {
         val parameters = ArrayList<Any>()
         if (active != null && !active) parameters.add(workspaceId)
