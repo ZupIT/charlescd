@@ -74,6 +74,10 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
       .mockImplementation(() => Promise.resolve({} as LogEntity))
 
+    jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
+      async() => Promise.resolve(undefined)
+    )
+
     const coreEvent = {
       metadata: {
         creationTimestamp: new Date('2021-04-23T11:30:20Z')
@@ -202,6 +206,10 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
       .mockImplementation(() => Promise.resolve({} as LogEntity))
+
+    jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
+      async() => Promise.resolve(undefined)
+    )
 
     const coreEvent = {
       metadata: {
