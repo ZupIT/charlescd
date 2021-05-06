@@ -57,7 +57,7 @@ class FindDeploymentLogsInteractorTest extends Specification {
         def deploymentConfiguration = TestUtils.deploymentConfig
         def log = new Log("INFO", "log title", "log details", LocalDateTime.now().toString())
         def logResponse = new LogResponse(
-                [log]
+                [log] as Set
         )
 
         when:
@@ -84,7 +84,7 @@ class FindDeploymentLogsInteractorTest extends Specification {
         def deploymentId = '083337ef-6177-4a24-b32e-f7429336ec20'
         def log = new Log("INFO", "log title", "log details", LocalDateTime.now().toString())
         def logResponse = new LogResponse(
-                [log]
+                [log]  as Set
         )
         def deploymentConfiguration = TestUtils.deploymentConfig
 
