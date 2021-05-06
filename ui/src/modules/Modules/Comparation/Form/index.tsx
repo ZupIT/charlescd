@@ -33,7 +33,7 @@ import {
   validateSlash
 } from './helpers';
 import Styled from './styled';
-import { isNotBlank, isRequired, isRequiredAndNotBlank, maxLength, urlPattern } from 'core/utils/validations';
+import { isRequired, isRequiredAndNotBlank, maxLength, urlPattern } from 'core/utils/validations';
 import { getWorkspace } from 'core/utils/workspace';
 
 interface Props {
@@ -180,7 +180,6 @@ const FormModule = ({ module, onChange }: Props) => {
           ref={
             helmRegister({ validate: {
               slash: value => validateSlash(value, "helm branch"),
-              notBlack: isNotBlank
             }})
           }
           error={helmErrors?.helmBranch?.message}
