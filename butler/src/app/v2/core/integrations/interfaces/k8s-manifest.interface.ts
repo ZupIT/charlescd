@@ -15,7 +15,7 @@
  */
 
 import { KubernetesObject } from '@kubernetes/client-node'
-import { V1ObjectMeta } from '@kubernetes/client-node/dist/api';
+import { V1ObjectMeta } from '@kubernetes/client-node/dist/api'
 
 interface Cookie {
   regex: string

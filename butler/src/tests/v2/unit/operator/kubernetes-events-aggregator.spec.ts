@@ -24,10 +24,7 @@ import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/
 import { CoreV1Event, KubernetesObject } from '@kubernetes/client-node'
 import { LogRepository } from '../../../../app/v2/api/deployments/repository/log.repository'
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
-import {DeploymentEntityV2} from "../../../../app/v2/api/deployments/entity/deployment.entity";
-import {UrlConstants} from "../../integration/test-constants";
-import {ComponentEntityV2} from "../../../../app/v2/api/deployments/entity/component.entity";
-import * as moment from "moment";
+import * as moment from 'moment'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -277,6 +274,11 @@ describe('Aggregate events from kubernetes to charles logs', () => {
         'deploymentId': '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3'
       }
     }
+
+    jest.spyOn(k8sClient, 'readResource').mockImplementation(
+      async() => Promise.resolve({ body: body, response: {} as http.IncomingMessage })
+    )
+
     const timestamp = new Date()
     const eventMessage =
         `Sync error: invalid labels on desired child Deployment charles/null-release-darwin-test-schu-v-1
@@ -293,9 +295,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     corev1Event.message = eventMessage
     corev1Event.reason = 'SyncError'
 
-    jest.spyOn(k8sClient, 'readResource').mockImplementation(
-      async() => Promise.resolve({ body: body, response: {} as http.IncomingMessage })
-    )
+
 
     const log = {
       type: 'WARN',
@@ -307,14 +307,16 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       timestamp: moment(timestamp).format()
     }
     const logEntity = new LogEntity('6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3', [log])
+
+
     jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
       async() => Promise.resolve(logEntity)
     )
 
-    const logAgreggator = new EventsLogsAggregator(k8sClient, logRepository, logService)
-
-    await logAgreggator.aggregate(corev1Event, timestamp)
     const spySaveLogs = jest.spyOn(logRepository, 'save')
+
+    const logAgreggator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    await logAgreggator.aggregate(corev1Event, timestamp)
     expect(spySaveLogs).not.toBeCalled()
   })
 })

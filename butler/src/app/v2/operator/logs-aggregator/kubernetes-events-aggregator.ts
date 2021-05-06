@@ -25,12 +25,9 @@ import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
 import { AppConstants } from '../../core/constants'
-import { CoreV1Event, V1ObjectReference } from '@kubernetes/client-node'
-import {plainToClass} from "class-transformer";
-import {V1ObjectMeta} from "@kubernetes/client-node/dist/api";
-import {type} from "os";
-import {time} from "cron";
-import {K8sManifestWithSpec} from "../../core/integrations/interfaces/k8s-manifest.interface";
+import {  V1ObjectReference } from '@kubernetes/client-node'
+import { plainToClass } from 'class-transformer'
+import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
 
 @Injectable()
 export class EventsLogsAggregator {

@@ -24,7 +24,4 @@ export const DeploymentsConfigurationConstants = {
 
   CHARLES_CUSTOM_RESOURCE_ROUTES_KIND: 'CharlesRoutes',
 
-  CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_NAME: 'charlesdeployments-controller',
-
-  CHARLES_CUSTOM_RESOURCE_ROUTES_NAME: 'charlesroutes-controller',
 }

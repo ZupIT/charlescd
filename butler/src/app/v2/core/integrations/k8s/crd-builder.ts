@@ -22,7 +22,7 @@ import {
   CharlesRoutes
 } from './interfaces/charles-routes.interface'
 import { uniqBy } from 'lodash'
-import {AppConstants} from "../../constants";
+import { AppConstants } from '../../constants'
 
 export class CrdBuilder {
 
