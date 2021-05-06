@@ -151,6 +151,6 @@ test('should search a workspace by name', async () => {
 
   const search = await screen.findByTestId('input-text-search');
   userEvent.type(search , 'ws2');
-  await waitFor(() => expect(screen.getByText('ws2')).toBeInTheDocument(), { timeout: 700 });
+  await waitFor(() => expect(screen.getByText('ws2')).toBeInTheDocument(), { timeout: 900 });
   expect(screen.queryByText('ws1')).not.toBeInTheDocument();
 });
