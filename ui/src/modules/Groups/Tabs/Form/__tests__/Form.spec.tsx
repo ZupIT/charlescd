@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Form from '../index';
 import { mockUserGroup1, mockUserGroup2 } from './fixtures';
@@ -56,14 +56,14 @@ test('render user group Form with more then 8 users', async () => {
   expect(onAddUser).toHaveBeenCalled();
 });
 
-test('render user group Form and try to edit', async () => {
-  const onEditUser = jest.fn();
+test('should render a user group Form and edit the name', async () => {
+  const onEdit = jest.fn();
 
   render(
     <Form
       userGroup={mockUserGroup1}
       onAddUser={jest.fn()}
-      onEdit={onEditUser}
+      onEdit={onEdit}
     />
   );
 
@@ -79,7 +79,7 @@ test('render user group Form and try to edit', async () => {
   const buttonSave = await screen.findByTestId('button-default-submit');
 
   expect(buttonSave).toBeInTheDocument();
-  userEvent.click(buttonSave);
+  await act(async () => userEvent.click(buttonSave));
 
-  waitFor(() => expect(onEditUser).toHaveBeenCalled());
+  await waitFor(() => expect(onEdit).toBeCalledTimes(1));
 });

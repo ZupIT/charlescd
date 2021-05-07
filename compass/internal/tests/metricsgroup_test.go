@@ -205,6 +205,37 @@ func (s *SuiteMetricGroup) TestFindAllError() {
 	require.NotNil(s.T(), err)
 }
 
+func (s *SuiteMetricGroup) TestFindAllByWorkspaceId() {
+	group1 := newBasicMetricGroup()
+	group1.Name = "group 1"
+
+	group2 := newBasicMetricGroup()
+	group2.Name = "group 2"
+	group2.WorkspaceID = group1.WorkspaceID
+
+	expectMetricGroups := []metricsgroup.MetricsGroup{group1, group2}
+
+	for _, metricGroup := range expectMetricGroups {
+		s.DB.Create(&metricGroup)
+	}
+
+	list, err := s.repository.FindAllByWorkspaceId(group1.WorkspaceID)
+	require.Nil(s.T(), err)
+
+	require.NotEmpty(s.T(), list)
+	for index, item := range list {
+		expectMetricGroups[index].BaseModel = item.BaseModel
+		require.Equal(s.T(), item.ID, expectMetricGroups[index].ID)
+	}
+}
+
+func (s *SuiteMetricGroup) TestFindAllByWorkspaceIdError() {
+	s.DB.Close()
+
+	_, err := s.repository.FindAllByWorkspaceId(uuid.New())
+	require.NotNil(s.T(), err)
+}
+
 func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 	metricGroup := newBasicMetricGroup()
 

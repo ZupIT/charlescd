@@ -56,6 +56,8 @@
         <liquibase.core.version>3.8.7</liquibase.core.version>
         <spock.core.version>1.0-groovy-2.4</spock.core.version>
         <groovy.all.version>2.4.7</groovy.all.version>
+        <scalaz.stream.version>0.7.2a</scalaz.stream.version>
+        <gfc.semver.version>0.0.5</gfc.semver.version>
     </properties>
 
     <dependencies>
@@ -230,6 +232,18 @@
                 <artifactId>csv-validator-java-api</artifactId>
                 <version>${csv.validator.version}</version>
             </dependency>
+            <!-- Override versions from csv-validator-java-api to fetch from maven central-->
+            <dependency>
+                <groupId>org.scalaz.stream</groupId>
+                <artifactId>scalaz-stream_2.11</artifactId>
+                <version>${scalaz.stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gilt</groupId>
+                <artifactId>gfc-semver_2.11</artifactId>
+                <version>${gfc.semver.version}</version> <!-- the version 0.0.5 seems to work, even though it is a downgrade version-->
+            </dependency>
+            <!--end-->
             <dependency>
                 <groupId>com.github.java-json-tools</groupId>
                 <artifactId>json-patch</artifactId>
