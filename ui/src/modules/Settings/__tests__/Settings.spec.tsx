@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import fetch, { FetchMock } from 'jest-fetch-mock';
 import Settings from '..';
-import userEvent from '@testing-library/user-event';
 
 test('render settings wizard', async () => {
   (fetch as FetchMock)
@@ -34,7 +32,7 @@ test('render settings wizard', async () => {
   await screen.findByTestId('modal-wizard');
 
   const nextButton = await screen.findByTestId('button-iconRounded-next');
-        
+
   expect(screen.getByTestId('modal-wizard')).toBeInTheDocument();
   expect(screen.getByTestId('modal-wizard-menu-item-welcome')).toBeInTheDocument();
   fireEvent.click(nextButton);
