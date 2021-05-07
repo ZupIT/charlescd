@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useImperativeHandle, useEffect } from 'react';
+import React, { useRef, useState, useImperativeHandle } from 'react';
 import Button from 'core/components/Button';
 import Styled from './styled';
 
@@ -47,17 +47,8 @@ const InputTitle = React.forwardRef(
     const inputRef = useRef<HTMLInputElement>(null);
     const wrapperRef = useRef<HTMLDivElement>();
     const [isResumed, setIsResumed] = useState(resume);
-    const isFocused = inputRef.current === document.activeElement;
 
     useImperativeHandle(ref, () => inputRef.current);
-
-    useEffect(() => {
-      if (isFocused) {
-        setIsResumed(false);
-      } else if (!isFocused && defaultValue) {
-        setIsResumed(true);
-      }
-    }, [isFocused, defaultValue]);
 
     const onButtonClick = () => {
       const input = inputRef.current;
