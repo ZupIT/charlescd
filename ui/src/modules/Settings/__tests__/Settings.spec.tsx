@@ -34,18 +34,17 @@ test('render settings wizard', async () => {
   await screen.findByTestId('modal-wizard');
 
   const nextButton = await screen.findByTestId('button-iconRounded-next');
-
-  await screen.findByTestId('modal-wizard-menu-item-welcome');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-user-group');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-git');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-registry');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-cdConfig');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-circle-matcher');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-metrics-provider');
+        
+  expect(screen.getByTestId('modal-wizard')).toBeInTheDocument();
+  expect(screen.getByTestId('modal-wizard-menu-item-welcome')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-registry')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-circle-matcher')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-metrics-provider')).toBeInTheDocument();
 });
