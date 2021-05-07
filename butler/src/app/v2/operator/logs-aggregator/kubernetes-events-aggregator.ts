@@ -188,7 +188,7 @@ export class EventsLogsAggregator {
     }
     const event = new Event(coreEvent)
     if (this.isEventOlderThan(event, since)) {
-      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
+      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older than ${since}. Discarding event...`)
       return
     }
     return event
