@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.webhook
 
-import feign.FeignException
 import io.charlescd.moove.application.BuildService
 import io.charlescd.moove.application.WebhookEventService
 import io.charlescd.moove.domain.*
@@ -24,7 +23,6 @@ import io.charlescd.moove.domain.repository.BuildRepository
 import io.charlescd.moove.infrastructure.service.HermesClientService
 import io.charlescd.moove.infrastructure.service.client.HermesClient
 import io.charlescd.moove.infrastructure.service.client.HermesPublisherClient
-import io.charlescd.moove.infrastructure.service.client.request.HermesPublishSubscriptionEventRequest
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -36,12 +34,15 @@ class WebhookEventServiceTest extends Specification {
     private HermesClient hermesClient = Mock(HermesClient)
     private HermesPublisherClient hermesPublisherClient = Mock(HermesPublisherClient)
     private BuildRepository buildRepository = Mock(BuildRepository)
+    private HermesClientService hermesClientService = Spy(new HermesClientService(hermesClient, hermesPublisherClient))
 
     void setup() {
-        this.webhookEventService = new WebhookEventService(new HermesClientService(hermesClient, hermesPublisherClient), new BuildService(buildRepository))
+        this.webhookEventService = new WebhookEventService(hermesClientService, new BuildService(buildRepository))
     }
 
     def "when hermes response with success notify with success"() {
+        given:
+        def startDeployEvent = getWebhookDeploymentEventType(deployment, null, WebhookEventSubTypeEnum.START_DEPLOY)
         when:
         webhookEventService.notifyDeploymentEvent(
                 "workspaceId",
@@ -54,6 +55,27 @@ class WebhookEventServiceTest extends Specification {
 
         then:
         1 * this.buildRepository.findById(buildId) >> Optional.of(build)
+        1 * this.hermesClientService.notifySubscriptionEvent(startDeployEvent)
+        1 * this.hermesPublisherClient.notifyEvent(_)
+        notThrown()
+    }
+
+    def "when finish deploy with success hermes notify with success"() {
+        given:
+        def finishDeployEvent = getWebhookDeploymentEventType(deployment, 39, WebhookEventSubTypeEnum.FINISH_DEPLOY)
+        when:
+        webhookEventService.notifyDeploymentEvent(
+                "workspaceId",
+                WebhookEventTypeEnum.DEPLOY,
+                WebhookEventSubTypeEnum.FINISH_DEPLOY,
+                WebhookEventStatusEnum.SUCCESS,
+                deployment,
+                null
+        )
+
+        then:
+        1 * this.buildRepository.findById(buildId) >> Optional.of(build)
+        1 * this.hermesClientService.notifySubscriptionEvent(finishDeployEvent)
         1 * this.hermesPublisherClient.notifyEvent(_)
         notThrown()
     }
@@ -75,7 +97,6 @@ class WebhookEventServiceTest extends Specification {
         notThrown()
     }
 
-
     private static List<String> getEvents() {
         def events = new ArrayList()
         events.add("DEPLOY")
@@ -91,7 +112,6 @@ class WebhookEventServiceTest extends Specification {
                 [], root, LocalDateTime.now())
     }
 
-
     private static String getWorkspaceId() {
         return "workspaceId"
     }
@@ -104,8 +124,8 @@ class WebhookEventServiceTest extends Specification {
         new Deployment(
                 "deploymentId",
                 user,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                LocalDateTime.parse("2021-05-06T12:37:32"),
+                LocalDateTime.parse("2021-05-06T12:38:11"),
                 DeploymentStatusEnum.DEPLOYED,
                 circle,
                 buildId,
@@ -171,5 +191,31 @@ class WebhookEventServiceTest extends Specification {
                 'tag-name', '6181aaf1-10c4-47d8-963a-3b87186debbb', 'f53020d7-6c85-4191-9295-440a3e7c1307', BuildStatusEnum.BUILT,
                 workspaceId, deploymentList)
         build
+    }
+
+    private static WebhookDeploymentEventType getWebhookDeploymentEventType(Deployment deployment, Long executionTime, WebhookEventSubTypeEnum subtype) {
+        return new WebhookDeploymentEventType(
+                "workspaceId",
+                WebhookEventTypeEnum.DEPLOY,
+                WebhookEventStatusEnum.SUCCESS,
+                null,
+                new WebhookDeploymentEvent(deployment.id,
+                        subtype,
+                        WebhookEventStatusEnum.SUCCESS,
+                        subtype == WebhookEventSubTypeEnum.START_DEPLOY ? deployment.createdAt : deployment.deployedAt,
+                        deployment.workspaceId,
+                        new WebhookDeploymentAuthorEvent(deployment.author.email, deployment.author.name),
+                        executionTime,
+                        new WebhookDeploymentCircleEvent(deployment.circle.id, deployment.circle.name),
+                        new WebhookDeploymentReleaseEvent(
+                                'tag-name',
+                                [new WebhookDeploymentModuleEvent(
+                                        'Module Snapshot Name',
+                                        [new WebhookDeploymentComponentEvent('70189ffc-b517-4719-8e20-278a7e5f9b33', 'Component snapshot name')]
+                                )],
+                                [new WebhookDeploymentFeatureEvent('Feature name', 'feature-branch-name')],
+                        )
+                )
+        )
     }
 }

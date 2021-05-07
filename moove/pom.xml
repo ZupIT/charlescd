@@ -54,7 +54,7 @@
         <spring.jdbc.version>5.2.4.RELEASE</spring.jdbc.version>
         <bucket4j-core.version>4.10.0</bucket4j-core.version>
         <liquibase.core.version>3.8.7</liquibase.core.version>
-        <spock.core.version>1.0-groovy-2.4</spock.core.version>
+        <spock.core.version>1.3-groovy-2.4</spock.core.version>
         <groovy.all.version>2.4.7</groovy.all.version>
         <scalaz.stream.version>0.7.2a</scalaz.stream.version>
         <gfc.semver.version>0.0.5</gfc.semver.version>
