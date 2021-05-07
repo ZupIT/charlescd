@@ -166,6 +166,16 @@ func (main Main) FindAll() ([]MetricsGroup, errors.Error) {
 	return metricsGroups, nil
 }
 
+func (main Main) FindAllByWorkspaceId(workspaceId uuid.UUID) ([]MetricsGroup, errors.Error) {
+	var metricsGroups []MetricsGroup
+	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id=?", workspaceId).Find(&metricsGroups)
+	if db.Error != nil {
+		return []MetricsGroup{}, errors.NewError("FindAllByWorkspaceId error", db.Error.Error()).
+			WithOperations("FindAllByWorkspaceId.DBFind")
+	}
+	return metricsGroups, nil
+}
+
 func (main Main) isMetricError(metrics []metric.Metric) bool {
 	for _, currentMetric := range metrics {
 		if currentMetric.MetricExecution.Status == metric.MetricError {
