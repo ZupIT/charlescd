@@ -56,6 +56,7 @@
         <liquibase.core.version>3.8.7</liquibase.core.version>
         <spock.core.version>1.0-groovy-2.4</spock.core.version>
         <groovy.all.version>2.4.7</groovy.all.version>
+        <scalaz.stream.version>0.7.2a</scalaz.stream.version>
     </properties>
 
     <dependencies>
@@ -229,6 +230,17 @@
                 <groupId>uk.gov.nationalarchives</groupId>
                 <artifactId>csv-validator-java-api</artifactId>
                 <version>${csv.validator.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.scalaz.stream</groupId>
+                        <artifactId>scalaz-stream_2.11</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.scalaz.stream</groupId>
+                <artifactId>scalaz-stream_2.11</artifactId>
+                <version>${scalaz.stream.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.java-json-tools</groupId>
