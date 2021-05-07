@@ -231,16 +231,6 @@
                 <groupId>uk.gov.nationalarchives</groupId>
                 <artifactId>csv-validator-java-api</artifactId>
                 <version>${csv.validator.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.scalaz.stream</groupId>
-                        <artifactId>scalaz-stream_2.11</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.gilt</groupId>
-                        <artifactId>gfc-semver_2.11</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <!-- Override versions from csv-validator-java-api to fetch from maven central-->
             <dependency>
