@@ -197,7 +197,7 @@ export class EventsLogsAggregator {
   private getDeploymentIdLabel(resource: k8s.KubernetesObject) {
     const deploymentIdResource = resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
     if (!deploymentIdResource) {
-      if (resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND) {
+      if (this.isCharlesCustomResource(resource)) {
         const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
         if (!resourceWithSpec || !resourceWithSpec.spec) {
           return
@@ -207,6 +207,11 @@ export class EventsLogsAggregator {
     }
     return deploymentIdResource
   }
+
+  private isCharlesCustomResource(resource: k8s.KubernetesObject) {
+    return resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND
+  }
+  
 }
 
 class Event {
@@ -260,3 +265,4 @@ class Event {
 
 
 }
+
