@@ -77,3 +77,13 @@ test('should render secret field as optional', () => {
   const secretLabel = screen.getByLabelText('Secret (Optional)');
   expect(secretLabel).toBeInTheDocument();
 });
+
+test('should render events trigger text', () => {
+  const data: Webhook = null;
+  const onFinish = jest.fn();
+
+  render(<FormWebhook data={data} onFinish={onFinish} />);
+
+  const eventsText = screen.getByText('Which events would you like to trigger this webhook?');
+  expect(eventsText).toBeInTheDocument();
+});
