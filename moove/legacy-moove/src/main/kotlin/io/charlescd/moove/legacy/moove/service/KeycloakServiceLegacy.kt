@@ -28,11 +28,17 @@ class KeycloakServiceLegacy(private val keycloak: Keycloak) {
     @Value("\${charlescd.keycloak.realm}")
     lateinit var realm: String
 
-    fun deleteUserById(id: String) {
-        this.keycloak
+    fun deleteUserByEmail(email: String) {
+        val users =  this.keycloak
             .realm(realm)
             .users()
-            .delete(id)
+            .search(email)
+        users.forEach {
+            this.keycloak
+                .realm(realm)
+                .users()
+                .delete(it.id)
+        }
     }
 
     fun getEmailByAuthorizationToken(authorization: String): String {
