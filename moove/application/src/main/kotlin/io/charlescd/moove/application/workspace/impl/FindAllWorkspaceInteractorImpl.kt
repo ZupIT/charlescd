@@ -52,7 +52,7 @@ class FindAllWorkspaceInteractorImpl @Inject constructor(
                 SimpleWorkspaceResponse.from(
                     workspace, deploymentConfigurations.find { workspace.id == it?.workspaceId }
                 )
-           },
+            },
             page = page.pageNumber,
             size = page.size(),
             isLast = page.isLast(),
