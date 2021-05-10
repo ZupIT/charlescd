@@ -56,21 +56,20 @@ export class CreateUndeploymentUseCase {
 
   private async deleteDeploymentCRD(deployment: DeploymentEntity) {
     const activeComponents = await this.componentsRepository.findActiveComponents()
-    var status = ""
+    let status = DeploymentStatusEnum.UNDEPLOY_FAILED
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
       await this.k8sClient.applyUndeploymentCustomResource(deployment)
       status = DeploymentStatusEnum.UNDEPLOYED
     } catch (error) {
       this.consoleLoggerService.error('ERROR_DELETING_DEPLOYMENT_CRD')
-      status = DeploymentStatusEnum.UNDEPLOY_FAILED
       throw error
     } finally {
-        await this.mooveService.notifyDeploymentStatusV2(
-          deployment.id,
-          status,
-          deployment.callbackUrl,
-          deployment.circleId
+      await this.mooveService.notifyDeploymentStatusV2(
+        deployment.id,
+        status,
+        deployment.callbackUrl,
+        deployment.circleId
       )
     }
   }
