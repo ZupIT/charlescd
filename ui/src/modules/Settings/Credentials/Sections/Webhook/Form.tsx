@@ -139,7 +139,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           defaultValue={data?.apiKey}
         />
         <Text.h5 color="dark">
-          Witch events would you like to trigger this webhook?
+          Which events would you like to trigger this webhook?
         </Text.h5>
         <Form.Radio
           ref={register({ required: true })}
