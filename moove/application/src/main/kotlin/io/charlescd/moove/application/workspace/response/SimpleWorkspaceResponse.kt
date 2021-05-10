@@ -16,24 +16,35 @@
 
 package io.charlescd.moove.application.workspace.response
 
+import io.charlescd.moove.application.configuration.response.DeploymentConfigurationResponse
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.SimpleWorkspace
 
 data class SimpleWorkspaceResponse(
     val id: String,
     val name: String,
     val permissions: List<String>,
-    val status: String
+    val status: String,
+    val deploymentConfiguration: DeploymentConfigurationResponse? = null
 ) {
     companion object {
 
         fun from(
-            workspace: SimpleWorkspace
+            workspace: SimpleWorkspace,
+            deploymentConfiguration: DeploymentConfiguration? = null
         ): SimpleWorkspaceResponse {
             return SimpleWorkspaceResponse(
                 id = workspace.id,
                 name = workspace.name,
                 status = workspace.status.name,
-                permissions = emptyList()
+                permissions = emptyList(),
+                deploymentConfiguration = deploymentConfiguration?.let {
+                    DeploymentConfigurationResponse(
+                        id = it.id,
+                        name = it.name,
+                        gitProvider = it.gitProvider
+                    )
+                }
             )
         }
     }
