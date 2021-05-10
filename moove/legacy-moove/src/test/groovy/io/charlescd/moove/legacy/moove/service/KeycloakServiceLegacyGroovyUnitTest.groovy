@@ -48,11 +48,12 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
         users.add(user)
 
         when:
-        service.deleteUserById(user.id)
+        service.deleteUserByEmail(user.email)
 
         then:
-        1 * keycloak.realm(_ as String) >> realmResource
-        1 * realmResource.users() >> usersResource
+        2 * keycloak.realm(_ as String) >> realmResource
+        2 * realmResource.users() >> usersResource
+        1 * usersResource.search(user.email) >> users
         1 * usersResource.delete(user.id) >> response
         notThrown()
     }
@@ -71,11 +72,12 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
         users.add(user)
 
         when:
-        service.deleteUserById(user.id)
+        service.deleteUserByEmail(user.email)
 
         then:
-        1 * keycloak.realm(_) >> realmResource
-        1 * realmResource.users() >> usersResource
+        2 * keycloak.realm(_) >> realmResource
+        2 * realmResource.users() >> usersResource
+        1 * usersResource.search(user.email) >> users
         1 * usersResource.delete(user.id)
         notThrown()
     }
