@@ -133,13 +133,13 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         <Form.Password
           ref={register()}
           name="apiKey"
-          label="Secret"
+          label="Secret (Optional)"
           disabled={isEditMode}
           autoComplete="new-password"
           defaultValue={data?.apiKey}
         />
         <Text.h5 color="dark">
-          Witch events would you like to trigger this webhook?
+          Which events would you like to trigger this webhook?
         </Text.h5>
         <Form.Radio
           ref={register({ required: true })}
