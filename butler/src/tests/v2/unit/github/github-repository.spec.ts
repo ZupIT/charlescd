@@ -101,7 +101,7 @@ describe('Download resources from github', () => {
     ).rejects.toMatchObject({
       response: {
         errors: [{
-          detail: `Status 'INTERNAL_SERVER_ERROR' with error: Reached maximum fetch attempts! ${errorMessage}`,
+          detail: `Status 'INTERNAL_SERVER_ERROR' with error: ${errorMessage}`,
           source: 'components.helmRepository',
           status: 500,
           title: 'Unable to fetch resource from github url: https://api.github.com/repos/charlescd-fake/helm-chart/contents/helm-chart?ref=master'

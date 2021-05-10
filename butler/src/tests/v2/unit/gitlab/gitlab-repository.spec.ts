@@ -103,7 +103,7 @@ describe('Download resources from gitlab', () => {
     ).rejects.toMatchObject({
       response: {
         errors: [{
-          detail: `Status 'INTERNAL_SERVER_ERROR' with error: Reached maximum fetch attempts! ${errorMessage}`,
+          detail: `Status 'INTERNAL_SERVER_ERROR' with error: ${errorMessage}`,
           source: 'components.helmRepository',
           status: 500,
           title: 'Unable to fetch resource from gitlab url: https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart'
