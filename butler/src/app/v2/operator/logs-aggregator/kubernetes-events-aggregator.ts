@@ -16,7 +16,6 @@
 
 import * as k8s from '@kubernetes/client-node'
 import { Injectable } from '@nestjs/common'
-import * as http from 'http'
 import * as moment from 'moment'
 import { LogEntity } from '../../api/deployments/entity/logs.entity'
 import { ConsoleLoggerService } from '../../core/logs/console'
