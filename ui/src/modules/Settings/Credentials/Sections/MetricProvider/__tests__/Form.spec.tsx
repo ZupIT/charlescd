@@ -27,6 +27,15 @@ beforeEach(() => {
   (fetch as FetchMock).resetMocks();
 });
 
+test('should render title and text to documentation', () => {
+  render(<Form onFinish={jest.fn()} />);
+
+  expect(screen.getByText('Add Datasource')).toBeInTheDocument();
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
+});
+
 test('render button test connection', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(Plugins))

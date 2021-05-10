@@ -24,7 +24,8 @@ import { MetadataSizeValidation } from '../validations/metadata-size.validation'
 import { Metadata } from '../interfaces/deployment.interface'
 import { CreateGitDeploymentDto } from './create-git-request.dto'
 import { CreateComponentRequestDto } from './create-component-request.dto'
-import { Validate } from 'class-validator'
+
+
 
 export class CreateDeploymentRequestDto {
 
@@ -58,7 +59,6 @@ export class CreateDeploymentRequestDto {
   public readonly components: CreateComponentRequestDto[]
 
   @ApiProperty()
-  @Validate(MetadataSizeValidation)
   public metadata: Metadata | null
 
   constructor(

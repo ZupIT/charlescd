@@ -69,14 +69,15 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   useEffect(() => {
     if (userUpdated) {
       setCurrentUser(userUpdated);
+      onChange('Updated');
     } else if (status === 'rejected') {
       findByEmail(email);
     }
-  }, [userUpdated, status, email, findByEmail]);
+  }, [userUpdated, status, email, findByEmail, onChange]);
 
   useEffect(() => {
-    onChange(delUserResponse);
     if (delUserResponse === 'Deleted') {
+      onChange(delUserResponse);
       delParam('user', routes.usersComparation, history, currentUser.email);
     }
   });

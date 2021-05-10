@@ -24,12 +24,15 @@ import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
-
+import { AppConstants } from '../../core/constants'
+import { plainToClass } from 'class-transformer'
+import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
 
   private static readonly KUBE_SYSTEM_NS_PREFIX = 'kube-'
-  
+
   private readonly MAX_CACHE_SIZE = 100
   private readonly MAX_CACHE_AGE_ONE_HOUR = 1000 * 60 * 60
 
@@ -41,40 +44,25 @@ export class EventsLogsAggregator {
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
     private consoleLoggerService: ConsoleLoggerService) {
-    this.cache = new LRUCache({ 
-      max: this.MAX_CACHE_SIZE, 
-      maxAge: this.MAX_CACHE_AGE_ONE_HOUR 
+    this.cache = new LRUCache({
+      max: this.MAX_CACHE_SIZE,
+      maxAge: this.MAX_CACHE_AGE_ONE_HOUR
     })
   }
 
   public async aggregate(coreEvent: k8s.CoreV1Event, since?: Date): Promise<void> {
+
     const involvedObject = coreEvent.involvedObject
-
-    if (!involvedObject.namespace
-      || !involvedObject.kind
-      || !involvedObject.apiVersion
-      || !involvedObject.name) {
-      this.consoleLoggerService.log('"event.involvedObject" does not has the necessary data to identify the target resource! Discarding event...', involvedObject)
-      return
-    }
-
-    if (involvedObject.namespace.startsWith(EventsLogsAggregator.KUBE_SYSTEM_NS_PREFIX)) {
-      this.consoleLoggerService.log(`${involvedObject.namespace} is a kubernetes system namespace. Discarding event...`, involvedObject)
-      return
-    }
-
-    const event = new Event(coreEvent)
-
-    if (this.isEventOlderThan(event, since)) {
-      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older then ${since}. Discarding event...`)
+    const event = this.validateAndCreateEvent(coreEvent, since)
+    if (!event) {
       return
     }
 
     const resource = await this.resourceFor(
-      involvedObject.namespace,
-      involvedObject.kind,
-      involvedObject.apiVersion,
-      involvedObject.name
+        involvedObject.kind!,
+        involvedObject.apiVersion!,
+        involvedObject.name!,
+        involvedObject.namespace
     )
 
     if (!resource) {
@@ -82,12 +70,10 @@ export class EventsLogsAggregator {
       return
     }
 
-    const deploymentIdLabel = 'deploymentId'
-
-    const deploymentId = resource.metadata?.labels?.[deploymentIdLabel]
+    const deploymentId = this.getDeploymentIdLabel(resource)
 
     if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${deploymentIdLabel}. Discarding event...`)
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
       return
     }
 
@@ -98,10 +84,14 @@ export class EventsLogsAggregator {
       details: event.details
     }
 
+    if (await this.alreadyLogged(log, deploymentId)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
+    }
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
-
   }
+
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
     try {
@@ -120,13 +110,13 @@ export class EventsLogsAggregator {
     return !event.isAfter(since)
   }
 
-  private async resourceFor(namespace: string, kind: string, apiVersion: string, name: string): Promise<k8s.KubernetesObject | undefined> {
+  private async resourceFor(kind: string, apiVersion: string, name: string, namespace?: string): Promise<k8s.KubernetesObject | undefined> {
     try {
       const response = await this.cachedResourceFor(
-        namespace,
         kind,
         apiVersion,
-        name
+        name,
+        namespace
       )
       return response.body
     } catch (error) {
@@ -135,13 +125,13 @@ export class EventsLogsAggregator {
     }
   }
 
-  private async cachedResourceFor(namespace: string, kind: string, apiVersion: string, name: string):
+  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,):
     Promise<{
       body: k8s.KubernetesObject,
       response: http.IncomingMessage
     }> {
     
-    const cacheKey = this.createCacheKey(namespace, kind, name)
+    const cacheKey = this.createCacheKey(kind, name, namespace)
 
     const cachedResponse = this.cache.get(cacheKey)
     if (cachedResponse) {
@@ -164,9 +154,64 @@ export class EventsLogsAggregator {
     return response
   }
 
-  private createCacheKey(namespace: string, kind: string, name: string): string {
-    return `${namespace}:${kind}:${name}`
+
+  private createCacheKey(kind: string, name: string, namespace?: string): string {
+    return  namespace ? `${namespace}:${kind}:${name}` : `${kind}:${name}`
   }
+
+
+  private async alreadyLogged(logRequest: Log, deploymentId: string): Promise<Log | undefined> {
+    const logEntity= await this.logsRepository.findDeploymentLogs(deploymentId)
+    return logEntity?.logs.find(
+      logDatabase => this.isSameLog(logRequest, logDatabase)
+    )
+  }
+
+  private isSameLog(logRequest: Log, logDatabase: Log) {
+    return logRequest.title === logDatabase.title
+        &&  logRequest.timestamp === logDatabase.timestamp
+        && logRequest.details === logDatabase.details
+  }
+
+  private validateAndCreateEvent(coreEvent: k8s.CoreV1Event, since?: Date) {
+    const involvedObject = coreEvent.involvedObject
+    if (!involvedObject.kind
+        || !involvedObject.apiVersion
+        || !involvedObject.name) {
+      this.consoleLoggerService.log('"event.involvedObject" does not has the necessary data to identify the target resource! Discarding event...', involvedObject)
+      return
+    }
+
+    if (involvedObject.namespace && involvedObject.namespace.startsWith(EventsLogsAggregator.KUBE_SYSTEM_NS_PREFIX)) {
+      this.consoleLoggerService.log(`${involvedObject.namespace} is a kubernetes system namespace. Discarding event...`, involvedObject)
+      return
+    }
+    const event = new Event(coreEvent)
+    if (this.isEventOlderThan(event, since)) {
+      this.consoleLoggerService.log(`Event created at ${event.timestamp} is older than ${since}. Discarding event...`)
+      return
+    }
+    return event
+  }
+
+  private getDeploymentIdLabel(resource: k8s.KubernetesObject) {
+    const deploymentIdResource = resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
+    if (!deploymentIdResource) {
+      if (this.isCharlesCustomResource(resource)) {
+        const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
+        if (!resourceWithSpec || !resourceWithSpec.spec) {
+          return
+        }
+        return resourceWithSpec.spec.deploymentId as string  
+      }
+    }
+    return deploymentIdResource
+  }
+
+  private isCharlesCustomResource(resource: k8s.KubernetesObject) {
+    return resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND
+  }
+  
 }
 
 class Event {
@@ -217,4 +262,6 @@ class Event {
   public isAfter(timestamp: Date): boolean {
     return this.timestamp >= timestamp
   }
+
+
 }

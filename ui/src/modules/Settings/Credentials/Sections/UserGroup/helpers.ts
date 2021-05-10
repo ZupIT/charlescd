@@ -15,6 +15,9 @@
  */
 
 import map from 'lodash/map';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import lodashReduce from 'lodash/reduce';
 import { UserGroup } from './interfaces';
 
 export const reduce = (groups: UserGroup[]) =>
@@ -23,3 +26,13 @@ export const reduce = (groups: UserGroup[]) =>
     value: item.id,
     icon: 'users'
   }));
+
+export const hasUserDuplication = (userGroups: any, email: string) => {
+  const emails = lodashReduce(userGroups, (result, userGroup) => {
+    const user = find(userGroup.users, (user) => user.email === email);
+
+    return isEmpty(user) ? [...result] : [...result, user.email];
+  }, []);
+
+  return emails.length > 1;
+};

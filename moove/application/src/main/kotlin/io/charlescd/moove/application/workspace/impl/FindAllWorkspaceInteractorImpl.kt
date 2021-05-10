@@ -21,10 +21,10 @@ package io.charlescd.moove.application.workspace.impl
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.FindAllWorkspaceInteractor
-import io.charlescd.moove.application.workspace.response.WorkspaceResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.SimpleWorkspace
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -33,13 +33,13 @@ class FindAllWorkspaceInteractorImpl @Inject constructor(
     private val workspaceService: WorkspaceService
 ) : FindAllWorkspaceInteractor {
 
-    override fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<WorkspaceResponse> {
+    override fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<SimpleWorkspaceResponse> {
         return convert(workspaceService.findAll(pageRequest, name))
     }
 
-    private fun convert(page: Page<Workspace>): ResourcePageResponse<WorkspaceResponse> {
+    private fun convert(page: Page<SimpleWorkspace>): ResourcePageResponse<SimpleWorkspaceResponse> {
         return ResourcePageResponse(
-            content = page.content.map { WorkspaceResponse.from(it) },
+            content = page.content.map { SimpleWorkspaceResponse.from(it) },
             page = page.pageNumber,
             size = page.size(),
             isLast = page.isLast(),

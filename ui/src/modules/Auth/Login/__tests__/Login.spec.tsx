@@ -19,7 +19,9 @@ import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Login from '..';
 import routes from 'core/constants/routes';
-import { FetchMock } from 'jest-fetch-mock';
+import 'unit-test/setup-msw';
+import { server, rest } from 'mocks/server';
+import { DEFAULT_TEST_BASE_URL } from 'setupTests';
 
 const originalWindow = window;
 beforeEach(() => {
@@ -53,21 +55,6 @@ test('login on charles C.D.', async () => {
 
   render(<Login />);
 
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    access_token: 'abcdefghijklmn', refresh_token: 'opqrstuvwxyz'
-  }));
-  
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    circles: [{ id: '123', name: 'circle' }]
-  }));
-  
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({
-    id: '1',
-    name: 'charlescd',
-    email: 'charlescd@zup.com.br',
-    workspaces: [{ id: '1', name: 'workspace' }]
-  }));
-
   const inputEmail = await screen.findByTestId('input-email-email');
   const inputPassword = await screen.findByTestId('input-password-password');
   const buttonSubmit = await screen.findByTestId('button-default-submit');
@@ -80,4 +67,26 @@ test('login on charles C.D.', async () => {
   await act(async () => userEvent.click(buttonSubmit));
 
   expect(window.location.href).toEqual(routes.workspaces);
+});
+
+test('should show error message when email or password is incorrect', async () => {
+  server.use(
+    rest.post(`${DEFAULT_TEST_BASE_URL}/keycloak/auth/realms/:realm/protocol/openid-connect/token`, (req, res, ctx) => {
+      return res(
+        ctx.status(401, 'Unauthorized'),
+      )
+    })
+  );
+
+  render(<Login />);
+
+  const emailInput = screen.getByTestId('input-email-email');
+  const passwordInput = screen.getByTestId('input-password-password');
+  const continueButton = screen.getByText('Continue');
+
+  await act(async () => userEvent.type(emailInput, 'charlesadmin@admin'));
+  await act(async () => userEvent.type(passwordInput, '123mudar'));
+  await act(async () => userEvent.click(continueButton));
+
+  expect(await screen.findByText('The email address or password is incorrect.')).toBeInTheDocument();
 });

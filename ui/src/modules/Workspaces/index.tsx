@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { isRoot, logout } from 'core/utils/auth';
-import Menu from './Menu';
-import { clearWorkspace } from 'core/utils/workspace';
 import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import routes from 'core/constants/routes';
-import { isRequired, maxLength } from 'core/utils/validations';
+import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
+import Menu from './Menu';
 import Styled from './styled';
 import { getProfileByKey } from 'core/utils/profile';
 
-interface Props {
-  selectedWorkspace: (name: string) => void;
-}
-
-const Workspaces = ({ selectedWorkspace }: Props) => {
+const Workspaces = () => {
   const profileName = getProfileByKey('name');
   const email = getProfileByKey('email');
-
   const [toggleModal, setToggleModal] = useState(false);
   const {
     save,
@@ -69,10 +63,6 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     save({ name });
   };
 
-  useEffect(() => {
-    clearWorkspace();
-  }, []);
-
   const renderModal = () =>
     isRoot() && (
       <Modal.Default onClose={() => setToggleModal(false)}>
@@ -86,6 +76,9 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
             error={errors?.name?.message}
             ref={register({
               required: isRequired(),
+              validate: {
+                notBlank: isNotBlank,
+              },
               maxLength: maxLength()
             })}
           />
@@ -104,10 +97,7 @@ const Workspaces = ({ selectedWorkspace }: Props) => {
     <Page>
       {toggleModal && renderModal()}
       <Page.Menu>
-        <Menu
-          onCreate={() => setToggleModal(true)}
-          selectedWorkspace={(name: string) => selectedWorkspace(name)}
-        />
+        <Menu onCreate={() => setToggleModal(true)} />
       </Page.Menu>
       <Page.Content>
         <Placeholder

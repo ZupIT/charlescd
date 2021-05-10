@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 import AvatarName from 'core/components/AvatarName';
+import ComponentText from 'core/components/Text';
 import { Input } from 'core/components/Form';
 
 interface WrapperProps {
@@ -122,6 +123,10 @@ const ItemWrapper = styled.div`
   background: ${({ theme }) => theme.modal.default.background};
 `;
 
+const ItemContent = styled.div`
+  width: 350px;
+`;
+
 const ItemProfile = styled.div`
   display: flex;
   flex-direction: row;
@@ -134,13 +139,17 @@ const ItemPhoto = styled(AvatarName)`
   margin-right: 10px;
 `;
 
-const ItemName = styled.div`
+const ItemName = styled(ComponentText.h4)`
   font-size: 14px;
   font-weight: 900;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
-const ItemEmail = styled.div`
+const ItemEmail = styled(ComponentText.h4)`
   font-weight: 300;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const CloseButton = styled.div`
@@ -173,6 +182,7 @@ export default {
   Label,
   Item: {
     Wrapper: ItemWrapper,
+    Content: ItemContent,
     Profile: ItemProfile,
     Photo: ItemPhoto,
     Name: ItemName,

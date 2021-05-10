@@ -169,4 +169,11 @@ class TestUtils {
                 GitProviderEnum.GITHUB
         )
     }
+
+    static KeyValueRule getKeyValueRule()  {
+        def nodePart = getNodePart()
+
+        def jsonNode = new ObjectMapper().valueToTree(nodePart)
+        return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, circleId)
+    }
 }

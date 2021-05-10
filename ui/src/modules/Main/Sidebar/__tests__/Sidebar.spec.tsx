@@ -22,6 +22,7 @@ import { genMenuId } from 'core/utils/menu';
 import Sidebar from '../index';
 import * as utilsAuth from 'core/utils/auth';
 import { saveProfile } from 'core/utils/profile';
+import { saveWorkspace } from 'core/utils/workspace';
 
 const originalWindow = { ...window };
 const openDocumentation = jest.fn();
@@ -61,6 +62,10 @@ test('renders sidebar component', async () => {
 });
 
 test('renders sidebar component with selected workspace', async () => {
+  saveWorkspace({
+    id: 'ws-1',
+    name: 'workspace-1'
+  });
   delete window.location;
 
   window.location = {
@@ -74,11 +79,10 @@ test('renders sidebar component with selected workspace', async () => {
     <Sidebar
       isExpanded={true}
       onClickExpand={jest.fn()}
-      selectedWorkspace="test"
     />
   );
 
-  expect(await screen.findByTestId('dropdown')).toBeInTheDocument();
+  expect(await screen.findByText('workspace-1')).toBeInTheDocument();
 });
 
 test('renders help icon in the sidebar', async () => {

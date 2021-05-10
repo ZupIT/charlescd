@@ -142,6 +142,7 @@ const Placeholder = styled(TextComponent.h4)`
 
 const Wrapper = styled.div`
   position: relative;
+  padding-bottom: 10px;
 `;
 
 export default {

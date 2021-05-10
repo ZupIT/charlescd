@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import FormComponent from 'core/components/Form';
 import ComponentPopover, {
   Props as PopoverProps
 } from 'core/components/Popover';
 import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
-import Text from 'core/components/Text';
+import Text, { Props as TextProps } from 'core/components/Text';
 import { slideInRight } from 'core/assets/style/animate';
 
 const Title = styled(Text.h2)`
@@ -33,8 +33,16 @@ const Title = styled(Text.h2)`
   }
 `;
 
-const Subtitle = styled(Text.h5)`
+interface StyledSubtitle extends TextProps {
+  isEditing?: boolean;
+}
+
+const Subtitle = styled(Text.h5)<StyledSubtitle>`
   margin: 20px 0px 5px;
+
+  ${({ isEditing }) => isEditing && css`
+    margin-bottom: 25px;
+  `};
 `;
 
 const Options = styled(Text.h5)`

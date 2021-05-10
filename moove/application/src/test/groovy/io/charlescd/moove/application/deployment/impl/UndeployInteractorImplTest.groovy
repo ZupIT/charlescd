@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.deployment.impl
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.charlescd.moove.application.*
 import io.charlescd.moove.application.deployment.UndeployInteractor
 import io.charlescd.moove.domain.*
@@ -24,16 +25,15 @@ import io.charlescd.moove.domain.repository.*
 import io.charlescd.moove.domain.service.DeployService
 import io.charlescd.moove.domain.service.HermesService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
-import org.springframework.dao.DuplicateKeyException
-import scalaz.concurrent.Run
+import io.charlescd.moove.domain.service.CircleMatcherService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
 class UndeployInteractorImplTest extends Specification {
-
     private  UndeployInteractor undeployInteractor
-
+    private KeyValueRuleRepository keyValueRuleRepository = Mock(KeyValueRuleRepository)
+    private CircleRepository circleRepository = Mock(CircleRepository)
     private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
     private BuildRepository buildRepository = Mock(BuildRepository)
     private UserRepository userRepository = Mock(UserRepository)
@@ -44,6 +44,10 @@ class UndeployInteractorImplTest extends Specification {
     private HermesService hermesService = Mock(HermesService)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
     private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
+    private KeyValueRuleService keyValueRuleService = new KeyValueRuleService(keyValueRuleRepository)
+    private CircleService circleService = new CircleService(circleRepository)
+    private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
+
 
     def setup() {
         this.undeployInteractor = new  UndeployInteractorImpl(
@@ -52,7 +56,10 @@ class UndeployInteractorImplTest extends Specification {
                 deployService,
                 new WebhookEventService(hermesService, new BuildService(buildRepository)),
                 new WorkspaceService(workspaceRepository, userRepository),
-                new DeploymentConfigurationService(deploymentConfigurationRepository)
+                new DeploymentConfigurationService(deploymentConfigurationRepository),
+                circleMatcherService,
+                circleService,
+                keyValueRuleService
         )
     }
 
@@ -74,6 +81,7 @@ class UndeployInteractorImplTest extends Specification {
 
     def 'should undeploy successfully and notify using authorization'() {
         given:
+        def circle =  getCircle(false, MatcherTypeEnum.SIMPLE_KV)
         def workspaceId = TestUtils.workspaceId
         def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
@@ -95,8 +103,68 @@ class UndeployInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.update(_)
+        1 * circleRepository.update(_) >> circle
+        1 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
+        1 * circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def nodes = arguments[2]
+            def matcherUrl = arguments[3]
+            def active = arguments[4]
+
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert !active
+            assert nodes instanceof List<JsonNode>
+            assert nodes.size() == 1
+        }
 
        notThrown()
+    }
+
+    def 'should undeploy successfully and update on matcher with status active false'() {
+        given:
+        def deployment = getRegularDeployment()
+        def circle = getCircle(false, MatcherTypeEnum.REGULAR)
+        def workspaceId = TestUtils.workspaceId
+        def workspace = TestUtils.workspace
+        def authorization = TestUtils.authorization
+        def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
+        def author = TestUtils.user
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def deploymentConfig = TestUtils.deploymentConfig
+
+        when:
+        undeployInteractor.execute(workspaceId, authorization, null, deploymentId)
+
+        then:
+        1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(deployment)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
+        1 * buildRepository.findById(buildId) >> Optional.of(build)
+        1 * deployService.undeploy(deploymentId, author.id, deploymentConfig)
+        1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * hermesService.notifySubscriptionEvent(_)
+        1 * deploymentRepository.update(_)
+        0 * circleRepository.update(_) >> circle
+        0 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
+        1 * circleMatcherService.update(_, _, _, _) >> { arguments ->
+            def circleCompare = arguments[0]
+            def reference = arguments[1]
+            def matcherUrl = arguments[2]
+            def active = arguments[3]
+
+            assert circleCompare instanceof Circle
+            assert circleCompare.id == circle.id
+            assert matcherUrl.toString() == workspace.circleMatcherUrl
+            assert reference == circle.reference
+            assert active == false
+
+        }
+        notThrown()
     }
 
     def 'should undeploy successfully and notify using system token'() {
@@ -123,8 +191,9 @@ class UndeployInteractorImplTest extends Specification {
         1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.update(_)
-
-        notThrown()
+        1 * circleRepository.update(_) >> getCircle(false, MatcherTypeEnum.SIMPLE_KV)
+        1 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
+        1 * circleMatcherService.updateImport(_, _, _, _, _)
     }
 
     def 'when undeploy has error should throw exception and notify'() {
@@ -162,7 +231,22 @@ class UndeployInteractorImplTest extends Specification {
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 DeploymentStatusEnum.DEPLOYED,
-                getCircle(false),
+                getCircle(false, MatcherTypeEnum.SIMPLE_KV),
+                buildId,
+                TestUtils.workspaceId,
+                null,
+                null
+        )
+    }
+
+    private static Deployment getRegularDeployment() {
+        return new Deployment(
+                deploymentId,
+                TestUtils.getUser(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                DeploymentStatusEnum.DEPLOYED,
+                getCircle(false, MatcherTypeEnum.REGULAR),
                 buildId,
                 TestUtils.workspaceId,
                 null,
@@ -200,10 +284,11 @@ class UndeployInteractorImplTest extends Specification {
         build
     }
 
-    private static Circle getCircle(Boolean defaultCircle) {
+    private static Circle getCircle(Boolean defaultCircle, MatcherTypeEnum matcherTypeEnum) {
         return new Circle("5d4c9492-6f83-11ea-bc55-0242ac130003", 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
-                TestUtils.user, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, defaultCircle, TestUtils.workspaceId, false, null)
+                TestUtils.user, LocalDateTime.now(), matcherTypeEnum, null, null, null, defaultCircle, TestUtils.workspaceId, false, null)
     }
+
 
     private static String getBuildId() {
         return "5d4c9492-6f83-11ea-bc55-0242ac130003"
@@ -215,6 +300,6 @@ class UndeployInteractorImplTest extends Specification {
 
     private static Deployment getDeployment(DeploymentStatusEnum status, LocalDateTime deployedAt, LocalDateTime undeployAt, Boolean isDefaultCircle) {
         return new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', TestUtils.user,
-                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, null, undeployAt)
+                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle, MatcherTypeEnum.SIMPLE_KV), buildId, TestUtils.workspaceId, null, undeployAt)
     }
 }

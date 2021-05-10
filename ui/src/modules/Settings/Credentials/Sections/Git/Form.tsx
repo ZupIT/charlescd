@@ -144,7 +144,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
       <Styled.Title color="light">Add Git</Styled.Title>
       <Styled.Info color="dark" data-testid="git-help-text">
         Adding a Git allows Charles to create, delete and merge branches, as
-        well as view repositories and generate releases. Consult our{' '}
+        well as view repositories and generate releases. See our{' '}
         <Styled.Link
           href="https://docs.charlescd.io/get-started/defining-a-workspace/github"
           target="_blank"
