@@ -93,7 +93,7 @@ class UserServiceLegacy(
     }
 
     private fun deleteOnKeycloak(it: User): User {
-        keycloakServiceLegacy.deleteUserById(it.id)
+        keycloakServiceLegacy.deleteUserByEmail(it.email)
         return it
     }
 
