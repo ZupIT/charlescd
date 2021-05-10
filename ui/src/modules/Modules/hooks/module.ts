@@ -174,9 +174,16 @@ export const useDeleteModule = (
             status: 'error'
           })
         );
+      } else if(response) {
+        dispatch(
+          toogleNotification({
+            text: "The module has been deleted",
+            status: 'success'
+          })
+        );
       }
     })();
-  }, [dispatch, error]);
+  }, [dispatch, error, response]);
 
   return {
     removeModule,
