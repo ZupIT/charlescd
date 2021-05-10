@@ -32,7 +32,6 @@ import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateName } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
-import Modal from 'core/components/Modal';
 import { AccountMenu } from './constants';
 import ChangePassword from './ChangePassword';
 import Styled from './styled';
