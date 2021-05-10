@@ -177,13 +177,13 @@ export const useDeleteModule = (
       } else if(response) {
         dispatch(
           toogleNotification({
-            text: "The module has been deleted",
+            text: `The module ${module?.name} has been deleted`,
             status: 'success'
           })
         );
       }
     })();
-  }, [dispatch, error, response]);
+  }, [dispatch, error, response, module]);
 
   return {
     removeModule,
