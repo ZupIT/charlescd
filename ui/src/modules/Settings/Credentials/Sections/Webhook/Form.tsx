@@ -133,7 +133,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
         <Form.Password
           ref={register()}
           name="apiKey"
-          label="Secret"
+          label="Secret (Optional)"
           disabled={isEditMode}
           autoComplete="new-password"
           defaultValue={data?.apiKey}
