@@ -29,7 +29,7 @@ class KeycloakServiceLegacy(private val keycloak: Keycloak) {
     lateinit var realm: String
 
     fun deleteUserByEmail(email: String) {
-        val users =  this.keycloak
+        val users = this.keycloak
             .realm(realm)
             .users()
             .search(email)
