@@ -27,7 +27,7 @@ import * as LRUCache from 'lru-cache'
 import { AppConstants } from '../../core/constants'
 import { plainToClass } from 'class-transformer'
 import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
-import {KubernetesObject} from "@kubernetes/client-node/dist/types";
+import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
