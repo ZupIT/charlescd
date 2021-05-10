@@ -146,22 +146,6 @@ test("Should render submit button", async () => {
   updateModuleSpy.mockRestore();
 });
 
-test('should validate blank in optional branch path', async () => {
-  render(
-    <AllTheProviders>
-      <FormModule
-        onChange={jest.fn()}
-        module={{} as Module}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-
-  const branchInput = await screen.findByTestId('input-text-helmBranch');
-  await act(async () => userEvent.type(branchInput, '   '))
-  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
-});
-
 test('should not show error when optional field is empty (helm path)', async () => {
   render(
     <AllTheProviders>

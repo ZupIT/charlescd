@@ -22,7 +22,7 @@ import { useSaveWorkspace } from 'modules/Workspaces/hooks';
 import { useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import routes from 'core/constants/routes';
-import { isRequired, maxLength } from 'core/utils/validations';
+import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
 import Modal from 'core/components/Modal';
 import Menu from './Menu';
@@ -76,6 +76,9 @@ const Workspaces = () => {
             error={errors?.name?.message}
             ref={register({
               required: isRequired(),
+              validate: {
+                notBlank: isNotBlank,
+              },
               maxLength: maxLength()
             })}
           />
