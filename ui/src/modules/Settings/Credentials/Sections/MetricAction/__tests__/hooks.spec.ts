@@ -127,7 +127,23 @@ test('should create action', async () => {
 });
 
 test('error create action', async () => {
-  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({
+    errors: [
+      {
+        id: "b2dfb7c5--47a7-9774-",
+        title: "Invalid data",
+        detail: "could not be reached",
+        meta: {
+          component: "asdf",
+          field: "type",
+          timestamp: "2021-05-11 15:00:39.702540061 +0000 UTC m=+2109.565183561"
+        },
+        operations: [
+          "validateActionConfig.pluginErrs"
+        ]
+      }
+    ]
+  })));
   const payload = { nickname: 'foobar' } as ActionPayload;
   const { result: userResult } = renderHook(() => useCreateAction());
 
