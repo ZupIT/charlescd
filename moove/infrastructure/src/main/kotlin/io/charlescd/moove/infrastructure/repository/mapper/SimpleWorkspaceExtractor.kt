@@ -38,7 +38,8 @@ class SimpleWorkspaceExtractor() : ResultSetExtractor<Set<SimpleWorkspace>> {
         return SimpleWorkspace(
             id = resultSet.getString("workspace_id"),
             name = resultSet.getString("workspace_name"),
-            status = WorkspaceStatusEnum.valueOf(resultSet.getString("workspace_status"))
+            status = WorkspaceStatusEnum.valueOf(resultSet.getString("workspace_status")),
+            deploymentConfigurationId = resultSet.getString("workspace_deployment_configuration_id")
         )
     }
 }
