@@ -99,16 +99,11 @@ const Tab = ({ param }: Props) => {
             }
           />
         </Can>
-        {/* {console.log('ABILITY RULES:', ability.rules)} */}
         <Can I="write" a="modules" passThrough>
           <Dropdown.Item
             icon="delete"
             name="Delete"
-            onClick={() => {
-              console.log('ONCLICK DELETE')
-              console.log('MODULE:', module)
-              removeModule(module?.id)
-            }}
+            onClick={() => removeModule(module?.id)}
           />
         </Can>
         <Can I="read" a="modules" passThrough>
