@@ -130,6 +130,7 @@
     method: GET
     url: .*/repos/.*/.*/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d
 
+# Chart.yaml manifest
   response:
     status: 200
     headers:
@@ -140,7 +141,7 @@
         "node_id": "MDQ6QmxvYjI3NTAwMDUyODpiYTNjYmFhMDlhOWM0NDgzMGFmZmU1ZDZiNjY0NGEyNzUxZjdmMjNk",
         "size": 103,
         "url": "http://stubby4j:8883/repos/charlescd-fake/helm-chart/git/blobs/ba3cbaa09a9c44830affe5d6b6644a2751f7f23d",
-        "content": "YXBpVmVyc2lvbjogdjEKYXBwVmVyc2lvbjogIjEuMCIKZGVzY3JpcHRpb246\nIERyYWdvbmJvYXJkaW5nIGFwcApuYW1lOiBkcmFnb25ib2FyZGluZwp2ZXJz\naW9uOiAnZGFyd2luJw==\n",
+        "content": "YXBpVmVyc2lvbjogdjEKYXBwVmVyc2lvbjogIjEuMCIKZGVzY3JpcHRpb246IERyYWdvbmJvYXJkaW5nIGFwcApuYW1lOiBkcmFnb25ib2FyZGluZwp2ZXJzaW9uOiAnMS4wJw==",
         "encoding": "base64"
       }
 
