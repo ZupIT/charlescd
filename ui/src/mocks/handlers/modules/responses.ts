@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const MODULES = {
+export const MODULE = {
     createdAt: "2021-02-03 11:34:51",
     gitRepositoryAddress: "https://github.com/example",
     helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
