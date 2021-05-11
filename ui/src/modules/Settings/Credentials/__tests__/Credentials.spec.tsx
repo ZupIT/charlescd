@@ -17,7 +17,7 @@
 import { ReactElement } from 'react';
 import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import { FetchMock } from 'jest-fetch-mock/types';
+import { FetchMock } from 'jest-fetch-mock';
 import * as StateHooks from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import Credentials from '../';
@@ -25,6 +25,7 @@ import * as clipboardUtils from 'core/utils/clipboard';
 import { Actions, Subjects } from "core/utils/abilities";
 import * as MetricProviderHooks from '../Sections/MetricProvider/hooks';
 import { Datasources } from '../Sections/MetricProvider/__tests__/fixtures';
+import routes from 'core/constants/routes';
 
 interface fakeCanProps {
   I?: Actions;
@@ -42,6 +43,21 @@ jest.mock('containers/Can', () => {
       return <div>{children}</div>;
     }
   };
+});
+
+const originalWindow = {...window};
+
+beforeEach(() => {
+  delete window.location;
+
+  window.location = {
+    ...window.location,
+    pathname: routes.settings
+  };
+});
+
+afterEach(() => {
+  window = originalWindow;
 });
 
 beforeEach(() => {
