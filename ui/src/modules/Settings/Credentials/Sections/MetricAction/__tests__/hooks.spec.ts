@@ -130,11 +130,11 @@ test('error create action', async () => {
   (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({
     errors: [
       {
-        id: "b2dfb7c5-a44a-47a7-9774-39a241cbaf8f",
+        id: "b2dfb7c5--47a7-9774-",
         title: "Invalid data",
-        detail: "moove could not be reached",
+        detail: "could not be reached",
         meta: {
-          component: "compass",
+          component: "asdf",
           field: "type",
           timestamp: "2021-05-11 15:00:39.702540061 +0000 UTC m=+2109.565183561"
         },
