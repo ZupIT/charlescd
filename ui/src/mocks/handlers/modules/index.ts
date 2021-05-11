@@ -20,19 +20,16 @@ import {MODULES} from './responses';
 
 export default [
   rest.get(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
-    console.log('HERE GET BYID')
     return res(
       ctx.json(MODULES)
     )
   }),
   rest.get(`${basePath}/moove/v2/modules`, (req, res, ctx) => {
-    console.log('HERE GET ALL')
     return res(
       ctx.json(MODULES)
     )
   }),
   rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
-    console.log('HERE DELETE')
     return res(
       ctx.status(204)
     )
