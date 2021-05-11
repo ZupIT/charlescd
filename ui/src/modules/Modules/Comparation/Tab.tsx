@@ -46,7 +46,7 @@ const Tab = ({ param }: Props) => {
   const { getModuleById, response } = useFindModule();
   const { removeModule } = useDeleteModule(module);
   const isLoading = isEmpty(module) && id !== NEW_TAB;
-  const hasTabActions = id !== NEW_TAB && mode !== 'component' && isEmpty(component); 
+  const hasTabActions = id !== NEW_TAB && mode !== 'component' && isEmpty(component);
 
   useEffect(() => {
     if (response) {
@@ -99,11 +99,16 @@ const Tab = ({ param }: Props) => {
             }
           />
         </Can>
+        {/* {console.log('ABILITY RULES:', ability.rules)} */}
         <Can I="write" a="modules" passThrough>
           <Dropdown.Item
             icon="delete"
             name="Delete"
-            onClick={() => removeModule(module?.id)}
+            onClick={() => {
+              console.log('ONCLICK DELETE')
+              console.log('MODULE:', module)
+              removeModule(module?.id)
+            }}
           />
         </Can>
         <Can I="read" a="modules" passThrough>

@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-import auth from './handlers/auth';
-import users from './handlers/users';
-import circles from './handlers/circles';
-import circleMatcher from './handlers/circleMatcher';
-import workspaces from './handlers/workspaces';
-import gate from './handlers/gate';
-import modules from './handlers/modules';
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import {MODULES} from './responses';
 
-export const handlers = [
-  ...auth,
-  ...users,
-  ...circles,
-  ...circleMatcher,
-  ...workspaces,
-  ...gate,
-  ...modules
+export default [
+  rest.get(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    console.log('HERE GET BYID')
+    return res(
+      ctx.json(MODULES)
+    )
+  }),
+  rest.get(`${basePath}/moove/v2/modules`, (req, res, ctx) => {
+    console.log('HERE GET ALL')
+    return res(
+      ctx.json(MODULES)
+    )
+  }),
+  rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    console.log('HERE DELETE')
+    return res(
+      ctx.status(204)
+    )
+  })
 ]
