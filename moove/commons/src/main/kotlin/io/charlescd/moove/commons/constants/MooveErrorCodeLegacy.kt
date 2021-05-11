@@ -42,5 +42,6 @@ enum class MooveErrorCodeLegacy(val key: String) {
     REGISTRY_GENERAL_ERROR("registry.general.error"),
     VILLAGER_INTERNAL_INTEGRATION_ERROR("villager.unexpected.error"),
     VILLAGER_INTEGRATION_ERROR("villager.unexpected.error"),
-    VILLAGER_UNEXPECTED_ERROR("villager.unexpected.error")
+    VILLAGER_UNEXPECTED_ERROR("villager.unexpected.error"),
+    FORBIDDEN("forbidden")
 }

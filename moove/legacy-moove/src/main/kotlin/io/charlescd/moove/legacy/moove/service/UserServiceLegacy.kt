@@ -20,6 +20,7 @@ package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
+import io.charlescd.moove.commons.exceptions.ForbiddenExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
@@ -35,7 +36,8 @@ class UserServiceLegacy(
     private val userRepository: UserRepository,
     private val systemTokenRepository: SystemTokenRepository,
     private val keycloakServiceLegacy: KeycloakServiceLegacy,
-    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean,
+    @Value("\${charles.default.root.user}") private val defaultRootUserEmail: String
 ) {
 
     @Transactional
@@ -48,6 +50,13 @@ class UserServiceLegacy(
             return deleteUser(user.id)
         } else
             throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
+    }
+
+    private fun checkIfCanBeDeleted(user: User): User {
+        if (user.email == this.defaultRootUserEmail) {
+            throw ForbiddenExceptionLegacy()
+        }
+        return user
     }
 
     fun findUsers(users: List<String>): List<User> =
@@ -86,6 +95,7 @@ class UserServiceLegacy(
 
     private fun deleteUser(id: String): UserRepresentation {
         return userRepository.findById(id)
+            .map(this::checkIfCanBeDeleted)
             .map(this::deleteUser)
             .map(this::deleteOnKeycloak)
             .map(this::toRepresentation)

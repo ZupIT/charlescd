@@ -164,6 +164,14 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
         return ErrorMessageResponse.of(MooveErrorCode.FORBIDDEN, ex.message!!)
     }
 
+    @ExceptionHandler(ForbiddenExceptionLegacy::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    fun handleForbiddenExceptionLegacy(request: HttpServletRequest, ex: ForbiddenExceptionLegacy): ErrorMessageResponse {
+        this.logger.error(ex.message, ex)
+        return ErrorMessageResponse.of(MooveErrorCode.FORBIDDEN, ex.message!!)
+    }
+
     @ExceptionHandler(BusinessExceptionLegacy::class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ResponseBody
