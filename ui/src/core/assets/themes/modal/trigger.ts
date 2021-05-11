@@ -18,8 +18,7 @@ import {
   COLOR_BASTILLE,
   COLOR_RED_ORANGE,
   COLOR_BLACK_RUSSIAN,
-  COLOR_GHOST_WHITE,
-  COLOR_WHITE
+  COLOR_GHOST_WHITE
 } from 'core/assets/colors';
 
 export const light = {};
@@ -28,6 +27,5 @@ export const dark = {
   screen: COLOR_BLACK_RUSSIAN,
   background: COLOR_BASTILLE,
   continue: COLOR_RED_ORANGE,
-  dismiss: COLOR_GHOST_WHITE,
-  border: COLOR_WHITE
+  dismiss: COLOR_GHOST_WHITE
 };

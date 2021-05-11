@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import isEqual from 'lodash/isEqual';
-import find from 'lodash/find';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
 import Card from 'core/components/Card';
@@ -27,13 +26,6 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { useUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
-import Modal from 'core/components/Modal';
-import Text from 'core/components/Text';
-import { getProfileByKey } from 'core/utils/profile';
-import { useHistory } from 'react-router';
-import routes from 'core/constants/routes';
-import useOutsideClick from 'core/hooks/useClickOutside';
-import { hasUserDuplication } from './helpers';
 
 interface Props {
   form: string;
@@ -44,49 +36,11 @@ interface Props {
 const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const [userGroups, setUserGroups] = useState(data);
   const { remove, loadingRemove } = useUserGroup();
-  const [toggleModal, setToggleModal] = useState<boolean>(false);
-  const [currentUserGroup, setCurrentUserGroup] = useState(null);
-  const history = useHistory();
-  const modalRef = useRef<HTMLDivElement>();
 
-  useOutsideClick(modalRef, () => setToggleModal(false));
-
-  const confirmUserGroupDelete = async () => {
-    const email = getProfileByKey('email');
-    const { users } = currentUserGroup;
-    const hasUser = find(users, user => user.email === email);
-    const isUserDuplicated = !hasUserDuplication(userGroups, email);
-
-    await remove(getWorkspaceId(), currentUserGroup.id);
-    setUserGroups(filter(userGroups, item => item.id !== currentUserGroup.id));
-    
-    setToggleModal(false);
-
-    if (hasUser && isUserDuplicated) {
-      history.push(routes.workspaces);
-    }
+  const handleClose = async (id: string) => {
+    await remove(getWorkspaceId(), id);
+    setUserGroups(filter(userGroups, item => item.id !== id));
   };
-
-  const handleClose = (userGroup: any) => {
-    setCurrentUserGroup(userGroup);
-    setToggleModal(true);
-  };
-
-  const renderWarningModal = () => (
-    <Modal.Trigger
-      ref={modalRef}
-      title="Do you want to remove this user group?"
-      dismissLabel="Cancel, keep user group"
-      onDismiss={() => setToggleModal(false)}
-      continueLabel="Yes, remove user group"
-      onContinue={() => confirmUserGroupDelete()}
-    >
-      <Text.h4 color="light" lineHeight={1.3}>
-        When you remove a user group, all the users associated to the group will
-        no longer access the workspace. Do you want to continue? 
-      </Text.h4>
-    </Modal.Trigger>
-  );
 
   const renderSection = () => (
     <Section
@@ -96,16 +50,14 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_USER_GROUP)}
       type="Optional"
     >
-      {toggleModal && renderWarningModal()}
       {userGroups &&
         map(userGroups, userGroup => (
           <Card.Config
-            id={`user-group-${userGroup.id}`}
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
             isLoading={loadingRemove}
-            onClose={() => handleClose(userGroup)}
+            onClose={() => handleClose(userGroup?.id)}
           />
         ))}
     </Section>

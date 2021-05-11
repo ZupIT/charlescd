@@ -176,6 +176,8 @@ test('should throw an error in userWorkspacesByUser', async () => {
   expect(response).toBeUndefined();
 });
 
+// TODO hooks.spec.tsx to .ts
+// TODO no test usergroup, colocar data em fixture file
 test('should find all users', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify(userPagination));
 

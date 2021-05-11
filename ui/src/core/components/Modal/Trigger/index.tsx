@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode, forwardRef, Ref } from 'react';
+import React, { useState, ReactNode } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -31,7 +31,7 @@ export interface Props {
   children: ReactNode;
 }
 
-const Trigger = forwardRef(({
+const Trigger = ({
   className,
   onContinue,
   onDismiss,
@@ -41,7 +41,7 @@ const Trigger = forwardRef(({
   isDisabled,
   isLoading,
   children
-}: Props, ref: Ref<HTMLDivElement>) => {
+}: Props) => {
   const [toggle, switchToggle] = useState(true);
 
   const handleDismiss = () => {
@@ -53,22 +53,19 @@ const Trigger = forwardRef(({
     toggle && (
       <Styled.Wrapper data-testid="modal-trigger" className={className}>
         <Styled.Background className="modal-background" />
-        <Styled.Content className="modal-content" ref={ref}>
+        <Styled.Content className="modal-content">
           <Styled.Button.Container>
             <Icon
               name="cancel"
               size="22px"
               onClick={() => handleDismiss()}
               color="light"
-              data-testid="icon-cancel-modal"
             />
           </Styled.Button.Container>
           <Styled.Title weight="bold" color="light">
             {title}
           </Styled.Title>
-          <Styled.Description>
-            {children}
-          </Styled.Description>
+          {children}
           <Styled.Buttons className="modal-buttons">
             <Styled.Button.Dismiss
               id="dismiss"
@@ -93,6 +90,6 @@ const Trigger = forwardRef(({
       </Styled.Wrapper>
     )
   );
-});
+};
 
 export default Trigger;
