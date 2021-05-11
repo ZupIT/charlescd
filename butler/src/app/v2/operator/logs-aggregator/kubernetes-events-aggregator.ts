@@ -16,7 +16,6 @@
 
 import * as k8s from '@kubernetes/client-node'
 import { Injectable } from '@nestjs/common'
-import * as http from 'http'
 import * as moment from 'moment'
 import { LogEntity } from '../../api/deployments/entity/logs.entity'
 import { ConsoleLoggerService } from '../../core/logs/console'
@@ -27,6 +26,7 @@ import * as LRUCache from 'lru-cache'
 import { AppConstants } from '../../core/constants'
 import { plainToClass } from 'class-transformer'
 import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
@@ -36,10 +36,7 @@ export class EventsLogsAggregator {
   private readonly MAX_CACHE_SIZE = 100
   private readonly MAX_CACHE_AGE_ONE_HOUR = 1000 * 60 * 60
 
-  private readonly cache: LRUCache<string, Promise<{
-    body: k8s.KubernetesObject
-    response: http.IncomingMessage
-  }>>
+  private readonly cache: LRUCache<string, KubernetesObject>
 
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
@@ -58,7 +55,7 @@ export class EventsLogsAggregator {
       return
     }
 
-    const resource = await this.resourceFor(
+    const resource = await this.cachedResourceFor(
         involvedObject.kind!,
         involvedObject.apiVersion!,
         involvedObject.name!,
@@ -110,26 +107,7 @@ export class EventsLogsAggregator {
     return !event.isAfter(since)
   }
 
-  private async resourceFor(kind: string, apiVersion: string, name: string, namespace?: string): Promise<k8s.KubernetesObject | undefined> {
-    try {
-      const response = await this.cachedResourceFor(
-        kind,
-        apiVersion,
-        name,
-        namespace
-      )
-      return response.body
-    } catch (error) {
-      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, error.body)
-      return undefined
-    }
-  }
-
-  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,):
-    Promise<{
-      body: k8s.KubernetesObject,
-      response: http.IncomingMessage
-    }> {
+  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,): Promise<KubernetesObject | undefined>{
     
     const cacheKey = this.createCacheKey(kind, name, namespace)
 
@@ -147,11 +125,14 @@ export class EventsLogsAggregator {
       }
     }
 
-    const response = this.k8sClient.readResource(spec)
-
-    this.cache.set(cacheKey, response)
-
-    return response
+    try {
+      const response = await this.k8sClient.readResource(spec)
+      this.cache.set(cacheKey, response.body)
+      return response.body
+    } catch (exception) {
+      this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, exception.body)
+      return undefined
+    }
   }
 
 

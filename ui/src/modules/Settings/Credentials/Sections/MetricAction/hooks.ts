@@ -137,7 +137,7 @@ export const useCreateAction = () => {
           setValidationError(parsedError);
           dispatch(
             toogleNotification({
-              text: parsedError,
+              text: parsedError?.errors?.[0]?.detail,
               status: 'error'
             })
           );

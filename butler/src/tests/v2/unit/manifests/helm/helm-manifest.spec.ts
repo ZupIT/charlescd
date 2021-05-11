@@ -29,8 +29,6 @@ import { ConsoleLoggerService } from '../../../../../app/v2/core/logs/console/co
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
 
-
-
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
   const manifestConfig : ManifestConfig = {

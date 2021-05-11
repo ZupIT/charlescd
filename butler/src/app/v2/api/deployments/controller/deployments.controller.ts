@@ -29,7 +29,6 @@ import { DefaultCircleUniquenessPipe } from '../pipes/default-circle-uniqueness.
 import { NamespaceValidationPipe } from '../pipes/namespace-validation.pipe'
 import { FindDeploymentLogsByIdUsecase } from '../use-cases/find-deployment-logs-by-id.usecase'
 import { ReadLogsDto } from '../dto/read-logs.dto'
-import { DefaultCircleNamespaceUniquenessPipe } from '../pipes/default-circle-namespace-uniqueness.pipe'
 import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 
 @Controller('v2/deployments')
@@ -46,7 +45,6 @@ export class DeploymentsController {
   @UsePipes(DeploymentUniquenessPipe)
   @UsePipes(DefaultCircleUniquenessPipe)
   @UsePipes(NamespaceValidationPipe)
-  @UsePipes(DefaultCircleNamespaceUniquenessPipe)
   @UsePipes(new JoiValidationPipe())
   public async createDeployment(
     @Body() createDeploymentRequestDto: CreateDeploymentRequestDto,
