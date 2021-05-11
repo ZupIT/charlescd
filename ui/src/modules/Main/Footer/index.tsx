@@ -25,7 +25,6 @@ const Footer = () => {
   const { notification } = useGlobalState(({ notification }) => notification);
   const dispatch = useDispatch();
 
-  console.log('FOOTER NOTIFICATION:', notification)
   return (
     <Styled.Footer data-testid="footer">
       {notification.isVisible && (
