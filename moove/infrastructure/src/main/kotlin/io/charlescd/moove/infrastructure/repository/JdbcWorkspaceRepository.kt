@@ -86,7 +86,6 @@ class JdbcWorkspaceRepository(
                 """
     }
 
-
     override fun save(workspace: Workspace): Workspace {
         createWorkspace(workspace)
         return find(workspace.id).get()
@@ -254,9 +253,9 @@ class JdbcWorkspaceRepository(
         )
     }
 
-
     private fun createWorkspace(
-                        workspace: Workspace) {
+        workspace: Workspace
+    ) {
         val statement = "INSERT INTO workspaces(" +
                 "id, " +
                 "name, " +
@@ -296,6 +295,4 @@ class JdbcWorkspaceRepository(
             userGroupId
         )
     }
-
-
 }

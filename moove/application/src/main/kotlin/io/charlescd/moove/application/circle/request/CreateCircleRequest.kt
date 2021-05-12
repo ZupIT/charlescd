@@ -31,13 +31,11 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 class CreateCircleRequest(
-
     @field:NotBlank
     @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")
     val name: String,
     @field:Valid
     val rules: NodePart
-
 ) {
     fun toDomain(user: User, workspaceId: String) = Circle(
         id = UUID.randomUUID().toString(),

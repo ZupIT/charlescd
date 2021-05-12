@@ -20,7 +20,6 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.CircleRepository
-
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleHistoryExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor

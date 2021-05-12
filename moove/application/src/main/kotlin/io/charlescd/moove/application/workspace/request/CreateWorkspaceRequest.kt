@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class CreateWorkspaceRequest(
-
     @field:NotNull
     @field:NotBlank
     @field:Size(min = 1, max = 64, message = "Name minimum size is 1 and maximum is 64.")

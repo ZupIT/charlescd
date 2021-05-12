@@ -46,8 +46,8 @@ class WorkspaceService(
         }
     }
 
-    fun save( workspace: Workspace): Workspace {
-        if(this.workspaceRepository.existsByName(workspace.name)) {
+    fun save(workspace: Workspace): Workspace {
+        if (this.workspaceRepository.existsByName(workspace.name)) {
             throw BusinessException.of(MooveErrorCode.DUPLICATED_WORKSPACE_NAME_ERROR)
         }
         return this.workspaceRepository.save(workspace)
