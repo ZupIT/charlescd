@@ -17,14 +17,21 @@
 import { render, screen } from 'unit-test/testUtils';
 import Tab from '../Tab';
 import userEvent from '@testing-library/user-event';
+import 'unit-test/setup-msw';
+import Footer from 'modules/Main/Footer';
+import { saveProfile } from 'core/utils/profile';
+import { setUserAbilities } from 'core/utils/abilities';
+
+beforeEach(() => {
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
+  setUserAbilities();
+})
 
 test('render Modules comparation Tab', async () => {
   render(<Tab param="123" />);
 
   const dropdownElement = await screen.findByTestId('icon-vertical-dots');
   userEvent.click(dropdownElement);
-
-  screen.debug();
 
   const dropdownItemEdit = screen.getByText('Edit');
   const dropdownItemDelete = screen.getByText('Delete');
@@ -36,4 +43,23 @@ test('render Modules comparation Tab', async () => {
 
   const tabpanel = await screen.findByTestId('tabpanel-Untitled');
   expect(tabpanel).toBeInTheDocument();
+});
+
+test('should show notification when deleting a module', async () => {
+  render(
+    <div>
+      <Tab param="123" />
+      <Footer />
+    </div>
+  );
+  
+  const dropdownElement = await screen.findByTestId('icon-vertical-dots');
+  userEvent.click(dropdownElement);
+
+  const dropdownItemDelete = screen.getByText('Delete');
+  expect(dropdownItemDelete).toBeInTheDocument();
+
+  userEvent.click(dropdownItemDelete);
+
+  expect(await screen.findByText('The module module 1 has been deleted')).toBeInTheDocument();
 });
