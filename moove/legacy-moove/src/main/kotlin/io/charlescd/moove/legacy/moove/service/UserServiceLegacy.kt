@@ -20,7 +20,6 @@ package io.charlescd.moove.legacy.moove.service
 
 import io.charlescd.moove.commons.constants.MooveErrorCodeLegacy
 import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
-import io.charlescd.moove.commons.exceptions.ForbiddenExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.commons.extension.toRepresentation
 import io.charlescd.moove.commons.representation.UserRepresentation
@@ -54,7 +53,7 @@ class UserServiceLegacy(
 
     private fun checkIfCanBeDeleted(user: User): User {
         if (user.email == this.defaultRootUserEmail) {
-            throw ForbiddenExceptionLegacy()
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.CANNOT_DELETE_DEFAULT_ROOT_USER)
         }
         return user
     }

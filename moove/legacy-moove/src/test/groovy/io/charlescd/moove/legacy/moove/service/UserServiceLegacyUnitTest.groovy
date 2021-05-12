@@ -1,11 +1,10 @@
 package io.charlescd.moove.legacy.moove.service
 
-import io.charlescd.moove.commons.exceptions.ForbiddenExceptionLegacy
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.legacy.repository.SystemTokenRepository
 import io.charlescd.moove.legacy.repository.UserRepository
 import io.charlescd.moove.legacy.repository.entity.User
-import org.springframework.beans.factory.annotation.Value
 import spock.lang.Specification
 import java.time.LocalDateTime
 
@@ -61,7 +60,7 @@ class UserServiceLegacyUnitTest extends Specification {
         1 * this.userRepository.findById(userId) >> Optional.of(user)
         1 * this.keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
         1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
-        thrown(ForbiddenExceptionLegacy)
+        thrown(BusinessExceptionLegacy)
     }
 
     static String getAuthorization() {

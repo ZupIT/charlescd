@@ -43,5 +43,5 @@ enum class MooveErrorCodeLegacy(val key: String) {
     VILLAGER_INTERNAL_INTEGRATION_ERROR("villager.unexpected.error"),
     VILLAGER_INTEGRATION_ERROR("villager.unexpected.error"),
     VILLAGER_UNEXPECTED_ERROR("villager.unexpected.error"),
-    FORBIDDEN("forbidden")
+    CANNOT_DELETE_DEFAULT_ROOT_USER("cannot.delete.default.root.user")
 }
