@@ -35,7 +35,8 @@ class UserServiceLegacy(
     private val userRepository: UserRepository,
     private val systemTokenRepository: SystemTokenRepository,
     private val keycloakServiceLegacy: KeycloakServiceLegacy,
-    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean
+    @Value("\${charles.internal.idm.enabled:true}") private val internalIdmEnabled: Boolean,
+    @Value("\${charles.default.root.user}") private val defaultRootUserEmail: String
 ) {
 
     @Transactional
@@ -48,6 +49,13 @@ class UserServiceLegacy(
             return deleteUser(user.id)
         } else
             throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.EXTERNAL_IDM_FORBIDDEN)
+    }
+
+    private fun checkIfCanBeDeleted(user: User): User {
+        if (user.email == this.defaultRootUserEmail) {
+            throw BusinessExceptionLegacy.of(MooveErrorCodeLegacy.CANNOT_DELETE_DEFAULT_ROOT_USER)
+        }
+        return user
     }
 
     fun findUsers(users: List<String>): List<User> =
@@ -86,6 +94,7 @@ class UserServiceLegacy(
 
     private fun deleteUser(id: String): UserRepresentation {
         return userRepository.findById(id)
+            .map(this::checkIfCanBeDeleted)
             .map(this::deleteUser)
             .map(this::deleteOnKeycloak)
             .map(this::toRepresentation)

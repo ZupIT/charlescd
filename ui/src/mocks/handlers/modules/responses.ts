@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import auth from './handlers/auth';
-import users from './handlers/users';
-import circles from './handlers/circles';
-import circleMatcher from './handlers/circleMatcher';
-import workspaces from './handlers/workspaces';
-import gate from './handlers/gate';
-import modules from './handlers/modules';
+export const MODULE = {
+    createdAt: "2021-02-03 11:34:51",
+    gitRepositoryAddress: "https://github.com/example",
+    helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
+    id: "123",
+    name: "module 1"
+};
 
-export const handlers = [
-  ...auth,
-  ...users,
-  ...circles,
-  ...circleMatcher,
-  ...workspaces,
-  ...gate,
-  ...modules
-]
+export const MODULES = [
+    {
+      createdAt: "2021-02-03 11:34:51",
+      gitRepositoryAddress: "https://github.com/example",
+      helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
+      id: "123",
+      name: "module 1"
+  }
+];

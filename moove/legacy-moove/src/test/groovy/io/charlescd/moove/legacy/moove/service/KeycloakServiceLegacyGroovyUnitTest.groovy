@@ -97,5 +97,6 @@ class KeycloakServiceLegacyGroovyUnitTest extends Specification {
         email == "darth.vader@siths.com"
         notThrown()
     }
+
 }
 

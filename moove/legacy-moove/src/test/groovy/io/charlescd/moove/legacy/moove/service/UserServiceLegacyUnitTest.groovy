@@ -1,5 +1,6 @@
 package io.charlescd.moove.legacy.moove.service
 
+import io.charlescd.moove.commons.exceptions.BusinessExceptionLegacy
 import io.charlescd.moove.commons.exceptions.NotFoundExceptionLegacy
 import io.charlescd.moove.legacy.repository.SystemTokenRepository
 import io.charlescd.moove.legacy.repository.UserRepository
@@ -14,9 +15,10 @@ class UserServiceLegacyUnitTest extends Specification {
     private KeycloakServiceLegacy keycloakServiceLegacy = Mock(KeycloakServiceLegacy)
     private Boolean internalIdmEnabled = true
     private UserServiceLegacy userServiceLegacy
+    private String defaultRootUser = "charlesadmin@admin"
 
     void setup() {
-        this.userServiceLegacy = new UserServiceLegacy(userRepository, systemTokenRepository, keycloakServiceLegacy, internalIdmEnabled)
+        this.userServiceLegacy = new UserServiceLegacy(userRepository, systemTokenRepository, keycloakServiceLegacy, internalIdmEnabled, defaultRootUser)
     }
 
     void "when requested a user should be successfully and return them"() {
@@ -46,4 +48,23 @@ class UserServiceLegacyUnitTest extends Specification {
 
         thrown(NotFoundExceptionLegacy)
     }
+
+    void "when the deletion is of the default root charles user should throw BusinessExceptionLegacy"() {
+        given:
+        def userId = "1"
+        def user = new User(userId, "Charles Admin", defaultRootUser, "http://teste.com", true, null, LocalDateTime.now())
+        when:
+        this.userServiceLegacy.delete(userId, authorization)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * this.keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
+        thrown(BusinessExceptionLegacy)
+    }
+
+    static String getAuthorization() {
+        return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
+    }
+
 }

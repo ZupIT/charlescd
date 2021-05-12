@@ -120,7 +120,7 @@ export class GitLabRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Reached maximum fetch attempts! ${error}`) :
+          throwError(error) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY)
