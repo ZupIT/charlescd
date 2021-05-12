@@ -64,9 +64,10 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
     private KeycloakServiceLegacy keycloakService = Mock(KeycloakServiceLegacy)
     private UserServiceLegacy service
     private Boolean idmEnabled = true
+    private String defaultRootUserEmail = "charlesadmin@admin"
 
     def setup() {
-        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, idmEnabled)
+        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, idmEnabled, defaultRootUserEmail)
     }
 
     def "should delete by id"() {
@@ -116,7 +117,7 @@ class UserServiceLegacyGroovyUnitTest extends Specification {
 
     def "shouldn't delete user cause using external idm"() {
         given:
-        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, false)
+        service = new UserServiceLegacy(repository, systemTokenRepository, keycloakService, false, defaultRootUserEmail)
 
         when:
         def response = service.delete(representation.id, authorization)
