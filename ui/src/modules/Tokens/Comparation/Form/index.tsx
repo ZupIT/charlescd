@@ -137,6 +137,7 @@ const FormToken = ({ mode, data }: Props) => {
               defaultValue={data?.name}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
+              buttonText="Next"
             />
             {isModeView && <Info />}
           </ContentIcon>
