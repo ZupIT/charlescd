@@ -28,7 +28,7 @@ interface Props {
   onClickSave?: () => void;
   isDisabled?: boolean;
   error?: string;
-  isTokenName?: boolean;
+  buttonText?: string;
 }
 const InputTitle = React.forwardRef(
   (
@@ -42,7 +42,7 @@ const InputTitle = React.forwardRef(
       readOnly,
       isDisabled,
       error,
-      isTokenName = false
+      buttonText = "Save"
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
@@ -80,7 +80,7 @@ const InputTitle = React.forwardRef(
               onClick={onButtonClick}
               isDisabled={isDisabled}
             >
-              {isTokenName ? "Next" : "Save"}
+              {buttonText}
             </Button.Default>
           )}
         </Styled.Field>
