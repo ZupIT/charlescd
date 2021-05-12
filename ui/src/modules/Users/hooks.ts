@@ -158,7 +158,7 @@ export const useDeleteUser = (): [Function, string] => {
 export const useUpdateName = (): {
   status: string;
   user: User;
-  updateNameById: (id: string, name: string) => void;
+  updateNameById: (id: string, name: string) => Promise<User>;
 } => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState<FetchStatuses>('idle');
@@ -172,6 +172,9 @@ export const useUpdateName = (): {
         const res = await patch(id, name);
         setNewUser(res);
         setStatus('resolved');
+
+        return Promise.resolve(res);
+
       } catch (e) {
         setStatus('rejected');
 
@@ -183,6 +186,8 @@ export const useUpdateName = (): {
             status: 'error'
           })
         );
+
+        return Promise.reject(error);
       }
     },
     [patch, dispatch]

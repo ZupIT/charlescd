@@ -81,9 +81,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     }
   });
 
-  const onSubmit = (profile: User) => {
+  const onSubmit = async (profile: User) => {
     setCurrentUser(null);
-    updateNameById(currentUser.id, profile.name);
+    await updateNameById(currentUser.id, profile.name);
     onChange('Update');
   };
 
