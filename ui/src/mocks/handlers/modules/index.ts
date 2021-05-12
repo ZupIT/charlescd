@@ -16,7 +16,7 @@
 
 import { basePath } from 'core/providers/base';
 import { rest } from 'msw';
-import {MODULE} from './responses';
+import {MODULE, MODULES} from './responses';
 
 export default [
   rest.get(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
@@ -26,7 +26,7 @@ export default [
   }),
   rest.get(`${basePath}/moove/v2/modules`, (req, res, ctx) => {
     return res(
-      ctx.json(MODULE)
+      ctx.json(MODULES)
     )
   }),
   rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
