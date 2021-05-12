@@ -86,6 +86,7 @@ class JdbcWorkspaceRepository(
                 """
     }
 
+
     override fun save(workspace: Workspace): Workspace {
         createWorkspace(workspace)
         return find(workspace.id).get()
@@ -108,8 +109,12 @@ class JdbcWorkspaceRepository(
         return checkIfWorkspaceExists(id)
     }
 
-    override fun existsByParam(paramName: String, paramValue: String ): Boolean {
-        return checkIfWorkspaceExistsByParam(paramName, paramValue)
+    override fun existsByName(name: String): Boolean {
+        val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
+            .appendln("AND workspaces.name= ?")
+            .toString()
+        return applyCountQuery(
+            countStatement, arrayOf(name))
     }
 
     override fun associateUserGroupAndPermissions(workspaceId: String, userGroupId: String, permissions: List<Permission>) {
@@ -206,14 +211,6 @@ class JdbcWorkspaceRepository(
             countStatement, arrayOf(id))
     }
 
-    private fun checkIfWorkspaceExistsByParam(paramName: String, paramValue: String ): Boolean {
-        val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
-            .appendln("AND workspaces.$paramName= ?")
-            .toString()
-        return applyCountQuery(
-            countStatement, arrayOf(paramValue))
-    }
-
     private fun applyCountQuery(statement: String, params: Array<String>): Boolean {
         val count = this.jdbcTemplate.queryForObject(
             statement,
@@ -256,7 +253,9 @@ class JdbcWorkspaceRepository(
         )
     }
 
-    private fun createWorkspace(workspace: Workspace) {
+
+    private fun createWorkspace(
+                        workspace: Workspace) {
         val statement = "INSERT INTO workspaces(" +
                 "id, " +
                 "name, " +
@@ -296,4 +295,6 @@ class JdbcWorkspaceRepository(
             userGroupId
         )
     }
+
+
 }

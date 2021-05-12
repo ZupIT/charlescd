@@ -64,5 +64,7 @@ enum class MooveErrorCode(val key: String) {
     LIMIT_OF_PERCENTAGE_CIRCLES_EXCEEDED("limit.of.percentage.circles.exceeded"),
     IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
     DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error"),
-    DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED("deployment.configuration.already.registered")
+    DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED("deployment.configuration.already.registered"),
+    DUPLICATED_WORKSPACE_NAME_ERROR("duplicated.workspace.name.error"),
+    DUPLICATED_CIRCLE_NAME_ERROR("duplicated.circe.name.error")
 }

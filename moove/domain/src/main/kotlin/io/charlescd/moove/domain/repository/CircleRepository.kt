@@ -56,5 +56,5 @@ interface CircleRepository {
 
     fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest?): Page<Circle>
 
-    fun existsByParam(paramName: String, paramValue: String ): Boolean
+    fun existsByNameAndWorkspaceId(name: String, workspaceId: String): Boolean
 }

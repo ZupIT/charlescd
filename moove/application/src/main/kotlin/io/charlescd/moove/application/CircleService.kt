@@ -18,7 +18,6 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.commons.validator.UniqueValueFieldService
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -27,9 +26,12 @@ import java.util.*
 import javax.inject.Named
 
 @Named
-class CircleService(private val circleRepository: CircleRepository):UniqueValueFieldService {
+class CircleService(private val circleRepository: CircleRepository) {
 
     fun save(circle: Circle): Circle {
+        if(this.circleRepository.existsByNameAndWorkspaceId(circle.name, circle.workspaceId)) {
+            throw BusinessException.of(MooveErrorCode.DUPLICATED_CIRCLE_NAME_ERROR)
+        }
         return this.circleRepository.save(circle)
     }
 
@@ -100,9 +102,5 @@ class CircleService(private val circleRepository: CircleRepository):UniqueValueF
         if (!isAlreadyDeployed) {
             verifyLimitReached(sumPercentage, circle.percentage!!)
         }
-    }
-
-    override fun fieldValueExists(value: String, fieldName: String): Boolean {
-        TODO("Not yet implemented")
     }
 }

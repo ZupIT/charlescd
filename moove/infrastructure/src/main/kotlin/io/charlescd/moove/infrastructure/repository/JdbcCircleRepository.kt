@@ -20,6 +20,7 @@ package io.charlescd.moove.infrastructure.repository
 
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.CircleRepository
+
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleHistoryExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor
@@ -121,22 +122,18 @@ class JdbcCircleRepository(
         deleteCircleById(id)
     }
 
-    override fun existsByParam(paramName: String, paramValue: String ): Boolean {
-        return checkIfCircleExistsByParam(paramName, paramValue)
-    }
-
-    private fun checkIfCircleExistsByParam(paramName: String, paramValue: String ): Boolean {
-
+    override fun existsByNameAndWorkspaceId(name: String, workspaceId: String): Boolean {
         val baseCountQuery = """
                 SELECT count(*) AS total
                 FROM circles 
                 WHERE 1 = 1
                 """
         val countStatement = StringBuilder(baseCountQuery)
-            .appendln("AND circles.$paramName= ?")
+            .appendln("AND circles.workspace_id = ?")
+            .appendln("AND circles.name = ?")
             .toString()
         return applyCountQuery(
-            countStatement, arrayOf(paramValue))
+            countStatement, arrayOf(workspaceId, name))
     }
 
     private fun applyCountQuery(statement: String, params: Array<String>): Boolean {

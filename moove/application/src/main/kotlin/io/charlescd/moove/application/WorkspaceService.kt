@@ -18,8 +18,8 @@
 
 package io.charlescd.moove.application
 
-import io.charlescd.moove.commons.validator.UniqueValueFieldService
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
@@ -29,7 +29,7 @@ import javax.inject.Named
 class WorkspaceService(
     private val workspaceRepository: WorkspaceRepository,
     private val userRepository: UserRepository
-): UniqueValueFieldService {
+) {
 
     fun find(workspaceId: String): Workspace {
         return this.workspaceRepository.find(workspaceId)
@@ -46,7 +46,10 @@ class WorkspaceService(
         }
     }
 
-    fun save(workspace: Workspace): Workspace {
+    fun save( workspace: Workspace): Workspace {
+        if(this.workspaceRepository.existsByName(workspace.name)) {
+            throw BusinessException.of(MooveErrorCode.DUPLICATED_WORKSPACE_NAME_ERROR)
+        }
         return this.workspaceRepository.save(workspace)
     }
 
@@ -64,9 +67,5 @@ class WorkspaceService(
 
     fun findAllUsers(workspaceId: String, name: String?, email: String?, pageRequest: PageRequest): Page<User> {
         return this.userRepository.findByWorkspace(workspaceId, name, email, pageRequest)
-    }
-
-    override fun fieldValueExists(value: String, fieldName: String): Boolean {
-       return this.workspaceRepository.existsByParam(fieldName, value);
     }
 }
