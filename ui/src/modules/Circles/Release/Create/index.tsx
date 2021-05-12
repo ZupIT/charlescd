@@ -60,6 +60,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   });
   const isNotUnique = fields.length > ONE;
   const [error, setError] = useState('');
+  const [isDeploying, setIsDeploying] = useState(false);
 
   useEffect(() => {
     if (watchFields) {
@@ -84,6 +85,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   }, [createDeployment, build, circleId]);
 
   const onSubmit = () => {
+    setIsDeploying(true);
     const data = getValues();
     const modules = formatDataModules(data);
 
@@ -143,7 +145,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="submit"
           size="EXTRA_SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error)}
+          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
         >
           Deploy
         </Styled.Submit>
