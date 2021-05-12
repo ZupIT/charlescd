@@ -150,3 +150,30 @@ test('form should be invalid when version name not found', async () => {
 
   expect(submit).toBeDisabled();
 });
+
+test('should disable button on deploy', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(mockGetModules)
+    .mockResponseOnce(mockGetTags1)
+    .mockResponse(JSON.stringify([]));
+
+  render(
+    <CreateRelease circleId="123" onDeployed={() => { }} />
+  );
+
+  const nameInput = screen.getByTestId('input-text-releaseName');
+  await act(async () => userEvent.type(nameInput, 'release-name'));
+
+  const moduleLabel = screen.getByText('Select a module');
+  await act(async () => selectEvent.select(moduleLabel, 'module-1'));
+
+  const componentLabel = screen.getByText('Select a component');
+  await act(async () => selectEvent.select(componentLabel, 'component-1'));
+
+  const versionInput = screen.getByTestId('input-text-modules[0].version');
+  await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
+
+  await act(async () => userEvent.click(screen.getByTestId('button-default-submit')));
+
+  expect(screen.getByTestId('button-default-submit')).toBeDisabled();
+});
