@@ -173,11 +173,6 @@ test('should disable button on deploy', async () => {
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
-  await waitFor(() =>
-    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
-    { timeout: 700 }
-  );
-
   await act(async () => userEvent.click(screen.getByTestId('button-default-submit')));
 
   expect(screen.getByTestId('button-default-submit')).toBeDisabled();
