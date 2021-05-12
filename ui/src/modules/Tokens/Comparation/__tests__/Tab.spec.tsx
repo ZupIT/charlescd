@@ -130,13 +130,13 @@ test('should create a token', async () => {
   render(<Tab param={`${NEW_TAB}~create`} />);
 
   const name = screen.getByTestId('input-text-name');
-  await act(() => userEvent.type(name, 'New Token')); 
+  await act(async () => userEvent.type(name, 'New Token')); 
   
   const addWorkspace = await screen.findByText('Add workspaces');
   userEvent.click(addWorkspace);
 
   await waitFor(() => expect(screen.getByText('Allow access for all workspaces')).toBeInTheDocument());
-  const add = screen.getByText('Next');
+  const add = screen.getAllByText('Next')[1];
   userEvent.click(add);
 
   await waitFor(() => expect(screen.getByText('Scopes')).toBeInTheDocument());
