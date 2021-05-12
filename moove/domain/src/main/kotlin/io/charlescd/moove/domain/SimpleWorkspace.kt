@@ -19,5 +19,6 @@ package io.charlescd.moove.domain
 data class SimpleWorkspace(
     val id: String,
     val name: String,
-    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE
+    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE,
+    val deploymentConfigurationId: String? = null
 )

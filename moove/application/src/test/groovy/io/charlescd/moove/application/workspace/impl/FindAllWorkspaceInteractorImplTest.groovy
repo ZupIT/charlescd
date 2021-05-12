@@ -16,9 +16,12 @@
 
 package io.charlescd.moove.application.workspace.impl
 
+import io.charlescd.moove.application.DeploymentConfigurationService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.FindAllWorkspaceInteractor
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import spock.lang.Specification
@@ -28,10 +31,14 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
     private FindAllWorkspaceInteractor findAllWorkspaceInteractor
 
     private UserRepository userRepository = Mock(UserRepository)
+    private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
 
     def setup() {
-        this.findAllWorkspaceInteractor = new FindAllWorkspaceInteractorImpl(new WorkspaceService(workspaceRepository, userRepository))
+        this.findAllWorkspaceInteractor = new FindAllWorkspaceInteractorImpl(
+                new WorkspaceService(workspaceRepository, userRepository),
+                new DeploymentConfigurationService(deploymentConfigurationRepository)
+        )
     }
 
     def "when there is no workspaces should return an empty page"() {
@@ -60,10 +67,10 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         assert response.isLast
     }
 
-    def "when there are workspaces, should list them"() {
+    def "when there are workspaces without configuration, should list them"() {
         given:
         def pageRequest = new PageRequest()
-        def workspace = new SimpleWorkspace("workspace-id", "workspace-name",WorkspaceStatusEnum.INCOMPLETE)
+        def workspace = new SimpleWorkspace("workspace-id", "workspace-name", WorkspaceStatusEnum.INCOMPLETE, null)
         def page = new Page([workspace], 0, 20, 1)
 
         when:
@@ -77,6 +84,7 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
 
             return page
         }
+        0 * this.deploymentConfigurationRepository.find(_)
 
         assert response != null
         assert response.page == 0
@@ -85,6 +93,40 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         assert response.content[0].id == workspace.id
         assert response.content[0].name == workspace.name
         assert response.content[0].status == workspace.status.toString()
+    }
+
+    def "when there are workspaces with configuration, should list them"() {
+        given:
+        def deploymentConfigurationId = TestUtils.deploymentConfigId
+        def deploymentConfiguration = TestUtils.deploymentConfig
+        def pageRequest = new PageRequest()
+        def workspace = new SimpleWorkspace(TestUtils.workspaceId, "workspace-name", WorkspaceStatusEnum.INCOMPLETE, deploymentConfigurationId)
+        def page = new Page([workspace], 0, 20, 1)
+
+        when:
+        def response = this.findAllWorkspaceInteractor.execute(pageRequest, null)
+
+        then:
+        1 * this.workspaceRepository.find(_, null) >> { arguments ->
+            def argPageRequest = arguments[0]
+
+            assert argPageRequest instanceof PageRequest
+
+            return page
+        }
+        1 * this.deploymentConfigurationRepository.find(workspace.deploymentConfigurationId) >> Optional.of(deploymentConfiguration)
+
+        assert response != null
+        assert response.page == 0
+        assert response.size == 1
+        assert response.content.size() == 1
+        assert response.content[0].id == workspace.id
+        assert response.content[0].name == workspace.name
+        assert response.content[0].status == workspace.status.toString()
+        assert response.content[0].deploymentConfiguration != null
+        assert response.content[0].deploymentConfiguration.id == deploymentConfiguration.id
+        assert response.content[0].deploymentConfiguration.name == deploymentConfiguration.name
+        assert response.content[0].deploymentConfiguration.gitProvider == deploymentConfiguration.gitProvider
     }
 
 }

@@ -33,7 +33,7 @@ import {
   validateSlash
 } from './helpers';
 import Styled from './styled';
-import { isNotBlank, isRequired, isRequiredAndNotBlank, maxLength, urlPattern } from 'core/utils/validations';
+import { isRequired, isRequiredAndNotBlank, maxLength, urlPattern } from 'core/utils/validations';
 import { getWorkspace } from 'core/utils/workspace';
 
 interface Props {
@@ -180,7 +180,6 @@ const FormModule = ({ module, onChange }: Props) => {
           ref={
             helmRegister({ validate: {
               slash: value => validateSlash(value, "helm branch"),
-              notBlack: isNotBlank
             }})
           }
           error={helmErrors?.helmBranch?.message}
@@ -216,7 +215,7 @@ const FormModule = ({ module, onChange }: Props) => {
           description="To configure a module you need to register a Git URL and enter the Helm repository URL. You will need to insert the components in the next step. See our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle isEditing={isEditing} color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
       <FormProvider {...form}>

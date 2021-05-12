@@ -89,12 +89,13 @@ test('useUpdateName hook trigger promise success', async () => {
   expect(result.current.status).toEqual('resolved');
 });
 
-test('useUpdateName hook trigger promise error', async () => {
+test('useUpdateName hook trigger promise rejected', async () => {
   (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
-
   const { result } = renderHook(() => useUpdateName());
 
-  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
+  try {
+    await act(() => result.current.updateNameById(newUser.id, newUser.name));
+  } catch (e) { }
 
   expect(result.current.status).toEqual('rejected');
 });

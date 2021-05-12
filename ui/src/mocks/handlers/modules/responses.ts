@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-export const DeploymentsConfigurationConstants = {
+export const MODULE = {
+    createdAt: "2021-02-03 11:34:51",
+    gitRepositoryAddress: "https://github.com/example",
+    helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
+    id: "123",
+    name: "module 1"
+};
 
-  DEFAULT_CIRCLE_HEADER_NAME: 'x-circle-id',
-
-  ISTIO_RESOURCES_API_VERSION: 'networking.istio.io/v1alpha3',
-
-  CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND: 'CharlesDeployment',
-
-  CHARLES_CUSTOM_RESOURCE_ROUTES_KIND: 'CharlesRoutes',
-
-  DEPLOYMENT_ID_LABEL: 'deploymentId'
-}
+export const MODULES = [
+    {
+      createdAt: "2021-02-03 11:34:51",
+      gitRepositoryAddress: "https://github.com/example",
+      helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
+      id: "123",
+      name: "module 1"
+  }
+];

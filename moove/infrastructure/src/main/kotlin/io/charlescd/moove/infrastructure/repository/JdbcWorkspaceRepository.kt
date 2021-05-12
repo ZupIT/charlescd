@@ -149,7 +149,8 @@ class JdbcWorkspaceRepository(
         return """
             SELECT workspaces.id                          AS workspace_id,
                    workspaces.name                        AS workspace_name,
-                   workspaces.status                      AS workspace_status
+                   workspaces.status                      AS workspace_status,
+                   workspaces.deployment_configuration_id AS workspace_deployment_configuration_id
             FROM workspaces WHERE 1 = 1 $innerQueryStatement
             ORDER BY workspaces.name, workspaces.id ASC
             LIMIT ${pageRequest.size}

@@ -19,6 +19,7 @@
 package metricsgroup
 
 import (
+	"github.com/google/uuid"
 	"io"
 
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -35,6 +36,7 @@ type UseCases interface {
 	PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error)
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error)
 	FindAll() ([]MetricsGroup, errors.Error)
+	FindAllByWorkspaceId(workspaceId uuid.UUID) ([]MetricsGroup, errors.Error)
 	ResumeByCircle(circleId string) ([]MetricGroupResume, errors.Error)
 	Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
 	FindById(id string) (MetricsGroup, errors.Error)

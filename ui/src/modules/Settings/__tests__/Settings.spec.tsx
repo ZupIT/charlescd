@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, fireEvent } from 'unit-test/testUtils';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import fetch, { FetchMock } from 'jest-fetch-mock';
 import Settings from '..';
-import userEvent from '@testing-library/user-event';
 
 test('render settings wizard', async () => {
   (fetch as FetchMock)
@@ -35,17 +33,16 @@ test('render settings wizard', async () => {
 
   const nextButton = await screen.findByTestId('button-iconRounded-next');
 
-  await screen.findByTestId('modal-wizard-menu-item-welcome');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-user-group');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-git');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-registry');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-cdConfig');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-circle-matcher');
-  userEvent.click(nextButton);
-  await screen.findByTestId('modal-wizard-info-metrics-provider');
+  expect(screen.getByTestId('modal-wizard')).toBeInTheDocument();
+  expect(screen.getByTestId('modal-wizard-menu-item-welcome')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-registry')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-cdConfig')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-circle-matcher')).toBeInTheDocument();
+  fireEvent.click(nextButton);
+  expect(screen.getByTestId('modal-wizard-info-metrics-provider')).toBeInTheDocument();
 });

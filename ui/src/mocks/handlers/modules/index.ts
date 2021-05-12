@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-export const DeploymentsConfigurationConstants = {
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import {MODULE, MODULES} from './responses';
 
-  DEFAULT_CIRCLE_HEADER_NAME: 'x-circle-id',
-
-  ISTIO_RESOURCES_API_VERSION: 'networking.istio.io/v1alpha3',
-
-  CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND: 'CharlesDeployment',
-
-  CHARLES_CUSTOM_RESOURCE_ROUTES_KIND: 'CharlesRoutes',
-
-  DEPLOYMENT_ID_LABEL: 'deploymentId'
-}
+export default [
+  rest.get(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    return res(
+      ctx.json(MODULE)
+    )
+  }),
+  rest.get(`${basePath}/moove/v2/modules`, (req, res, ctx) => {
+    return res(
+      ctx.json(MODULES)
+    )
+  }),
+  rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    return res(
+      ctx.status(204)
+    )
+  })
+]

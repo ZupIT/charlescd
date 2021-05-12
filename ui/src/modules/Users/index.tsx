@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { lazy, useState, useEffect, Suspense } from 'react';
+import { lazy, useState, useEffect, Suspense, useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import Page from 'core/components/Page';
@@ -38,19 +38,20 @@ const Users = () => {
   const profileName = getProfileByKey('name');
   const [filterUsers, , loading] = useUsers();
   const [name, setName] = useState('');
-  const [message, setMessage] = useState('');
   const { list } = useGlobalState(({ users }) => users);
   const query = getQueryStrings();
   const users = query.getAll('user');
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const onChangeUser = useCallback(() => {
     const page = 0;
     dispatch(resetContentAction());
-    if (message === '' || message === 'Deleted') {
-      filterUsers(name, page);
-    }
-  }, [name, message, filterUsers, dispatch]);
+    filterUsers(name, page);
+  }, [dispatch, filterUsers, name]);
+
+  useEffect(() => {
+    onChangeUser();
+  }, [onChangeUser]);
 
   const loadMore = (page: number) => {
     filterUsers(name, page);
@@ -93,9 +94,7 @@ const Users = () => {
               renderPlaceholder()
             ) : (
               <Styled.ScrollableX>
-                <UsersComparation
-                  onChange={(userStatus: string) => setMessage(userStatus)}
-                />
+                <UsersComparation onChange={onChangeUser} />
               </Styled.ScrollableX>
             )}
           </Route>

@@ -1,4 +1,4 @@
-name: charlescd-ci-staging
+name: charlescd-cicd-staging
 
 # Charles branchs of beta images, pre-release must have name in format of version starting at patch .0 charlescd-release-<VERSION>.0
 # ex: charlescd-release-1.1.0

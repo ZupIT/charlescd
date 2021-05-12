@@ -24,6 +24,7 @@ import { WorkspacePagination } from './interfaces/WorkspacePagination';
 import { Workspace } from './interfaces/Workspace';
 import { isRoot } from 'core/utils/auth';
 import { getProfileByKey } from 'core/utils/profile';
+import { saveWorkspace } from 'core/utils/workspace';
 
 type WorkspaceResponse = {
   workspaces: Workspace[],
@@ -101,7 +102,9 @@ export const useSaveWorkspace = (): {
 
   useEffect(() => {
     (async () => {
-      if (error) {
+      if (response) {
+        saveWorkspace(response);
+      } else if (error) {
         const e = await error.json();
         dispatch(
           toogleNotification({
