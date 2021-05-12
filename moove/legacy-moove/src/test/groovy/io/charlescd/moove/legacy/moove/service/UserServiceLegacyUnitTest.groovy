@@ -49,7 +49,7 @@ class UserServiceLegacyUnitTest extends Specification {
         thrown(NotFoundExceptionLegacy)
     }
 
-    void "when the deletion is of the default root charles user should throw forbidden"() {
+    void "when the deletion is of the default root charles user should throw BusinessExceptionLegacy"() {
         given:
         def userId = "1"
         def user = new User(userId, "Charles Admin", defaultRootUser, "http://teste.com", true, null, LocalDateTime.now())
