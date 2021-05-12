@@ -18,13 +18,13 @@ import routes from 'core/constants/routes';
 
 export const PlaceholderCardItems = [
   {
-    icon: 'circles',
-    text: 'Go to Circles',
-    linkTo: routes.circles
-  },
-  {
     icon: 'modules',
     text: 'Go to Modules',
     linkTo: routes.modules
-  }
+  },
+  {
+    icon: 'metrics',
+    text: 'Go to Metrics',
+    linkTo: routes.metrics
+  },
 ];

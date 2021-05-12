@@ -34,7 +34,13 @@ import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
 import DocumentationLink from 'core/components/DocumentationLink';
 import { useForm } from 'react-hook-form';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { 
+  isRequired,
+  urlPattern,
+  isRequiredAndNotBlank,
+  isNotBlank,
+  trimValue
+} from 'core/utils/validations';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
@@ -65,6 +71,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
     getValues,
     setValue,
     watch,
+    errors,
     formState: { isValid }
   } = useForm<Registry>({
     mode: 'onChange',
@@ -222,21 +229,14 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           <>
             <Form.Input
               ref={register({
-                required: true,
+                required: isRequired(),
                 validate: {
-                  methodValidate: (value: string) => {
-                    if (value === 'https://' || value === 'http://') {
-                      return false;
-                    } else if (
-                      value.includes('https://') ||
-                      value.includes('http://')
-                    ) {
-                      return true;
-                    }
-                    return false;
-                  }
-                }
+                  notBlank: isNotBlank
+                },
+                setValueAs: trimValue,
+                pattern: urlPattern()
               })}
+              error={errors?.address?.message}
               name="address"
               label="Enter the registry url"
             />
