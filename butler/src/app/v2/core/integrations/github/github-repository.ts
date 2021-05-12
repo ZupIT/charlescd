@@ -106,7 +106,7 @@ export class GitHubRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.FETCH_RESOURCE_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Reached maximum fetch attempts! ${error}`) :
+          throwError(error) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.FETCH_RESOURCE_MILLISECONDS_RETRY_DELAY)
