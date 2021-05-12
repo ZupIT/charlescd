@@ -178,7 +178,7 @@ export const useUpdateName = (): {
       } catch (e) {
         setStatus('rejected');
 
-        const error = await e?.json();
+        const error = await e?.json?.();
 
         dispatch(
           toogleNotification({
@@ -187,7 +187,7 @@ export const useUpdateName = (): {
           })
         );
 
-        return Promise.reject(error);
+       return Promise.reject(error);
       }
     },
     [patch, dispatch]

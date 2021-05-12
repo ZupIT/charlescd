@@ -89,6 +89,17 @@ test('useUpdateName hook trigger promise success', async () => {
   expect(result.current.status).toEqual('resolved');
 });
 
+test('useUpdateName hook trigger promise rejected', async () => {
+  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
+  const { result } = renderHook(() => useUpdateName());
+
+  try {
+    await act(() => result.current.updateNameById(newUser.id, newUser.name));
+  } catch (e) { }
+
+  expect(result.current.status).toEqual('rejected');
+});
+
 test('should get data about a user (which is saved in profile of local storage)', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(user));
 
