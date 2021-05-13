@@ -110,6 +110,8 @@ env:
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000"
 - name: BUTLER_NAMESPACE
   value: {{ .ChartContext.Release.Namespace }}
+- name: REQUEST_SIZE_LIMIT
+  value: {{ .RangeContext.requestSizeLimit | default "50mb" | quote }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:

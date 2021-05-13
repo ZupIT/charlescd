@@ -46,6 +46,7 @@ CharlesApplications:
       password: 3f2Yq8R4HhDCnefR
       name: charlescd_butler
       ssl: false
+    requestSizeLimit: 50mb
 
   moove:
     enabled: true
