@@ -46,12 +46,12 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
     status === HTTP_STATUS.teapot ? '' : toString(status)
   )
 
-  const onDelete = async (id: string) => {
-    await remove(id);
+  const onDelete = async (id: string, description: string) => {
+    await remove(id, description);
     setWebhooks(filter(webhooks, item => item.id !== id));
   };
 
-  const onEdit = (webhook: Webhook) => {
+  const onEdit = async (webhook: Webhook) => {
     setWebhook(webhook);
     setForm(FORM_WEBHOOK);
   };
@@ -62,7 +62,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
       <Dropdown.Item
         icon="delete"
         name="Delete"
-        onClick={() => onDelete(webhook.id)}
+        onClick={() => onDelete(webhook.id, webhook.description)}
       />
     </Dropdown>
   );
