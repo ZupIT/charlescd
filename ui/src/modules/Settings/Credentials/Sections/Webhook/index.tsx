@@ -51,7 +51,7 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
     setWebhooks(filter(webhooks, item => item.id !== id));
   };
 
-  const onEdit = (webhook: Webhook) => {
+  const onEdit = async (webhook: Webhook) => {
     setWebhook(webhook);
     setForm(FORM_WEBHOOK);
   };
