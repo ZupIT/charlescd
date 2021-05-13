@@ -92,4 +92,8 @@ class DeploymentService(private val deploymentRepository: DeploymentRepository) 
             circleId, workspaceId
         )
     }
+
+    fun existsActiveListByWorkspace(workspaceId: String): Boolean {
+        return this.deploymentRepository.existActiveListByWorkspaceId(workspaceId)
+    }
 }
