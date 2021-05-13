@@ -100,8 +100,8 @@ test('should show text to documentation', () => {
   expect(screen.getByText(/See our documentation for further details./i)).toBeInTheDocument();
 });
 
-test("component for edit mode render", async () => {
-  const { container } = render(
+test("should render component for edit mode", async () => {
+  render(
     <AllTheProviders>
       <FormModule
         onChange={mockOnChange}
@@ -111,7 +111,8 @@ test("component for edit mode render", async () => {
     </AllTheProviders>
   );
 
-  await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
+  await waitFor(() => expect(screen.getByText('Edit module')).toBeInTheDocument());
+  expect(screen.getByText('Save')).toBeInTheDocument();
 });
 
 test("component for create mode", async () => {
