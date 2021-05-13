@@ -95,6 +95,17 @@ export const useRegistry = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
+  useEffect(() => {
+    if (responseRemove) {
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting registry',
+          status: 'success'
+        })
+      );
+    }
+  }, [responseRemove, dispatch]);
+
   return {
     responseAdd,
     save,
