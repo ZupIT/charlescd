@@ -94,6 +94,17 @@ export const useDatasource = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
+  useEffect(() => {
+    if (responseRemove) {
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting Datasources',
+          status: 'success'
+        })
+      );
+    }
+  }, [responseRemove, dispatch]);
+
   return {
     getAll,
     save,
