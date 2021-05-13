@@ -49,6 +49,11 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
 
   const renderAction = (component: Component, index: number) => (
     <Styled.Dropdown color="light">
+      <Dropdown.Item
+        icon="edit"
+        name="Edit"
+        onClick={() => onSelectComponent(component)}
+      />
       {(index !== FIRST || module.components.length > ONE)
         && (
           <Dropdown.Item
