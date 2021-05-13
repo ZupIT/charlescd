@@ -28,7 +28,8 @@ import {
   updateCircleManually,
   findAllCirclesWithoutActive,
   updateCirclePercentage,
-  createCirclePercentage
+  createCirclePercentage,
+  findAllCirclesSimple
 } from 'core/providers/circle';
 import { undeploy } from 'core/providers/deployment';
 import { useDispatch } from 'core/state/hooks';
@@ -179,6 +180,16 @@ export const useCirclesActive = () => {
 
   return {
     getCirclesData
+  };
+};
+
+export const useCircleSimple = () => {
+  const getCirclesSimple = useFetchData<Pagination<Circle>>(
+    findAllCirclesSimple
+  );
+
+  return {
+    getCirclesSimple
   };
 };
 
