@@ -111,7 +111,7 @@ env:
 - name: BUTLER_NAMESPACE
   value: {{ .ChartContext.Release.Namespace }}
 - name: REQUEST_SIZE_LIMIT
-  value: {{ .RangeContext.requestSizeLimit }}
+  value: {{ .RangeContext.requestSizeLimit | default "50mb" | quote }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:
