@@ -60,5 +60,7 @@ export const Configuration: IEnvConfiguration = {
 
   butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 
-  butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE
+  butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE,
+
+  requestSizeLimit: process.env.REQUEST_SIZE_LIMIT || ConfigurationConstants.REQUEST_SIZE_LIMIT,
 }
