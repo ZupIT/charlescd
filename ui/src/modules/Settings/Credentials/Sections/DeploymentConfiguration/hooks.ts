@@ -77,7 +77,13 @@ export const useCDConfiguration = (): FetchProps => {
     try {
       setStatus('pending');
       await patchDeploymentConfig(configPath, id)
-      removeDeploymentConfig(id);
+      removeDeploymentConfig(id); 
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting deployment configuration',
+          status: 'success'
+        })
+      );
       setStatus('resolved');
     } catch (e) {
       setStatus('rejected');
