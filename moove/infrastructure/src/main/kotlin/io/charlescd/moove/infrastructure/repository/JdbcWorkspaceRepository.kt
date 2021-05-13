@@ -25,9 +25,9 @@ import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.infrastructure.repository.mapper.SimpleWorkspaceExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.WorkspaceExtractor
-import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class JdbcWorkspaceRepository(
@@ -166,9 +166,9 @@ class JdbcWorkspaceRepository(
         return parameters
     }
 
-    private fun createParametersArray(name: String?): Array<Any> {
+    private fun createParametersArray(param: String?): Array<Any> {
         val parameters = ArrayList<Any>()
-        name?.let { parameters.add("%$name%") }
+        param?.let { parameters.add("%$param%") }
         return parameters.toTypedArray()
     }
 

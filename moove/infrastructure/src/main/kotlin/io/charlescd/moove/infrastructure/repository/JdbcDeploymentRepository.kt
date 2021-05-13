@@ -21,9 +21,9 @@ package io.charlescd.moove.infrastructure.repository
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.*
-import java.util.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class JdbcDeploymentRepository(
@@ -116,6 +116,10 @@ class JdbcDeploymentRepository(
 
     override fun findActiveByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment> {
         return findActiveDeploymentsByCircleIdAndWorkspaceId(circleId, workspaceId)
+    }
+
+    override fun existActiveListByWorkspaceId(workspaceId: String): Boolean {
+        return checkIfActiveDeploymentsByWorkspaceIdExists(workspaceId)
     }
 
     private fun deleteDeploymentsByCircleId(circleId: String) {
@@ -256,6 +260,34 @@ class JdbcDeploymentRepository(
             arrayOf(workspaceId, circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
+    }
+
+    private fun checkIfActiveDeploymentsByWorkspaceIdExists(workspaceId: String): Boolean {
+
+        val baseCountStatement = StringBuilder(
+            """
+                SELECT COUNT(*)
+                FROM deployments d
+                WHERE 1 = 1
+            """
+        )
+        val statement = StringBuilder(baseCountStatement)
+            .appendln("AND deployments.workspace_id = ?")
+            .appendln("AND deployments.status not in ('NOT_DEPLOYED','DEPLOY_FAILED')")
+
+        val count = this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(workspaceId)
+        ) { resultSet, _ ->
+            resultSet.getInt(1)
+        }
+        return count != null && count >= 1
+    }
+
+    private fun createParametersArray(param: String?): Array<Any> {
+        val parameters = ArrayList<Any>()
+        param?.let { parameters.add("%$param%") }
+        return parameters.toTypedArray()
     }
 
     override fun countBetweenTodayAndDaysPastGroupingByStatus(

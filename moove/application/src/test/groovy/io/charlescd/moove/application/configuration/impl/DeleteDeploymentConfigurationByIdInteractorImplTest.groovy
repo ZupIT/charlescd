@@ -17,9 +17,13 @@
 package io.charlescd.moove.application.configuration.impl
 
 import io.charlescd.moove.application.DeploymentConfigurationService
+import io.charlescd.moove.application.DeploymentService
 import io.charlescd.moove.application.configuration.DeleteDeploymentConfigurationByIdInteractor
+import io.charlescd.moove.domain.MooveErrorCode
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.DeploymentConfigurationRepository
+import io.charlescd.moove.domain.repository.DeploymentRepository
 import spock.lang.Specification
 
 class DeleteDeploymentConfigurationByIdInteractorImplTest extends Specification {
@@ -27,9 +31,10 @@ class DeleteDeploymentConfigurationByIdInteractorImplTest extends Specification 
     private DeleteDeploymentConfigurationByIdInteractor interactor
 
     private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
+    private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
 
     def setup() {
-        this.interactor = new DeleteDeploymentConfigurationByIdInteractorImpl(new DeploymentConfigurationService(deploymentConfigurationRepository))
+        this.interactor = new DeleteDeploymentConfigurationByIdInteractorImpl(new DeploymentConfigurationService(deploymentConfigurationRepository), new DeploymentService(deploymentRepository))
     }
 
     def 'when deployment configuration id does not exist should throw exception'() {
@@ -48,6 +53,22 @@ class DeleteDeploymentConfigurationByIdInteractorImplTest extends Specification 
         ex.id == deploymentConfigurationId
     }
 
+    def 'when active exists to deployment configuration should throw exception'() {
+        given:
+        def deploymentConfigurationId = "4e806b2a-557b-45c5-91be-1e1db909bef6"
+        def workspaceId = "00000000-557b-45c5-91be-1e1db909bef6"
+
+        when:
+        interactor.execute(workspaceId, deploymentConfigurationId)
+
+        then:
+        1 * deploymentConfigurationRepository.exists(workspaceId, deploymentConfigurationId) >> true
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspaceId) >> true
+
+        def ex = thrown(BusinessException)
+        ex.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
+    }
+
     def 'should delete git configuration id successfully'() {
         given:
         def deploymentConfigurationId = "4e806b2a-557b-45c5-91be-1e1db909bef6"
@@ -58,6 +79,7 @@ class DeleteDeploymentConfigurationByIdInteractorImplTest extends Specification 
 
         then:
         1 * deploymentConfigurationRepository.exists(workspaceId, deploymentConfigurationId) >> true
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspaceId) >> false
         1 * deploymentConfigurationRepository.delete(deploymentConfigurationId)
     }
 }
