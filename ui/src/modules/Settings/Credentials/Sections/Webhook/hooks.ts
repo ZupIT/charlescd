@@ -65,7 +65,7 @@ export const useWebhook = (): Props => {
   );
 
   const remove = useCallback(
-    async (id: string, description = '') => {
+    async (id: string) => {
       try {
         setStatus('pending');
         const response = await removing(id);
@@ -73,7 +73,7 @@ export const useWebhook = (): Props => {
 
         dispatch(
           toogleNotification({
-            text: `Webhook ${description} successfully deleted`,
+            text: 'Success deleting webhook',
             status: 'success'
           })
         );
