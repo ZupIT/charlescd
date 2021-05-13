@@ -20,7 +20,6 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.ent
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
 import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
-import { MetadataSizeValidation } from '../validations/metadata-size.validation'
 import { Metadata } from '../interfaces/deployment.interface'
 import { CreateGitDeploymentDto } from './create-git-request.dto'
 import { CreateComponentRequestDto } from './create-component-request.dto'

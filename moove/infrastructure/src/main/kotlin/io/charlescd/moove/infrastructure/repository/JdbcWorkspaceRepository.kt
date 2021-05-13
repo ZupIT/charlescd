@@ -268,8 +268,7 @@ class JdbcWorkspaceRepository(
 
     private fun createAssociation(workspaceId: String, userGroupId: String, permissions: List<Permission>) {
         val statement =
-            "INSERT INTO workspaces_user_groups(workspace_id, user_group_id, permissions) " +
-                    "VALUES(?, ?, to_json(?::jsonb))"
+            "INSERT INTO workspaces_user_groups(workspace_id, user_group_id, permissions) VALUES(?, ?, to_json(?::jsonb))"
         this.jdbcTemplate.update(
             statement,
             workspaceId,

@@ -182,7 +182,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           getSimpleManifests('D', 'my-namespace', 'imageurl.com')
         )
       ],
-      true,
+      false,
       'my-namespace',
       60,
       null
