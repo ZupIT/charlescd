@@ -155,10 +155,9 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
         then:
         1 * userRepository.findById(authorId) >> Optional.of(author)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(dummyWorkspaceWithoutMatcher)
-        def exception = thrown(NotFoundException)
+        def exception = thrown(BusinessException)
 
-        assert exception.resourceName == "workspace"
-        assert exception.id == workspaceId
+        assert exception.message == "workspace.matcher_url.is.missing"
     }
 
 
