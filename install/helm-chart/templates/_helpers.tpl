@@ -98,6 +98,8 @@ env:
 - name: DATABASE_SSL
   value: "true"
 {{ end }}
+- name: TLS_SKIP_VERIFY
+  value: {{ .RangeContext.tlsSkipVerify | default "false" | quote }}
 - name: MOOVE_URL
   value: "http://charlescd-moove:8080"
 - name: DARWIN_NOTIFICATION_URL

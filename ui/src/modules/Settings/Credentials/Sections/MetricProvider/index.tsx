@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
+import map from 'lodash/map';
 import Card from 'core/components/Card';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -23,7 +24,6 @@ import { useDatasource } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
 import { Datasource } from './interfaces';
 import FormMetricProvider from './Form';
-import { filter, map } from 'lodash';
 
 interface Props {
   form: string;
@@ -38,13 +38,19 @@ const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
 
   const handleClose = async (id: string) => {
     await remove(id);
-    setDatasource(filter(datasources, item => item.id !== id));
+    getNewDatasources();
   };
 
   const handleOnFinish = () => {
     setForm(null);
     getNewDatasources();
   };
+
+  useEffect(() => {
+    if (data !== datasources) {
+      setDatasource(data);
+    }
+  }, [data, datasources, form]);
 
   const renderSection = () => (
     <Section

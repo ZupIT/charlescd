@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen } from 'unit-test/testUtils';
 import Tab from '../Tab';
 import userEvent from '@testing-library/user-event';
 import 'unit-test/setup-msw';
 import Footer from 'modules/Main/Footer';
 import { saveProfile } from 'core/utils/profile';
 import { setUserAbilities } from 'core/utils/abilities';
+import { saveWorkspace } from 'core/utils/workspace';
 
 beforeEach(() => {
+  saveWorkspace({id: '1', name: 'workspace 1', status: 'COMPLETE'});
   saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
   setUserAbilities();
 })

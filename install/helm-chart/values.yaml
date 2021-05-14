@@ -47,6 +47,7 @@ CharlesApplications:
       name: charlescd_butler
       ssl: false
     requestSizeLimit: 50mb
+    tlsSkipVerify: false
 
   moove:
     enabled: true

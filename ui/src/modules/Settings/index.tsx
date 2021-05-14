@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { lazy, useEffect, useState } from 'react';
+import { lazy, useEffect, useState, useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
@@ -51,6 +51,10 @@ const Settings = () => {
     setShowWizard(false);
   };
 
+  const onChangeWorkspace = useCallback(() => {
+    getWorkspace(getWorkspaceId());
+  }, [getWorkspace]);
+
   const showWizardModal =
     (!isVeteranUser && workspace?.status === WORKSPACE_STATUS.INCOMPLETE) ||
     showWizard;
@@ -66,7 +70,11 @@ const Settings = () => {
           <PrivateRoute
             path={routes.credentials}
             render={() => (
-              <Credentials workspace={workspace} onClickHelp={() => setShowWizard(true)} />
+              <Credentials
+                workspace={workspace}
+                onChangeWorkspace={onChangeWorkspace}
+                onClickHelp={() => setShowWizard(true)}
+              />
             )}
             allowedRoles={['maintenance_write']}
           />
