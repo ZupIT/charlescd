@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import filter from 'lodash/filter';
 import Card from 'core/components/Card';
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
@@ -39,9 +38,10 @@ interface Props {
   form: string;
   setForm: Function;
   data: UserGroup[];
+  onSave: () => void;
 }
 
-const SectionUserGroup = ({ form, setForm, data }: Props) => {
+const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const [userGroups, setUserGroups] = useState(data);
   const { remove, loadingRemove } = useUserGroup();
   const [toggleModal, setToggleModal] = useState<boolean>(false);
@@ -51,6 +51,12 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
 
   useOutsideClick(modalRef, () => setToggleModal(false));
 
+  useEffect(() => {
+    if (data !== userGroups) {
+      setUserGroups(data);
+    }
+  }, [data, userGroups]);
+
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
     const { users } = currentUserGroup;
@@ -58,7 +64,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     const isUserDuplicated = !hasUserDuplication(userGroups, email);
 
     await remove(getWorkspaceId(), currentUserGroup.id);
-    setUserGroups(filter(userGroups, item => item.id !== currentUserGroup.id));
+    onSave();
     
     setToggleModal(false);
 
@@ -114,7 +120,10 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_USER_GROUP) && (
       <Layer action={() => setForm(null)}>
-        <FormUserGroup onFinish={() => setForm(null)} />
+        <FormUserGroup onFinish={() => {
+          onSave();
+          setForm(null);
+        }} />
       </Layer>
     );
 

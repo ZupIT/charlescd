@@ -28,9 +28,10 @@ interface Props {
   form: string;
   setForm: Function;
   data: Configuration;
+  onSave: () => void;
 }
 
-const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
+const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const { status, remove } = useCDConfiguration();
 
@@ -66,7 +67,12 @@ const SectionDeploymentConfiguration = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_CD_CONFIGURATION) && (
       <Layer action={() => setForm(null)}>
-        <Form onFinish={() => setForm(null)} />
+        <Form
+          onFinish={() => {
+            setForm(null);
+            onSave();
+          }}
+        />
       </Layer>
     );
 
