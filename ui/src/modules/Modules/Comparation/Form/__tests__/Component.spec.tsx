@@ -125,7 +125,7 @@ test('should render edit component default', async () => {
   expect(screen.getByLabelText('Latency Threshold (ms)')).toBeInTheDocument();
   expect(screen.getByLabelText('Http Error Threshold (%)')).toBeInTheDocument();
   expect(screen.getByText(advancedOptionsText)).toBeInTheDocument();
-  expect(screen.getByRole('button')).toHaveTextContent('Edit');
+  expect(screen.getByRole('button')).toHaveTextContent('Save');
 });
 
 test("component for edit mode render", async () => {
