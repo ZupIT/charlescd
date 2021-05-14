@@ -281,12 +281,13 @@ class JdbcDeploymentRepository(
         ) { resultSet, _ ->
             resultSet.getInt(1)
         }
+
         return count != null && count >= 1
     }
 
     private fun createParametersArray(param: String?): Array<Any> {
         val parameters = ArrayList<Any>()
-        param?.let { parameters.add("%$param%") }
+        param?.let { parameters.add("$param") }
         return parameters.toTypedArray()
     }
 
