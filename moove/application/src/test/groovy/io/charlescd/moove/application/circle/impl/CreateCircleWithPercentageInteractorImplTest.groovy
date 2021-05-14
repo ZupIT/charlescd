@@ -19,6 +19,7 @@ package io.charlescd.moove.application.circle.impl
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.circle.CreateCircleWithPercentageInteractor
@@ -139,6 +140,27 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
         assert exception.id == workspaceId
     }
 
+    def "should throw a BusinessException when workspace matcher url is missing"() {
+        given:
+        def authorId = "96c63356-d416-46c3-a24e-c6b8c71cb718"
+        def workspaceId = "983fcdc6-8adc-4baa-817b-17b587ff5dcb"
+
+        def request = new CreateCircleWithPercentageRequest("Women", authorId, 20)
+
+        def author = getDummyUser(authorId)
+
+        when:
+        this.createCircleWIthPercentageInteractor.execute(request, workspaceId)
+
+        then:
+        1 * userRepository.findById(authorId) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(dummyWorkspaceWithoutMatcher)
+        def exception = thrown(NotFoundException)
+
+        assert exception.resourceName == "workspace"
+        assert exception.id == workspaceId
+    }
+
 
     private User getDummyUser(String authorId) {
         new User(
@@ -184,6 +206,22 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
                 workspaceId,
                 false,
                 percentage
+        )
+    }
+
+    private Workspace getDummyWorkspaceWithoutMatcher() {
+        new Workspace(
+                TestUtils.workspaceId,
+                "Charles",
+                TestUtils.user,
+                LocalDateTime.now(),
+                [],
+                WorkspaceStatusEnum.COMPLETE,
+                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
+                null,
+                "aa3448d8-4421-4aba-99a9-184bdabe3046",
+                "cc3448d8-4421-4aba-99a9-184bdabeq233",
+                null
         )
     }
 }
