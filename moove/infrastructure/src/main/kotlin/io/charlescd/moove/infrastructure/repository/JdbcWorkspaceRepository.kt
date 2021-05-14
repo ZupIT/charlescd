@@ -194,7 +194,7 @@ class JdbcWorkspaceRepository(
 
     private fun executeCountQuery(name: String?): Int? {
         val statement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
-        name?.let { statement.appendln("AND w.name ILIKE ?") }
+        name?.let { statement.appendln("AND workspaces.name ILIKE ?") }
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
             createParametersArray(name)
