@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, act } from 'unit-test/testUtils';
 import Tab from '../Tab';
 import userEvent from '@testing-library/user-event';
 import 'unit-test/setup-msw';
@@ -41,7 +41,7 @@ test('render Modules comparation Tab', async () => {
   expect(dropdownItemDelete).toBeInTheDocument();
   expect(dropdownItemCopyID).toBeInTheDocument();
 
-  const tabpanel = await screen.findByTestId('tabpanel-Untitled');
+  const tabpanel = await screen.findByTestId('tabpanel-module 1');
   expect(tabpanel).toBeInTheDocument();
 });
 
