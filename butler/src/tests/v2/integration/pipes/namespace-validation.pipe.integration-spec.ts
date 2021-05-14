@@ -123,7 +123,8 @@ describe('NamespaceValidationPipe', () => {
       ],
       'iamvalid',
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
-      10
+      10,
+      false
     )
 
     expect(await pipe.transform(req)).toEqual(req)

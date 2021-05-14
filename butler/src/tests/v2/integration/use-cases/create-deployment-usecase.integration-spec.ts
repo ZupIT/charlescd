@@ -26,7 +26,6 @@ import { getSimpleManifests } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
-import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
 
 describe('CreateDeploymentUsecase v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -257,7 +256,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '222cd8db-3767-45d5-a415-7cca09cccf91',
       null,
       null,
-      customManifests('A', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
     )
     const previousComponentB = new ComponentEntity(
       UrlConstants.helmRepository,
@@ -267,7 +266,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
       null,
       null,
-      customManifests('B', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
     )
     const previousComponentC = new ComponentEntity(
       UrlConstants.helmRepository,
@@ -277,7 +276,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
       null,
       null,
-      customManifests('C', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('C', 'my-namespace', 'imageurl.com')
     )
     previousComponentC.merged = true
     previousComponentB.merged = true
@@ -305,7 +304,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
       null,
       null,
-      customManifests('A', 'my-namespace', 'https://repository.com/A:v2')
+      getSimpleManifests('A', 'my-namespace', 'https://repository.com/A:v2')
     )
     actualComponentA.running = false
     actualComponentA.id = expect.anything()
@@ -361,8 +360,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       'A',
       '222cd8db-3767-45d5-a415-7cca09cccf91',
       null,
-      null,
-      customManifests('A', 'my-namespace', 'imageurl.com')
+      null, 
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
     )
     const previousComponentB = new ComponentEntity(
       UrlConstants.helmRepository,
@@ -372,7 +371,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
       null,
       null,
-      customManifests('B', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
     )
     const previousComponentC = new ComponentEntity(
       UrlConstants.helmRepository,
@@ -382,7 +381,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
       null,
       null,
-      customManifests('C', 'my-namespace', 'imageurl.com')
+      getSimpleManifests('C', 'my-namespace', 'imageurl.com')
     )
     const currentDeployment = new DeploymentEntity(
       '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
@@ -408,7 +407,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
       null,
       null,
-      customManifests('A', 'my-namespace', 'https://repository.com/A:v2')
+      getSimpleManifests('A', 'my-namespace', 'https://repository.com/A:v2')
     )
     actualComponentA.running = false
     actualComponentA.id = expect.anything()
