@@ -34,7 +34,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, override: Boolean? ) {
+    override fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, override: Boolean?) {
         deployClient.deploy(
             URI.create(configuration.butlerUrl),
             buildDeployRequest(
