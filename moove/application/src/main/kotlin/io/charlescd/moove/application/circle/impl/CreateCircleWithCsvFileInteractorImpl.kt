@@ -23,9 +23,8 @@ import io.charlescd.moove.application.*
 import io.charlescd.moove.application.circle.CreateCircleWithCsvFileInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.KeyValueRule
-import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
 import java.util.*
 import javax.inject.Named
@@ -69,8 +68,15 @@ open class CreateCircleWithCsvFileInteractorImpl(
         circle: Circle
     ) {
         val workspace = workspaceService.find(workspaceId)
+        checkIfWorkspaceHasMatcherUrl(workspace)
         nodeList.chunked(100).map {
             circleMatcherService.createImport(circle, it, workspace.circleMatcherUrl!!)
+        }
+    }
+
+    private fun checkIfWorkspaceHasMatcherUrl(workspace: Workspace) {
+        if (!workspace.hasCircleMatcher()) {
+            throw BusinessException.of(MooveErrorCode.WORKSPACE_MATCHER_URL_IS_MISSING)
         }
     }
 
