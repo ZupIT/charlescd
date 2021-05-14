@@ -27,4 +27,9 @@ export const PlaceholderCardItems = [
     text: 'Go to Metrics',
     linkTo: routes.metrics
   },
+  {
+    icon: 'circles',
+    text: 'Go to Circles',
+    linkTo: routes.circles
+  },
 ];
