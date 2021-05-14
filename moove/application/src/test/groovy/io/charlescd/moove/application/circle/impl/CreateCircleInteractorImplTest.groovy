@@ -28,6 +28,8 @@ import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.WorkspaceStatusEnum
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.SystemTokenRepository
@@ -36,6 +38,8 @@ import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 class CreateCircleInteractorImplTest extends Specification {
 
@@ -170,6 +174,28 @@ class CreateCircleInteractorImplTest extends Specification {
         assert exception.id == workspaceId
     }
 
+    def "should throw a BusinessException when matcher url from workspace is missing"() {
+        given:
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def authorization = TestUtils.authorization
+        def workspaceWithoutMatcher =  dummyWorkspaceWithoutMatcher
+
+        def request = new CreateCircleRequest("Women", TestUtils.nodePart)
+
+        when:
+        this.createCircleInteractor.execute(request, workspaceId, authorization, null)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(workspaceWithoutMatcher)
+
+        def exception = thrown(BusinessException)
+
+        assert exception.message == "workspace.matcher_url.is.missing"
+    }
+
     private User getDummyUser(String authorId) {
         new User(
                 authorId,
@@ -210,6 +236,21 @@ class CreateCircleInteractorImplTest extends Specification {
                 null,
                 false,
                 workspaceId,
+                null
+        )
+    }
+    private Workspace getDummyWorkspaceWithoutMatcher() {
+        new Workspace(
+                TestUtils.workspaceId,
+                "Charles",
+                TestUtils.user,
+                LocalDateTime.now(),
+                [],
+                WorkspaceStatusEnum.COMPLETE,
+                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
+                null,
+                "aa3448d8-4421-4aba-99a9-184bdabe3046",
+                "cc3448d8-4421-4aba-99a9-184bdabeq233",
                 null
         )
     }
