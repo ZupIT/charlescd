@@ -44,7 +44,6 @@ export class GitHubRepository implements Repository {
 
     // TODO stop accepting self-signed TLS certificates
     const agent = new https.Agent({ rejectUnauthorized: this.envConfiguration.rejectUnauthorizedTLS })
-
     this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITHUB', urlResource)
     return this.downloadResource(urlResource, requestConfig.resourceName, {
       headers: {
