@@ -22,7 +22,7 @@ import { AppModule } from '../../../../app/app.module'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
-import { getSimpleManifests } from '../../fixtures/manifests.fixture'
+import { getSimpleManifests, getSimpleManifestsWithAllLabels } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -304,7 +304,12 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
       null,
       null,
-      getSimpleManifests('A', 'my-namespace', 'https://repository.com/A:v2')
+      getSimpleManifestsWithAllLabels(
+        'A',
+        'my-namespace',
+        'https://repository.com/A:v2',
+        'v2',
+        currentDeployment.circleId)
     )
     actualComponentA.running = false
     actualComponentA.id = expect.anything()
@@ -344,7 +349,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     expect(deploymentCreated.components).toEqual(expectedComponents)
   })
 
-  it('when is a  deployment to override circle should override the previous deployment components', async() => {
+  it('when is a deployment to override circle should override the previous deployment components', async() => {
     const encryptedToken = `-----BEGIN PGP MESSAGE-----
 
 ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
@@ -407,7 +412,12 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
       null,
       null,
-      getSimpleManifests('A', 'my-namespace', 'https://repository.com/A:v2')
+      getSimpleManifestsWithAllLabels(
+        'A',
+        'my-namespace',
+        'https://repository.com/A:v2',
+        'v2',
+        currentDeployment.circleId)
     )
     actualComponentA.running = false
     actualComponentA.id = expect.anything()

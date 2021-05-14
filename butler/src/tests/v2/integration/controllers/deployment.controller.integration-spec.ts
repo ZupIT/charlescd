@@ -140,7 +140,7 @@ describe('DeploymentController v2', () => {
           status: 400
         },
         {
-          detail: '"overrideCircle" is required',
+          title: '"overrideCircle" is required',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -671,7 +671,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const sameNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -765,7 +766,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -840,7 +842,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -908,7 +911,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const errorResponse = {

@@ -86,7 +86,8 @@ describe('NamespaceValidationPipe', () => {
       ],
       'iaminvalid',
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
-      10
+      10,
+      false
     )
     await expect(pipe.transform(req)).rejects.toThrow(new HttpException({}, HttpStatus.BAD_REQUEST))
   })

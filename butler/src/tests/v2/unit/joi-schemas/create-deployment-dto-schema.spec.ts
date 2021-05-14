@@ -135,6 +135,11 @@ it('Formats the error to the correct format', () => {
       'status': HttpStatus.BAD_REQUEST,
       'title': '"callbackUrl" is required',
       'source': 'callbackUrl'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': '"overrideCircle" is required',
+      'source': 'overrideCircle'
     }
   ]
   expect(formattedErrors).toEqual(expectedErrors)
