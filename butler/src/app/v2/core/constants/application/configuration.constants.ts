@@ -69,4 +69,6 @@ export const ConfigurationConstants = {
   FETCH_RESOURCE_MILLISECONDS_RETRY_DELAY:  1000,
 
   REQUEST_SIZE_LIMIT: '50mb',
+
+  TLS_SKIP_VERIFY: false,
 }
