@@ -72,7 +72,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             components = buildComponentsDeployRequest(build),
             circle = CircleRequest(deployment.circle.id, deployment.circle.isDefaultCircle()),
             git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
-            override = override
+            overrideCircle = override
         )
     }
 
