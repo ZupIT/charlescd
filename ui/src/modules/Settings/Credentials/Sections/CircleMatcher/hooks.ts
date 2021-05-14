@@ -61,5 +61,16 @@ export const useCircleMatcher = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
+  useEffect(() => {
+    if (responseRemove) {
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting circle matcher',
+          status: 'success'
+        })
+      );
+    }
+  }, [responseRemove, dispatch]);
+
   return { responseAdd, responseRemove, loadingAdd, save, remove };
 };
