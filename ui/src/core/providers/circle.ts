@@ -147,7 +147,6 @@ export const findAllCirclesWithoutActive = (
 export const findAllCirclesSimple = (
   filter: CircleFilter = initialCircleFilter
 ) => {
-  console.log(filter)
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name,
