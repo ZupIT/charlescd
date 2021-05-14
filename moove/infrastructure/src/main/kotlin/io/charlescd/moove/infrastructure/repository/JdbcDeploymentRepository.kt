@@ -267,7 +267,7 @@ class JdbcDeploymentRepository(
         val baseCountStatement = StringBuilder(
             """
                 SELECT COUNT(*)
-                FROM deployments d
+                FROM deployments
                 WHERE 1 = 1
             """
         )
