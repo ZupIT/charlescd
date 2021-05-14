@@ -65,5 +65,7 @@ enum class MooveErrorCode(val key: String) {
     IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
     DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error"),
     DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED("deployment.configuration.already.registered"),
-    ACTIVE_DEPLOYMENT_NAMESPACE_ERROR("active.deployment.namespace.error")
+    ACTIVE_DEPLOYMENT_NAMESPACE_ERROR("active.deployment.namespace.error"),
+    DUPLICATED_WORKSPACE_NAME_ERROR("duplicated.workspace.name.error"),
+    DUPLICATED_CIRCLE_NAME_ERROR("duplicated.circe.name.error")
 }
