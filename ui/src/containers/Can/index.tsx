@@ -21,10 +21,10 @@ import uniqueId from 'lodash/uniqueId';
 import omit from 'lodash/omit';
 import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
-import { useGlobalState } from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { hasPermission } from 'core/utils/auth';
 import { includes } from 'lodash';
+import { getWorkspace } from 'core/utils/workspace';
 
 interface Props {
   I: Actions;
@@ -45,7 +45,7 @@ const Element = ({
   isDisabled = false,
   allowedRoutes = true
 }: Props) => {
-  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
+  const workspace = getWorkspace();
   const id = uniqueId();
 
   const renderTooltip = () => (
