@@ -60,4 +60,6 @@ export default interface IEnvConfiguration {
   butlerNamespace: string
 
   requestSizeLimit: string
+
+  rejectUnauthorizedTLS: boolean
 }

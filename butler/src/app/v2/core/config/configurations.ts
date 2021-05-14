@@ -63,4 +63,6 @@ export const Configuration: IEnvConfiguration = {
   butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE,
 
   requestSizeLimit: process.env.REQUEST_SIZE_LIMIT || ConfigurationConstants.REQUEST_SIZE_LIMIT,
+
+  rejectUnauthorizedTLS: !(process.env.TLS_SKIP_VERIFY === 'true') || !ConfigurationConstants.TLS_SKIP_VERIFY,
 }

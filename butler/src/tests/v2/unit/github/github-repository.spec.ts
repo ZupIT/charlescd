@@ -23,8 +23,9 @@ import { of, throwError } from 'rxjs'
 import { AxiosResponse } from 'axios'
 
 import { GitHubRepository } from '../../../../app/v2/core/integrations/github/github-repository'
-import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
+import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
+import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 describe('Download resources from github', () => {
   const contents = getStubContents()
@@ -36,8 +37,10 @@ describe('Download resources from github', () => {
 
   const url = 'https://api.github.com/repos/charlescd-fake/helm-chart/contents?ref=master'
 
+  const envConfiguration = { rejectUnauthorizedTLS: true } as IEnvConfiguration
+
   it('Download helm chart recursively from github', async() => {
-    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
@@ -50,7 +53,7 @@ describe('Download resources from github', () => {
   })
 
   it('Download a single file from gibhub', async() => {
-    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
@@ -60,7 +63,7 @@ describe('Download resources from github', () => {
   })
 
   it('Download helm chart recursively from github from feature branch', async() => {
-    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
 
@@ -74,13 +77,14 @@ describe('Download resources from github', () => {
 
   it('Should invoke the github api service with the correct configuration object', async() => {
     const githubToken = 'github-auth-token123'
-    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService, envConfiguration)
     const expectedRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${githubToken}`
       },
-      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT,
+      httpsAgent: expect.anything()
     }
 
     const getSpy = jest.spyOn(httpService, 'get')
@@ -95,7 +99,7 @@ describe('Download resources from github', () => {
       .mockImplementation(() =>
         throwError(errorMessage)
       )
-    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitHubRepository(new ConsoleLoggerService(), httpService, envConfiguration)
     await expect(
       repository.getResource({ url: url, token: 'my-token', resourceName: 'helm-chart' })
     ).rejects.toMatchObject({
