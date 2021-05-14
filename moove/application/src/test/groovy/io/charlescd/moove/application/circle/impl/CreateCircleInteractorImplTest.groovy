@@ -16,7 +16,6 @@
 
 package io.charlescd.moove.application.circle.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.SystemTokenService
 import io.charlescd.moove.application.TestUtils
@@ -24,11 +23,6 @@ import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.circle.CreateCircleInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleRequest
-import io.charlescd.moove.application.circle.request.NodePart
-import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.User
-import io.charlescd.moove.domain.Workspace
-import io.charlescd.moove.domain.WorkspaceStatusEnum
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
@@ -38,8 +32,6 @@ import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 class CreateCircleInteractorImplTest extends Specification {
 
@@ -194,50 +186,6 @@ class CreateCircleInteractorImplTest extends Specification {
         def exception = thrown(BusinessException)
 
         assert exception.message == "workspace.matcher_url.is.missing"
-    }
-
-    private User getDummyUser(String authorId) {
-        new User(
-                authorId,
-                "charles",
-                "charles@zup.com.br",
-                "http://charles.com/dummy_photo.jpg",
-                [],
-                false,
-                LocalDateTime.now()
-        )
-    }
-
-    private Workspace getDummyWorkspace(String workspaceId, User author) {
-        new Workspace(
-                workspaceId,
-                "Charles",
-                author,
-                LocalDateTime.now(),
-                [],
-                WorkspaceStatusEnum.COMPLETE,
-                null,
-                "http://circle-matcher.com",
-                "aa3448d8-4421-4aba-99a9-184bdabe3046",
-                null,
-                null
-        )
-    }
-
-    private Circle getDummyCircle(String circleId, User author, NodePart nodePart, String workspaceId) {
-        new Circle(
-                circleId,
-                "Women",
-                "9d109f66-351b-426d-ad69-a49bbc329914",
-                author, LocalDateTime.now(),
-                MatcherTypeEnum.REGULAR,
-                new ObjectMapper().valueToTree(nodePart),
-                0,
-                null,
-                false,
-                workspaceId,
-                null
-        )
     }
 
 }
