@@ -29,9 +29,10 @@ interface Props {
   form: string;
   setForm: Function;
   data: string;
+  onSave: () => void;
 }
 
-const CircleMatcher = ({ form, setForm, data }: Props) => {
+const CircleMatcher = ({ form, setForm, onSave, data }: Props) => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [isAction, setIsAction] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +88,12 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_CIRCLE_MATCHER) && (
       <Layer action={() => setForm(null)}>
-        <FormCircleMatcher onFinish={() => setForm(null)} />
+        <FormCircleMatcher
+          onFinish={() => {
+            setForm(null);
+            onSave();
+          }}
+        />
       </Layer>
     );
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import isEqual from 'lodash/isEqual';
 import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
@@ -28,10 +28,11 @@ import Notification from 'core/components/Notification';
 interface Props {
   form: string;
   setForm: Function;
+  onSave: () => void;
   data: Configuration;
 }
 
-const SectionRegistry = ({ form, setForm, data }: Props) => {
+const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const isLoading = status === 'pending';
   const [isAction, setIsAction] = useState(true);
@@ -102,7 +103,12 @@ const SectionRegistry = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_REGISTRY) && (
       <Layer action={() => setForm(null)}>
-        <FormRegistry onFinish={() => setForm(null)} />
+        <FormRegistry
+          onFinish={() => {
+            setForm(null);
+            onSave();
+          }}
+        />
       </Layer>
     );
 

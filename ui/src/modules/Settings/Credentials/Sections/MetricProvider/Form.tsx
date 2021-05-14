@@ -100,9 +100,8 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       {map(
         (plugin.inputParameters as PluginDatasource)['configurationInputs'],
         input => (
-          <Styled.Wrapper>
+          <Styled.Wrapper key={input.name}>
             <Styled.Input
-              key={input.name}
               ref={register({ required: input.required })}
               name={`data.${input.name}`}
               label={input.label}
