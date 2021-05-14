@@ -37,6 +37,7 @@ import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
 import org.jetbrains.annotations.NotNull
+import org.junit.Test
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -154,7 +155,7 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
 
         then:
         1 * userRepository.findById(authorId) >> Optional.of(author)
-        1 * workspaceRepository.find(workspaceId) >> Optional.of(dummyWorkspaceWithoutMatcher)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(TestUtils.workspaceWithoutMatcher)
         def exception = thrown(BusinessException)
 
         assert exception.message == "workspace.matcher_url.is.missing"
@@ -208,19 +209,5 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
         )
     }
 
-    private Workspace getDummyWorkspaceWithoutMatcher() {
-        new Workspace(
-                TestUtils.workspaceId,
-                "Charles",
-                TestUtils.user,
-                LocalDateTime.now(),
-                [],
-                WorkspaceStatusEnum.COMPLETE,
-                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
-                null,
-                "aa3448d8-4421-4aba-99a9-184bdabe3046",
-                "cc3448d8-4421-4aba-99a9-184bdabeq233",
-                null
-        )
-    }
+
 }

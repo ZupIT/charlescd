@@ -179,7 +179,7 @@ class CreateCircleInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
-        def workspaceWithoutMatcher =  dummyWorkspaceWithoutMatcher
+        def workspaceWithoutMatcher =  TestUtils.workspaceWithoutMatcher
 
         def request = new CreateCircleRequest("Women", TestUtils.nodePart)
 
@@ -239,19 +239,5 @@ class CreateCircleInteractorImplTest extends Specification {
                 null
         )
     }
-    private Workspace getDummyWorkspaceWithoutMatcher() {
-        new Workspace(
-                TestUtils.workspaceId,
-                "Charles",
-                TestUtils.user,
-                LocalDateTime.now(),
-                [],
-                WorkspaceStatusEnum.COMPLETE,
-                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
-                null,
-                "aa3448d8-4421-4aba-99a9-184bdabe3046",
-                "cc3448d8-4421-4aba-99a9-184bdabeq233",
-                null
-        )
-    }
+
 }
