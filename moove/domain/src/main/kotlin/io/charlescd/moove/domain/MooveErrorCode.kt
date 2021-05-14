@@ -41,6 +41,7 @@ enum class MooveErrorCode(val key: String) {
     MOVE_BUILD_INVALID_COLUMN("move.build.invalid.column"),
     FORBIDDEN("forbidden"),
     WORKSPACE_GIT_CONFIGURATION_IS_MISSING("workspace.git.configuration.is.missing"),
+    WORKSPACE_MATCHER_URL_IS_MISSING("workspace.matcher_url.is.missing"),
     WORKSPACE_DOCKER_REGISTRY_CONFIGURATION_IS_MISSING("workspace.docker.registry.configuration.is.missing"),
     WORKSPACE_DEPLOYMENT_CONFIGURATION_IS_MISSING("workspace.deployment.configuration.is.missing"),
     SOME_OF_INFORMED_FEATURES_DOES_NOT_EXIST_OR_ARE_NOT_READY_TO_GO("some.of.informed.features.does.not.exist.or.are.not.ready.to.go"),
@@ -65,5 +66,7 @@ enum class MooveErrorCode(val key: String) {
     IDM_UNEXPECTED_ERROR("idm.unexpected.error"),
     DUPLICATED_COMPONENT_NAME_ERROR("duplicated.component.name.error"),
     DEPLOYMENT_CONFIGURATION_ALREADY_REGISTERED("deployment.configuration.already.registered"),
-    ACTIVE_DEPLOYMENT_NAMESPACE_ERROR("active.deployment.namespace.error")
+    ACTIVE_DEPLOYMENT_NAMESPACE_ERROR("active.deployment.namespace.error"),
+    DUPLICATED_WORKSPACE_NAME_ERROR("duplicated.workspace.name.error"),
+    DUPLICATED_CIRCLE_NAME_ERROR("duplicated.circe.name.error")
 }

@@ -29,6 +29,9 @@ import javax.inject.Named
 class CircleService(private val circleRepository: CircleRepository) {
 
     fun save(circle: Circle): Circle {
+        if (this.circleRepository.existsByNameAndWorkspaceId(circle.name, circle.workspaceId)) {
+            throw BusinessException.of(MooveErrorCode.DUPLICATED_CIRCLE_NAME_ERROR)
+        }
         return this.circleRepository.save(circle)
     }
 

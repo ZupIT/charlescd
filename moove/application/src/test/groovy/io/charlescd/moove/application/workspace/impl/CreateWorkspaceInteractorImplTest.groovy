@@ -24,9 +24,10 @@ import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.CreateWorkspaceInteractor
 import io.charlescd.moove.application.workspace.request.CreateWorkspaceRequest
 import io.charlescd.moove.domain.Circle
-import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Workspace
 import io.charlescd.moove.domain.WorkspaceStatusEnum
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.SystemTokenRepository
@@ -72,6 +73,27 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         ex.resourceName == "user"
     }
 
+    def 'when workspace name exist, should throw exception'() {
+        given:
+        def authorization = TestUtils.authorization
+        def author = TestUtils.user
+        def expectedWorkspace = TestUtils.workspace
+        def createWorkspaceRequest = new CreateWorkspaceRequest(expectedWorkspace.name)
+
+        when:
+        createWorkspaceInteractor.execute(createWorkspaceRequest, authorization, null)
+
+        then:
+        1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
+        1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.existsByName(expectedWorkspace.name) >> true
+
+
+        def ex = thrown(BusinessException)
+        ex.errorCode == MooveErrorCode.DUPLICATED_WORKSPACE_NAME_ERROR
+
+    }
+
     def 'should create workspace successfully using authorization'() {
         given:
         def authorization = TestUtils.authorization
@@ -84,6 +106,7 @@ class CreateWorkspaceInteractorImplTest extends Specification {
         then:
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
+        1 * workspaceRepository.existsByName(expectedWorkspace.name) >> false
         1 * workspaceRepository.save(_) >> { arguments ->
             def workspace = arguments[0]
             assert workspace instanceof Workspace
