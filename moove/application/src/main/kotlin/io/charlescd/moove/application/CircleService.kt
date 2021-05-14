@@ -69,6 +69,15 @@ class CircleService(private val circleRepository: CircleRepository) {
         )
     }
 
+    fun find(name: String?, except: String?, workspaceId: String, pageRequest: PageRequest): Page<SimpleCircle> {
+        return this.circleRepository.find(
+            name,
+            except,
+            workspaceId,
+            pageRequest
+        )
+    }
+
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle> {
         return this.circleRepository.findDefaultByWorkspaceId(workspaceId)
     }

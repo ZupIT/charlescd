@@ -180,9 +180,9 @@ class JdbcWorkspaceRepository(
         return parameters
     }
 
-    private fun createParametersArray(name: String?): Array<Any> {
+    private fun createParametersArray(param: String?): Array<Any> {
         val parameters = ArrayList<Any>()
-        name?.let { parameters.add("%$name%") }
+        param?.let { parameters.add("%$param%") }
         return parameters.toTypedArray()
     }
 

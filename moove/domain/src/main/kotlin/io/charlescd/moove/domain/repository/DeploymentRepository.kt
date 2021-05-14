@@ -66,4 +66,6 @@ interface DeploymentRepository {
     fun countGroupedByStatus(workspaceId: String, filters: DeploymentHistoryFilter): List<DeploymentCount>
 
     fun findActiveByCircleIdAndWorkspaceId(circleId: String, workspaceId: String): List<Deployment>
+
+    fun existActiveListByWorkspaceId(workspaceId: String): Boolean
 }

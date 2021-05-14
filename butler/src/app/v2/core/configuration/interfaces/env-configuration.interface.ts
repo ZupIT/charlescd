@@ -58,4 +58,6 @@ export default interface IEnvConfiguration {
   butlerUrl: string
 
   butlerNamespace: string
+
+  requestSizeLimit: string
 }

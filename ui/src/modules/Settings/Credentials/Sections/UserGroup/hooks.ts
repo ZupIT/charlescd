@@ -113,6 +113,17 @@ export const useUserGroup = (): FetchProps => {
     }
   }, [errorRemove, dispatch]);
 
+  useEffect(() => {
+    if (responseRemove) {
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting user group',
+          status: 'success'
+        })
+      );
+    }
+  }, [responseRemove, dispatch]);
+
   return {
     getAll,
     findUserGroupByName,
