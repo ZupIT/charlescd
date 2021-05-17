@@ -28,11 +28,11 @@ import Notification from 'core/components/Notification';
 interface Props {
   form: string;
   setForm: Function;
-  onSave: () => void;
+  onChange: () => void;
   data: Configuration;
 }
 
-const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
+const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const isLoading = status === 'pending';
   const [isAction, setIsAction] = useState(true);
@@ -106,7 +106,7 @@ const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
         <FormRegistry
           onFinish={() => {
             setForm(null);
-            onSave();
+            onChange();
           }}
         />
       </Layer>

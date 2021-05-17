@@ -17,9 +17,35 @@
 import { useCallback, useEffect } from 'react';
 import { configPath } from 'core/providers/circleMatcher';
 import { addConfig, delConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
+
+type DeleteCircleMatcher = {
+  deleteCircleMatcher: () => Promise<Response>;
+}
+export const useDeleteCircleMatcher = (): DeleteCircleMatcher => {
+  const deleteCM = useFetchData<Response>(delConfig);
+  const dispatch = useDispatch();
+
+  const deleteCircleMatcher = async () => {
+    try {
+      return await deleteCM(configPath);
+    } catch (e) {
+      dispatch(
+        toogleNotification({
+          text: `[${e.status}] Circle Matcher could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }
+
+  return {
+    deleteCircleMatcher
+  }
+}
+
 
 export const useCircleMatcher = (): FetchProps => {
   const dispatch = useDispatch();
