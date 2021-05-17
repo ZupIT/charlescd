@@ -31,20 +31,19 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
+import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
   onChangeWorkspace: () => void;
-  workspace: Workspace;
 }
 
 type FormState = {
   name: string;
 }
 
-const Credentials = ({ workspace, onChangeWorkspace, onClickHelp }: Props) => {
-  console.log('workspace:', workspace)
+const Credentials = ({ onChangeWorkspace, onClickHelp }: Props) => {
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const { updateWorkspaceName } = useWorkspaceUpdateName();
@@ -124,7 +123,7 @@ const Credentials = ({ workspace, onChangeWorkspace, onClickHelp }: Props) => {
       <Section.Registry
         form={form}
         setForm={setForm}
-        onSave={onChangeWorkspace}
+        onChange={onChangeWorkspace}
         data={workspace?.registryConfiguration}
       />
       <Section.DeploymentConfiguration
@@ -137,7 +136,7 @@ const Credentials = ({ workspace, onChangeWorkspace, onClickHelp }: Props) => {
       <Section.CircleMatcher
         form={form}
         setForm={setForm}
-        onSave={onChangeWorkspace}
+        onChange={onChangeWorkspace}
         data={workspace.circleMatcherUrl}
       />
       <Section.MetricProvider

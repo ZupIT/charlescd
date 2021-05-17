@@ -20,7 +20,7 @@ import map from 'lodash/map';
 import Card from 'core/components/Card';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useDatasource } from './hooks';
+import { useDeleteDatasource } from './hooks';
 import { FORM_METRIC_PROVIDER } from './constants';
 import { Datasource } from './interfaces';
 import FormMetricProvider from './Form';
@@ -34,10 +34,10 @@ interface Props {
 
 const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
   const [datasources, setDatasource] = useState(data);
-  const { remove, loadingRemove } = useDatasource();
+  const { removeDatasource, status } = useDeleteDatasource();
 
   const handleClose = async (id: string) => {
-    await remove(id);
+    await removeDatasource(id);
     getNewDatasources();
   };
 
@@ -66,7 +66,7 @@ const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
           key={datasource.id}
           icon="metrics"
           description={datasource.name}
-          isLoading={loadingRemove}
+          isLoading={status === "pending"}
           onClose={() => handleClose(datasource.id)}
         />
       ))}

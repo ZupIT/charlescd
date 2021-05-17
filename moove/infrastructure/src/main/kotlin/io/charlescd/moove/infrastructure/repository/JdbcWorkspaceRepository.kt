@@ -180,7 +180,7 @@ class JdbcWorkspaceRepository(
         return parameters
     }
 
-    private fun createParametersArray(param: String?): Array<Any> {
+    private fun createParametersArrayILikeQuery(param: String?): Array<Any> {
         val parameters = ArrayList<Any>()
         param?.let { parameters.add("%$param%") }
         return parameters.toTypedArray()
@@ -197,7 +197,7 @@ class JdbcWorkspaceRepository(
         name?.let { statement.appendln("AND workspaces.name ILIKE ?") }
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name)
+            createParametersArrayILikeQuery(name)
         ) { resultSet, _ ->
             resultSet.getInt(1)
         }

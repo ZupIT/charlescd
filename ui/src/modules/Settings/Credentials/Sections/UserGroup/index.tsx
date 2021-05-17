@@ -23,7 +23,7 @@ import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { getWorkspaceId } from 'core/utils/workspace';
-import { useUserGroup } from './hooks';
+import { useDeleteUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
 import Modal from 'core/components/Modal';
@@ -43,7 +43,7 @@ interface Props {
 
 const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const [userGroups, setUserGroups] = useState(data);
-  const { remove, loadingRemove } = useUserGroup();
+  const { remove, status } = useDeleteUserGroup();
   const [toggleModal, setToggleModal] = useState<boolean>(false);
   const [currentUserGroup, setCurrentUserGroup] = useState(null);
   const history = useHistory();
@@ -110,7 +110,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
-            isLoading={loadingRemove}
+            isLoading={status === "pending"}
             onClose={() => handleClose(userGroup)}
           />
         ))}

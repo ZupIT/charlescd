@@ -79,6 +79,8 @@ env:
     value: "{{ .RangeContext.limits.timeoutResourceVerification}}"
   - name: LIMIT_REQUESTS_BY_SECOND
     value: "{{ .RangeContext.limits.requestBySecond}}"
+  - name: SKIP_GIT_HTTPS_VALIDATION
+    value: {{ .RangeContext.skipGitSSL | default false | quote }}
 {{- end -}}
 
 
@@ -161,6 +163,8 @@ env:
   value: "{{ .RangeContext.internalIdmEnabled }}"
 - name: ORIGIN_HOSTS
   value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,{{ .RangeContext.allowedOriginHost }}"
+- name: GITLAB_IGNORE_CRETIFICATE_ERRORS
+  value: {{ .RangeContext.gitlabIgnoreSSL | default false | quote }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:

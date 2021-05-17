@@ -20,7 +20,7 @@ import Card from 'core/components/Card';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import { useRegistry, useRegistryValidateConnection } from './hooks';
+import { useDeleteRegistry, useRegistryValidateConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
@@ -28,25 +28,29 @@ import Notification from 'core/components/Notification';
 interface Props {
   form: string;
   setForm: Function;
-  onSave: () => void;
+  onChange: () => void;
   data: Configuration;
 }
 
-const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
+const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
   const [status, setStatus] = useState<FetchStatuses>('idle');
   const isLoading = status === 'pending';
   const [isAction, setIsAction] = useState(true);
   const [isDisabled, setIsDisabled] = useState(true);
-  const { remove, responseRemove, loadingRemove } = useRegistry();
+  const { deleteRegistry, status: statusDeleteRegistry } = useDeleteRegistry();
   const {
     validateConnectionRegistry,
     response,
     error
   } = useRegistryValidateConnection();
 
-  useEffect(() => {
-    setIsAction(true);
-  }, [responseRemove]);
+  const onRemoveRegistry = async () => {
+    try {
+      await deleteRegistry();
+      setIsAction(true);
+      onChange();
+    } catch (e) {}
+  }
 
   useEffect(() => {
     if (response) {
@@ -84,14 +88,14 @@ const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
       action={() => setForm(FORM_REGISTRY)}
       type="Required"
     >
-      {data && !responseRemove && (
+      {data && (
         <Fragment>
           <Card.Config
             icon="server"
             description={data.name}
-            isLoading={loadingRemove || isLoading}
+            isLoading={statusDeleteRegistry === "pending" || isLoading}
             isDisabled={isDisabled}
-            onClose={() => remove(data?.id)}
+            onClose={() => onRemoveRegistry()}
           >
             {error && renderError()}
           </Card.Config>
@@ -106,7 +110,7 @@ const SectionRegistry = ({ form, setForm, onSave, data }: Props) => {
         <FormRegistry
           onFinish={() => {
             setForm(null);
-            onSave();
+            onChange();
           }}
         />
       </Layer>
