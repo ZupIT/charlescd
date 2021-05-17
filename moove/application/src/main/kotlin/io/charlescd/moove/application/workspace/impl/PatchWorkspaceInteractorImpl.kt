@@ -143,7 +143,8 @@ open class PatchWorkspaceInteractorImpl(
     }
 
     private fun isDeploymentConfigurationDelete(patch: PatchOperation): Boolean {
-        return patch.op == OpCodeEnum.REMOVE && patch.path == DEPLOYMENT_CONFIGURATION_PATH
+        return (patch.op == OpCodeEnum.REMOVE || patch.op == OpCodeEnum.REPLACE) 
+                && patch.path == DEPLOYMENT_CONFIGURATION_PATH
     }
 
     private fun hasActiveDeploymentInWorkspace(workspaceId: String): Boolean {

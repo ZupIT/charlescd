@@ -174,6 +174,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
         1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> newDeploymentConfig
         0 * metricConfigurationRepository.exists(_, _)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
         1 * workspaceRepository.update(_) >> { arguments ->
             def workspaceUpdated = arguments[0]
             workspaceUpdated instanceof Workspace
@@ -206,7 +207,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         0 * gitConfigurationRepository.exists(_, _)
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
         1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId)
-        0 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
         0 * workspaceRepository.update(_)
 
         def ex = thrown(NotFoundException)
@@ -542,6 +543,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
     }
 
+
     def 'when removing deployment configuration and have active deployment, should throw exception'() {
         given:
         def workspace = TestUtils.workspace
@@ -553,6 +555,38 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         then:
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> true
+        0 * workspaceRepository.update(_)
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
+    }
+
+    def 'when replacing deployment configuration and dont have active deployment, should patch information successfully'() {
+        given:
+        def workspace = TestUtils.workspace
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
+        1 * workspaceRepository.update(_)
+
+    }
+
+    def 'when replacing deployment configuration and have active deployment, should throw exception'() {
+        given:
+        def workspace = TestUtils.workspace
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> true
+        0 * workspaceRepository.update(_)
         def exception = thrown(BusinessException)
         exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
     }
