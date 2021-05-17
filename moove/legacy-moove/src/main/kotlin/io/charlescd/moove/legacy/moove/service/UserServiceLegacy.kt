@@ -107,7 +107,11 @@ class UserServiceLegacy(
     }
 
     private fun deleteUser(user: User): User =
-        user.also { userRepository.delete(it) }
+        user.also {
+            userRepository.deleteFromUserGroupById(user.id)
+        }.also {
+            userRepository.delete(it)
+        }
 
     private fun toRepresentation(user: User): UserRepresentation = user.toRepresentation()
 }
