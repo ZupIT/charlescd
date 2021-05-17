@@ -64,9 +64,9 @@ const CardConfig = ({
   const headerAction = canClose && onClose && (
     <Icon
       name={isLoading ? 'loading' : 'cancel'}
-      color="light"
+      color={tooltip ? 'dark' : 'light'}
       size="15px"
-      onClick={handleClose}
+      onClick={!tooltip && handleClose}
       data-tip={dataTip}
       data-for={dataFor}
     />
