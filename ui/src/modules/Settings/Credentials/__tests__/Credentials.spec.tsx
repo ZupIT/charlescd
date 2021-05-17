@@ -86,7 +86,7 @@ test('should render Credentials items', async () => {
     JSON.stringify([{ name: 'workspace', nickname: 'action', id: '1' }])
   );
 
-  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} />);
+  render(<Credentials workspace={{ id: '1', name: 'workspace', createdAt: '' }} onChangeWorkspace={jest.fn()} />);
 
   await waitFor(() => expect(screen.getByTestId('contentIcon-workspace')).toBeInTheDocument());
   expect(screen.getByText('Registry')).toBeInTheDocument();
