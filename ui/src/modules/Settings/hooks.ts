@@ -39,7 +39,6 @@ export const useWorkspace = (): { getWorkspace: Function, data: WorkspasceRespon
         const workspace = await getWorkspaceById({ id });
         setData({ workspace, status: 'resolved' });
         dispatch(loadedWorkspaceAction(workspace));
-        console.log('getWorkspace', workspace);
 
       } catch (error) {
         if (error.status !== 403) {

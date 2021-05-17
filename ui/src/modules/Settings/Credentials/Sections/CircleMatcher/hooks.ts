@@ -30,7 +30,14 @@ export const useDeleteCircleMatcher = (): DeleteCircleMatcher => {
 
   const deleteCircleMatcher = async () => {
     try {
-      return await deleteCM(configPath);
+      const res = await deleteCM(configPath);
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting circle matcher',
+          status: 'success'
+        })
+      );
+      return res;
     } catch (e) {
       dispatch(
         toogleNotification({

@@ -24,7 +24,7 @@ import { ability, Actions, Subjects } from 'core/utils/abilities';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { hasPermission } from 'core/utils/auth';
 import { includes } from 'lodash';
-import { getWorkspace } from 'core/utils/workspace';
+import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
   I: Actions;
@@ -45,7 +45,7 @@ const Element = ({
   isDisabled = false,
   allowedRoutes = true
 }: Props) => {
-  const workspace = getWorkspace();
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = uniqueId();
 
   const renderTooltip = () => (
