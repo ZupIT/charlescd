@@ -58,6 +58,9 @@ const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) 
           icon="cd-configuration"
           description={data.name}
           isLoading={status === 'pending'}
+          tooltip="my tooltip"
+          dataTip={true}
+          dataFor="deploymentDelete"
           onClose={() => remove(data.id)}
         />
       )}

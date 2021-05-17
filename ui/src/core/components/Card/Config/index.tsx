@@ -19,6 +19,7 @@ import Card from 'core/components/Card';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
+import ReactTooltip from 'react-tooltip';
 
 export interface Props {
   id?: string;
@@ -32,6 +33,9 @@ export interface Props {
   canClose?: boolean;
   children?: ReactNode;
   className?: string;
+  tooltip?: string;
+  dataTip?: boolean;
+  dataFor?: string;
 }
 
 const CardConfig = ({
@@ -46,6 +50,9 @@ const CardConfig = ({
   className,
   isLoading,
   isDisabled,
+  tooltip,
+  dataTip,
+  dataFor
 }: Props) => {
   const headerIcon = <Icon name={icon} color="light" size="15px" />;
 
@@ -60,11 +67,24 @@ const CardConfig = ({
       color="light"
       size="15px"
       onClick={handleClose}
+      data-tip={dataTip}
+      data-for={dataFor}
     />
   );
 
-  const renderHeader = () => (
-    <Card.Header icon={headerIcon} action={actions || headerAction} />
+  const renderHeader = () => {
+    return (
+      <>
+        <Card.Header icon={headerIcon} action={actions || headerAction} />
+        {tooltip && renderTooltip()}
+      </>
+    );
+  };
+
+  const renderTooltip = () => (
+    <ReactTooltip id={dataFor} place="right" effect="solid">
+      <Text.h6 color="dark">{tooltip}</Text.h6>
+    </ReactTooltip>
   );
 
   const renderBody = () => (
