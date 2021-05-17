@@ -50,7 +50,7 @@ open class PatchWorkspaceInteractorImpl(
 
         val workspace = workspaceService.find(workspaceId)
 
-        checkIfDeploymentDeploymentConfigurationCanBeUpdated(workspaceId, request.patches)
+        checkIfDeploymentConfigurationCanBeUpdated(workspaceId, request.patches)
 
         val updatedWorkspace = request.applyPatch(workspace)
 
@@ -134,7 +134,7 @@ open class PatchWorkspaceInteractorImpl(
         return configuration != updatedInformation && updatedInformation != null
     }
 
-    private fun checkIfDeploymentDeploymentConfigurationCanBeUpdated(workspaceId: String, patches: List<PatchOperation>) {
+    private fun checkIfDeploymentConfigurationCanBeUpdated(workspaceId: String, patches: List<PatchOperation>) {
         patches.forEach { patch ->
             if (isDeploymentConfigurationDelete(patch) && hasActiveDeploymentInWorkspace(workspaceId)) {
                 throw BusinessException.of(MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR)
