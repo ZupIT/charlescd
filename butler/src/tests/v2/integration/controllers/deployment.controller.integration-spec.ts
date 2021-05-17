@@ -236,7 +236,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const expectedError = {
       errors: [
         {
-          title: 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character',
+          title: 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
           meta: {
             component: 'butler',
             timestamp: expect.anything()

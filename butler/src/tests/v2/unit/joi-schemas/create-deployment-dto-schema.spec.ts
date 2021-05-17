@@ -207,22 +207,22 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
   const expectedErrors  = [
     {
       'status': HttpStatus.BAD_REQUEST,
-      'title': 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character',
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
       'source': 'components/0'
     },
     {
       'status': HttpStatus.BAD_REQUEST,
-      'title': 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character',
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
       'source': 'components/1'
     },
     {
       'status': HttpStatus.BAD_REQUEST,
-      'title': 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character',
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
       'source': 'components/2'
     },
     {
       'status': HttpStatus.BAD_REQUEST,
-      'title': 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character',
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
       'source': 'components/3'
     }
   ]

@@ -151,7 +151,7 @@ export class CreateDeploymentValidator {
         {
           'image.length': 'Sum of lengths of componentName and buildImageTag cant be greater than 63',
           'imageTag.invalid': 'The tag suplied on the buildImageUrl must match the buildImageTag',
-          'imageTag.dns.format': 'tag must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character'
+          'imageTag.dns.format': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character'
         }
       )
   }
