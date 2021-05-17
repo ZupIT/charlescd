@@ -37,13 +37,13 @@ class PatchWorkspaceInteractorImplTest extends Specification {
     private UserRepository userRepository = Mock(UserRepository)
     private GitConfigurationRepository gitConfigurationRepository = Mock(GitConfigurationRepository)
     private WorkspaceRepository workspaceRepository = Mock(WorkspaceRepository)
-    private DeployService deployService = Mock(DeployService)
     private VillagerService villagerService = Mock(VillagerService)
     private CircleMatcherService circleMatcherService = Mock(CircleMatcherService)
     private CircleRepository circleRepository = Mock(CircleRepository)
     private MetricConfigurationRepository metricConfigurationRepository = Mock(MetricConfigurationRepository)
     private DeploymentConfigurationRepository deploymentConfigurationRepository = Mock(DeploymentConfigurationRepository)
     private CompassApi compassApi = Mock(CompassApi)
+    private DeploymentRepository deploymentRepository = Mock(DeploymentRepository)
 
     def setup() {
         interactor = new PatchWorkspaceInteractorImpl(
@@ -53,7 +53,8 @@ class PatchWorkspaceInteractorImplTest extends Specification {
                 new MetricConfigurationService(metricConfigurationRepository, compassApi),
                 circleMatcherService,
                 new CircleService(circleRepository),
-                new DeploymentConfigurationService(deploymentConfigurationRepository)
+                new DeploymentConfigurationService(deploymentConfigurationRepository),
+                new DeploymentService(deploymentRepository)
         )
     }
 
@@ -168,6 +169,7 @@ class PatchWorkspaceInteractorImplTest extends Specification {
 
         then:
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        0 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
         0 * gitConfigurationRepository.exists(_, _)
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
         1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> newDeploymentConfig
@@ -203,7 +205,8 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
         0 * gitConfigurationRepository.exists(_, _)
         0 * villagerService.checkIfRegistryConfigurationExists(_, _)
-        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> false
+        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId)
+        0 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
         0 * workspaceRepository.update(_)
 
         def ex = thrown(NotFoundException)
@@ -524,9 +527,39 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         }
     }
 
+    def 'when removing deployment configuration and dont have active deployment, should patch information successfully'() {
+        given:
+        def workspace = TestUtils.workspace
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
+        1 * workspaceRepository.update(_)
+
+    }
+
+    def 'when removing deployment configuration and have active deployment, should throw exception'() {
+        given:
+        def workspace = TestUtils.workspace
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> true
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
+    }
+
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
     }
 
 }

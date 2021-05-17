@@ -36,13 +36,22 @@ open class PatchWorkspaceInteractorImpl(
     private val metricConfigurationService: MetricConfigurationService,
     private val circleMatcherService: CircleMatcherService,
     private val circleService: CircleService,
-    private val deploymentConfigurationService: DeploymentConfigurationService
+    private val deploymentConfigurationService: DeploymentConfigurationService,
+    private val deploymentService: DeploymentService
+
 ) : PatchWorkspaceInteractor {
+
+    companion object {
+        const val DEPLOYMENT_CONFIGURATION_PATH = "/deploymentConfigurationId"
+    }
 
     override fun execute(workspaceId: String, request: PatchWorkspaceRequest) {
         request.validate()
 
         val workspace = workspaceService.find(workspaceId)
+
+        checkIfDeploymentDeploymentConfigurationCanBeUpdated(workspaceId, request.patches)
+
         val updatedWorkspace = request.applyPatch(workspace)
 
         checkIfNewConfigurationsExist(workspaceId, workspace, updatedWorkspace)
@@ -123,5 +132,21 @@ open class PatchWorkspaceInteractorImpl(
 
     private fun shouldConfigurationBeChecked(configuration: String?, updatedInformation: String?): Boolean {
         return configuration != updatedInformation && updatedInformation != null
+    }
+
+    private fun checkIfDeploymentDeploymentConfigurationCanBeUpdated(workspaceId: String, patches: List<PatchOperation>) {
+        patches.forEach { patch ->
+            if(isDeploymentConfigurationDelete(patch) && hasActiveDeploymentInWorkspace(workspaceId)) {
+                throw BusinessException.of(MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR)
+            }
+        }
+    }
+
+    private fun isDeploymentConfigurationDelete(patch: PatchOperation): Boolean {
+        return patch.op == OpCodeEnum.REMOVE && patch.path == DEPLOYMENT_CONFIGURATION_PATH
+    }
+
+    private fun hasActiveDeploymentInWorkspace(workspaceId: String): Boolean {
+        return deploymentService.existsActiveListByWorkspace(workspaceId)
     }
 }
