@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { FetchMock } from 'jest-fetch-mock/types';
-import { render, screen, waitFor, act } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import SectionRegistry from '../';
 
@@ -29,7 +29,7 @@ test('should render form', async () => {
   const setForm = jest.fn();
   const data = {"id": "1234", "name": "charles-cd" };
 
-  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  render(<SectionRegistry onChange={jest.fn} form={form} setForm={setForm} data={data} />);
 
   const textElement = await screen.findByText('Add Registry');
   expect(textElement).toBeInTheDocument();
@@ -46,7 +46,7 @@ test('should render registry with error', async () => {
   const setForm = jest.fn();
   const data = {"id": "1234", "name": "charles-cd" };
 
-  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  render(<SectionRegistry onChange={jest.fn}  form={form} setForm={setForm} data={data} />);
 
   const errorText = await screen.findByText('invalid registry');
   expect(errorText).toBeInTheDocument();
@@ -59,7 +59,7 @@ test('should render registry successful', async () => {
   const setForm = jest.fn();
   const data = {"id": "1234", "name": "charles-cd" };
 
-  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  render(<SectionRegistry onChange={jest.fn} form={form} setForm={setForm} data={data} />);
 
   const errorText = screen.queryByTestId('log-error');
   expect(errorText).not.toBeInTheDocument();
@@ -72,12 +72,11 @@ test('should remove/cancel registry', async () => {
   const setForm = jest.fn();
   const data = {"id": "1234", "name": "charles-cd" };
 
-  render(<SectionRegistry form={form} setForm={setForm} data={data} />);
+  render(<SectionRegistry onChange={jest.fn} form={form} setForm={setForm} data={data} />);
 
   let cancelIcon = await screen.findByTestId('icon-cancel');
   expect(cancelIcon).toBeInTheDocument();
   userEvent.click(cancelIcon);
 
-  cancelIcon = await screen.findByTestId('icon-cancel');
-  expect(cancelIcon).not.toBeInTheDocument();
+  await waitFor(() => expect(screen.queryByTestId('icon-cancel')).not.toBeInTheDocument());
 });
