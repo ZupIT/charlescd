@@ -83,7 +83,9 @@ const CardConfig = ({
 
   const renderTooltip = () => (
     <ReactTooltip id={dataFor} place="right" effect="solid">
-      <Text.h6 color="dark">{tooltip}</Text.h6>
+      <Styled.Tooltip color='dark'>
+        {tooltip}
+      </Styled.Tooltip>
     </ReactTooltip>
   );
 

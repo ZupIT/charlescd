@@ -17,6 +17,7 @@
 import styled, { css } from 'styled-components';
 import CardBase from 'core/components/Card/Base';
 import CardBody from 'core/components/Card/Body';
+import Text from 'core/components/Text';
 
 type StyledProps = {
   isDisabled?: boolean;
@@ -38,7 +39,12 @@ const Body = styled(CardBody)`
   }
 `;
 
+const Tooltip = styled(Text.h6)`
+  width: 150px;
+`;
+
 export default {
   CardConfig,
-  Body
+  Body,
+  Tooltip
 };
