@@ -29,11 +29,13 @@ interface Props {
   setForm: Function;
   data: Configuration;
   onSave: () => void;
+  hasActiveDeployment: boolean;
 }
 
-const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) => {
+const SectionDeploymentConfiguration = ({ form, setForm, onSave, data, hasActiveDeployment }: Props) => {
   const [isAction, setIsAction] = useState(true);
   const { status, remove } = useCDConfiguration();
+  const tooltipText = "It is not possible to delete or edit the Deployment Configuration for this worskpace. There are active deployments for the current namespace.";
 
   useEffect(() => {
     if (status === 'resolved') {
@@ -58,7 +60,7 @@ const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) 
           icon="cd-configuration"
           description={data.name}
           isLoading={status === 'pending'}
-          tooltip="It is not possible to delete or edit the Deployment Configuration for this worskpace. There are active deployments for the current namespace."
+          tooltip={hasActiveDeployment && tooltipText}
           dataTip={true}
           dataFor="deploymentDelete"
           onClose={() => remove(data.id)}

@@ -31,6 +31,7 @@ export interface Workspace {
   registryConfiguration?: Configuration;
   permissions?: string[];
   webhookConfiguration?: Webhook[];
+  hasActiveDeployment?: boolean;
 }
 
 export interface Configuration {

@@ -44,6 +44,7 @@ type FormState = {
 }
 
 const Credentials = ({ workspace, onChangeWorkspace, onClickHelp }: Props) => {
+  console.log('workspace:', workspace)
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const { updateWorkspaceName } = useWorkspaceUpdateName();
@@ -131,6 +132,7 @@ const Credentials = ({ workspace, onChangeWorkspace, onClickHelp }: Props) => {
         setForm={setForm}
         onSave={onChangeWorkspace}
         data={workspace.deploymentConfiguration}
+        hasActiveDeployment={workspace?.hasActiveDeployment}
       />
       <Section.CircleMatcher
         form={form}
