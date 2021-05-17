@@ -28,11 +28,52 @@ import {
   ResponseError,
   useFetchData,
   useFetchStatus,
-  FetchStatus
+  FetchStatus,
+  FetchStatuses
 } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { Registry, Response } from './interfaces';
+
+
+type DeleteRegistry = {
+  deleteRegistry: () => Promise<Response>;
+  status: FetchStatuses;
+}
+export const useDeleteRegistry = (): DeleteRegistry => {
+  const delRegistry = useFetchData(delConfig);
+  const [status, setStatus] = useState<FetchStatuses>("idle");
+  const dispatch = useDispatch();
+
+  const deleteRegistry = async () => {
+    try {
+      setStatus("pending");
+      const res = await delRegistry(configPath);
+      setStatus("resolved");
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting registry',
+          status: 'success'
+        })
+      );
+
+      return res;
+    } catch (e) {
+      setStatus("rejected");
+      dispatch(
+        toogleNotification({
+          text: `[${e.status}] Registry could not be removed.`,
+          status: 'error'
+        })
+      ); 
+    }
+  }
+
+  return {
+    deleteRegistry,
+    status
+  }
+};
 
 export const useRegistry = (): FetchProps => {
   const dispatch = useDispatch();

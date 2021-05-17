@@ -71,7 +71,6 @@ const Settings = () => {
             path={routes.credentials}
             render={() => (
               <Credentials
-                workspace={workspace}
                 onChangeWorkspace={onChangeWorkspace}
                 onClickHelp={() => setShowWizard(true)}
               />

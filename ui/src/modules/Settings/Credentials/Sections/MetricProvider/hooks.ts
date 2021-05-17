@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { useFetch, FetchProps } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, useFetchData, FetchStatuses } from 'core/providers/base/hooks';
 import { useDispatch } from 'core/state/hooks';
 import { Datasource, Plugin, Response } from './interfaces';
 import { toogleNotification } from 'core/components/Notification/state/actions';
@@ -24,8 +24,47 @@ import {
   getAllDatasources,
   createDatasource as create,
   deleteDatasource,
-  getAllPlugins
+  getAllPlugins,
 } from 'core/providers/datasources';
+
+type DeleteDatasource = {
+  removeDatasource: (id: string) => Promise<Response>;
+  status: FetchStatuses;
+}
+
+export const useDeleteDatasource = (): DeleteDatasource => {
+  const delDatasource = useFetchData<Response>(deleteDatasource);
+  const [status, setStatus] = useState<FetchStatuses>("idle");
+  const dispatch = useDispatch();
+
+  const removeDatasource = async (id: string) => {
+    try {
+      setStatus("pending");
+      const res = await delDatasource(id);
+      setStatus("resolved");
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting Datasources',
+          status: 'success'
+        })
+      );
+      return res;
+    } catch (e) {
+      setStatus("rejected");
+      dispatch(
+        toogleNotification({
+          text: `[${e.status}] Datasource could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }
+
+  return {
+    removeDatasource,
+    status
+  }
+}
 
 export const useDatasource = (): FetchProps => {
   const dispatch = useDispatch();
