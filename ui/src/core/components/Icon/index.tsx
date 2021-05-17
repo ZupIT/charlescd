@@ -27,12 +27,11 @@ export interface Props {
   className?: string;
   isActive?: boolean;
   onClick?: (event: MouseEvent) => void;
-  isDisabled?: boolean;
 }
 
 const Icon = React.forwardRef(
   (
-    { name, color, size, className, onClick, isActive, title, isDisabled, ...rest }: Props,
+    { name, color, size, className, onClick, isActive, title, ...rest }: Props,
     ref: Ref<HTMLDivElement>
   ) => {
     const iRef = useRef<HTMLDivElement>(null);
