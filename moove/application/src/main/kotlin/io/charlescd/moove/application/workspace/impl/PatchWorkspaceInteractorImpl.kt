@@ -136,7 +136,7 @@ open class PatchWorkspaceInteractorImpl(
 
     private fun checkIfDeploymentDeploymentConfigurationCanBeUpdated(workspaceId: String, patches: List<PatchOperation>) {
         patches.forEach { patch ->
-            if(isDeploymentConfigurationDelete(patch) && hasActiveDeploymentInWorkspace(workspaceId)) {
+            if (isDeploymentConfigurationDelete(patch) && hasActiveDeploymentInWorkspace(workspaceId)) {
                 throw BusinessException.of(MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR)
             }
         }

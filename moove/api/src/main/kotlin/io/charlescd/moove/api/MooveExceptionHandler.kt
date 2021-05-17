@@ -151,7 +151,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun businessException(ex: BusinessException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of(ex.getErrorCode(),
-             messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH))
+            messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH))
     }
 
     @ExceptionHandler(ForbiddenException::class)
