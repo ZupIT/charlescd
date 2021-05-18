@@ -46,4 +46,4 @@ dependencies:
     version: 8.12.2
     repository: https://charts.bitnami.com/bitnami
     condition: rabbitmq.enabled
-appVersion: 0.7.1
+appVersion: 1.0.0
