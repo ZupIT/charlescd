@@ -84,8 +84,24 @@ beforeAll(() => {
   });
 });
 
-test("component for edit mode render", async () => {
-  const { container } = render(
+test('should show text to documentation', () => {
+  render(
+    <AllTheProviders>
+      <FormModule
+        onChange={mockOnChange}
+        module={fakeModule}
+        key={"fake-key"}
+      />
+    </AllTheProviders>);
+
+  const infoIcon = screen.getByTestId('icon-info');
+  userEvent.click(infoIcon);
+
+  expect(screen.getByText(/See our documentation for further details./i)).toBeInTheDocument();
+});
+
+test("should render component for edit mode", async () => {
+  render(
     <AllTheProviders>
       <FormModule
         onChange={mockOnChange}
@@ -95,7 +111,8 @@ test("component for edit mode render", async () => {
     </AllTheProviders>
   );
 
-  await waitFor(() => expect(container.innerHTML).toMatch("Edit module"));
+  await waitFor(() => expect(screen.getByText('Edit module')).toBeInTheDocument());
+  expect(screen.getByText('Save')).toBeInTheDocument();
 });
 
 test("component for create mode", async () => {
@@ -128,22 +145,6 @@ test("Should render submit button", async () => {
   userEvent.click(screen.getByTestId('button-default-submit'));
   expect(updateModuleSpy).toHaveBeenCalled();
   updateModuleSpy.mockRestore();
-});
-
-test('should validate blank in optional branch path', async () => {
-  render(
-    <AllTheProviders>
-      <FormModule
-        onChange={jest.fn()}
-        module={{} as Module}
-        key={"fake-key"}
-      />
-    </AllTheProviders>
-  );
-
-  const branchInput = await screen.findByTestId('input-text-helmBranch');
-  await act(async () => userEvent.type(branchInput, '   '))
-  await waitFor(() => expect(screen.getByText('No whitespaces')).toBeInTheDocument());
 });
 
 test('should not show error when optional field is empty (helm path)', async () => {

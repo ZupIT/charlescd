@@ -57,28 +57,12 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "ui" .RangeContext.name }}
 {{ include "test.ui-envs" .}}
 {{- end -}}
-{{- if contains "octopipe" .RangeContext.name }}
-{{ include "test.octopipe-envs" .}}
-{{- end -}}
 {{- if contains "gate" .RangeContext.name }}
 {{ include "test.gate-envs" .}}
 {{- end -}}
 {{- if contains "hermes" .RangeContext.name }}
 {{ include "test.hermes-envs" .}}
 {{- end -}}
-{{- end -}}
-
-
-{{- define "test.octopipe-envs" -}}
-env:
-  - name: APP_PORT
-    value: "8080"
-  - name: KUBECONFIG
-    value: "IN_CLUSTER"
-  - name: TIMEOUT_RESOURCE_VERIFICATION
-    value: "{{ .RangeContext.limits.timeoutResourceVerification}}"
-  - name: LIMIT_REQUESTS_BY_SECOND
-    value: "{{ .RangeContext.limits.requestBySecond}}"
 {{- end -}}
 
 
@@ -98,18 +82,20 @@ env:
 - name: DATABASE_SSL
   value: "true"
 {{ end }}
+- name: TLS_SKIP_VERIFY
+  value: {{ .RangeContext.tlsSkipVerify | default "false" | quote }}
 - name: MOOVE_URL
   value: "http://charlescd-moove:8080"
 - name: DARWIN_NOTIFICATION_URL
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000/notifications"
 - name: DARWIN_CALLBACK
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000/notifications"
-- name: OCTOPIPE_URL
-  value: "http://charlescd-octopipe:8080"
 - name: BUTLER_URL
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000"
 - name: BUTLER_NAMESPACE
   value: {{ .ChartContext.Release.Namespace }}
+- name: REQUEST_SIZE_LIMIT
+  value: {{ .RangeContext.requestSizeLimit | default "50mb" | quote }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:
@@ -157,6 +143,8 @@ env:
   value: "{{ .RangeContext.internalIdmEnabled }}"
 - name: ORIGIN_HOSTS
   value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,{{ .RangeContext.allowedOriginHost }}"
+- name: GITLAB_IGNORE_CRETIFICATE_ERRORS
+  value: {{ .RangeContext.gitlabIgnoreSSL | default false | quote }}
 - name: ENCRYPTION_KEY
   valueFrom:
     secretKeyRef:

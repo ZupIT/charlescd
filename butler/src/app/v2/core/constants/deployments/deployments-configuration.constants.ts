@@ -18,5 +18,11 @@ export const DeploymentsConfigurationConstants = {
 
   DEFAULT_CIRCLE_HEADER_NAME: 'x-circle-id',
 
-  ISTIO_RESOURCES_API_VERSION: 'networking.istio.io/v1alpha3'
+  ISTIO_RESOURCES_API_VERSION: 'networking.istio.io/v1alpha3',
+
+  CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND: 'CharlesDeployment',
+
+  CHARLES_CUSTOM_RESOURCE_ROUTES_KIND: 'CharlesRoutes',
+
+  DEPLOYMENT_ID_LABEL: 'deploymentId'
 }

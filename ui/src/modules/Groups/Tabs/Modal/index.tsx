@@ -75,10 +75,10 @@ const UserItem = ({ id, name, email, checked, onSelected }: UserItemProps) => {
     <Styled.Item.Wrapper key={`user-item-${id}`} onClick={() => handleSelected(id)}>
       <Styled.Item.Profile>
         <Styled.Item.Photo name={name} />
-        <div>
-          <Styled.Item.Name>{name}</Styled.Item.Name>
-          <Styled.Item.Email>{email}</Styled.Item.Email>
-        </div>
+        <Styled.Item.Content>
+          <Styled.Item.Name color="light">{name}</Styled.Item.Name>
+          <Styled.Item.Email color="light">{email}</Styled.Item.Email>
+        </Styled.Item.Content>
       </Styled.Item.Profile>
       <MemberChecked checked={isChecked} onSelected={onSelected} />
     </Styled.Item.Wrapper>

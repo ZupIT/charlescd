@@ -14,103 +14,68 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
-import { isRoot, isIDMEnabled } from 'core/utils/auth';
+import { isRoot } from 'core/utils/auth';
 import MenuItem from './MenuItem';
 import Styled from './styled';
 import { useWorkspaces } from '../hooks';
-import { useGlobalState, useDispatch } from 'core/state/hooks';
-import { getProfileByKey } from 'core/utils/profile';
-import { useWorkspacesByUser } from 'modules/Users/hooks';
 import InfiniteScroll from 'core/components/InfiniteScroll';
-import { resetContentAction } from '../state/actions';
-import {WorkspacePaginationItem} from '../interfaces/WorkspacePagination';
+import { Workspace } from '../interfaces/Workspace';
+
 interface Props {
   onCreate: () => void;
-  selectedWorkspace: (name: string) => void;
 }
-
-const WorkspaceMenu = ({
-  onCreate,
-  selectedWorkspace
-}: Props) => {
-  const [filterWorkspace, , loading] = useWorkspaces();
-  const { findWorkspacesByUser, status } = useWorkspacesByUser();
-  const userId = getProfileByKey('id');
-  const workspaces = getProfileByKey('workspaces');
-  const { list } = useGlobalState(({ workspaces }) => workspaces);
-  const dispatch = useDispatch();
-  const isNotLoading = isRoot() ? !loading : status !== 'pending';
-  const isRenderEmpty = isEmpty(list?.content || workspaces) && isNotLoading;
+const WorkspaceMenu = ({ onCreate }: Props) => {
+  const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState('');
 
-  const onIDMFlow = useCallback(() => {
-    if (isRoot()) {
-      filterWorkspace();
-    } else {
-      findWorkspacesByUser(userId);
-    }
-  }, [filterWorkspace, findWorkspacesByUser, userId]);
-
   useEffect(() => {
-    if (isIDMEnabled()) {
-      onIDMFlow();
-    } else {
-      if(isRoot()) {
-        dispatch(resetContentAction());
-        filterWorkspace();
-      }
-      else {
-        dispatch(resetContentAction());
-        findWorkspacesByUser(userId);
-      }
+    if (status === 'idle') {
+      getWorkspaces();
     }
-  }, [onIDMFlow, filterWorkspace, findWorkspacesByUser, dispatch, userId]);
+  }, [getWorkspaces, status]);
 
-  const onChange = useCallback((value: string) => {
-      setName(value);
-      const page = 0;
-      dispatch(resetContentAction());
-      filterWorkspace(value, page);
-  }, [dispatch, filterWorkspace]);
+  const onSearch = useCallback((value: string) => {
+    setName(value);
+    const page = 0;
+    resetWorkspaces();
+    getWorkspaces(value, page);
+  }, [getWorkspaces, resetWorkspaces]);
 
   const loadMore = (page: number) => {
-    filterWorkspace(name, page);
+    getWorkspaces(name, page);
   };
 
-  const renderList = (data: WorkspacePaginationItem[]) =>
+  const renderList = (data: Workspace[]) =>
     map(data, item => renderItem(item))
 
-  const renderItem = ({ id, name, status }: WorkspacePaginationItem) => (
+  const renderItem = (workspace: Workspace) => (
     <MenuItem
-      key={id}
-      id={id}
-      name={name}
-      status={status}
-      selectedWorkspace={(name: string) => selectedWorkspace(name)}
+      key={workspace.id}
+      workspace={workspace}
     />
   );
 
-    const renderEmpty = () => (
-      <Styled.Empty>
-        <Text.h3 color="dark">No workspace was found</Text.h3>
-      </Styled.Empty>
-    );
+  const renderEmpty = () => (
+    <Styled.Empty>
+      <Text.h3 color="dark">No workspace was found</Text.h3>
+    </Styled.Empty>
+  );
 
-    const renderContent = () => (
-      <InfiniteScroll
-        hasMore={!list?.last}
-        loadMore={loadMore}
-        isLoading={loading}
-        loader={<Styled.Loader />}
-      >
-        {isRenderEmpty ? renderEmpty() : renderList(list?.content)}
-      </InfiniteScroll>
-    );
+  const renderContent = () => (
+    <InfiniteScroll
+      hasMore={!last}
+      loadMore={loadMore}
+      isLoading={status === 'pending'}
+      loader={<Styled.Loader />}
+    >
+      {isEmpty(workspaces) && status !== 'pending' ? renderEmpty() : renderList(workspaces)}
+    </InfiniteScroll>
+  );
 
   return (
     <>
@@ -128,7 +93,7 @@ const WorkspaceMenu = ({
       <Styled.Content>
         <Styled.SearchInput
           resume
-          onSearch={(value) => onChange(value)}
+          onSearch={onSearch}
           disabled={!isRoot()}
           maxLength={64}
         />

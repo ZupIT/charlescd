@@ -23,7 +23,7 @@ test("should validate blank fields", () => {
   const nonStringValue = {};
 
   expect(isNotBlank(nonStringValue)).toBe(nonStringValue);
-  expect(isNotBlank(emptyValue)).toBe('No whitespaces');
+  expect(isNotBlank(emptyValue)).toBe('Cannot start with whitespaces');
   expect(isNotBlank(nonEmptyValue)).toBeTruthy();
   expect(isNotBlank(spacesWithValue)).toBeTruthy();
 });

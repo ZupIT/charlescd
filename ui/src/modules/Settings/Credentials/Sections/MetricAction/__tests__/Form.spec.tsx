@@ -38,7 +38,7 @@ test('render add Metric Action form', async () => {
   const actionForm = await screen.findByText('Add Metric Action');
   expect(actionForm).toBeInTheDocument();
 
-  const actionInformationPart1 = screen.getByText(/You can create an action and add a trigger to perform an automatic task. Consult our/);
+  const actionInformationPart1 = screen.getByText(/You can create an action and add a trigger to perform an automatic task. See our/);
   const actionInformationPart2 = screen.getByText(/documentation/);
   const actionInformationPart3 = screen.getByText(/for further details./);
 
@@ -75,7 +75,7 @@ test('render add Metric Action form and add an action', async () => {
   expect(saveButton).toBeEnabled();
   userEvent.click(customButton);
 
-  await act(() => userEvent.type(screen.getByTestId('input-text-configuration'), 'url config'));
+  await act(() => userEvent.type(screen.getByTestId('input-text-configuration'), 'https://new.com'));
 
   userEvent.click(defaultButton);
   expect(saveButton).toBeEnabled();
@@ -117,7 +117,7 @@ test('should click a link to documentation about metric action', async () => {
   );
 
   const handleOnFinish = jest.fn();
-  const url = 'https://docs.charlescd.io/reference/metrics/metrics-actions';
+  const url = 'https://docs.charlescd.io/reference/metrics/action';
 
   render(<FormAddAction onFinish={handleOnFinish}/>);
 

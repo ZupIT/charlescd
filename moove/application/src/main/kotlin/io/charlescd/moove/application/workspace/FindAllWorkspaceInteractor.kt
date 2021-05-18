@@ -19,10 +19,10 @@
 package io.charlescd.moove.application.workspace
 
 import io.charlescd.moove.application.ResourcePageResponse
-import io.charlescd.moove.application.workspace.response.WorkspaceResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
 
 interface FindAllWorkspaceInteractor {
 
-    fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<WorkspaceResponse>
+    fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<SimpleWorkspaceResponse>
 }

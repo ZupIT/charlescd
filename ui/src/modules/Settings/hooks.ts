@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { useFetch, useFetchData } from 'core/providers/base/hooks';
-import { findAll, findById, updateName } from 'core/providers/workspace';
+import { useState, useCallback } from 'react';
+import { FetchStatuses, useFetchData } from 'core/providers/base/hooks';
+import { findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
-import { loadedWorkspacesAction } from 'modules/Workspaces/state/actions';
-import { WorkspacePagination } from './Workspaces/interfaces/WorkspacePagination';
 import { Workspace } from './Workspaces/interfaces/Workspace';
 import { toogleNotification } from 'core/components/Notification/state/actions';
-import {
-  loadedWorkspaceAction,
-  statusWorkspaceAction
-} from 'modules/Workspaces/state/actions';
-import { saveWorkspace } from 'core/utils/workspace';
+import { loadedWorkspaceAction } from 'modules/Workspaces/state/actions';
 
-export const useWorkspace = (): [Workspace, Function, Function, Function] => {
+type WorkspasceResponse = {
+  workspace: Workspace,
+  status: FetchStatuses
+};
+
+export const useWorkspace = (): { getWorkspace: Function, data: WorkspasceResponse } => {
   const getWorkspaceById = useFetchData<Workspace>(findById);
-  const [workspace, setWorkspace] = useState(null);
-  const [, , updateWorkspace] = useFetch(updateName);
+  const [data, setData] = useState<WorkspasceResponse>({ workspace: null, status: 'idle' });
   const dispatch = useDispatch();
 
-  const loadWorkspace = useCallback(
+  const getWorkspace = useCallback(
     async (id: string) => {
+      setData({ ...data, status: 'pending' });
       try {
-        dispatch(statusWorkspaceAction('pending'));
-        const response = await getWorkspaceById({ id });
-        saveWorkspace(response);
-        dispatch(loadedWorkspaceAction(response));
-        dispatch(statusWorkspaceAction('resolved'));
-        setWorkspace(response);
+        const workspace = await getWorkspaceById({ id });
+        setData({ workspace, status: 'resolved' });
+        dispatch(loadedWorkspaceAction(workspace));
+
       } catch (error) {
         if (error.status !== 403) {
-          dispatch(statusWorkspaceAction('rejected'));
+          setData({ ...data, status: 'rejected' });
           dispatch(
             toogleNotification({
               text: `[${error.status}] Could not list`,
@@ -55,14 +52,23 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
         }
       }
     },
-    [getWorkspaceById, dispatch]
+    [getWorkspaceById, dispatch, data]
   );
 
-  const update = useCallback(
+  return {
+    getWorkspace,
+    data
+  };
+};
+
+export const useWorkspaceUpdateName = () => {
+  const updateWorkspace = useFetchData(updateName);
+  const dispatch = useDispatch();
+
+  const updateWorkspaceName = useCallback(
     async (name: string) => {
       try {
         await updateWorkspace(name);
-        setWorkspace({ ...workspace, name });
       } catch (error) {
         dispatch(
           toogleNotification({
@@ -72,31 +78,12 @@ export const useWorkspace = (): [Workspace, Function, Function, Function] => {
         );
       }
     },
-    [updateWorkspace, workspace, dispatch]
+    [updateWorkspace, dispatch]
   );
 
-  return [workspace, loadWorkspace, getWorkspaceById, update];
-};
-
-export const useWorkspaces = (): [Function, Function, WorkspacePagination] => {
-  const dispatch = useDispatch();
-  const [workspaces, getWorkspaces] = useFetch<WorkspacePagination>(findAll);
-  const { response, error } = workspaces;
-
-  const filterWorkspace = useCallback(
-    (name: string) => {
-      getWorkspaces({ name });
-    },
-    [getWorkspaces]
-  );
-
-  useEffect(() => {
-    if (!error) {
-      dispatch(loadedWorkspacesAction(response));
-    }
-  }, [dispatch, response, error]);
-
-  return [filterWorkspace, getWorkspaces, response];
+  return {
+    updateWorkspaceName
+  }
 };
 
 export default useWorkspace;

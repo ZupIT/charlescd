@@ -28,8 +28,7 @@ import { RepositoryStrategyFactory } from '../../../../../app/v2/core/integratio
 import { ConsoleLoggerService } from '../../../../../app/v2/core/logs/console/console-logger.service'
 import { HelmManifest } from '../../../../../app/v2/core/manifests/helm/helm-manifest'
 import { ManifestConfig } from '../../../../../app/v2/core/manifests/manifest.interface'
-
-
+import IEnvConfiguration from '../../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 describe('Generate K8s manifest by helm', () => {
   const basePath = path.join(__dirname, '../../../../../', 'resources/helm-test-chart')
@@ -69,10 +68,12 @@ describe('Generate K8s manifest by helm', () => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function mockStratetyFactory(fn: (config: RequestConfig) => Promise<Resource>): RepositoryStrategyFactory {
-  const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService())
+  const envConfiguration = { rejectUnauthorizedTLS: true } as IEnvConfiguration
+
+  const gitHubRepository = new GitHubRepository(new ConsoleLoggerService(), new HttpService(), envConfiguration)
   jest.spyOn(gitHubRepository, 'getResource').mockImplementation(fn)
 
-  const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService())
+  const gitLabRepository = new GitLabRepository(new ConsoleLoggerService(), new HttpService(), envConfiguration)
   jest.spyOn(gitLabRepository, 'getResource').mockImplementation(fn)
 
   return new RepositoryStrategyFactory(gitHubRepository, gitLabRepository, new ConsoleLoggerService())

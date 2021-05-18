@@ -26,6 +26,7 @@ import io.charlescd.moove.application.circle.request.CreateCircleWithCsvRequest
 import io.charlescd.moove.application.circle.request.NodePart
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.MatcherTypeEnum
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.domain.repository.KeyValueRuleRepository
 import io.charlescd.moove.domain.repository.SystemTokenRepository
@@ -252,6 +253,43 @@ class CreateCircleWithCsvFileInteractorImplTest extends Specification {
         assert rules.type == NodePart.NodeTypeRequest.CLAUSE
         assert rules.clauses.size() == 1
         assert rules.clauses[0].clauses.size() == 4
+    }
+
+    def "should throw BusinessException when matcher url is missing on workspace"() {
+        given:
+        def fileContent = "IDs\n" +
+                "ce532f07-3bcf-40f8-9a39-289fb527ed54\n" +
+                "c4b13c9f-d151-4f68-aad5-313b08503bd6\n" +
+                "d77c5d16-a39f-406e-a33b-cee986b82348\n" +
+                "2dd5fd08-c23a-494a-80b6-66db39c73630\n"
+
+        def inputStream = new ByteArrayInputStream(fileContent.getBytes())
+
+        def name = "Women"
+        def keyName = "IDs"
+
+
+        def author = TestUtils.user
+        def workspaceId = TestUtils.workspaceId
+        def systemTokenValue = TestUtils.systemTokenValue
+        def systemTokenId = TestUtils.systemTokenId
+        def circle = TestUtils.circle
+        def request = new CreateCircleWithCsvRequest(name, keyName, inputStream)
+
+        when:
+        this.createCircleWithCsvFileInteractor.execute(request, workspaceId, null, systemTokenValue)
+
+        then:
+        1 * systemTokenRepository.getIdByTokenValue(systemTokenValue) >> systemTokenId
+        1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
+        1 * this.circleRepository.save(_) >> circle
+
+        1 * this.circleRepository.update(_) >> circle
+
+        1 * this.workspaceRepository.find(workspaceId) >> Optional.of(TestUtils.workspaceWithoutMatcher)
+
+        def exception = thrown(BusinessException)
+        assert exception.message == "workspace.matcher_url.is.missing"
     }
 
     def "should create a new circle with a csv file and return five rules on preview"() {

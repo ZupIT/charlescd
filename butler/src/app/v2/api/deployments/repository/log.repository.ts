@@ -16,6 +16,7 @@
 
 import { EntityRepository, Repository } from 'typeorm'
 import { LogEntity } from '../entity/logs.entity'
+import { Log } from '../interfaces/log.interface'
 
 @EntityRepository(LogEntity)
 export class LogRepository extends Repository<LogEntity> {
@@ -31,6 +32,27 @@ export class LogRepository extends Repository<LogEntity> {
   }
 
   private toLogEntity(deploymentId: string, logEntries: LogEntity[]) {
-    return new LogEntity(deploymentId, logEntries ? logEntries.flatMap(e => e.logs) : [])
+    return new LogEntity(deploymentId, this.extractLogs(logEntries))
+  }
+
+  private extractLogs(logEntries: LogEntity[]): Log[] {
+    return logEntries ?
+      logEntries
+        .flatMap(e => e.logs)
+        .sort(this.byTimestamp)
+      : []
+  }
+
+  private byTimestamp(a: Log, b: Log): number {
+    const d1 = new Date(a.timestamp)
+    const d2 = new Date(b.timestamp)
+
+    if (d1 > d2) {
+      return 1
+    }
+    if (d1 < d2) {
+      return -1
+    }
+    return 0
   }
 }

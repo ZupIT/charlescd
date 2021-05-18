@@ -26,10 +26,12 @@ import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 
 test('should remove a user group (maintainer user)', async () => {
+  const onSave = jest.fn();
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
+      onSave={onSave}
       data={userGroups}
     />
   );
@@ -44,15 +46,16 @@ test('should remove a user group (maintainer user)', async () => {
   userEvent.click(confirmRemove);
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
-  
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(onSave).toBeCalled();
 });
 
 test('should remove a user group when I (maintainer) belongs to two user groups of a workspace', async () => {
+  const onSave = jest.fn();
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
+      onSave={onSave}
       data={userGroupsWithSameUser}
     />
   );
@@ -67,11 +70,12 @@ test('should remove a user group when I (maintainer) belongs to two user groups 
   userEvent.click(confirmRemove);
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
+  expect(onSave).toBeCalled();
   
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
 });
 
 test('should remove a user group (root user)', async () => {
+  const onSave = jest.fn();
   saveProfile({
     id: '1',
     name: 'Charles Admin',
@@ -83,6 +87,7 @@ test('should remove a user group (root user)', async () => {
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
+      onSave={onSave}
       data={userGroups}
     />
   );
@@ -98,16 +103,18 @@ test('should remove a user group (root user)', async () => {
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(onSave).toBeCalled();
 });
 
 test('should remove a user group that I do not belong to', async () => {
   saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br' });
+  const onSave = jest.fn();
 
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
+      onSave={onSave}
       data={userGroups}
     />
   );
@@ -123,12 +130,13 @@ test('should remove a user group that I do not belong to', async () => {
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(onSave).toBeCalled();
 });
 
 test('should remove a user group that I (maintainer) belong to, and be redirected to workspaces', async () => {
   saveProfile({ id: '123', name: 'user 1', email: 'user1@gmail.com' });
   const history = createMemoryHistory()
+  const onSave = jest.fn();
 
   render(
     <Router history={history}>
@@ -136,6 +144,7 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
         form=''
         setForm={() => jest.fn()}
         data={userGroups}
+        onSave={onSave}
       />
     </Router>
   );
@@ -151,7 +160,7 @@ test('should remove a user group that I (maintainer) belong to, and be redirecte
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(onSave).toBeCalled();
   expect(history.location.pathname).toBe('/workspaces');
 });
 
@@ -163,7 +172,9 @@ test('should remove a user group (I am a root user), and not be redirected to wo
     root: false
   });
 
-  const history = createMemoryHistory()
+  const history = createMemoryHistory();
+  const onSave = jest.fn();
+
 
   render(
     <Router history={history}>
@@ -171,6 +182,7 @@ test('should remove a user group (I am a root user), and not be redirected to wo
         form=''
         setForm={() => jest.fn()}
         data={userGroups}
+        onSave={onSave}
       />
     </Router>
   );
@@ -186,16 +198,18 @@ test('should remove a user group (I am a root user), and not be redirected to wo
 
   await waitFor(() => expect(screen.queryByText('Do you want to remove this user group?')).not.toBeInTheDocument());
   
-  expect(screen.queryByText('devx user group')).not.toBeInTheDocument();
+  expect(onSave).toBeCalled();
   expect(history.location.pathname).not.toBe('/workspaces');
 });
 
 test('should cancel removal of a user group (maintainer user)', async () => {
+  const onSave = jest.fn();
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
       data={userGroups}
+      onSave={onSave}
     />
   );
 
@@ -221,11 +235,13 @@ test('should cancel removal of a user group (root user)', async () => {
     root: false
   });
 
+  const onSave = jest.fn();
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
       data={userGroups}
+      onSave={onSave}
     />
   );
 
@@ -246,12 +262,15 @@ test('should cancel removal of a user group (root user)', async () => {
 
 test('should render modal that confirms user group deletion', async () => {
   const modalDescription = "When you remove a user group, all the users associated to the group will no longer access the workspace. Do you want to continue?"
+  const [userGroup] = userGroups;
 
+  const onSave = jest.fn();
   render(
     <SectionUserGroup 
       form=''
       setForm={() => jest.fn()}
-      data={userGroup}
+      data={[userGroup]}
+      onSave={onSave}
     />
   );
 
@@ -271,6 +290,7 @@ test('should close modal', async () => {
       form=''
       setForm={() => jest.fn()}
       data={userGroup}
+      onSave={() => jest.fn()}
     />
   );
 
@@ -290,6 +310,7 @@ test('should close modal when clicking outside', async () => {
       <SectionUserGroup 
         form=''
         setForm={() => jest.fn()}
+        onSave={() => jest.fn()}
         data={userGroup}
       />
     </div>

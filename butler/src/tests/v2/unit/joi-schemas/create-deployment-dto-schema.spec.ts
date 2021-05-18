@@ -137,3 +137,94 @@ it('Formats the error to the correct format', () => {
   ]
   expect(formattedErrors).toEqual(expectedErrors)
 })
+
+it('validate the tag for special characters ', () => {
+
+  const encryptedToken =  `-----BEGIN PGP MESSAGE-----
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----) `
+  const base64Token = Buffer.from(encryptedToken).toString('base64')
+  const params ={
+    deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+    namespace: 'default',
+    git: {
+      token: base64Token,
+      provider: GitProvidersEnum.GITHUB
+    },
+    circle: {
+      id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+      default: false
+    },
+    components: [
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'tag@invalid',
+        componentName: 'component-name'
+      },
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: '-anothertaginvalid',
+        componentName: 'component-name-2'
+      },
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'onemoretaginvalid-',
+        componentName: 'component-name-3'
+      },
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'lastTagInvalid',
+        componentName: 'component-name-4'
+      },
+      {
+        helmRepository: UrlConstants.helmRepository,
+        componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'some-valid-tag-1',
+        componentName: 'component-name-5'
+      },
+
+    ],
+    authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+    callbackUrl: UrlConstants.deploymentCallbackUrl,
+  }
+  const validator = new CreateDeploymentValidator(params)
+  const validatorResult = validator.validate()
+  if (validatorResult.valid) {
+    fail('Should not be valid')
+  }
+  const formattedErrors = validator.formatErrors(validatorResult.errors, HttpStatus.BAD_REQUEST)
+  const expectedErrors  = [
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+      'source': 'components/0'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+      'source': 'components/1'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+      'source': 'components/2'
+    },
+    {
+      'status': HttpStatus.BAD_REQUEST,
+      'title': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+      'source': 'components/3'
+    }
+  ]
+  expect(formattedErrors).toEqual(expectedErrors)
+})

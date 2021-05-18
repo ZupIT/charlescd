@@ -32,7 +32,6 @@ import { isRequired, maxLength } from 'core/utils/validations';
 import InputTitle from 'core/components/Form/InputTitle';
 import { useUser, useUpdateName } from 'modules/Users/hooks';
 import { User } from 'modules/Users/interfaces/User';
-import Modal from 'core/components/Modal';
 import { AccountMenu } from './constants';
 import ChangePassword from './ChangePassword';
 import Styled from './styled';
@@ -79,9 +78,9 @@ const Account = () => {
 
   const renderModal = () =>
     toggleModal && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
+      <Styled.Modal.Default onClose={() => setToggleModal(false)}>
         <ChangePassword onSubmit={() => setToggleModal(false)} />
-      </Modal.Default>
+      </Styled.Modal.Default>
     );
 
   const renderContent = () => (
@@ -104,7 +103,7 @@ const Account = () => {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
-                defaultValue={user.name}
+                defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
                 isDisabled={!isValid}
               />

@@ -46,7 +46,9 @@ class FindWorkspaceByUserIdInteractorImpl(private val userService: UserService, 
                 SimpleWorkspaceResponse(
                     workspace.id,
                     workspace.name,
-                    workspacePermission.distinctBy { it.name }.map { it.name })
+                    workspacePermission.distinctBy { it.name }.map { it.name },
+                    workspace.status.name
+                )
             }
         }
 

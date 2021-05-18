@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-import { setAccessToken } from '../auth';
 import { ability, setUserAbilities } from '../abilities';
 import * as workspaceUtils from 'core/utils/workspace';
-import { saveProfile } from '../profile';
 
 const workspaceId = 'workspace-123'
 
 beforeAll(() => {
-  saveProfile(
-    {
-      id: '123',
-      name: 'User',
-      email: 'user@zup.com.br',
-      workspaces: [
-        {
-          id: workspaceId,
-          permissions: [
-            'maintenance_write',
-            'circles_read',
-            'circles_write',
-            'modules_read',
-            'modules_write'
-          ]
-        }
-      ]
-    }
-  );
+  workspaceUtils.saveWorkspace({
+    id: workspaceId,
+    name: 'workspace',
+    permissions: [
+      'maintenance_write',
+      'circles_read',
+      'circles_write',
+      'modules_read',
+      'modules_write'
+    ]
+  });
 });
 
 test('set user abilities', () => {

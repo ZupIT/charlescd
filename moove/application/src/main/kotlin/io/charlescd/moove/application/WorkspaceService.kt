@@ -19,6 +19,7 @@
 package io.charlescd.moove.application
 
 import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
@@ -35,7 +36,7 @@ class WorkspaceService(
             .orElseThrow { NotFoundException("workspace", workspaceId) }
     }
 
-    fun findAll(pageRequest: PageRequest, name: String?): Page<Workspace> {
+    fun findAll(pageRequest: PageRequest, name: String?): Page<SimpleWorkspace> {
         return workspaceRepository.find(pageRequest, name)
     }
 
@@ -46,6 +47,9 @@ class WorkspaceService(
     }
 
     fun save(workspace: Workspace): Workspace {
+        if (this.workspaceRepository.existsByName(workspace.name)) {
+            throw BusinessException.of(MooveErrorCode.DUPLICATED_WORKSPACE_NAME_ERROR)
+        }
         return this.workspaceRepository.save(workspace)
     }
 

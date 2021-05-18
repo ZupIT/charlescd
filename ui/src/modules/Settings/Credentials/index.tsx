@@ -17,12 +17,11 @@
 import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
-import isNull from 'lodash/isNull';
-import { useWorkspace } from 'modules/Settings/hooks';
+import { copyToClipboard } from 'core/utils/clipboard';
+import { useWorkspaceUpdateName } from 'modules/Settings/hooks';
 import { useActionData } from './Sections/MetricAction/hooks';
 import { getWorkspaceId } from 'core/utils/workspace';
 import ContentIcon from 'core/components/ContentIcon';
-import { useGlobalState } from 'core/state/hooks';
 import TabPanel from 'core/components/TabPanel';
 import Layer from 'core/components/Layer';
 import Form from 'core/components/Form';
@@ -32,20 +31,22 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { copyToClipboard } from 'core/utils/clipboard';
+import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
+  onChangeWorkspace: () => void;
 }
 
 type FormState = {
   name: string;
 }
 
-const Credentials = ({ onClickHelp }: Props) => {
+const Credentials = ({ onChangeWorkspace, onClickHelp }: Props) => {
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
-  const [, loadWorkspace, , updateWorkspace] = useWorkspace();
+  const { updateWorkspaceName } = useWorkspaceUpdateName();
   const {
     responseAll: datasources,
     getAll: getAllDatasources
@@ -55,15 +56,12 @@ const Credentials = ({ onClickHelp }: Props) => {
     actionResponse,
     status: actionDataStatus
   } = useActionData();
-  const { item: workspace, status } = useGlobalState(
-    ({ workspaces }) => workspaces
-  );
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
-  
+
   const handleSaveClick = ({ name }: Record<string, string>) => {
-    updateWorkspace(name);
+    updateWorkspaceName(name);
   };
 
   const getActions = () => getActionData();
@@ -77,11 +75,8 @@ const Credentials = ({ onClickHelp }: Props) => {
   }, [getActionData, actionDataStatus]);
 
   useEffect(() => {
-    if (isNull(form)) {
-      loadWorkspace(id);
-    }
     getAllDatasources();
-  }, [id, form, loadWorkspace, getAllDatasources]);
+  }, [getAllDatasources]);
 
   const renderContent = () => (
     <Layer>
@@ -128,16 +123,19 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.Registry
         form={form}
         setForm={setForm}
-        data={workspace.registryConfiguration}
+        onChange={onChangeWorkspace}
+        data={workspace?.registryConfiguration}
       />
       <Section.DeploymentConfiguration
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}
         setForm={setForm}
+        onChange={onChangeWorkspace}
         data={workspace.circleMatcherUrl}
       />
       <Section.MetricProvider
@@ -157,11 +155,13 @@ const Credentials = ({ onClickHelp }: Props) => {
       <Section.Webhook
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.webhookConfiguration}
       />
       <Section.UserGroup
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.userGroups}
       />
     </TabPanel>
@@ -169,7 +169,7 @@ const Credentials = ({ onClickHelp }: Props) => {
 
   return (
     <Styled.Wrapper data-testid="credentials">
-      {status === 'pending' || isEmpty(workspace.id) || !datasources ? (
+      {isEmpty(workspace?.id) || !datasources ? (
         <Loader.Tab />
       ) : (
         renderPanel()

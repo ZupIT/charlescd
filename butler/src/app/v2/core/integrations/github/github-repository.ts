@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
@@ -24,26 +24,34 @@ import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../constants'
+import * as https from 'https'
+import { IoCTokensConstants } from '../../constants/ioc'
+import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class GitHubRepository implements Repository {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration
   ) {}
 
   public async getResource(requestConfig: RequestConfig): Promise<Resource> {
     const urlResource = new URL(requestConfig.url)
     urlResource.pathname = `${urlResource.pathname}/${requestConfig.resourceName}`
 
+    // TODO stop accepting self-signed TLS certificates
+    const agent = new https.Agent({ rejectUnauthorized: this.envConfiguration.rejectUnauthorizedTLS })
     this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITHUB', urlResource)
     return this.downloadResource(urlResource, requestConfig.resourceName, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${requestConfig.token}`
       },
-      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT,
+      httpsAgent: agent
     })
   }
 
@@ -106,7 +114,7 @@ export class GitHubRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.FETCH_RESOURCE_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Reached maximum fetch attempts! ${error}`) :
+          throwError(error) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.FETCH_RESOURCE_MILLISECONDS_RETRY_DELAY)
