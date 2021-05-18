@@ -57,30 +57,12 @@ If release name contains chart name it will be used as a full name.
 {{- if contains "ui" .RangeContext.name }}
 {{ include "test.ui-envs" .}}
 {{- end -}}
-{{- if contains "octopipe" .RangeContext.name }}
-{{ include "test.octopipe-envs" .}}
-{{- end -}}
 {{- if contains "gate" .RangeContext.name }}
 {{ include "test.gate-envs" .}}
 {{- end -}}
 {{- if contains "hermes" .RangeContext.name }}
 {{ include "test.hermes-envs" .}}
 {{- end -}}
-{{- end -}}
-
-
-{{- define "test.octopipe-envs" -}}
-env:
-  - name: APP_PORT
-    value: "8080"
-  - name: KUBECONFIG
-    value: "IN_CLUSTER"
-  - name: TIMEOUT_RESOURCE_VERIFICATION
-    value: "{{ .RangeContext.limits.timeoutResourceVerification}}"
-  - name: LIMIT_REQUESTS_BY_SECOND
-    value: "{{ .RangeContext.limits.requestBySecond}}"
-  - name: SKIP_GIT_HTTPS_VALIDATION
-    value: {{ .RangeContext.skipGitSSL | default false | quote }}
 {{- end -}}
 
 
@@ -108,8 +90,6 @@ env:
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000/notifications"
 - name: DARWIN_CALLBACK
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000/notifications"
-- name: OCTOPIPE_URL
-  value: "http://charlescd-octopipe:8080"
 - name: BUTLER_URL
   value: "http://charlescd-butler.{{ .ChartContext.Release.Namespace }}.svc.cluster.local:3000"
 - name: BUTLER_NAMESPACE
