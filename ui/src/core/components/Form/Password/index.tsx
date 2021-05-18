@@ -39,7 +39,7 @@ const FormPassword = React.forwardRef(
       <Styled.Wrapper type={type} className={className}>
         <Input
           ref={inputRef}
-          type={INPUT_TYPE_TEXT}
+          type={isHidden ? INPUT_TYPE_PASSWORD : INPUT_TYPE_TEXT}
           {...rest}
         />
         <Styled.Icon
