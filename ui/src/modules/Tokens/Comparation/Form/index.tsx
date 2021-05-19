@@ -26,7 +26,7 @@ import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import ModalCopy from './Modal';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { updateParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { useHistory } from 'react-router';
