@@ -50,7 +50,7 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
   }, [status.isResolved, response]);
 
   useEffect(() => {
-    let timeout = 0;
+    let timeout: null | ReturnType<typeof setTimeout> = null
     if (isCopied) {
       timeout = setTimeout(() => {
         setIsCopied(false);
