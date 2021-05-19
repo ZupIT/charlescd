@@ -53,7 +53,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	deployment, err := getCurrentDeploymentAtCircle(ec.CircleId, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.CircleId, ec.WorkspaceID)
-		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
+		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
@@ -68,7 +68,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, CircleId: %s, BuildId: %s",
 			ac.MooveURL, ec.WorkspaceID, ec.CircleId, deployment.BuildId)
-		logger.Error("DO_CIRCLE_UNDEPLOYMENT", "DoDeploymentAction", err, dataErr)
+		logger.Error("DO_CIRCLE_UNDEPLOYMENT", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
