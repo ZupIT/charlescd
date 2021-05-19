@@ -33,7 +33,15 @@ import (
 
 func GetAll(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		list, err := metricsgroupMain.FindAll()
+		workspaceId := r.Header.Get("x-workspace-id")
+
+		parsedWorkspaceId, parseErr := uuid.Parse(workspaceId)
+		if parseErr != nil {
+			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+			return
+		}
+
+		list, err := metricsgroupMain.FindAllByWorkspaceId(parsedWorkspaceId)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return

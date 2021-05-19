@@ -98,6 +98,10 @@ func ValidateExecutionConfiguration(executionConfig []byte) []error {
 		return append(errs, errors.New("error validating execution configuration"))
 	}
 
+	if strings.TrimSpace(config.OriginCircleID) == strings.TrimSpace(config.DestinationCircleID) {
+		errs = append(errs, errors.New("origin circle id and destination circle id should not be the same"))
+	}
+
 	if strings.TrimSpace(config.DestinationCircleID) == "" {
 		errs = append(errs, errors.New("destination circle id is required"))
 	}

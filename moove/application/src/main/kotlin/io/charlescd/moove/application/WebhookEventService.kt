@@ -96,7 +96,7 @@ class WebhookEventService(
     private fun getTimeExecutionEvent(deployment: Deployment, simpleWebhookEvent: SimpleWebhookEvent): Long? {
         if (simpleWebhookEvent.eventSubType == WebhookEventSubTypeEnum.FINISH_DEPLOY &&
             simpleWebhookEvent.eventStatus == WebhookEventStatusEnum.SUCCESS) {
-            return ChronoUnit.SECONDS.between(deployment.deployedAt, deployment.createdAt)
+            return ChronoUnit.SECONDS.between(deployment.createdAt, deployment.deployedAt)
         }
         return null
     }

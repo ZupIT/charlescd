@@ -21,7 +21,6 @@ import { useSave } from 'modules/Tokens/hooks';
 import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import map from 'lodash/map';
-import Form from 'core/components/Form';
 import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
@@ -121,7 +120,7 @@ const FormToken = ({ mode, data }: Props) => {
       <FormProvider {...methods}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <ContentIcon icon="token">
-            <Form.InputTitle
+            <Styled.InputTitle
               name="name"
               placeholder="Type a name"
               ref={self => {
@@ -138,6 +137,7 @@ const FormToken = ({ mode, data }: Props) => {
               defaultValue={data?.name}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
+              buttonText="Next"
             />
             {isModeView && <Info />}
           </ContentIcon>

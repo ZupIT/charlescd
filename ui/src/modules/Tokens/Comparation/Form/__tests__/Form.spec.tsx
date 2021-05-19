@@ -81,3 +81,10 @@ test('Render Token Form in create mode: Defining name', async () => {
   expect(ContentWorkspaces).toBeInTheDocument();
   expect(ContentScopes).not.toBeInTheDocument();
 });
+
+test('should show button next when creating a new token', () => {
+  render(<Form mode="create" />);
+
+  expect(screen.getByPlaceholderText('Type a name')).toBeInTheDocument();
+  expect(screen.getByText('Next')).toBeInTheDocument();
+});

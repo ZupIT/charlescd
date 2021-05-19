@@ -27,6 +27,7 @@ interface Props {
   title?: string;
   subtitle?: string;
   hasCards?: boolean;
+  currentPage?: string;
   className?: string;
 }
 
@@ -59,37 +60,43 @@ Page.Placeholder = ({
   title,
   subtitle,
   hasCards,
+  currentPage,
   children,
   className
-}: Props) => (
-  <Styled.Placeholder data-testid="page-placeholder" className={className}>
-    <Icon name={icon} />
-    <Styled.PlaceholderText>
-      {title && (
-        <Text.h1 color="dark" weight="bold" align="center">
-          {title}
-        </Text.h1>
-      )}
-      {subtitle && (
-        <Text.h1 color="dark" weight="bold" align="center">
-          {subtitle}
-        </Text.h1>
-      )}
-    </Styled.PlaceholderText>
-    {hasCards && (
-      <Styled.PlaceholderCardWrapper>
-        {map(PlaceholderCardItems, ({ icon, text, linkTo }: Action) => (
-          <Styled.PlaceholderCard to={linkTo} data-testid={icon} key={icon}>
-            <Icon name={icon} color="dark" size="15px" />
-            <Text.h4 color="dark" weight="bold">
-              {text}
-            </Text.h4>
-          </Styled.PlaceholderCard>
-        ))}
-      </Styled.PlaceholderCardWrapper>
-    )}
-    {children}
-  </Styled.Placeholder>
-);
+}: Props) => {
+
+  return <Styled.Placeholder data-testid="page-placeholder" className={className}>
+            <Icon name={icon} />
+            <Styled.PlaceholderText>
+              {title && (
+                <Text.h1 color="dark" weight="bold" align="center">
+                  {title}
+                </Text.h1>
+              )}
+              {subtitle && (
+                <Text.h1 color="dark" weight="bold" align="center">
+                  {subtitle}
+                </Text.h1>
+              )}
+            </Styled.PlaceholderText>
+            {hasCards && (
+              <Styled.PlaceholderCardWrapper>
+                {map(PlaceholderCardItems, ({ icon, text, linkTo }: Action) => (
+                  <>
+                    {!(currentPage === icon) && 
+                      <Styled.PlaceholderCard to={linkTo} data-testid={icon} key={icon}>
+                        <Icon name={icon} color="dark" size="15px" />
+                        <Text.h4 color="dark" weight="bold">
+                          {text}
+                        </Text.h4>
+                      </Styled.PlaceholderCard>
+                    }
+                  </>
+                ))}
+              </Styled.PlaceholderCardWrapper>
+            )}
+            {children}
+          </Styled.Placeholder>
+};
 
 export default Page;

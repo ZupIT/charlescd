@@ -4,7 +4,7 @@ dependencies:
   version: 0.3.10
 - name: metacontroller
   repository: ""
-  version: 1.0.0
+  version: 1.5.6
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 10.4.1
@@ -20,5 +20,5 @@ dependencies:
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
   version: 8.12.2
-digest: sha256:4f65249a24c057103926688ee0739ebef5cb27b515b765f5307f57c62650e2f4
-generated: "2021-05-02T22:17:40.814287915-03:00"
+digest: sha256:66a4ee63d1b8265d8708f6b1275d067da1a78e91a96f156b5b6f7f6c8e07bc8d
+generated: "2021-05-07T14:43:30.52428973-03:00"

@@ -18,28 +18,41 @@
 
 package io.charlescd.moove.application.workspace.impl
 
+import io.charlescd.moove.application.DeploymentConfigurationService
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.workspace.FindAllWorkspaceInteractor
-import io.charlescd.moove.application.workspace.response.WorkspaceResponse
+import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
+import io.charlescd.moove.domain.DeploymentConfiguration
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
-import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.SimpleWorkspace
 import javax.inject.Inject
 import javax.inject.Named
 
 @Named
 class FindAllWorkspaceInteractorImpl @Inject constructor(
-    private val workspaceService: WorkspaceService
+    private val workspaceService: WorkspaceService,
+    private val deploymentConfigurationService: DeploymentConfigurationService
 ) : FindAllWorkspaceInteractor {
 
-    override fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<WorkspaceResponse> {
-        return convert(workspaceService.findAll(pageRequest, name))
+    override fun execute(pageRequest: PageRequest, name: String?): ResourcePageResponse<SimpleWorkspaceResponse> {
+        val workspaces = workspaceService.findAll(pageRequest, name)
+        val deploymentConfigurations = workspaces.content.map { workspace ->
+            workspace.deploymentConfigurationId?.let {
+                deploymentConfigurationService.find(it)
+            }
+        }
+        return convert(workspaces, deploymentConfigurations)
     }
 
-    private fun convert(page: Page<Workspace>): ResourcePageResponse<WorkspaceResponse> {
+    private fun convert(page: Page<SimpleWorkspace>, deploymentConfigurations: List<DeploymentConfiguration?>): ResourcePageResponse<SimpleWorkspaceResponse> {
         return ResourcePageResponse(
-            content = page.content.map { WorkspaceResponse.from(it) },
+            content = page.content.map { workspace ->
+                SimpleWorkspaceResponse.from(
+                    workspace, deploymentConfigurations.find { workspace.id == it?.workspaceId }
+                )
+            },
             page = page.pageNumber,
             size = page.size(),
             isLast = page.isLast(),

@@ -74,9 +74,11 @@ const Link = styled.a`
 `;
 
 const InputTitle = styled(InputTitleComponent)`
-  width: 334px;
-  height: 31px;
-  margin-top: 1px;
+  .input-title {
+    width: 334px;
+    height: 31px;
+    margin-top: 1px;
+  }
 `;
 
 const MetricsGroupsHeader = styled.div`

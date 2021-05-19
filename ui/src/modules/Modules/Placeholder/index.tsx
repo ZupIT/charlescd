@@ -16,16 +16,18 @@
 
 import React from 'react';
 import { getProfileByKey } from 'core/utils/profile';
-import PlaceholderComponent from 'core/components/Placeholder';
+import Page from 'core/components/Page';
 
 const Placeholder = () => {
   const profileName = getProfileByKey('name');
 
   return (
-    <PlaceholderComponent
+    <Page.Placeholder
       icon="empty-modules"
       title={`Hello, ${profileName}!`}
       subtitle="Select or create a module in the side menu."
+      hasCards={true}
+      currentPage="modules"
     />
   );
 };

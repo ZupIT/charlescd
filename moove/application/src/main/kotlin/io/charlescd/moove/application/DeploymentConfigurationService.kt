@@ -26,6 +26,7 @@ import javax.inject.Named
 @Named
 class DeploymentConfigurationService(
     private val deploymentConfigurationRepository: DeploymentConfigurationRepository
+
 ) {
 
     fun save(deploymentConfiguration: DeploymentConfiguration): DeploymentConfiguration {

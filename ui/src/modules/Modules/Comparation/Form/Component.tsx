@@ -174,7 +174,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
             size="EXTRA_SMALL"
             isLoading={loading}
           >
-            {isEdit ? 'Edit' : 'Save'}
+            Save
           </Styled.Button>
         </Can>
       </Styled.Form>

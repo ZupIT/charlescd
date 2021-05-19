@@ -61,6 +61,7 @@ const Circles = () => {
       icon="placeholder-circles"
       title={`Welcome, ${profileName}! What do you like to do?`}
       hasCards={true}
+      currentPage="circles"
     />
   );
 

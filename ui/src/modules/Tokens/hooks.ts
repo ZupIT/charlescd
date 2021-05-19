@@ -149,7 +149,7 @@ export const useSave = () => {
 
       return data;
     } catch (error) {
-      const e = await error.json();
+      const e = await error?.json?.();
       dispatch(
         toogleNotification({
           text: e?.message,

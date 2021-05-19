@@ -95,7 +95,7 @@ test('should submit AZURE form', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar!');
   });
@@ -123,7 +123,7 @@ test('should have successful test connection with AZURE registry', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -155,7 +155,7 @@ test('should have failed test connection with AZURE registry', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -197,7 +197,7 @@ test('should not trigger onSubmit on json parse error with GCP form', async () =
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPAddress, 'http://fake-host.com');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, 'te');
     userEvent.click(submitButton);
@@ -221,7 +221,7 @@ test('should not enable submit button after partially filled GCP form', async ()
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPAddress, 'http://fake-host.com');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '');
   });
@@ -245,7 +245,7 @@ test('should enable submit button after fill GCP form', async () => {
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPAddress, 'http://fake-host.com');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
@@ -273,7 +273,7 @@ test('should test connectivity with GCR successful', async () => {
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPAddress, 'http://fake-host.com');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
@@ -305,7 +305,7 @@ test('should test connectivity with GCR error', async () => {
 
   await act(async () => {
     userEvent.type(inputGCPName, 'fake-name');
-    userEvent.type(inputGCPAddress, 'http://fake-host');
+    userEvent.type(inputGCPAddress, 'http://fake-host.com');
     userEvent.type(inputGCPOrganization, 'fake-access-key');
     userEvent.type(inputGCPJsonKey, '{ "testKey": "testValue" }');
   });
@@ -376,7 +376,7 @@ test('should enable submit button after fill AWS form', async () => {
 
   await act(async () => {
     userEvent.type(inputAwsName, 'fake-name');
-    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAddress, 'http://fake-host.com');
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
@@ -405,7 +405,7 @@ test('should not enable submit button after partially filled AWS form (missing n
   const submitButton = screen.getByTestId("button-default-submit-registry");
 
   await act(async () => {
-    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAddress, 'http://fake-host.com');
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
@@ -435,7 +435,7 @@ test('should test AWS registry connection successful', async () => {
 
   await act(async () => {
     userEvent.type(inputAwsName, 'fake-name');
-    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAddress, 'http://fake-host.com');
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
@@ -470,7 +470,7 @@ test('should test AWS registry connection error', async () => {
 
   await act(async () => {
     userEvent.type(inputAwsName, 'fake-name');
-    userEvent.type(inputAwsAddress, 'http://fake-host');
+    userEvent.type(inputAwsAddress, 'http://fake-host.com');
     userEvent.type(inputAwsAccessKey, 'fake-access-key');
     userEvent.type(inputAwsSecretKey, 'fake-secret-key');
     userEvent.type(inputAwsRegion, 'fake-region');
@@ -607,7 +607,7 @@ test('should submit Harbor form', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar!');
   });
@@ -660,7 +660,7 @@ test('should test connection with Harbor (success)', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -692,7 +692,7 @@ test('should test connection with Harbor (error)', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -704,7 +704,7 @@ test('should test connection with Harbor (error)', async () => {
   expect(submitButton).not.toBeDisabled();
 });
 
-test('should clean test connection message after change form', async () => {
+test('should clean test connection success message after change form', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({ }));
 
   render(<FormRegistry onFinish={mockOnFinish}/>);
@@ -721,7 +721,7 @@ test('should clean test connection message after change form', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -734,14 +734,14 @@ test('should clean test connection message after change form', async () => {
   expect(successMessage).toBeInTheDocument();
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudaragain');
   });
   expect(successMessage).not.toBeInTheDocument();
 });
 
-test('should clean test connection message after change form', async () => {
+test('should clean test connection error message after change form', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'
@@ -762,7 +762,7 @@ test('should clean test connection message after change form', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudar');
   });
@@ -775,10 +775,18 @@ test('should clean test connection message after change form', async () => {
 
   await act(async () => {
     userEvent.type(registryField, 'fake-name');
-    userEvent.type(registryURLField, 'http://fake-host');
+    userEvent.type(registryURLField, 'http://fake-host.com');
     userEvent.type(usernameField, 'fake username');
     userEvent.type(passwordField, '123mudaragain');
   });
   expect(errorMessage).not.toBeInTheDocument();
+});
+
+test('should show text to documentation', () => {
+  render(<FormRegistry onFinish={mockOnFinish}/>);
+
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
 });
 

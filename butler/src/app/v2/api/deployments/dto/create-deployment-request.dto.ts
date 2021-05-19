@@ -20,8 +20,8 @@ import { ComponentEntityV2 as ComponentEntity } from '../entity/component.entity
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { CreateCircleDeploymentDto } from './create-circle-request.dto'
-import { CreateComponentRequestDto } from './create-component-request.dto'
 import { CreateGitDeploymentDto } from './create-git-request.dto'
+import { CreateComponentRequestDto } from './create-component-request.dto'
 
 
 export class CreateDeploymentRequestDto {

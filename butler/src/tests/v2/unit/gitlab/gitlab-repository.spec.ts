@@ -25,6 +25,7 @@ import { AxiosResponse } from 'axios'
 import { GitLabRepository } from '../../../../app/v2/core/integrations/gitlab/gitlab-repository'
 import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console/console-logger.service'
 import { ConfigurationConstants } from '../../../../app/v2/core/constants/application/configuration.constants'
+import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
 
 describe('Download resources from gitlab', () => {
   const contents = getStubContents()
@@ -37,8 +38,10 @@ describe('Download resources from gitlab', () => {
   const urlMaster = 'https://gitlab.com/api/v4/projects/22700476/repository?ref=master'
   const urlFeature = 'https://gitlab.com/api/v4/projects/22700476/repository?ref=feature'
 
+  const envConfiguration = { rejectUnauthorizedTLS: true } as IEnvConfiguration
+
   it('Download helm chart recursively from gitlab', async() => {
-    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: urlMaster, token: 'my-token', resourceName: 'helm-chart' })
 
@@ -51,7 +54,7 @@ describe('Download resources from gitlab', () => {
   })
 
   it('Download a single file from giblab', async() => {
-    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: urlMaster, token: 'my-token', resourceName: 'helm-chart/Chart.yaml' })
 
@@ -61,7 +64,7 @@ describe('Download resources from gitlab', () => {
   })
 
   it('Download helm chart recursively from gitlab from feature branch', async() => {
-    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService, envConfiguration)
 
     const resource = await repository.getResource({ url: urlFeature, token: 'my-token', resourceName: 'helm-chart' })
 
@@ -75,13 +78,14 @@ describe('Download resources from gitlab', () => {
 
   it('Should invoke the gitlab api service with the correct configuration object', async() => {
     const gitlabToken = 'gitlab-auth-token123'
-    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService, envConfiguration)
     const expectedRequestConfig = {
       headers: {
         'Content-Type': 'application/json',
         'PRIVATE-TOKEN': gitlabToken
       },
-      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT,
+      httpsAgent: expect.anything()
     }
 
     const getSpy = jest.spyOn(httpService, 'get')
@@ -97,13 +101,13 @@ describe('Download resources from gitlab', () => {
       .mockImplementation(() =>
         throwError(errorMessage)
       )
-    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService)
+    const repository = new GitLabRepository(new ConsoleLoggerService(), httpService, envConfiguration)
     await expect(
       repository.getResource({ url: urlFeature, token: gitlabToken, resourceName: 'helm-chart' })
     ).rejects.toMatchObject({
       response: {
         errors: [{
-          detail: `Status 'INTERNAL_SERVER_ERROR' with error: Reached maximum fetch attempts! ${errorMessage}`,
+          detail: `Status 'INTERNAL_SERVER_ERROR' with error: ${errorMessage}`,
           source: 'components.helmRepository',
           status: 500,
           title: 'Unable to fetch resource from gitlab url: https://gitlab.com/api/v4/projects/22700476/repository/tree?ref=feature&path=helm-chart'

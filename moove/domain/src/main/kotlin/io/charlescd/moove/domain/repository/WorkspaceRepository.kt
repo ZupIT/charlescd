@@ -27,7 +27,7 @@ interface WorkspaceRepository {
 
     fun find(id: String): Optional<Workspace>
 
-    fun find(pageRequest: PageRequest, name: String?): Page<Workspace>
+    fun find(pageRequest: PageRequest, name: String?): Page<SimpleWorkspace>
 
     fun update(workspace: Workspace): Workspace
 
@@ -36,4 +36,6 @@ interface WorkspaceRepository {
     fun associateUserGroupAndPermissions(workspaceId: String, userGroupId: String, permissions: List<Permission>)
 
     fun disassociateUserGroupAndPermissions(workspaceId: String, userGroupId: String)
+
+    fun existsByName(name: String): Boolean
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { lazy, useState } from 'react';
+import { lazy, useEffect, useState, useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
@@ -22,21 +22,28 @@ import Modal from 'core/components/Modal';
 import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
-import { useGlobalState } from 'core/state/hooks';
 import isEmpty from 'lodash/isEmpty';
 import Menu from './Menu';
 import { SettingsMenu } from './constants';
 import { getWizardByUser, setWizard } from './helpers';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
+import useWorkspace from './hooks';
+import { getWorkspaceId } from 'core/utils/workspace';
 
 const Credentials = lazy(() => import('modules/Settings/Credentials'));
 
 const Settings = () => {
   const profileName = getProfileByKey('name');
-  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const [showWizard, setShowWizard] = useState(false);
   const hasWizard = !isEmpty(getWizardByUser().email);
   const [isVeteranUser, setIsVeteranUser] = useState<boolean>(hasWizard);
+  const { getWorkspace, data: { workspace, status } } = useWorkspace();
+
+  useEffect(() => {
+    if (status === 'idle') {
+      getWorkspace(getWorkspaceId());
+    }
+  }, [getWorkspace, status]);
 
   const onCloseWizard = (enabledWizard: boolean) => {
     setWizard(enabledWizard);
@@ -44,8 +51,12 @@ const Settings = () => {
     setShowWizard(false);
   };
 
+  const onChangeWorkspace = useCallback(() => {
+    getWorkspace(getWorkspaceId());
+  }, [getWorkspace]);
+
   const showWizardModal =
-    (!isVeteranUser && workspace.status === WORKSPACE_STATUS.INCOMPLETE) ||
+    (!isVeteranUser && workspace?.status === WORKSPACE_STATUS.INCOMPLETE) ||
     showWizard;
 
   return (
@@ -59,7 +70,10 @@ const Settings = () => {
           <PrivateRoute
             path={routes.credentials}
             render={() => (
-              <Credentials onClickHelp={() => setShowWizard(true)} />
+              <Credentials
+                onChangeWorkspace={onChangeWorkspace}
+                onClickHelp={() => setShowWizard(true)}
+              />
             )}
             allowedRoles={['maintenance_write']}
           />

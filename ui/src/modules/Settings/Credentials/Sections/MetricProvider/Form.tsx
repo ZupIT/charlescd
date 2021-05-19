@@ -100,9 +100,8 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       {map(
         (plugin.inputParameters as PluginDatasource)['configurationInputs'],
         input => (
-          <Styled.Wrapper>
+          <Styled.Wrapper key={input.name}>
             <Styled.Input
-              key={input.name}
               ref={register({ required: input.required })}
               name={`data.${input.name}`}
               label={input.label}
@@ -162,8 +161,8 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
     <Styled.Content>
       <Text.h2 color="light">Add Datasource</Text.h2>
       <Text.h4 color="dark" data-testid="text-datasource">
-        Adding the URL of our tool helps Charles to metrics generation since
-        this can vary from workspace to another. Consult the our{' '}
+        Adding the URL of our tool helps Charles to do metrics generation since
+        this can vary from workspace to another. See our{' '}
         <DocumentationLink
           text="documentation"
           documentationLink={`${CHARLES_DOC}/reference/metrics`}

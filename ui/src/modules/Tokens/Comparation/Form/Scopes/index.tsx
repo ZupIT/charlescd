@@ -25,6 +25,7 @@ import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Actions, Subjects, actions, subjects } from 'core/utils/abilities';
 import Styled from './styled';
+import { CHARLES_DOC } from 'core/components/Popover';
 import { actionTemplate, displayAction, getScopes, subjectTemplate } from './helpers';
 import { useFormContext } from 'react-hook-form';
 import { Mode } from '../../helpers';
@@ -130,7 +131,7 @@ const Scopes = ({ mode }: Props) => {
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
             <DocumentationLink
-              documentationLink="https://docs.charlescd.io"
+              documentationLink={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}
               text="documentation"
             />
             for further details.

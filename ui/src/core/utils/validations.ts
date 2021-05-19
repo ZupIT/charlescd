@@ -31,7 +31,7 @@ export const validFields = (fields: object) => {
 
 export const isNotBlank = (value: string | any) => {
   if (value && isString(value)) {
-    return !!value.trim() || 'No whitespaces'
+    return !!value.trim() || 'Cannot start with whitespaces'
   }
   return value;
 }

@@ -56,3 +56,34 @@ test('should render form in edit mode', async () => {
   expect(radioEverythingElement).toBeInTheDocument();
   expect(radioEverythingElement).toBeChecked();
 });
+
+test('should show text to documentation', () => {
+  const data: Webhook = null;
+  const onFinish = jest.fn();
+
+  render(<FormWebhook data={data} onFinish={onFinish} />);
+
+  expect(screen.getByText(/See our/i)).toBeInTheDocument();
+  expect(screen.getByText(/documentation/i)).toBeInTheDocument();
+  expect(screen.getByText(/for further details./i)).toBeInTheDocument();
+});
+
+test('should render secret field as optional', () => {
+  const data: Webhook = null;
+  const onFinish = jest.fn();
+
+  render(<FormWebhook data={data} onFinish={onFinish} />);
+
+  const secretLabel = screen.getByLabelText('Secret (Optional)');
+  expect(secretLabel).toBeInTheDocument();
+});
+
+test('should render events trigger text', () => {
+  const data: Webhook = null;
+  const onFinish = jest.fn();
+
+  render(<FormWebhook data={data} onFinish={onFinish} />);
+
+  const eventsText = screen.getByText('Which events would you like to trigger this webhook?');
+  expect(eventsText).toBeInTheDocument();
+});
