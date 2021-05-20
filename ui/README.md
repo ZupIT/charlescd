@@ -16,7 +16,7 @@ Run the following commands in the [root folder] to get all dependencies installe
 
 ```
 npm install
-npm start
+npm run start
 ```
 
 The app will start up on localhost:3000
@@ -25,19 +25,19 @@ The app will start up on localhost:3000
 Run the following commands in the [root folder] to get all dependencies installed in ui and to start the server:
 
 ```
-npm
-start-local
+npm install
+npm run start:local
 ```
 
 `We are still working on mock improvements`
 
 ### Testing
 
-To run the tests execute `npm test`.
+To run the tests execute `npm run test`.
 
 ### Building & Deploying
 
-To build the ui, run `npm build`. The built ui lives in `build/`.
+To build the ui, run `npm run build`. The built ui lives in `build/`.
 
 ### CRA
 
