@@ -50,7 +50,7 @@ open class PatchWorkspaceInteractorImpl(
 
         val workspace = workspaceService.find(workspaceId)
 
-        checkIfDeploymentConfigurationCanBeUpdated(workspaceId, request.patches)
+        checkIfDeploymentConfigurationCanBeUpdated(request.patches, workspace)
 
         val updatedWorkspace = request.applyPatch(workspace)
 
@@ -134,17 +134,28 @@ open class PatchWorkspaceInteractorImpl(
         return configuration != updatedInformation && updatedInformation != null
     }
 
-    private fun checkIfDeploymentConfigurationCanBeUpdated(workspaceId: String, patches: List<PatchOperation>) {
+    private fun checkIfDeploymentConfigurationCanBeUpdated(patches: List<PatchOperation>, workspace: Workspace) {
         patches.forEach { patch ->
-            if (isDeploymentConfigurationDelete(patch) && hasActiveDeploymentInWorkspace(workspaceId)) {
+            if (isDeploymentConfigurationDeleteOrUpdate(patch, workspace) && hasActiveDeploymentInWorkspace(workspace.id)) {
                 throw BusinessException.of(MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR)
             }
         }
     }
 
-    private fun isDeploymentConfigurationDelete(patch: PatchOperation): Boolean {
-        return (patch.op == OpCodeEnum.REMOVE || patch.op == OpCodeEnum.REPLACE) &&
+    private fun isDeploymentConfigurationDeleteOrUpdate(patch: PatchOperation, workspace: Workspace): Boolean {
+        return isDeploymentDeleteConfiguration(patch) ||
+                isDeploymentUpdateConfiguration(patch, workspace)
+    }
+
+    private fun isDeploymentDeleteConfiguration(patch: PatchOperation): Boolean {
+        return patch.op == OpCodeEnum.REMOVE  &&
                 patch.path == DEPLOYMENT_CONFIGURATION_PATH
+    }
+
+    private fun isDeploymentUpdateConfiguration(patch: PatchOperation, workspace: Workspace): Boolean {
+        return  patch.op == OpCodeEnum.REPLACE &&
+                patch.path == DEPLOYMENT_CONFIGURATION_PATH &&
+                !workspace.deploymentConfigurationId.isNullOrBlank()
     }
 
     private fun hasActiveDeploymentInWorkspace(workspaceId: String): Boolean {
