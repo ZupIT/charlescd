@@ -123,7 +123,7 @@ const CirclesComparationItem = ({
   }, [response]);
 
   useEffect(() => {
-    let timeout: null | ReturnType<typeof setTimeout> = null;
+    let timeout: NodeJS.Timeout;
     if (isBusy(circle?.deployment?.status)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
