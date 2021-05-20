@@ -142,9 +142,9 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: yarn install
+      - run: npm install
         working-directory: ./ui
-      - run: yarn build
+      - run: npm build
         working-directory: ./ui
         env:
           CI: true
