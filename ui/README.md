@@ -15,8 +15,8 @@ Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charle
 Run the following commands in the [root folder] to get all dependencies installed in ui and to start the server:
 
 ```
-yarn
-yarn start
+npm install
+npm start
 ```
 
 The app will start up on localhost:3000
@@ -25,27 +25,19 @@ The app will start up on localhost:3000
 Run the following commands in the [root folder] to get all dependencies installed in ui and to start the server:
 
 ```
-yarn
-yarn stub
+npm
+start-local
 ```
-
-then on another terminal run
-
-```
-yarn mock:api
-```
-
-The app will start up on localhost:3000
 
 `We are still working on mock improvements`
 
 ### Testing
 
-To run the tests execute `yarn test`.
+To run the tests execute `npm test`.
 
 ### Building & Deploying
 
-To build the ui, run `yarn build`. The built ui lives in `build/`.
+To build the ui, run `npm build`. The built ui lives in `build/`.
 
 ### CRA
 
