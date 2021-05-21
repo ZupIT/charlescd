@@ -23,7 +23,6 @@ import CardBody from 'core/components/Card/Body';
 import CardExpand from 'core/components/Card/Expand';
 import CardRelease from 'core/components/Card/Release';
 import CardRole from 'core/components/Card/Role';
-import CardBoard from 'core/components/Card/Board';
 
 const Card = {
   Base: CardBase,
@@ -34,8 +33,7 @@ const Card = {
   Header: CardHeader,
   Config: CardConfig,
   Expand: CardExpand,
-  Role: CardRole,
-  Board: CardBoard
+  Role: CardRole
 };
 
 export default Card;

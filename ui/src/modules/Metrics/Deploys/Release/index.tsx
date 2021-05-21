@@ -22,7 +22,7 @@ import Summary from './Summary';
 import { pageInitialCount } from './constants';
 import Loader from '../../Loaders/index';
 import { useReleaseHistory } from '../hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import { ReleaseHistory, ReleaseHistoryRequest } from '../interfaces';
 
 type Props = {
@@ -83,11 +83,10 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
           </Styled.TableColumn>
         </Styled.TableHead>
         <InfiniteScroll
-          dataLength={releases.length}
-          next={loadMore}
           hasMore={hasMoreData}
+          loadMore={loadMore}
+          isLoading={loading}
           loader={<Loader.Releases />}
-          height={540}
         >
           {releases?.map((release, index) => (
             <ReleaseRow release={release} key={index} />
