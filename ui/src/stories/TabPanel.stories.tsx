@@ -9,5 +9,5 @@ export default {
 const Template: Story<Props> = (props: Props) => <TabPanel {...props} />;
 export const tabpanel = Template.bind({});
 tabpanel.args = {
-  color: 'primary',
+  children: 'Tab',
 };
