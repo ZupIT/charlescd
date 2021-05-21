@@ -16,7 +16,7 @@
     "test:coverage": "react-scripts test --watchAll=false --coverage --testPathIgnorePatterns='fixtures.ts'",
     "test:watch": "react-scripts test --testPathIgnorePatterns='fixtures.ts'",
     "storybook": "start-storybook -p 6006 -s public --ci",
-    "build-storybook": "build-storybook -s public"
+    "build:storybook": "build-storybook -s public"
   },
   "browserslist": {
     "production": [
