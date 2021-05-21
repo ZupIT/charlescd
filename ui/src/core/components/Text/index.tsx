@@ -20,9 +20,6 @@ import { HEADINGS_FONT_SIZE } from './enums';
 
 export interface Props {
   fontSize?: HEADINGS_FONT_SIZE;
-  /**
-   * Is this the principal call to action on the page?
-   */
   lineHeight?: number;
   color?: string;
   fontStyle?: 'normal' | 'italic' | 'oblique';
