@@ -16,7 +16,7 @@
  *
  */
 
-package metricsgroupaction
+package handlers
 
 import (
 	"net/http"
@@ -28,7 +28,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func Create(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func CreateMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(r.Body)
 		if err != nil {
@@ -111,7 +111,7 @@ func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.Re
 	}
 }
 
-func Delete(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func DeleteMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricgroupactionID"]
 

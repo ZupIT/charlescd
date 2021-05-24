@@ -20,6 +20,7 @@ package metricsgroup
 
 import (
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"io"
 
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -28,8 +29,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
-
-	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {

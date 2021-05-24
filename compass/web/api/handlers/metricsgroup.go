@@ -16,7 +16,7 @@
  *
  */
 
-package metricsgroup
+package handlers
 
 import (
 	"net/http"
@@ -65,7 +65,7 @@ func Resume(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, 
 	}
 }
 
-func Create(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func CreateMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		metricsGroup, err := metricsgroupMain.Parse(r.Body)
 		if err != nil {
@@ -154,7 +154,7 @@ func Result(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, 
 	}
 }
 
-func Update(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func UpdateMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricGroupID"]
 		metricsGroup, err := metricsgroupMain.Parse(r.Body)
@@ -199,7 +199,7 @@ func UpdateName(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWrit
 	}
 }
 
-func Delete(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func DeleteMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricGroupID"]
 		err := metricsgroupMain.Remove(id)

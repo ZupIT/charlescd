@@ -16,7 +16,7 @@
  *
  */
 
-package metric
+package handlers
 
 import (
 	"net/http"
@@ -30,7 +30,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/web/api/util"
 )
 
-func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func CreateMetric(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		metricgroupId := mux.Vars(r)["metricGroupID"]
 
@@ -64,7 +64,7 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 	}
 }
 
-func Update(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func UpdateMetric(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		metricId := mux.Vars(r)["metricID"]
 		metricGroupId := mux.Vars(r)["metricGroupID"]
@@ -91,7 +91,7 @@ func Update(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func Delete(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func DeleteMetric(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		metricId := mux.Vars(r)["metricID"]
 		err := metricMain.RemoveMetric(metricId)

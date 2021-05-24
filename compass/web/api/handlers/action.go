@@ -16,7 +16,7 @@
  *
  */
 
-package action
+package handlers
 
 import (
 	"net/http"

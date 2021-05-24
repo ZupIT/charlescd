@@ -16,7 +16,7 @@
  *
  */
 
-package api
+package middlewares
 
 import (
 	"fmt"
@@ -58,12 +58,12 @@ func getWhiteList(path string) string {
 	return ""
 }
 
-func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
+func (api api.Api) ValidatorMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
 
-		ers := NewApiErrors()
+		ers := api.NewApiErrors()
 
 		reqErr := tollbooth.LimitByRequest(api.limiter, w, r)
 		if reqErr != nil {
@@ -129,7 +129,7 @@ func extractToken(authorization string) (AuthToken, errors.Error) {
 	return *token.Claims.(*AuthToken), nil
 }
 
-func (api Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
+func (api api.Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
 	user, err := api.mooveMain.FindUserByEmail(email)
 	if err != nil {
 		return false, err.WithOperations("authorizeUser.FindUserByEmail")

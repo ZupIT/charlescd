@@ -19,12 +19,12 @@
 package action
 
 import (
+	"gorm.io/gorm"
 	"io"
 
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {

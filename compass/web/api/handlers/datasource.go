@@ -16,7 +16,7 @@
  *
  */
 
-package datasource
+package handlers
 
 import (
 	"encoding/json"
@@ -72,7 +72,7 @@ func TestConnection(datasourceMain datasource.UseCases) func(w http.ResponseWrit
 	}
 }
 
-func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func CreateDatasource(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		dataSource, err := datasourceMain.Parse(r.Body)
 		if err != nil {
@@ -98,7 +98,7 @@ func Create(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *h
 	}
 }
 
-func Delete(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func DeleteDatasource(datasourceMain datasource.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["datasourceID"]
 		err := datasourceMain.Delete(id)

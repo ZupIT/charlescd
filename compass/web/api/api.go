@@ -19,6 +19,7 @@
 package api
 
 import (
+	"github.com/ZupIT/charlescd/compass/web/middlewares"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
@@ -79,7 +80,7 @@ func NewApi(
 	api.metrics(router)
 
 	s := router.PathPrefix("/api").Subrouter()
-	s.Use(LoggingMiddleware)
+	s.Use(middlewares.LoggingMiddleware)
 	s.Use(api.ValidatorMiddleware)
 
 	api.newV1Api(s)

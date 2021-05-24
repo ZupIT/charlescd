@@ -50,11 +50,11 @@ func main() {
 
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 
-	db, err := configuration.GetDBConnection("migrations")
+	db, err := prepareDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	mooveDb, err := configuration.GetMooveDBConnection()
 	if err != nil {

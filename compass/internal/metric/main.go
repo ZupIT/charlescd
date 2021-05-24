@@ -23,9 +23,8 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"gorm.io/gorm"
 	"io"
-
-	"github.com/jinzhu/gorm"
 )
 
 type UseCases interface {
