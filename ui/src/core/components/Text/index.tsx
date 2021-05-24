@@ -19,7 +19,6 @@ import Styled from './styled';
 import { HEADINGS_FONT_SIZE } from './enums';
 
 export interface Props {
-  fontSize?: HEADINGS_FONT_SIZE;
   lineHeight?: number;
   color?: string;
   fontStyle?: 'normal' | 'italic' | 'oblique';
@@ -31,7 +30,14 @@ export interface Props {
   role?: string;
 }
 
-const Text = (props: Props) => {
+export interface TextProps extends Props {
+  fontSize: HEADINGS_FONT_SIZE;
+}
+
+/**
+ * Primary UI component for user interaction
+ */
+export const Text = (props: TextProps) => {
   const {
     color = 'primary',
     weight = 'normal',
