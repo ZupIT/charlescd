@@ -25,7 +25,7 @@ import { Props } from '../interfaces';
 import { useCircleMatcher } from './hooks';
 import Styled from './styled';
 import Modal from 'core/components/Modal';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const [circleMatcher, setCircleMatcher] = useState<string>();
