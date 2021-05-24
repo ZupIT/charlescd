@@ -17,8 +17,9 @@ CharlesApplications:
       port: 3000
       initialDelay: 60
     image:
-      registry: zupcharles
-      application: charlescd-butler
+      registry: thallesf
+      application: butler-operator
+      tag: tls
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -59,8 +60,9 @@ CharlesApplications:
       port: 8080
       initialDelay: 180
     image:
-      registry: zupcharles
-      application: charlescd-moove
+      registry: thallesf
+      application: moove-operator
+      tag: tls
     imagePullSecrets: false
     pullPolicy: Always
     service:

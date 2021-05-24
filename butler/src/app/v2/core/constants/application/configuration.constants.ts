@@ -71,4 +71,8 @@ export const ConfigurationConstants = {
   REQUEST_SIZE_LIMIT: '50mb',
 
   TLS_SKIP_VERIFY: false,
+
+  TLS_CERT: process.env.TLS_CERT,
+
+  TLS_KEY: process.env.TLS_CERT
 }

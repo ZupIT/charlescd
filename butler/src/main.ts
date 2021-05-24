@@ -28,6 +28,10 @@ import { Request, Response, Router } from 'express'
 import { HttpExceptionFilter } from './app/v2/core/filters/http-exception.filter'
 import * as bodyParser from 'body-parser'
 import { Configuration } from './app/v2/core/config/configurations'
+import { ExpressAdapter } from '@nestjs/platform-express'
+import * as express from 'express'
+import * as https from 'https'
+import * as http from 'http'
 
 const healtCheckRouter = Router()
 healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
@@ -37,7 +41,12 @@ healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
 })
 
 async function bootstrap() {
-
+  console.log(AppConstants.TLS_KEY)
+  console.log(AppConstants.TLS_CERT)
+  const httpsOptions = {
+    key: AppConstants.TLS_KEY,
+    cert: AppConstants.TLS_CERT
+  }
   hpropagate({
     setAndPropagateCorrelationId: false,
     headersToPropagate: [
@@ -46,7 +55,12 @@ async function bootstrap() {
   })
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
-  const app: INestApplication = await NestFactory.create(appModule)
+  const server = express()
+  const app = await NestFactory.create(
+    appModule,
+    new ExpressAdapter(server),
+  )
+  await app.init()
   const logger = app.get<ConsoleLoggerService>(ConsoleLoggerService)
   const options = new DocumentBuilder()
     .setTitle('Charles Butler')
@@ -63,7 +77,8 @@ async function bootstrap() {
   app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)
   app.enableShutdownHooks()
-  await app.listen(3000)
+  http.createServer(server).listen(3000)
+  https.createServer(httpsOptions, server).listen(443)
 }
 
 bootstrap()
