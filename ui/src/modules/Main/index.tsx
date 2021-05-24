@@ -30,7 +30,6 @@ export const Users = lazy(() => import('modules/Users'));
 export const Tokens = lazy(() => import('modules/Tokens'));
 export const Groups = lazy(() => import('modules/Groups'));
 export const Account = lazy(() => import('modules/Account'));
-export const Hypotheses = lazy(() => import('modules/Hypotheses'));
 export const Circles = lazy(() => import('modules/Circles'));
 export const Modules = lazy(() => import('modules/Modules'));
 export const Settings = lazy(() => import('modules/Settings'));

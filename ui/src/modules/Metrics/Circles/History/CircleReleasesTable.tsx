@@ -22,7 +22,7 @@ import ReleaseRow from './ReleaseRow';
 import SummaryRelease from './SummaryRelease';
 import Loader from '../../Loaders/index';
 import { useCirclesReleases } from '../hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import { CircleRelease } from '../interfaces';
 
 type Props = {
@@ -84,11 +84,10 @@ const CircleReleasesTable = ({ circleId }: Props) => {
         </Styled.TableColumn>
       </Styled.TableHead>
       <InfiniteScroll
-        dataLength={releases.length}
-        next={loadMore}
         hasMore={hasMoreData}
+        loadMore={loadMore}
+        isLoading={loading}
         loader={<Loader.Releases />}
-        height={300}
       >
         {releases?.map((release, index) => (
           <ReleaseRow release={release} key={index} />

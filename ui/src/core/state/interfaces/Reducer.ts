@@ -26,8 +26,6 @@ import { UserGroupState } from 'modules/Groups/interfaces/UserGroupState';
 import { UserGroupsActionTypes } from 'modules/Groups/state/actions';
 import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
 import { ModulesActionTypes } from 'modules/Modules/state/actions';
-import { HypothesesState } from 'modules/Hypotheses/interfaces';
-import { HypothesesActionTypes } from 'modules/Hypotheses/state/actions';
 import { TokensActionTypes } from 'modules/Tokens/state/actions';
 import { TokensState } from 'modules/Tokens/state/reducer';
 
@@ -47,10 +45,6 @@ export interface Reducer {
     action: UserGroupsActionTypes
   ) => UserGroupState;
   modules: (state: ModuleState, action: ModulesActionTypes) => ModuleState;
-  hypothesis: (
-    state: HypothesesState,
-    action: HypothesesActionTypes
-  ) => HypothesesState;
   tokens: (
     state: TokensState,
     action: TokensActionTypes

@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState, useRef } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import { CircleRelease } from 'modules/Metrics/Circles/interfaces';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
@@ -88,12 +88,11 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
           <Text.h2 color="light">History</Text.h2>
         </Styled.Title>
         <InfiniteScroll
-        dataLength={releases.length}
-        next={loadMore}
-        hasMore={hasMoreData}
-        loader={<Loader.History />}
-        height={690}
-      >
+            hasMore={hasMoreData}
+            loadMore={loadMore}
+            isLoading={loading}
+            loader={<Loader.History />}
+          >
         {(!loading && isEmpty(releases)) && (
           <Styled.NoHistoryPlaceholder
             icon="error-403"
