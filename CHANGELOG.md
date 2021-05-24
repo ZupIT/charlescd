@@ -294,6 +294,7 @@ Fixes
 ---
 
 ## 0.4.2 (26/11/2020)
+*No changelog for this release.*
 
 ---
 
