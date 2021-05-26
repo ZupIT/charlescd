@@ -20,6 +20,7 @@ import defaultConfig from './config';
 import Styled from './styled';
 
 export interface Props {
+  type?: 'bar' | 'area' 
   series: object[];
   options?: object;
   className?: string;
@@ -27,21 +28,26 @@ export interface Props {
   height?: number | string;
 }
 
-const AreaChart = ({
-  className,
-  options,
-  series,
-  width = '100%',
-  height
-}: Props) => (
-  <Styled.Chart
-    className={className}
-    options={defaultsDeep(options, defaultConfig.options)}
-    width={width}
-    height={height}
-    series={series}
-    type="area"
-  />
-);
+const Chart = (props: Props) => {
+  const {
+    type,
+    series,
+    options,
+    width = '100%',
+    height = '100%',
+    className
+  } = props;
 
-export default AreaChart;
+  return (
+    <Styled.Chart
+      className={className}
+      options={defaultsDeep(options, defaultConfig.options)}
+      width={width}
+      height={height}
+      series={series}
+      type={type}
+    />
+  );
+};
+
+export default Chart;
