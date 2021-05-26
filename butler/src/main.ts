@@ -41,11 +41,13 @@ healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
 })
 
 async function bootstrap() {
-  console.log(AppConstants.TLS_KEY)
-  console.log(AppConstants.TLS_CERT)
+  console.log('KEly-key'+ AppConstants.TLS_KEY)
+  console.log('CERTIN'+ AppConstants.TLS_CERT)
   const httpsOptions = {
     key: AppConstants.TLS_KEY,
-    cert: AppConstants.TLS_CERT
+    cert: AppConstants.TLS_CERT,
+    requestCert: true,
+    rejectUnauthorized: true,
   }
   hpropagate({
     setAndPropagateCorrelationId: false,
@@ -60,7 +62,7 @@ async function bootstrap() {
     appModule,
     new ExpressAdapter(server),
   )
-  await app.init()
+
   const logger = app.get<ConsoleLoggerService>(ConsoleLoggerService)
   const options = new DocumentBuilder()
     .setTitle('Charles Butler')
@@ -77,6 +79,7 @@ async function bootstrap() {
   app.use(healtCheckRouter)
   SwaggerModule.setup('/api/swagger', app, document)
   app.enableShutdownHooks()
+  await app.init()
   http.createServer(server).listen(3000)
   https.createServer(httpsOptions, server).listen(443)
 }

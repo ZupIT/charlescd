@@ -19,7 +19,7 @@ CharlesApplications:
     image:
       registry: thallesf
       application: butler-operator
-      tag: tls
+      tag: tls-10
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -28,6 +28,8 @@ CharlesApplications:
       ports:
         - name: http
           port: 3000
+        - name: https
+          port: 443
     replicaCount: 1
     resources:
       limits:
@@ -62,7 +64,7 @@ CharlesApplications:
     image:
       registry: thallesf
       application: moove-operator
-      tag: tls
+      tag: tls-8
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -341,7 +343,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
-    enabled: false
+    enabled: true
     name: charlescd-gate
     sidecarIstio:
       enabled: true

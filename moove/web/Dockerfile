@@ -6,4 +6,4 @@ ENV APP web.jar
 RUN mkdir -p /opt
 COPY ${APP_TARGET}/${APP} /opt
 
-ENTRYPOINT exec java ${JAVA_AGENT} ${JAVA_OPTS} ${MEM_PARAMS} -jar /opt/${APP}
+ENTRYPOINT exec java -Djavax.net.debug=all -Djdk.tls.client.protocols="TLSv1.2"  ${JAVA_AGENT} ${JAVA_OPTS} ${MEM_PARAMS} -jar /opt/${APP}

@@ -23,6 +23,7 @@ import feign.codec.ErrorDecoder
 import feign.form.FormEncoder
 import org.apache.http.conn.ssl.NoopHostnameVerifier
 import org.apache.http.ssl.SSLContextBuilder
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
@@ -33,33 +34,24 @@ import org.springframework.context.annotation.Scope
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.security.KeyStore
+import java.security.cert.Certificate
 
 import java.security.cert.CertificateFactory
+import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManagerFactory
 
 
 @Configuration
 class ButlerConfiguration(
-    val messageConverters: ObjectFactory<HttpMessageConverters>,
     @Value("\${tls.key}")
     val certKey: String,
     @Value("\${tls.cert}")
     val cert: String
 ) {
-
+    private val logger = LoggerFactory.getLogger(this.javaClass)
     @Bean
-    fun simpleFeignLogger(): Logger.Level {
-        return Logger.Level.FULL
-    }
-
-    @Bean
-    @Scope("prototype")
-    fun simpleFeignFormEncoder(): Encoder {
-        return FormEncoder(SpringEncoder(messageConverters))
-    }
-
-    @Bean
-    fun simpleErrorDecoder(): ErrorDecoder {
+    fun butlerErrorDecoder(): ErrorDecoder {
         return CustomFeignErrorDecoder()
     }
     @Bean
@@ -69,15 +61,25 @@ class ButlerConfiguration(
     }
 
     fun getSSLSocketFactory(): SSLSocketFactory {
-        val password = "charlesadmin"
+        logger.info("Cert: ${this.cert}")
         val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
         val certStream: InputStream = ByteArrayInputStream(this.cert.toByteArray());
         val root = cf.generateCertificate(certStream)
-        val pkcs12: KeyStore = KeyStore.getInstance("PKCS12")
-        pkcs12.setCertificateEntry("root", root)
-        val sslContext = SSLContextBuilder.create()
-            .loadKeyMaterial(pkcs12, password.toCharArray())
-            .build();
-        return sslContext.socketFactory
+        val keyStoreType = KeyStore.getDefaultType();
+
+        //Save Butler ca on key store
+        logger.info("Saving butler ca", root)
+        val keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", root);
+        //Set that the butler ca is a trusted certificate
+        val tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        val tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+        logger.info("butler ca  is trusted ${root}", root)
+        //Init context
+        val context = SSLContext.getInstance("TLS");
+        context.init(null, tmf.trustManagers, null);
+        return context.socketFactory
     }
 }

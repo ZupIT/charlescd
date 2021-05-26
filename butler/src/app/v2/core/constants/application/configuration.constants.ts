@@ -74,5 +74,5 @@ export const ConfigurationConstants = {
 
   TLS_CERT: process.env.TLS_CERT,
 
-  TLS_KEY: process.env.TLS_CERT
+  TLS_KEY: process.env.TLS_KEY
 }

@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.infrastructure.service.client
 
+import io.charlescd.moove.infrastructure.configuration.ButlerConfiguration
 import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
@@ -27,7 +28,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 // TODO remove url. It is currently needed here because we couldn't find another way to disable Ribbon (https://github.com/Netflix/ribbon).
-@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ SimpleFeignEncoderConfiguration::class])
+@FeignClient(name = "deployClient", url = "\${charlescd.deploy.url}", configuration = [ ButlerConfiguration::class])
 interface DeployClient {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(

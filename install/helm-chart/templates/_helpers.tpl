@@ -114,7 +114,7 @@ env:
 - name: TLS_KEY
   valueFrom:
     secretKeyRef:
-      name: "moove-tls-key"
+      name: "moove-tls-cert"
       key: "tls.key"
 {{- end -}}
 
@@ -173,7 +173,7 @@ env:
 - name: MOOVE_TLS_KEY
   valueFrom:
     secretKeyRef:
-      name: "moove-tls-key"
+      name: "moove-tls-cert"
       key: "tls.key"
 {{- end -}}
 
