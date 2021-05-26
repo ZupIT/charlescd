@@ -15,7 +15,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import Card from 'core/components/Card';
+import CardHeader from 'core/components/Card/Header';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -64,7 +64,7 @@ const CardConfig = ({
   );
 
   const renderHeader = () => (
-    <Card.Header icon={headerIcon} action={actions || headerAction} />
+    <CardHeader icon={headerIcon} action={actions || headerAction} />
   );
 
   const renderBody = () => (

@@ -21,11 +21,11 @@ import React, {
   forwardRef,
   useState,
   ReactNode,
-  MutableRefObject
+  MutableRefObject,
 } from 'react';
 import lowerCase from 'lodash/lowerCase';
 import capitalize from 'lodash/capitalize';
-import Card from 'core/components/Card';
+import CardHeader from 'core/components/Card/Header';
 import Badge from 'core/components/Badge';
 import Icon from 'core/components/Icon';
 import { Artifact } from 'modules/Circles/interfaces/Circle';
@@ -46,9 +46,9 @@ const CardRelease = forwardRef(
     ref: Ref<HTMLDivElement>
   ) => {
     const [toggle, switchToggle] = useState(false);
-    const cardRef = useRef<HTMLDivElement>(null) as MutableRefObject<
-      HTMLDivElement
-    >;
+    const cardRef = useRef<HTMLDivElement>(
+      null
+    ) as MutableRefObject<HTMLDivElement>;
 
     useImperativeHandle(ref, () => cardRef.current);
 
@@ -57,9 +57,9 @@ const CardRelease = forwardRef(
     const renderIcon = () => <Icon name="info" color="light" size="15px" />;
 
     const renderHeader = () => (
-      <Card.Header icon={renderIcon()} action={action}>
+      <CardHeader icon={renderIcon()} action={action}>
         {renderStatus()}
-      </Card.Header>
+      </CardHeader>
     );
 
     const renderBody = () => (

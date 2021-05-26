@@ -18,7 +18,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -60,12 +60,12 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
     const { users } = currentUserGroup;
-    const hasUser = find(users, user => user.email === email);
+    const hasUser = find(users, (user) => user.email === email);
     const isUserDuplicated = !hasUserDuplication(userGroups, email);
 
     await remove(getWorkspaceId(), currentUserGroup.id);
     onSave();
-    
+
     setToggleModal(false);
 
     if (hasUser && isUserDuplicated) {
@@ -89,7 +89,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
     >
       <Text.h4 color="light" lineHeight={1.3}>
         When you remove a user group, all the users associated to the group will
-        no longer access the workspace. Do you want to continue? 
+        no longer access the workspace. Do you want to continue?
       </Text.h4>
     </Modal.Trigger>
   );
@@ -104,13 +104,13 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
     >
       {toggleModal && renderWarningModal()}
       {userGroups &&
-        map(userGroups, userGroup => (
-          <Card.Config
+        map(userGroups, (userGroup) => (
+          <CardConfig
             id={`user-group-${userGroup.id}`}
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
-            isLoading={status === "pending"}
+            isLoading={status === 'pending'}
             onClose={() => handleClose(userGroup)}
           />
         ))}
@@ -120,10 +120,12 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_USER_GROUP) && (
       <Layer action={() => setForm(null)}>
-        <FormUserGroup onFinish={() => {
-          onSave();
-          setForm(null);
-        }} />
+        <FormUserGroup
+          onFinish={() => {
+            onSave();
+            setForm(null);
+          }}
+        />
       </Layer>
     );
 

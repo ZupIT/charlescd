@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
-import Card from 'core/components/Card';
+import { ReactNode } from 'react';
+import CardBody from 'core/components/Card/Body';
+import CardHeader from 'core/components/Card/Header';
 import Styled from './styled';
 
 export interface Props {
@@ -36,17 +37,17 @@ const Main = (props: Props) => {
     header,
     width,
     children,
-    action
+    action,
   } = props;
 
   return (
     <Styled.Card data-testid="card-main" color={color} width={width}>
-      {header && <Card.Header action={action}>{header}</Card.Header>}
-      <Card.Body>
+      {header && <CardHeader action={action}>{header}</CardHeader>}
+      <CardBody>
         {title && <Styled.Title color="light">{title}</Styled.Title>}
         <Styled.Description color="light">{description}</Styled.Description>
         {children && <Styled.Content>{children}</Styled.Content>}
-      </Card.Body>
+      </CardBody>
     </Styled.Card>
   );
 };

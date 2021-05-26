@@ -16,7 +16,7 @@
 
 import { useState, useEffect, Fragment } from 'react';
 import isEqual from 'lodash/isEqual';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -41,7 +41,7 @@ const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
   const {
     validateConnectionRegistry,
     response,
-    error
+    error,
   } = useRegistryValidateConnection();
 
   const onRemoveRegistry = async () => {
@@ -50,7 +50,7 @@ const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
       setIsAction(true);
       onChange();
     } catch (e) {}
-  }
+  };
 
   useEffect(() => {
     if (response) {
@@ -90,15 +90,15 @@ const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
     >
       {data && (
         <Fragment>
-          <Card.Config
+          <CardConfig
             icon="server"
             description={data.name}
-            isLoading={statusDeleteRegistry === "pending" || isLoading}
+            isLoading={statusDeleteRegistry === 'pending' || isLoading}
             isDisabled={isDisabled}
             onClose={() => onRemoveRegistry()}
           >
             {error && renderError()}
-          </Card.Config>
+          </CardConfig>
         </Fragment>
       )}
     </Section>
