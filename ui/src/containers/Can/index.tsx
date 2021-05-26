@@ -23,7 +23,7 @@ import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { hasPermission } from 'core/utils/auth';
-import { includes } from 'lodash';
+import includes from 'lodash/includes';
 import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
