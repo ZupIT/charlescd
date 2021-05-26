@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * CopyrigHt 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-export enum HEADINGS {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6
-}
-
-export enum HEADINGS_FONT_SIZE {
-  h1 = '32px',
-  h2 = '18px',
-  h3 = '16px',
-  h4 = '14px',
-  h5 = '12px',
-  h6 = '10px'
+export const baseFontSize = {
+  H1: '32px',
+  H2: '18px',
+  H3: '16px',
+  H4: '14px',
+  H5: '12px',
+  H6: '10px'
 }

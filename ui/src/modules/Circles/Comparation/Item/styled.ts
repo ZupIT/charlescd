@@ -100,7 +100,7 @@ const MetricsGroupsContent = styled.div`
   width: 550px;
 `;
 
-const MetricsGroupsCountContent = styled(Text.h5)`
+const MetricsGroupsCountContent = styled(Text)`
   margin: auto 60px auto 15px;
   white-space: nowrap;
   overflow: hidden;
@@ -129,7 +129,7 @@ const MetricsGroupsThresholdsContent = styled.div<NoDataThresholds>`
   }
 `;
 
-const MetricsGroupsNameContent = styled(Text.h5)`
+const MetricsGroupsNameContent = styled(Text)`
   margin: auto 20px auto 15px;
   white-space: nowrap;
   overflow: hidden;

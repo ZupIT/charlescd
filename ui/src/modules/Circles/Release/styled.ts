@@ -32,7 +32,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 20px 0 10px;
 `;
 
@@ -95,12 +95,12 @@ const SearchWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   position: absolute;
   top: 47px;
 `;
 
-const Info = styled(Text.h5)`
+const Info = styled(Text)`
   margin-top: 40px;
   margin-bottom: 10px;
 `;

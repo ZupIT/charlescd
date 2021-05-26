@@ -83,15 +83,15 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">Add Deployment Configuration</Text.h2>
-      <Text.h4 color="dark" data-testid="text-datasource">
+      <Text tag="H2" color="light">Add Deployment Configuration</Text>
+      <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding your Deployment Configuration tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. See our{' '}
         <DocumentationLink
           text="documentation"
           documentationLink={`${CHARLES_DOC}/reference/cd-configuration`}
         />
         for further details.
-      </Text.h4>
+      </Text>
       {renderForm()}
     </Styled.Content>
   );

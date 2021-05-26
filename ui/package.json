@@ -36,8 +36,7 @@
       "react-app/jest"
     ],
     "rules": {
-      "import/no-anonymous-default-export": "off",
-      "react/jsx-pascal-case": 0
+      "import/no-anonymous-default-export": "off"
     },
     "overrides": [
       {

@@ -96,7 +96,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         description={nickname}
         onClose={() => setShowConfigAction(false)}
       />
-      <Styled.OptionText color="dark">
+      <Styled.OptionText tag="H5" color="dark">
         You select an action configuration in a basic way or fill an advanced
         one.
       </Styled.OptionText>
@@ -132,7 +132,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
             label="Enter a action configuration"
           />
           {showPlaceholder && (
-            <Styled.Placeholder color="light">
+            <Styled.Placeholder tag="H4" color="light">
               {actionPlaceholder}
             </Styled.Placeholder>
           )}
@@ -183,8 +183,8 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
 
   return (
     <Styled.Content data-testid="add-action-form">
-      <Styled.Title color="light">Add Metric Action</Styled.Title>
-      <Styled.Info color="dark" data-testid="text-metric-action">
+      <Styled.Title tag="H2" color="light">Add Metric Action</Styled.Title>
+      <Styled.Info tag="H5" color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         See our{' '}
         <DocumentationLink

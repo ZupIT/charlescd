@@ -19,10 +19,8 @@ import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
 import Text from 'core/components/Text';
 import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 import { fadeIn } from 'core/assets/style/animate';
-import ComponentText from 'core/components/Text';
-import TextComponent from 'core/components/Text';
 
 const Content = styled.div`
   display: flex;
@@ -59,7 +57,7 @@ const Select = styled(SelectComponent.Single)`
   width: 271px;
 `;
 
-const OptionText = styled(Text.h5)`
+const OptionText = styled(Text)`
   padding: 15px 0;
 `;
 
@@ -83,7 +81,7 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
 
   span {
     font-weight: normal;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
     margin-right: 10px;
   }
 
@@ -108,7 +106,7 @@ const FormContent = styled.div<FormContertProps>`
   display: ${({ showForm }) => (showForm ? 'block' : 'none')};
 `;
 
-const Title = styled(ComponentText.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -117,7 +115,7 @@ const Title = styled(ComponentText.h2)`
   }
 `;
 
-const Info = styled(ComponentText.h5)`
+const Info = styled(Text)`
   margin-bottom: 20px;
 `;
 
@@ -131,7 +129,7 @@ const Link = styled.a`
   }
 `;
 
-const Placeholder = styled(TextComponent.h4)`
+const Placeholder = styled(Text)`
   pointer-events: none;
   margin-left: 47px;
   opacity: 60%;

@@ -85,11 +85,11 @@ const ChangePassword = styled.form`
   width: 320px;
 `;
 
-const ModalSubtitle = styled(Text.h5)`
+const ModalSubtitle = styled(Text)`
   margin: 20px 0 10px;
 `;
 
-const ModalInfo = styled(Text.h5)`
+const ModalInfo = styled(Text)`
   margin: 20px 0 10px;
   line-height: 14px;
 `;
@@ -101,7 +101,7 @@ const Password = styled(FormComponent.Password)`
   }
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   margin-top: 5px;
 `;
 
