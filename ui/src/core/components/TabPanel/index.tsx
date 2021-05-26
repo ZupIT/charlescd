@@ -19,7 +19,7 @@ import Icon, { Props as IconProps } from 'core/components/Icon';
 import { NEW_TAB } from './constants';
 import Styled from './styled';
 
-interface Props {
+export interface Props extends IconProps {
   title?: string;
   children?: ReactNode;
   actions?: ReactNode;
@@ -34,8 +34,8 @@ const TabPanel = ({
   actions,
   name,
   className,
-  size
-}: Props & IconProps) => (
+  size,
+}: Props) => (
   <Styled.Panel className={className} data-testid={`tabpanel-${title}`}>
     <Styled.Header>
       <Styled.Tab>
