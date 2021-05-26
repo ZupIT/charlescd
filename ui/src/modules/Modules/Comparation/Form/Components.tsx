@@ -39,7 +39,7 @@ const Components = ({ fieldArray }: Props) => {
 
   return (
     <>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle tag='H5' color="dark">
         Add components and enter SLO metrics:
       </Styled.Subtitle>
       {fields.map((field: ComponentField, index: number) => (

@@ -67,7 +67,7 @@ const Workspaces = () => {
     isRoot() && (
       <Modal.Default onClose={() => setToggleModal(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Styled.Modal.Title color="light">
+          <Styled.Modal.Title tag='H2' color="light">
             Create workspace
           </Styled.Modal.Title>
           <Styled.Modal.Input

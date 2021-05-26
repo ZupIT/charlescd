@@ -111,7 +111,7 @@ const Workspaces = ({ mode }: Props) => {
       {renderModal()}
       <ContentIcon icon="workspaces">
         <Text tag='H2' color="light">Associated Workspaces</Text>
-        <Styled.Caption color="dark">
+        <Styled.Caption tag='H5' color="dark">
           {
             watchAllWorkspaces
               ? 'Your token has access to all workspaces (including new ones)'

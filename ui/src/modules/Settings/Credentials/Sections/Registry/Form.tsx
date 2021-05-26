@@ -171,7 +171,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           name="organization"
           label="Enter the project id"
         />
-        <Styled.Subtitle color="dark">
+        <Styled.Subtitle tag='H4' color="dark">
           Enter the json key below:
         </Styled.Subtitle>
         <AceEditorForm
@@ -241,7 +241,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
               label="Enter the registry url"
             />
             {showPlaceholder && (
-              <Styled.Placeholder color="light">
+              <Styled.Placeholder tag='H4' color="light">
                 {registryPlaceholder[registryType]}
               </Styled.Placeholder>
             )}
@@ -286,7 +286,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">Add Registry</Styled.Title>
+      <Styled.Title tag='H2' color="light">Add Registry</Styled.Title>
       <Text tag='H5' color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to

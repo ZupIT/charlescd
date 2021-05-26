@@ -146,7 +146,7 @@ const FormModule = ({ module, onChange }: Props) => {
   const renderGitHelm = () => (
     <Fragment>
       <Styled.Helm>
-        <Styled.Title color="light">
+        <Styled.Title tag='H2' color="light">
           {!isEditing
             ? 'Add helm chart repository'
             : 'Edit helm chart repository'}
@@ -205,7 +205,7 @@ const FormModule = ({ module, onChange }: Props) => {
           }
         />
       )}
-      <Styled.Title color="light">
+      <Styled.Title tag='H2' color="light">
         {isEditing ? 'Edit module' : 'Create module'}
         <Popover
           title="How to create a module?"
@@ -215,7 +215,7 @@ const FormModule = ({ module, onChange }: Props) => {
           description="To configure a module you need to register a Git URL and enter the Helm repository URL. You will need to insert the components in the next step. See our documentation for further details."
         />
       </Styled.Title>
-      <Styled.Subtitle isEditing={isEditing} color="dark">
+      <Styled.Subtitle tag='H5' isEditing={isEditing} color="dark">
         Enter the requested information below:
       </Styled.Subtitle>
       <FormProvider {...form}>

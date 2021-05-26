@@ -108,7 +108,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
               label={input.label}
             />
             {(input.name === 'url' && showPlaceholder) &&
-              <Styled.Placeholder color="light">
+              <Styled.Placeholder tag='H4' color="light">
                 {datasourcePlaceholder}
               </Styled.Placeholder>
             }
