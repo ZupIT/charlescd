@@ -18,28 +18,26 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
-import io.charlescd.moove.domain.*
+import io.charlescd.moove.domain.SimpleCircle
 import java.sql.ResultSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
 @Component
-class SimpleWorkspaceExtractor() : ResultSetExtractor<Set<SimpleWorkspace>> {
+class CircleSimpleExtractor : ResultSetExtractor<Set<SimpleCircle>> {
 
-    override fun extractData(resultSet: ResultSet): Set<SimpleWorkspace> {
-        val workspaces = HashSet<SimpleWorkspace>()
+    override fun extractData(resultSet: ResultSet): Set<SimpleCircle>? {
+        val circles = HashSet<SimpleCircle>()
+
         while (resultSet.next()) {
-            workspaces.add(mapSimpleWorkspace(resultSet))
+            circles.add(mapCircle(resultSet))
         }
-        return workspaces
+
+        return circles
     }
 
-    private fun mapSimpleWorkspace(resultSet: ResultSet): SimpleWorkspace {
-        return SimpleWorkspace(
-            id = resultSet.getString("workspace_id"),
-            name = resultSet.getString("workspace_name"),
-            status = WorkspaceStatusEnum.valueOf(resultSet.getString("workspace_status")),
-            deploymentConfigurationId = resultSet.getString("workspace_deployment_configuration_id")
-        )
-    }
+    private fun mapCircle(resultSet: ResultSet) = SimpleCircle(
+        id = resultSet.getString("circle_id"),
+        name = resultSet.getString("circle_name")
+    )
 }

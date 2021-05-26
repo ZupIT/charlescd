@@ -30,6 +30,7 @@ const Metrics = () => {
       icon="placeholder-metrics"
       title={'Select the metric you want to view from the side menu.'}
       hasCards={true}
+      currentPage="metrics"
     />
   );
 

@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package repository
+import { basePath } from 'core/providers/base';
+import { rest } from 'msw';
+import {MODULE, MODULES} from './responses';
 
-type MainUseCases interface {
-	NewRepository(repository Repository) (UseCases, error)
-}
-
-type RepositoryMain struct{}
-
-func NewRepositoryMain() MainUseCases {
-	return RepositoryMain{}
-}
+export default [
+  rest.get(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    return res(
+      ctx.json(MODULE)
+    )
+  }),
+  rest.get(`${basePath}/moove/v2/modules`, (req, res, ctx) => {
+    return res(
+      ctx.json(MODULES)
+    )
+  }),
+  rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
+    return res(
+      ctx.status(204)
+    )
+  })
+]

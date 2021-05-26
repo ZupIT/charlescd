@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package template
+package io.charlescd.moove.application.circle
 
-import "octopipe/pkg/repository"
+import io.charlescd.moove.application.ResourcePageResponse
+import io.charlescd.moove.application.circle.response.SimpleCircleResponse
+import io.charlescd.moove.domain.PageRequest
 
-type MainUseCases interface {
-	NewTemplate(template Template) (UseCases, error)
-}
-
-type TemplateMain struct {
-	repositoryMain repository.MainUseCases
-}
-
-func NewTemplateMain(repositoryMain repository.MainUseCases) MainUseCases {
-	return TemplateMain{repositoryMain}
+interface FindAllCirclesSimpleInteractor {
+    fun execute(
+        name: String?,
+        except: String?,
+        workspaceId: String,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<SimpleCircleResponse>
 }

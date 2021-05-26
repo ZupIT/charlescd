@@ -78,6 +78,12 @@ class JdbcWorkspaceRepository(
                          LEFT JOIN users user_group_member ON user_groups_users.user_id = user_group_member.id
                 WHERE 1 = 1
             """
+
+        const val BASE_COUNT_QUERY_STATEMENT = """
+                SELECT count(*) AS total
+                FROM workspaces 
+                WHERE 1 = 1
+                """
     }
 
     override fun save(workspace: Workspace): Workspace {
@@ -100,6 +106,14 @@ class JdbcWorkspaceRepository(
 
     override fun exists(id: String): Boolean {
         return checkIfWorkspaceExists(id)
+    }
+
+    override fun existsByName(name: String): Boolean {
+        val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
+            .appendln("AND workspaces.name= ?")
+            .toString()
+        return applyCountQuery(
+            countStatement, arrayOf(name))
     }
 
     override fun associateUserGroupAndPermissions(workspaceId: String, userGroupId: String, permissions: List<Permission>) {
@@ -134,7 +148,8 @@ class JdbcWorkspaceRepository(
         return """
             SELECT workspaces.id                          AS workspace_id,
                    workspaces.name                        AS workspace_name,
-                   workspaces.status                      AS workspace_status
+                   workspaces.status                      AS workspace_status,
+                   workspaces.deployment_configuration_id AS workspace_deployment_configuration_id
             FROM workspaces WHERE 1 = 1 $innerQueryStatement
             ORDER BY workspaces.name, workspaces.id ASC
             LIMIT ${pageRequest.size}
@@ -165,9 +180,9 @@ class JdbcWorkspaceRepository(
         return parameters
     }
 
-    private fun createParametersArray(name: String?): Array<Any> {
+    private fun createParametersArrayILikeQuery(param: String?): Array<Any> {
         val parameters = ArrayList<Any>()
-        name?.let { parameters.add("%$name%") }
+        param?.let { parameters.add("%$param%") }
         return parameters.toTypedArray()
     }
 
@@ -178,36 +193,29 @@ class JdbcWorkspaceRepository(
     }
 
     private fun executeCountQuery(name: String?): Int? {
-
-        val statement = StringBuilder(
-            """
-                SELECT COUNT(*)
-                FROM workspaces w
-                WHERE 1 = 1 
-            """
-        )
-        name?.let { statement.appendln("AND w.name ILIKE ?") }
-
+        val statement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
+        name?.let { statement.appendln("AND workspaces.name ILIKE ?") }
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
-            createParametersArray(name)
+            createParametersArrayILikeQuery(name)
         ) { resultSet, _ ->
             resultSet.getInt(1)
         }
     }
 
     private fun checkIfWorkspaceExists(id: String): Boolean {
-        val countStatement = """
-               SELECT count(*) AS total
-               FROM workspaces 
-               WHERE workspaces.id = ?
-               """
+        val countStatement = StringBuilder(BASE_COUNT_QUERY_STATEMENT)
+            .appendln("AND workspaces.id = ?")
+            .toString()
+        return applyCountQuery(
+            countStatement, arrayOf(id))
+    }
 
+    private fun applyCountQuery(statement: String, params: Array<String>): Boolean {
         val count = this.jdbcTemplate.queryForObject(
-            countStatement,
-            arrayOf(id)
+            statement,
+            params
         ) { rs, _ -> rs.getInt(1) }
-
         return count != null && count >= 1
     }
 
@@ -245,7 +253,9 @@ class JdbcWorkspaceRepository(
         )
     }
 
-    private fun createWorkspace(workspace: Workspace) {
+    private fun createWorkspace(
+        workspace: Workspace
+    ) {
         val statement = "INSERT INTO workspaces(" +
                 "id, " +
                 "name, " +

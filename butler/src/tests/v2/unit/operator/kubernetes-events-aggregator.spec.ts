@@ -249,7 +249,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
       .mockImplementation(() => Promise.resolve({} as LogEntity))
-      
+
     const coreEvent = {
       metadata: {
         creationTimestamp: new Date('2021-04-23T11:30:20Z')
@@ -269,6 +269,42 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(0)
+    expect(logRepositorySpy).toBeCalledTimes(0)
+  })
+
+  it('Should not save logs or cache a event for a resource when fails to read them', async() => {
+    const readSpy = jest.spyOn(k8sClient, 'readResource')
+      .mockImplementation(() => Promise.reject({
+        body: {
+        },
+        response: {} as http.IncomingMessage
+      } as K8sClientResolveObject))
+
+    const logRepositorySpy = jest.spyOn(logRepository, 'save')
+      .mockImplementation(() => Promise.resolve({} as LogEntity))
+
+    const coreEvent = {
+      metadata: {
+        creationTimestamp: new Date('2021-04-23T11:30:20Z')
+      },
+      involvedObject: {
+        namespace: 'events',
+        kind: 'Pod',
+        apiVersion: 'v1',
+        name: 'pod-name'
+      },
+      reason: 'Created',
+      message: 'Created container pod-name',
+      type: 'Normal',
+    }
+
+
+
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
+    await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
+
+    expect(readSpy).toBeCalledTimes(2)
     expect(logRepositorySpy).toBeCalledTimes(0)
   })
 

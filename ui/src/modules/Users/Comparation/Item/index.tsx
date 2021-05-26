@@ -51,7 +51,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const [action, setAction] = useState('');
   const [currentUser, setCurrentUser] = useState<User>();
   const { register, handleSubmit, errors } = useForm<User>({
-    mode: 'onChange'
+    mode: 'onChange',
   });
   const { findByEmail, user } = useUser();
   const [delUser, delUserResponse] = useDeleteUser();
@@ -69,11 +69,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   useEffect(() => {
     if (userUpdated) {
       setCurrentUser(userUpdated);
-      onChange('Updated');
     } else if (status === 'rejected') {
       findByEmail(email);
     }
-  }, [userUpdated, status, email, findByEmail, onChange]);
+  }, [userUpdated, status, email, findByEmail]);
 
   useEffect(() => {
     if (delUserResponse === 'Deleted') {
@@ -82,9 +81,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     }
   });
 
-  const onSubmit = (profile: User) => {
+  const onSubmit = async (profile: User) => {
     setCurrentUser(null);
-    updateNameById(currentUser.id, profile.name);
+    await updateNameById(currentUser.id, profile.name);
+    onChange('Update');
   };
 
   const handleDelete = (userId: string, userName: string) => {
@@ -101,8 +101,8 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onDismiss={() => setAction('Cancel')}
     >
       <Text.h4 color="light">
-        By deleting this user, all related information will also be deleted. Do
-        you wish to continue?
+        By deleting this user, all related information will also be deleted. Do you wish to
+        continue?
       </Text.h4>
     </Modal.Trigger>
   );
@@ -115,22 +115,14 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
       {!isIDMEnabled() && (
-        <Dropdown.Item
-          icon="delete"
-          name="Delete"
-          onClick={() => setAction('Delete')}
-        />
+        <Dropdown.Item icon="delete" name="Delete" onClick={() => setAction('Delete')} />
       )}
     </Dropdown>
   );
 
   const renderResetPassword = () =>
     isAbleToReset && (
-      <LabeledIcon
-        icon="shield"
-        marginContent="5px"
-        onClick={() => toggleModalPassword(true)}
-      >
+      <LabeledIcon icon="shield" marginContent="5px" onClick={() => toggleModalPassword(true)}>
         <Text.h5 color="dark">Reset password</Text.h5>
       </LabeledIcon>
     );
@@ -166,7 +158,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
                 resume
                 ref={register({
                   required: isRequired(),
-                  maxLength: maxLength()
+                  maxLength: maxLength(),
                 })}
                 isDisabled={!!errors.name}
                 defaultValue={currentUser.name}

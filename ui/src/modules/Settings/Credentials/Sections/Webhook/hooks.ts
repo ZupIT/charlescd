@@ -29,7 +29,7 @@ import { Webhook } from './interfaces';
 interface Props {
   status: FetchStatuses;
   save: (webhook: Webhook) => Promise<unknown>;
-  remove: (id: string) => Promise<unknown>;
+  remove: (id: string, description?: string) => Promise<unknown>;
   list: (id: string) => Promise<unknown>;
   edit: (id: string, value: string[]) => Promise<unknown>;
 }
@@ -70,6 +70,14 @@ export const useWebhook = (): Props => {
         setStatus('pending');
         const response = await removing(id);
         setStatus('resolved');
+
+        dispatch(
+          toogleNotification({
+            text: 'Success deleting webhook',
+            status: 'success'
+          })
+        );
+
         return response;
       } catch (e) {
         setStatus('rejected');

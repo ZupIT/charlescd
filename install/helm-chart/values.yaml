@@ -46,6 +46,8 @@ CharlesApplications:
       password: 3f2Yq8R4HhDCnefR
       name: charlescd_butler
       ssl: false
+    requestSizeLimit: 50mb
+    tlsSkipVerify: false
 
   moove:
     enabled: true
@@ -86,6 +88,7 @@ CharlesApplications:
       password: 7Qs2KuM9gYzw48BS
       name: charlescd_moove
     allowedOriginHost: *hostGlobal
+    gitlabIgnoreSSL: true
     keycloak:
       host: "http://examplename-keycloak-http/keycloak/auth"
       realm: charlescd
@@ -133,44 +136,6 @@ CharlesApplications:
       user: charlescd_villager
       password: ZkQ67Lnhs2bM3MPN
       name: charlescd_villager
-
-  octopipe:
-    enabled: true
-    serviceAccountName: charlescd-octopipe
-    name: charlescd-octopipe
-    sidecarIstio:
-      enabled: true
-    healthCheck:
-      path: /api/v1/health
-      port: 8080
-      initialDelay: 60
-    image:
-      registry: zupcharles
-      application: charlescd-octopipe
-    imagePullSecrets: false
-    pullPolicy: Always
-    service:
-      name: charlescd-octopipe
-      type: ClusterIP
-      ports:
-        - name: http
-          port: 8080
-    replicaCount: 1
-    database: {}
-    resources:
-      limits:
-        cpu: 512m
-        memory: 1Gi
-      requests:
-        cpu: 512m
-        memory: 1Gi
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
-    #octopipe envs
-    limits:
-      timeoutResourceVerification: 300
-      requestBySecond: 10
 
   ui:
     enabled: true
@@ -541,8 +506,6 @@ envoy:
   circlematcher:
     enabled: true
   keycloak:
-    enabled: true
-  octopipe:
     enabled: true
   compass:
     enabled: true

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {  HttpService, Injectable } from '@nestjs/common'
+import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosResponse, AxiosRequestConfig } from 'axios'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
 import { ConsoleLoggerService } from '../../logs/console'
@@ -25,27 +25,35 @@ import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../constants'
-
-
+import * as https from 'https'
+import { IoCTokensConstants } from '../../constants/ioc'
+import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
 
 @Injectable()
 export class GitLabRepository implements Repository {
 
   constructor(
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly httpService: HttpService) {}
+    private readonly httpService: HttpService,
+    @Inject(IoCTokensConstants.ENV_CONFIGURATION)
+    private readonly envConfiguration: IEnvConfiguration
+  ) {}
 
   public async getResource(requestConfig: RequestConfig): Promise<Resource> {
     const urlResource = new URL(requestConfig.url)
     this.appendPathParam(urlResource, requestConfig.resourceName)
 
     this.consoleLoggerService.log('START:DOWNLOADING CHART FROM GITLAB', { urlResource })
+
+    // TODO stop accepting self-signed TLS certificates
+    const agent = new https.Agent({ rejectUnauthorized: this.envConfiguration.rejectUnauthorizedTLS })
     const config = {
       headers: {
         'Content-Type': 'application/json',
         'PRIVATE-TOKEN': requestConfig.token
       },
-      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT
+      timeout: ConfigurationConstants.CHART_DOWNLOAD_TIMEOUT,
+      httpsAgent: agent
     }
     return this.downloadResource(urlResource, requestConfig.resourceName, config)
   }
@@ -120,7 +128,7 @@ export class GitLabRepository implements Repository {
     return fetchError.pipe(
       concatMap((error, attempts: number) => {
         return attempts >= AppConstants.MOOVE_NOTIFICATION_MAXIMUM_RETRY_ATTEMPTS   ?
-          throwError(`Reached maximum fetch attempts! ${error}`) :
+          throwError(error) :
           of(error).pipe(
             tap(() => this.consoleLoggerService.log(`Fetch attempt #${attempts + 1}. Retrying fetch resource!`)),
             delay(AppConstants.MOOVE_NOTIFICATION_MILLISECONDS_RETRY_DELAY)

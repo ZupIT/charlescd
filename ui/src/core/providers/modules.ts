@@ -62,7 +62,7 @@ export const update = (id: string, module: ModuleSave) =>
   baseRequest(`${endpoint}/${id}`, module, { method: 'PUT' });
 
 export const deleteModule = (id: string) =>
-  baseRequest(`${endpoint}/${id}`, module, { method: 'DELETE' });
+  baseRequest(`${endpoint}/${id}`, {}, { method: 'DELETE' });
 
 export const createComponent = (moduleId: string, component: Component) =>
   baseRequest(`${endpoint}/${moduleId}/components`, component, {

@@ -14,31 +14,20 @@
  * limitations under the License.
  */
 
-package template
+package io.charlescd.moove.application.circle.response
 
-import (
-	"errors"
-	"octopipe/pkg/template/helm"
-)
+import com.fasterxml.jackson.annotation.JsonInclude
+import io.charlescd.moove.domain.*
 
-const (
-	HelmType = "HELM"
-)
-
-type UseCases interface {
-	GetManifests(templateContent, valueContent string) (map[string]interface{}, error)
-}
-
-type Template struct {
-	Type string `json:"type"`
-	helm.HelmTemplate
-}
-
-func (main TemplateMain) NewTemplate(template Template) (UseCases, error) {
-	switch template.Type {
-	case HelmType:
-		return helm.NewHelmTemplate(template.HelmTemplate), nil
-	default:
-		return nil, errors.New("Template not found")
-	}
+@JsonInclude(JsonInclude.Include.NON_NULL)
+class SimpleCircleResponse(
+    val id: String,
+    val name: String
+) {
+    companion object {
+        fun from(circle: SimpleCircle) = SimpleCircleResponse(
+            id = circle.id,
+            name = circle.name
+        )
+    }
 }

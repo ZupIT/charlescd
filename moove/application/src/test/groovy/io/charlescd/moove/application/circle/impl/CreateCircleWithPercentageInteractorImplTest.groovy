@@ -16,16 +16,13 @@
 
 package io.charlescd.moove.application.circle.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.application.CircleService
 import io.charlescd.moove.application.SystemTokenService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.WorkspaceService
 import io.charlescd.moove.application.circle.CreateCircleWithPercentageInteractor
-import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageRequest
-import io.charlescd.moove.application.circle.request.NodePart
-import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -35,9 +32,7 @@ import io.charlescd.moove.domain.repository.UserRepository
 import io.charlescd.moove.domain.repository.WorkspaceRepository
 import io.charlescd.moove.domain.service.CircleMatcherService
 import io.charlescd.moove.domain.service.ManagementUserSecurityService
-import org.jetbrains.annotations.NotNull
 import spock.lang.Specification
-
 import java.time.LocalDateTime
 
 class CreateCircleWithPercentageInteractorImplTest extends Specification {
@@ -137,6 +132,26 @@ class CreateCircleWithPercentageInteractorImplTest extends Specification {
 
         assert exception.resourceName == "workspace"
         assert exception.id == workspaceId
+    }
+
+    def "should throw a BusinessException when workspace matcher url is missing"() {
+        given:
+        def authorId = "96c63356-d416-46c3-a24e-c6b8c71cb718"
+        def workspaceId = "983fcdc6-8adc-4baa-817b-17b587ff5dcb"
+
+        def request = new CreateCircleWithPercentageRequest("Women", authorId, 20)
+
+        def author = getDummyUser(authorId)
+
+        when:
+        this.createCircleWIthPercentageInteractor.execute(request, workspaceId)
+
+        then:
+        1 * userRepository.findById(authorId) >> Optional.of(author)
+        1 * workspaceRepository.find(workspaceId) >> Optional.of(TestUtils.workspaceWithoutMatcher)
+        def exception = thrown(BusinessException)
+
+        assert exception.message == "workspace.matcher_url.is.missing"
     }
 
 

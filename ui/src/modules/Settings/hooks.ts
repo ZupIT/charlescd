@@ -20,6 +20,7 @@ import { findById, updateName } from 'core/providers/workspace';
 import { useDispatch } from 'core/state/hooks';
 import { Workspace } from './Workspaces/interfaces/Workspace';
 import { toogleNotification } from 'core/components/Notification/state/actions';
+import { loadedWorkspaceAction } from 'modules/Workspaces/state/actions';
 
 type WorkspasceResponse = {
   workspace: Workspace,
@@ -37,6 +38,7 @@ export const useWorkspace = (): { getWorkspace: Function, data: WorkspasceRespon
       try {
         const workspace = await getWorkspaceById({ id });
         setData({ workspace, status: 'resolved' });
+        dispatch(loadedWorkspaceAction(workspace));
 
       } catch (error) {
         if (error.status !== 403) {

@@ -59,7 +59,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     @ResponseBody
     fun exceptions(ex: Exception): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
-        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message!!)
+        return ErrorMessageResponse.of(MooveErrorCode.INTERNAL_SERVER_ERROR, ex.message?.also { ex.message } ?: "Internal Server Error")
     }
 
     @ExceptionHandler(BadRequestClientException::class)
@@ -151,9 +151,7 @@ class MooveExceptionHandler(private val messageSource: MessageSource) {
     fun businessException(ex: BusinessException): ErrorMessageResponse {
         this.logger.error(ex.message, ex)
         return ErrorMessageResponse.of(ex.getErrorCode(),
-            ex.getParameters()
-                ?.let { messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH) }
-                ?: ex.message)
+            messageSource.getMessage(ex.getErrorCode().key, ex.getParameters(), Locale.ENGLISH))
     }
 
     @ExceptionHandler(ForbiddenException::class)

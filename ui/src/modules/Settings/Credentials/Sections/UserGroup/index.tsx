@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import filter from 'lodash/filter';
 import Card from 'core/components/Card';
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { getWorkspaceId } from 'core/utils/workspace';
-import { useUserGroup } from './hooks';
+import { useDeleteUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
 import Modal from 'core/components/Modal';
@@ -39,17 +38,24 @@ interface Props {
   form: string;
   setForm: Function;
   data: UserGroup[];
+  onSave: () => void;
 }
 
-const SectionUserGroup = ({ form, setForm, data }: Props) => {
+const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const [userGroups, setUserGroups] = useState(data);
-  const { remove, loadingRemove } = useUserGroup();
+  const { remove, status } = useDeleteUserGroup();
   const [toggleModal, setToggleModal] = useState<boolean>(false);
   const [currentUserGroup, setCurrentUserGroup] = useState(null);
   const history = useHistory();
   const modalRef = useRef<HTMLDivElement>();
 
   useOutsideClick(modalRef, () => setToggleModal(false));
+
+  useEffect(() => {
+    if (data !== userGroups) {
+      setUserGroups(data);
+    }
+  }, [data, userGroups]);
 
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
@@ -58,7 +64,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
     const isUserDuplicated = !hasUserDuplication(userGroups, email);
 
     await remove(getWorkspaceId(), currentUserGroup.id);
-    setUserGroups(filter(userGroups, item => item.id !== currentUserGroup.id));
+    onSave();
     
     setToggleModal(false);
 
@@ -104,7 +110,7 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
-            isLoading={loadingRemove}
+            isLoading={status === "pending"}
             onClose={() => handleClose(userGroup)}
           />
         ))}
@@ -114,7 +120,10 @@ const SectionUserGroup = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_USER_GROUP) && (
       <Layer action={() => setForm(null)}>
-        <FormUserGroup onFinish={() => setForm(null)} />
+        <FormUserGroup onFinish={() => {
+          onSave();
+          setForm(null);
+        }} />
       </Layer>
     );
 

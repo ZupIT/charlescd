@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  DynamicModule,
-  INestApplication
-} from '@nestjs/common'
+import { DynamicModule, INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import * as rTracer from 'cls-rtracer'
@@ -29,6 +26,8 @@ import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-
 import { ConsoleLoggerService } from './app/v2/core/logs/console'
 import { Request, Response, Router } from 'express'
 import { HttpExceptionFilter } from './app/v2/core/filters/http-exception.filter'
+import * as bodyParser from 'body-parser'
+import { Configuration } from './app/v2/core/config/configurations'
 
 const healtCheckRouter = Router()
 healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
@@ -55,6 +54,7 @@ async function bootstrap() {
     .build()
   const document = SwaggerModule.createDocument(app, options)
 
+  app.use(bodyParser.json({ limit: Configuration.requestSizeLimit }))
   app.use(morgan('dev'))
   app.use(morgan('X-Circle-Id: :req[x-circle-id]'))
   app.useGlobalFilters(new EntityNotFoundExceptionFilter(logger))

@@ -64,7 +64,8 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   });
   const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const isNotUnique = fields.length > ONE;
-  const [error, setError] = useState('');;
+  const [error, setError] = useState('');
+  const [isDeploying, setIsDeploying] = useState(false);
 
   useEffect(() => {
     if (watchFields) {
@@ -95,6 +96,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   }, [createDeployment, build, circleId, getValues]);
 
   const onSubmit = () => {
+    setIsDeploying(true);
     const data = getValues();
     const modules = formatDataModules(data);
 
@@ -145,7 +147,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Button.Default>
-        {error && 
+        {error &&
           <ConnectionStatus
             errorMessage={error}
             status={"error"} />
@@ -156,7 +158,11 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="submit"
           size="SMALL"
           isLoading={savingBuild}
+<<<<<<< HEAD
           isDisabled={(isEmptyFields || !isEmpty(errors) || !isEmpty(error))}
+=======
+          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
+>>>>>>> 81a40fd5f7a99faa40d8e4365a4c4005077b453b
         >
           Deploy
         </Styled.Submit>
