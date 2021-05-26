@@ -92,7 +92,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text tag='H5' color="dark">
+      <Text tag="H5" color="dark">
         Fill in the fields below with your information:
       </Text>
       <Styled.Fields>
@@ -141,8 +141,8 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
 
   return (
     <Styled.Content>
-      <Styled.Title tag='H2' color="light">Add Git</Styled.Title>
-      <Styled.Info tag='H5' color="dark" data-testid="git-help-text">
+      <Styled.Title tag="H2" color="light">Add Git</Styled.Title>
+      <Styled.Info tag="H5" color="dark" data-testid="git-help-text">
         Adding a Git allows Charles to create, delete and merge branches, as
         well as view repositories and generate releases. See our{' '}
         <Styled.Link
@@ -153,7 +153,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
         </Styled.Link>{' '}
         for further details.
       </Styled.Info>
-      <Styled.Subtitle tag='H5' color="dark">
+      <Styled.Subtitle tag="H5" color="dark">
         Choose which one you want to add:
       </Styled.Subtitle>
       <Radio.Buttons

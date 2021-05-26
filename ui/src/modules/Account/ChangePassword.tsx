@@ -62,8 +62,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
 
   return (
     <Styled.ChangePassword onSubmit={handleSubmit(onSubmitForm)}>
-      <Text tag='H2' color="light">Change password</Text>
-      <Styled.Modal.Info tag='H5' color="dark">
+      <Text tag="H2" color="light">Change password</Text>
+      <Styled.Modal.Info tag="H5" color="dark">
         Fill in the fields below to change your password:
       </Styled.Modal.Info>
       <Styled.Password
@@ -74,7 +74,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
           required: isRequired()
         })}
       />
-      <Styled.Modal.Info tag='H5' color="dark">
+      <Styled.Modal.Info tag="H5" color="dark">
         Your new password must be at least 10 characters long, uppercase,
         lowercase, numbers and at least one special character.
       </Styled.Modal.Info>

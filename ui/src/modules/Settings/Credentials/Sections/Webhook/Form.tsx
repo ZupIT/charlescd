@@ -65,8 +65,8 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
   const renderTitle = () => (
     isEditMode
-      ? <Text tag='H2' color="light">Edit Webhook</Text>
-      : <Text tag='H2' color="light">Add Webhook</Text>
+      ? <Text tag="H2" color="light">Edit Webhook</Text>
+      : <Text tag="H2" color="light">Add Webhook</Text>
   )
 
   const renderOptions = () => (
@@ -92,12 +92,12 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text tag='H5' color="dark">
+      <Text tag="H5" color="dark">
         Webhooks allow external services to be notified when certain events
         happen. When the specified events happen, we’ll send a POST request to
         each of the URLs you provide.
       </Text>
-      <Text tag='H5' color="dark">
+      <Text tag="H5" color="dark">
         See our {' '}
           <DocumentationLink
             text="documentation"
@@ -138,7 +138,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           autoComplete="new-password"
           defaultValue={data?.apiKey}
         />
-        <Text tag='H5' color="dark">
+        <Text tag="H5" color="dark">
           Which events would you like to trigger this webhook?
         </Text>
         <Form.Radio

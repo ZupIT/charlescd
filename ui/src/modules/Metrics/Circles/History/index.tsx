@@ -58,13 +58,13 @@ const HistoryComponent = () => {
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text tag='H5' color="dark">Circles</Text>
+            <Text tag="H5" color="dark">Circles</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text tag='H5' color="dark">Last update</Text>
+            <Text tag="H5" color="dark">Last update</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text tag='H5' color="dark">Life time</Text>
+            <Text tag="H5" color="dark">Life time</Text>
           </Styled.TableColumn>
         </Styled.TableHead>
         <Styled.CircleRowWrapper>

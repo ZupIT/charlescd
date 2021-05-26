@@ -55,7 +55,7 @@ const MetricCard = ({
       data-testid={`metric-group-card-${metric.nickname}`}
     >
       <Styled.MetricNickname
-        tag='H5'
+        tag="H5"
         color="light"
         title={metric.nickname}
         data-testid={`${metric.nickname}-nickname`}
@@ -63,13 +63,13 @@ const MetricCard = ({
         {metric.nickname}
       </Styled.MetricNickname>
       <Styled.MetricConditionThreshold>
-        <Text tag='H5'
+        <Text tag="H5"
           color="dark"
           data-testid={`${metric.nickname}-threshold-condition`}
         >
           {getMetricCondition(metric.condition)}
         </Text>
-        <Text tag='H5' color="light" title={metric.threshold.toString()}>
+        <Text tag="H5" color="light" title={metric.threshold.toString()}>
           {metric.threshold !== 0 && metric.threshold}
         </Text>
       </Styled.MetricConditionThreshold>
@@ -84,7 +84,7 @@ const MetricCard = ({
           data-for={`thresholdTooltip-${metric.id}`}
         />
         <Styled.MetricLastValueText
-          tag='H5'
+          tag="H5"
           color="light"
           title={metric.execution.lastValue.toString()}
         >

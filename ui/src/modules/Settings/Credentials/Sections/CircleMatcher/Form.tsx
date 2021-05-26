@@ -56,7 +56,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
       onContinue={() => save(circleMatcher)}
       onDismiss={() => setCircleMatcher(null)}
     >
-      <Text tag='H4' color="light">
+      <Text tag="H4" color="light">
         This operation will syncronize all data from this workspace to the Circle Matcher.
       </Text>
     </Modal.Trigger>
@@ -83,7 +83,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
     <Fragment>
       {isConfimation && renderConfirmation()}
       <Styled.Content>
-        <Text tag='H2' color="light">
+        <Text tag="H2" color="light">
           Add Circle Matcher
           <Popover
             title="Why we ask for Circle Matcher?"

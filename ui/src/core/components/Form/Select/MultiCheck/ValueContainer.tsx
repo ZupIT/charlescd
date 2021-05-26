@@ -52,7 +52,7 @@ const ValueContainer = ({ children, ...props }: ContainerProps) => {
       <Placeholder {...props} innerProps={null} isFocused={false} isDisabled={false}>
         {props.selectProps.placeholder}
       </Placeholder>
-      <Text tag='H4' color="light">{toBeRendered}</Text>
+      <Text tag="H4" color="light">{toBeRendered}</Text>
     </components.ValueContainer>
   );
 };

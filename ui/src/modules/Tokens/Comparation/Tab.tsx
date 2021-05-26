@@ -99,14 +99,14 @@ const Tab = ({ param }: Props) => {
             marginContent="5px"
             onClick={toggleRevoke}
           >
-            <Text tag='H5' color="dark">Revoke token</Text>
+            <Text tag="H5" color="dark">Revoke token</Text>
           </LabeledIcon>
           <LabeledIcon
             icon="regenerate"
             marginContent="5px"
             onClick={() => setIsRegenerate(true)}
           >
-            <Text tag='H5' color="dark">Regenerate token</Text>
+            <Text tag="H5" color="dark">Regenerate token</Text>
           </LabeledIcon>
         </Fragment>
       )}

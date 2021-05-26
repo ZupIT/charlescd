@@ -69,7 +69,7 @@ const CardConfig = ({
 
   const renderBody = () => (
     <Styled.Body onClick={onClick}>
-      <Text tag='H4' color="light">{description}</Text>
+      <Text tag="H4" color="light">{description}</Text>
       {children}
     </Styled.Body>
   );

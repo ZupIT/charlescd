@@ -129,7 +129,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text tag='H2' color="light">
+        <Text tag="H2" color="light">
           {metric?.id ? 'Update metric' : 'Add metric'}
         </Text>
       </Styled.Layer>
@@ -161,7 +161,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
             {canShowForm && (
               <>
-                <Text tag='H5' color="dark">
+                <Text tag="H5" color="dark">
                   You can fill your query in a basic or advanced way:
                 </Text>
                 <Styled.Actions>
@@ -216,8 +216,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </>
                 )}
 
-                <Styled.Title tag='H2' color="light">Threshold</Styled.Title>
-                <Styled.Subtitle tag='H5' color="dark">
+                <Styled.Title tag="H2" color="light">Threshold</Styled.Title>
+                <Styled.Subtitle tag="H5" color="dark">
                   Set the threshold for this metric:
                 </Styled.Subtitle>
 

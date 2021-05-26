@@ -40,19 +40,19 @@ const ActionCard = ({
 
   const deleteBody = () => (
     <Styled.ActionCardBodyDelete>
-      <Styled.ActionNicknameDeleteCard tag='H5' color="light">
+      <Styled.ActionNicknameDeleteCard tag="H5" color="light">
         {action.nickname}
       </Styled.ActionNicknameDeleteCard>
-      <Styled.ActionType tag='H5' color="light">Are you sure?</Styled.ActionType>
+      <Styled.ActionType tag="H5" color="light">Are you sure?</Styled.ActionType>
       <Styled.ActionDeleteCardText
-        tag='H5'
+        tag="H5"
         color="light"
         onClick={() => handleDeleteAction(action.id, action.nickname)}
       >
         <u>Yes, delete</u>
       </Styled.ActionDeleteCardText>
       <Styled.ActionDeleteCardText
-        tag='H5'
+        tag="H5"
         color="light"
         onClick={() => setDeleteView(false)}
       >
@@ -73,7 +73,7 @@ const ActionCard = ({
         data-testid={`action-status-${camelCase(action.status)}`}
       />
       <Styled.ActionNickname
-        tag='H5'
+        tag="H5"
         color="light"
         title={action.nickname}
         data-testid={`${action.nickname}-action-nickname`}
@@ -81,7 +81,7 @@ const ActionCard = ({
         {action.nickname}
       </Styled.ActionNickname>
       <Styled.ActionType
-        tag='H5'
+        tag="H5"
         color="light"
         title={action.actionType}
         data-testid={`${action.actionType}-action-type`}
@@ -89,7 +89,7 @@ const ActionCard = ({
         {action.actionType}
       </Styled.ActionType>
       <Styled.ActionTypeTriggeredAt
-        tag='H5'
+        tag="H5"
         color="light"
         title={action.triggeredAt}
         data-testid={`${action.triggeredAt}-action-triggered`}

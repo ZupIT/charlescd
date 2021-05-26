@@ -33,7 +33,7 @@ const ConnectionStatus = ({ successMessage, errorMessage, status }: Props) => {
         status={status}
       >
         <Icon name={status} />
-        <Text tag='H5'>
+        <Text tag="H5">
           {status === 'success' ? successMessage : errorMessage}
         </Text>
       </Styled.StatusMessageWrapper>

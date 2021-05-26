@@ -51,7 +51,7 @@ const renderPercentage = (
       {!circle.deployment && (
         <Styled.WarningPercentageContainer>
           <Icon name="alert" color="warning" />
-          <Text tag='H4' color="warning">
+          <Text tag="H4" color="warning">
             The percentage will be activated only when the circle is active.
           </Text>
         </Styled.WarningPercentageContainer>
@@ -108,7 +108,7 @@ const LayerSegments = ({
   return (
     <Styled.Layer>
       <ContentIcon icon="segments">
-        <Text tag='H2' color="light">Segments</Text>
+        <Text tag="H2" color="light">Segments</Text>
       </ContentIcon>
       <Styled.Content>{renderContent()}</Styled.Content>
     </Styled.Layer>

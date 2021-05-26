@@ -19,7 +19,7 @@ import Text from 'core/components/Text';
 
 const Loader = () => (
   <p>
-    <Text tag='H5' color="dark">Wait, performing importing...</Text>
+    <Text tag="H5" color="dark">Wait, performing importing...</Text>
   </p>
 );
 

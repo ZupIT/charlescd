@@ -30,7 +30,7 @@ const Notification = ({ notification, onDismiss }: Props) => (
   <Styled.Notification color={notification.status} data-testid="notification">
     <Styled.Wrapper>
       <Icon name={notification.status} color="light" />
-      <Text tag='H4' color="light" weight="light">
+      <Text tag="H4" color="light" weight="light">
         {notification.text}
       </Text>
     </Styled.Wrapper>

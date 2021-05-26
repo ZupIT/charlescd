@@ -47,7 +47,7 @@ const MenuItem = ({ id, name }: Props) => {
     <Can I="read" a="modules" passThrough>
       <Styled.Link onClick={() => onMenuClick()} isActive={isActive()}>
         <Styled.ListItem icon="modules" isActive={isActive()}>
-          <Text tag='H4' color="light">{moduleFormatterName(name)}</Text>
+          <Text tag="H4" color="light">{moduleFormatterName(name)}</Text>
         </Styled.ListItem>
       </Styled.Link>
     </Can>

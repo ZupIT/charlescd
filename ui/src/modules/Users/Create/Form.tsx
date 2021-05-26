@@ -111,8 +111,8 @@ const FormUser = ({ onFinish }: Props) => {
 
   return (
     <Styled.Content data-testid="content-create-user">
-      <Styled.Title tag='H2'>
-        <Text tag='H2' weight="bold" color="light">
+      <Styled.Title tag="H2">
+        <Text tag="H2" weight="bold" color="light">
           Create User
         </Text>
         <Popover
@@ -123,7 +123,7 @@ const FormUser = ({ onFinish }: Props) => {
           description="In order to create a new user, you must fill the following fields."
         />
       </Styled.Title>
-      <Styled.Subtitle tag='H5' color="dark">
+      <Styled.Subtitle tag="H5" color="dark">
         Enter the requested information bellow:
       </Styled.Subtitle>
       {renderForm()}

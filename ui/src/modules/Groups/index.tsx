@@ -64,7 +64,7 @@ const UserGroups = () => {
   const renderModal = () => (
     <Modal.Default onClose={() => setToggleModal(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Modal.Title tag='H2' color="light">New user group</Styled.Modal.Title>
+        <Styled.Modal.Title tag="H2" color="light">New user group</Styled.Modal.Title>
         <Styled.Modal.Input
           name="name"
           label="Type a name"

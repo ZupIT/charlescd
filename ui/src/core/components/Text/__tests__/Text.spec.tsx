@@ -21,7 +21,7 @@ import { baseFontSize } from '../constants';
 import { dark as textTheme } from 'core/assets/themes/text';
 
 test('renders text component with default properties', () => {
-  render(<Text tag='H1'>hello</Text>);
+  render(<Text tag="H1">hello</Text>);
 
   const textElement = screen.getByText('hello');
   expect(textElement).toHaveStyle(`color: ${textTheme.primary};`);
@@ -32,7 +32,7 @@ test('renders text component with default properties', () => {
 
 test('renders text component with color, weight and align props', () => {
   render(
-    <Text tag='H2' color="dark" align="center" weight="bold">
+    <Text tag="H2" color="dark" align="center" weight="bold">
       hello
     </Text>
   );
@@ -47,10 +47,10 @@ test('renders text component with color, weight and align props', () => {
 test('renders anothers text variations', () => {
   render(
     <>
-      <Text tag='H3'>hello</Text>
-      <Text tag='H4'>hello</Text>
-      <Text tag='H5'>hello</Text>
-      <Text tag='H6'>hello</Text>
+      <Text tag="H3">hello</Text>
+      <Text tag="H4">hello</Text>
+      <Text tag="H5">hello</Text>
+      <Text tag="H6">hello</Text>
     </>
   );
 

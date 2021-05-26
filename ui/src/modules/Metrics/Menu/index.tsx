@@ -37,7 +37,7 @@ const Menu = () => {
         isDisabled={true}
       >
         <LabeledIcon icon="plus-circle" marginContent="5px">
-          <Text tag='H5' color="dark">Create dashboard</Text>
+          <Text tag="H5" color="dark">Create dashboard</Text>
         </LabeledIcon>
       </Styled.CreateMetricDashboard>
       <Styled.Content>

@@ -45,7 +45,7 @@ const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
   return (
     <Styled.SliderContainer>
       <Styled.SliderInputContainer>
-        <Text tag='H4' color="light">0%</Text>
+        <Text tag="H4" color="light">0%</Text>
         <Styled.Slider
           type="range"
           data-testid="slider-input"
@@ -54,7 +54,7 @@ const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
           disabled={isDisabled}
           max={limitValue}
         />
-        <Text tag='H4' data-testid="slider-limit-value" color="light">
+        <Text tag="H4" data-testid="slider-limit-value" color="light">
           {limitValue}%
         </Text>
         <Styled.SliderNumberInput
@@ -68,7 +68,7 @@ const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
           })}
         />
       </Styled.SliderInputContainer>
-      <Text tag='H5' color="error">{errors?.slider?.message}</Text>
+      <Text tag="H5" color="error">{errors?.slider?.message}</Text>
     </Styled.SliderContainer>
   );
 };

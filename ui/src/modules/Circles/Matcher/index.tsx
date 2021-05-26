@@ -78,7 +78,7 @@ const CircleMatcher = () => {
       >
         <Styled.Layer>
           <ContentIcon icon="circle-matcher">
-            <Text tag='H2' color="light">Circle matcher</Text>
+            <Text tag="H2" color="light">Circle matcher</Text>
           </ContentIcon>
           <Styled.Content>
             {renderJsonEditor()}

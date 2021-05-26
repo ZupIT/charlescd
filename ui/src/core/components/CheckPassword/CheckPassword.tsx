@@ -43,7 +43,7 @@ const CheckPassword = ({
         return (
           <Styled.Item key={checkPoint.name}>
             <Icon name={icon} color={color} size="14px" />
-            <Text tag='H5' color={color}>{checkPoint.name}</Text>
+            <Text tag="H5" color={color}>{checkPoint.name}</Text>
           </Styled.Item>
         );
       })}

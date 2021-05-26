@@ -45,13 +45,13 @@ const InputGroup = React.forwardRef(
 
     const renderPrepend = () => (
       <Styled.Prepend data-testid={`input-group-${defaultValue}-prepend`}>
-        <Text tag='H5' color="light">{prepend}</Text>
+        <Text tag="H5" color="light">{prepend}</Text>
       </Styled.Prepend>
     );
 
     const renderAppend = () => (
       <Styled.Append data-testid={`input-group-${defaultValue}-append`}>
-        <Text tag='H5' color="light">{append}</Text>
+        <Text tag="H5" color="light">{append}</Text>
       </Styled.Append>
     );
 

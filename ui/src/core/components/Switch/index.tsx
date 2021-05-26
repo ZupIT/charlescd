@@ -45,7 +45,7 @@ const Switch = ({ label, active, onChange, name, className }: Props) => {
         onChange={onSwitch}
       />
       <Styled.Toggle />
-      <Text tag='H4' color="light">{label}</Text>
+      <Text tag="H4" color="light">{label}</Text>
     </Styled.Switch>
   );
 };

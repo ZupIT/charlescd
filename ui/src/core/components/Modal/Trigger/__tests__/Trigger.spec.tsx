@@ -28,7 +28,7 @@ test('render Trigger', () => {
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-      <Text tag='H4' color="light">Test</Text>
+      <Text tag="H4" color="light">Test</Text>
     </Modal.Trigger>
   );
 
@@ -43,7 +43,7 @@ test('onDismiss button click', () => {
   const onDismiss = jest.fn();
   render(
     <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
-      <Text tag='H4' color="light">Test</Text>
+      <Text tag="H4" color="light">Test</Text>
     </Modal.Trigger>
   );
   const button = screen.getByTestId('button-default-dismiss');
@@ -59,7 +59,7 @@ test('onContinue button click', () => {
       onDismiss={jest.fn()}
       onContinue={onContinue}
     >
-      <Text tag='H4' color="light">Test</Text>
+      <Text tag="H4" color="light">Test</Text>
     </Modal.Trigger>
   );
   const button = screen.getByTestId('button-default-continue');

@@ -16,7 +16,7 @@ const CardHeader = ({
   handleEditGroup
 }: Props) => (
   <Styled.MetricsGroupsCardHeader>
-    <Text tag='H2' color="light" title={metricGroup.name}>
+    <Text tag="H2" color="light" title={metricGroup.name}>
       {metricGroup.name}
     </Text>
     <Dropdown icon="vertical-dots" size="16px">

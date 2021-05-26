@@ -42,8 +42,8 @@ const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text tag='H2' color="light">Add release</Text>
-        <Styled.Subtitle tag='H5' color="dark">
+        <Text tag="H2" color="light">Add release</Text>
+        <Styled.Subtitle tag="H5" color="dark">
           You can create a release manually or search for existing releases.
         </Styled.Subtitle>
 

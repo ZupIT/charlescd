@@ -50,13 +50,13 @@ const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
         <Can I="write" a="circles" passThrough>
           <Styled.A onClick={() => goToCircleComparison(NEW_TAB)}>
             <LabeledIcon icon="plus-circle" marginContent="5px">
-              <Text tag='H5' color="dark">Create circle</Text>
+              <Text tag="H5" color="dark">Create circle</Text>
             </LabeledIcon>
           </Styled.A>
         </Can>
         <Menu actions={menuFilterItems} active={status} onSelect={onSelect}>
           <LabeledIcon icon="filter" marginContent="5px">
-            <Text tag='H5' color="dark">{circleStatus}</Text>
+            <Text tag="H5" color="dark">{circleStatus}</Text>
           </LabeledIcon>
         </Menu>
         <Styled.A onClick={() => goToCircleComparison(CIRCLE_MATCHER_TAB)}>

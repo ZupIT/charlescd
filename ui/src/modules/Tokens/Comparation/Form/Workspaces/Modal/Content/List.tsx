@@ -68,7 +68,7 @@ const List = ({ draft, onSelect }: Props) => {
 
   const NoContent = () => (
     <Styled.NoContent>
-      <Text tag='H4' color="dark">No more results.</Text>
+      <Text tag="H4" color="dark">No more results.</Text>
     </Styled.NoContent>
   )
 

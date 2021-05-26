@@ -59,7 +59,7 @@ const DropdownItem = ({
         {...rest}
       >
         {icon && <Styled.Icon name={icon} size="15px" />}
-        <Styled.Text tag='H5' color="dark">{name}</Styled.Text>
+        <Styled.Text tag="H5" color="dark">{name}</Styled.Text>
       </Styled.Item>
       {isInactive && (
         <Styled.ReactTooltipStyled

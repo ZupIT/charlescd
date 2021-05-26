@@ -26,8 +26,8 @@ export type Props = {
 const NavTabsPlaceholder = ({ title, subTitle }: Props) => {
   return (
     <Styled.Placeholder>
-      <Styled.PlaceholderTitle tag='H2' color="light">{title}</Styled.PlaceholderTitle>
-      <Text tag='H5' color="dark">{subTitle}</Text>
+      <Styled.PlaceholderTitle tag="H2" color="light">{title}</Styled.PlaceholderTitle>
+      <Text tag="H5" color="dark">{subTitle}</Text>
     </Styled.Placeholder>
   );
 };

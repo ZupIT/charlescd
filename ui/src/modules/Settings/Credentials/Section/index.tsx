@@ -49,10 +49,10 @@ const Section = ({
   return (
     <Layer data-testid={id ? `section-${id}` : ''}>
       <ContentIcon icon={icon}>
-        <Text tag='H2' color="light">{name}</Text>
+        <Text tag="H2" color="light">{name}</Text>
       </ContentIcon>
       <Styled.Type data-testid={`configuration-type-${type}`}>
-        <Text tag='H5' color="dark">{type}</Text>
+        <Text tag="H5" color="dark">{type}</Text>
       </Styled.Type>
       <Styled.Content>
         {showAction && renderAction()}

@@ -95,9 +95,9 @@ const MetricsGroupCard = ({
         <Summary.Item name="Failed" color="red" />
       </Summary>
       <Styled.ActionCardHead>
-        <Text tag='H5' color="dark">Nickname</Text>
-        <Text tag='H5' color="dark">Type</Text>
-        <Text tag='H5' color="dark">Triggered at</Text>
+        <Text tag="H5" color="dark">Nickname</Text>
+        <Text tag="H5" color="dark">Type</Text>
+        <Text tag="H5" color="dark">Triggered at</Text>
       </Styled.ActionCardHead>
       <Styled.MetricsGroupsCardContent>
         {map(metricGroup.actions, action => (
@@ -121,7 +121,7 @@ const MetricsGroupCard = ({
           icon={chartOpen ? 'view' : 'no-view'}
           onClick={handleViewChart}
         >
-          <Text tag='H5' color={chartOpen ? 'light' : 'dark'}>View Chart</Text>
+          <Text tag="H5" color={chartOpen ? 'light' : 'dark'}>View Chart</Text>
         </LabeledIcon>
         {chartOpen && (
           <LabeledIcon icon="filter" isActive={!renderLabelText()}>
@@ -146,9 +146,9 @@ const MetricsGroupCard = ({
         />
       )}
       <Styled.MetricCardTableHead>
-        <Text tag='H5' color="dark">Nickname</Text>
-        <Text tag='H5' color="dark">Condition Threshold</Text>
-        <Text tag='H5' color="dark">Last Value</Text>
+        <Text tag="H5" color="dark">Nickname</Text>
+        <Text tag="H5" color="dark">Condition Threshold</Text>
+        <Text tag="H5" color="dark">Last Value</Text>
       </Styled.MetricCardTableHead>
       <Styled.MetricsGroupsCardContent>
         {map(metricGroup.metrics, metric => (

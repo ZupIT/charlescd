@@ -34,7 +34,7 @@ const MenuItem = ({ route, id, name }: Props) => {
   return (
     <Styled.Link onClick={() => history.push(route)} isActive={isActive}>
       <Styled.ListItem icon="metrics" isActive={isActive}>
-        <Styled.Item tag='H4' color="light">{name}</Styled.Item>
+        <Styled.Item tag="H4" color="light">{name}</Styled.Item>
       </Styled.ListItem>
     </Styled.Link>
   );

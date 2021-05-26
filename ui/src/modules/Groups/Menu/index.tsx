@@ -66,7 +66,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text tag='H3' color="dark">No User group was found</Text>
+      <Text tag="H3" color="dark">No User group was found</Text>
     </Styled.Empty>
   );
 
@@ -89,7 +89,7 @@ const UserGroupMenu = ({ onCreate, onSelect }: Props) => {
       <Styled.Actions data-testid="user-groups-action">
         <Styled.Button onClick={onCreate} id="create-user-group">
           <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text tag='H5' color="dark">Create user group</Text>
+            <Text tag="H5" color="dark">Create user group</Text>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>

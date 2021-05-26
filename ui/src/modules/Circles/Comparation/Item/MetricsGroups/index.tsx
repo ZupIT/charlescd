@@ -135,7 +135,7 @@ const MetricsGroups = ({ onGoBack, id }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text tag='H2' color="light">Metrics groups</Text>
+        <Text tag="H2" color="light">Metrics groups</Text>
         <Styled.Actions>
           <Styled.ButtonAdd
             name="add"

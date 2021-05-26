@@ -74,7 +74,7 @@ const TokensMenu = () => {
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text tag='H3' color="dark">No token was found</Text>
+      <Text tag="H3" color="dark">No token was found</Text>
     </Styled.Empty>
   );
 
@@ -97,7 +97,7 @@ const TokensMenu = () => {
       <Styled.Actions>
         <Styled.Button onClick={handleCreate}>
           <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text tag='H5' color="dark">Create access token</Text>
+            <Text tag="H5" color="dark">Create access token</Text>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>

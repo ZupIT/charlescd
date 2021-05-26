@@ -33,18 +33,18 @@ const Placeholder = ({ icon, title, subtitle, description, children, className }
     <Icon name={icon} />
     <Styled.Empty>
       {title && (
-        <Text tag='H1' color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           {title}
         </Text>
       )}
       {subtitle && (
-        <Text tag='H1' color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           {subtitle}
         </Text>
       )}
       {description && (
         <Styled.Description>
-          <Text tag='H3' color="dark" align="center">
+          <Text tag="H3" color="dark" align="center">
             {description}
           </Text>
         </Styled.Description>

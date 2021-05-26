@@ -29,10 +29,10 @@ const Placeholder = () => {
         <Icon name="empty-user-groups" />
       </Styled.Wrapper>
       <Styled.Empty>
-        <Text tag='H1' color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           Hello, {profileName}!
         </Text>
-        <Text tag='H1' color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           Select or create a workspace in the side menu.
         </Text>
       </Styled.Empty>

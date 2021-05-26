@@ -70,10 +70,10 @@ const CardCircle = forwardRef(
 
     const renderBody = () => (
       <Styled.CardBody>
-        <Text tag='H4' color="light" align="left">
+        <Text tag="H4" color="light" align="left">
           {title}
         </Text>
-        <Text tag='H5' color="light" align="left">
+        <Text tag="H5" color="light" align="left">
           {description}
         </Text>
         {children}

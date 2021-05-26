@@ -87,7 +87,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
       continueLabel="Yes, remove user group"
       onContinue={() => confirmUserGroupDelete()}
     >
-      <Text tag='H4' color="light" lineHeight={1.3}>
+      <Text tag="H4" color="light" lineHeight={1.3}>
         When you remove a user group, all the users associated to the group will
         no longer access the workspace. Do you want to continue? 
       </Text>

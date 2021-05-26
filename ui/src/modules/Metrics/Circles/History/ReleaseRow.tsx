@@ -37,25 +37,25 @@ const ReleaseRow = ({ release }: Props) => {
         data-testid={`release-table-row-${release.id}`}
       >
         <Styled.TableColumn>
-          <Text tag='H5' color="light">{release.tag}</Text>
+          <Text tag="H5" color="light">{release.tag}</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">
+          <Text tag="H5" color="light">
             {release.deployedAt ? dateTimeFormatter(release.deployedAt) : '-'}
           </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">
+          <Text tag="H5" color="light">
             {release.undeployedAt
               ? dateTimeFormatter(release.undeployedAt)
               : '-'}
           </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">{release.createdAt}</Text>
+          <Text tag="H5" color="light">{release.createdAt}</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">{release.authorName}</Text>
+          <Text tag="H5" color="light">{release.authorName}</Text>
         </Styled.TableColumn>
       </Styled.TableRow>
       {activeRow && (

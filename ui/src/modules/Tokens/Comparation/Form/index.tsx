@@ -97,13 +97,13 @@ const FormToken = ({ mode, data }: Props) => {
 
   const LastUsed = () => (
     data?.last_used_at
-      ? <Text tag='H5' color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text>
-      : <Text tag='H5' color="dark">This token has not been used yet.</Text>
+      ? <Text tag="H5" color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text>
+      : <Text tag="H5" color="dark">This token has not been used yet.</Text>
   )
 
   const Author = () => (
     data?.author
-      ? <Text tag='H5' color="dark">Created by {data.author}</Text>
+      ? <Text tag="H5" color="dark">Created by {data.author}</Text>
       : <></>
   )
 

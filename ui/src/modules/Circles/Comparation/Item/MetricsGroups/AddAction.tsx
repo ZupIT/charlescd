@@ -147,12 +147,12 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text tag='H2' color="light">
+        <Text tag="H2" color="light">
           {action?.id ? 'Update action' : 'Add action'}
         </Text>
       </Styled.Layer>
       <Styled.Layer>
-        <Text tag='H5' color="dark">
+        <Text tag="H5" color="dark">
           {`Fill in the information below to ${
             action?.id ? 'update' : 'create'
           } an action.`}
@@ -172,7 +172,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           {!!errors.nickname && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text tag='H6' color="error">
+              <Text tag="H6" color="error">
                 {errors.nickname.message || 'Type a valid nickname'}
               </Text>
             </Styled.FieldErrorWrapper>

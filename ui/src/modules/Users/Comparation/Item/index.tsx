@@ -100,7 +100,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
-      <Text tag='H4' color="light">
+      <Text tag="H4" color="light">
         By deleting this user, all related information will also be deleted. Do you wish to
         continue?
       </Text>
@@ -123,7 +123,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const renderResetPassword = () =>
     isAbleToReset && (
       <LabeledIcon icon="shield" marginContent="5px" onClick={() => toggleModalPassword(true)}>
-        <Text tag='H5' color="dark">Reset password</Text>
+        <Text tag="H5" color="dark">Reset password</Text>
       </LabeledIcon>
     );
 
@@ -167,24 +167,24 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
-                  <Text tag='H6' color="error">{errors.name.message}</Text>
+                  <Text tag="H6" color="error">{errors.name.message}</Text>
                 </Styled.FieldErrorWrapper>
               )}
             </>
           ) : (
-            <Text tag='H2' color="light">{currentUser.name}</Text>
+            <Text tag="H2" color="light">{currentUser.name}</Text>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
-          <Text tag='H2' color="light">Email</Text>
-          <Text tag='H4' color="dark">{currentUser.email}</Text>
+          <Text tag="H2" color="light">Email</Text>
+          <Text tag="H4" color="dark">{currentUser.email}</Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text tag='H2' color="light">User groups</Text>
+          <Text tag="H2" color="light">User groups</Text>
         </ContentIcon>
       </Styled.Layer>
     </TabPanel>

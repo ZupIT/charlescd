@@ -44,7 +44,7 @@ const ResultList = ({ isLoading, circles }: Props) => {
         <Styled.CardLeftLine />
         <Styled.CardContent>
           <div>
-            <Text tag='H5'
+            <Text tag="H5"
               color="light"
               data-testid={`circle-matcher-result-${circle.name}`}
             >
@@ -52,7 +52,7 @@ const ResultList = ({ isLoading, circles }: Props) => {
             </Text>
           </div>
           <div>
-            <Text tag='H5'
+            <Text tag="H5"
               color="dark"
               data-testid={`circle-matcher-result-${circle.id}`}
             >
@@ -77,7 +77,7 @@ const ResultList = ({ isLoading, circles }: Props) => {
     <Styled.Layer>
       {(isLoading || circles) && (
         <Styled.ContentIcon icon="list">
-          <Text tag='H2' color="light">Result:</Text>
+          <Text tag="H2" color="light">Result:</Text>
         </Styled.ContentIcon>
       )}
       <Styled.Content>

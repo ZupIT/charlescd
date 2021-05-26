@@ -292,7 +292,7 @@ const CirclesComparationItem = ({
       onContinue={() => handleDelete(circle?.deployment?.status)}
       onDismiss={() => setAction('Cancel')}
     >
-      <Text tag='H4' color="light">
+      <Text tag="H4" color="light">
         When deleting this circle, users will be sent to Default and all metrics
         in this circle will be lost. Do you wish to continue?
       </Text>
@@ -308,7 +308,7 @@ const CirclesComparationItem = ({
             marginContent="5px"
             onClick={() => setActiveSection(SECTIONS.RELEASE)}
           >
-            <Text tag='H5' color="dark">Override release</Text>
+            <Text tag="H5" color="dark">Override release</Text>
           </LabeledIcon>
         </Can>
       )}
@@ -317,7 +317,7 @@ const CirclesComparationItem = ({
         marginContent="5px"
         onClick={() => setActiveSection(SECTIONS.HISTORY)}
         >
-          <Text tag='H5' color="dark">History</Text>
+          <Text tag="H5" color="dark">History</Text>
       </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>

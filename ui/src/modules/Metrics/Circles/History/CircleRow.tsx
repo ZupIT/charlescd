@@ -44,15 +44,15 @@ const CircleRow = ({ circle }: Props) => {
         }
       >
         <Styled.TableColumn>
-          <Text tag='H5' color="light">{circle.name}</Text>
+          <Text tag="H5" color="light">{circle.name}</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">
+          <Text tag="H5" color="light">
             {dateTimeFormatter(circle.lastUpdatedAt)}
           </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="light">
+          <Text tag="H5" color="light">
             {humanizeDurationFromSeconds(circle.lifeTime)}
           </Text>
         </Styled.TableColumn>

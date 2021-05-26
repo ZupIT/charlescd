@@ -71,7 +71,7 @@ const ModulesMenu = () => {
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text tag='H3' color="dark">No Modules was found</Text>
+      <Text tag="H3" color="dark">No Modules was found</Text>
     </Styled.Empty>
   );
 
@@ -95,7 +95,7 @@ const ModulesMenu = () => {
         <Can I="write" a="modules" passThrough>
           <Styled.Button onClick={openNewModule}>
             <LabeledIcon icon="plus-circle" marginContent="5px">
-              <Text tag='H5' color="dark">Create Module</Text>
+              <Text tag="H5" color="dark">Create Module</Text>
             </LabeledIcon>
           </Styled.Button>
         </Can>

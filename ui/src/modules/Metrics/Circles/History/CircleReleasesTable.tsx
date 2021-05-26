@@ -59,7 +59,7 @@ const CircleReleasesTable = ({ circleId }: Props) => {
   const renderEmpetyReleases = () => (
     <Styled.NoReleaseWrapper>
       <Icon name="not-allowed" color="dark" size="16px" />
-      <Text tag='H5' color="dark">Doesn´t exists any release for this circle</Text>
+      <Text tag="H5" color="dark">Doesn´t exists any release for this circle</Text>
     </Styled.NoReleaseWrapper>
   );
 
@@ -68,19 +68,19 @@ const CircleReleasesTable = ({ circleId }: Props) => {
       <SummaryRelease isLoading={loading} />
       <Styled.TableHead>
         <Styled.TableColumn>
-          <Text tag='H5' color="dark">Release</Text>
+          <Text tag="H5" color="dark">Release</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="dark">Deployed</Text>
+          <Text tag="H5" color="dark">Deployed</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="dark">Undeployed</Text>
+          <Text tag="H5" color="dark">Undeployed</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="dark">Create date</Text>
+          <Text tag="H5" color="dark">Create date</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text tag='H5' color="dark">Author</Text>
+          <Text tag="H5" color="dark">Author</Text>
         </Styled.TableColumn>
       </Styled.TableHead>
       <InfiniteScroll

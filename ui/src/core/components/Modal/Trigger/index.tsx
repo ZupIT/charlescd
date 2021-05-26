@@ -63,7 +63,7 @@ const Trigger = forwardRef(({
               data-testid="icon-cancel-modal"
             />
           </Styled.Button.Container>
-          <Styled.Title tag='H2' weight="bold" color="light">
+          <Styled.Title tag="H2" weight="bold" color="light">
             {title}
           </Styled.Title>
           <Styled.Description>
@@ -75,7 +75,7 @@ const Trigger = forwardRef(({
               className="modal-button-dismiss"
               onClick={() => handleDismiss()}
             >
-              <Text tag='H5' color="dark">{dismissLabel}</Text>
+              <Text tag="H5" color="dark">{dismissLabel}</Text>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue
@@ -85,7 +85,7 @@ const Trigger = forwardRef(({
                 isDisabled={isDisabled}
                 onClick={() => onContinue()}
               >
-                <Text tag='H5' color="light">{continueLabel}</Text>
+                <Text tag="H5" color="light">{continueLabel}</Text>
               </Styled.Button.Continue>
             )}
           </Styled.Buttons>

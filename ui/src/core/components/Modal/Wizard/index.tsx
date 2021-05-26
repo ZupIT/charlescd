@@ -77,7 +77,7 @@ const Wizard = ({ onClose }: Props) => {
 
   const sideMenu = () => (
     <Styled.SideMenu className="modal-sidemenu">
-      <Text tag='H3' color="light" weight="bold">
+      <Text tag="H3" color="light" weight="bold">
         Configure the workspace
       </Text>
       {map(WizardItems, (item, index) => (
@@ -86,7 +86,7 @@ const Wizard = ({ onClose }: Props) => {
           data-testid={`modal-wizard-menu-item-${item.name}`}
         >
           <Styled.Item.Active status={setItemStatus(item, index)} />
-          <Styled.Item.Text tag='H4' status={setItemStatus(item, index)}>
+          <Styled.Item.Text tag="H4" status={setItemStatus(item, index)}>
             {item.menu}
           </Styled.Item.Text>
         </Styled.Item.Wrapper>
@@ -117,10 +117,10 @@ const Wizard = ({ onClose }: Props) => {
         <Styled.Content.Icon name={item.icon} size={item.size} />
       </Styled.Content.Background>
       <Styled.Info>
-        <Styled.Content.Title tag='H3' color="light" weight="bold">
+        <Styled.Content.Title tag="H3" color="light" weight="bold">
           {item.title}
         </Styled.Content.Title>
-        <Styled.Content.Subtitle tag='H4' color="light">
+        <Styled.Content.Subtitle tag="H4" color="light">
           {item.subtitle}
         </Styled.Content.Subtitle>
       </Styled.Info>

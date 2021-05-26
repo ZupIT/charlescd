@@ -33,9 +33,9 @@ const SummaryRelease = ({ isLoading }: Props) => {
       ) : (
         <Styled.HistoryLegend data-testid="summary-release">
           <Styled.Dot status="deployed" />
-          <Text tag='H5' color="dark">Deployed</Text>
+          <Text tag="H5" color="dark">Deployed</Text>
           <Styled.Dot status="error" />
-          <Text tag='H5' color="dark">Error</Text>
+          <Text tag="H5" color="dark">Error</Text>
         </Styled.HistoryLegend>
       )}
     </>

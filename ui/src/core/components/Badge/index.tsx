@@ -24,7 +24,7 @@ export interface Props {
 
 const Badge = ({ label }: Props) => (
   <Styled.Badge>
-    <Text tag='H6' color="light" align="center" data-testid={`badge-${label}`}>
+    <Text tag="H6" color="light" align="center" data-testid={`badge-${label}`}>
       {label}
     </Text>
   </Styled.Badge>

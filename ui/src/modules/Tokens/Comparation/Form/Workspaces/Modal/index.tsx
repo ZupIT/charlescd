@@ -53,7 +53,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        <Text tag='H2' color="light">Add workspaces</Text>
+        <Text tag="H2" color="light">Add workspaces</Text>
         <Select
           options={options}
           defaultValue={type}
@@ -62,7 +62,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         />
       </Styled.Header>
       <Styled.Caption>
-        <Text tag='H5' color="dark">
+        <Text tag="H5" color="dark">
           {renderDescription()}
           Read our 
           <DocumentationLink

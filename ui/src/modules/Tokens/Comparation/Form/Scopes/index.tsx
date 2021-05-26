@@ -106,16 +106,16 @@ const Scopes = ({ mode }: Props) => {
     return (
       <Styled.View>
         <Styled.ViewHead>
-          <Text tag='H5' color="dark">Scopes</Text>
-          <Text tag='H5' color="dark">Permissions</Text>
+          <Text tag="H5" color="dark">Scopes</Text>
+          <Text tag="H5" color="dark">Permissions</Text>
         </Styled.ViewHead>
         {map(scopes, ({ subject, permission }, index)=> (
           <Styled.ViewItem key={index} data-testid={subject}>
             <Styled.ViewScope>
               <Icon name="checkmark" size="12px" color="light" />
-              <Text tag='H4' color="light">{capitalize(subject)}</Text>
+              <Text tag="H4" color="light">{capitalize(subject)}</Text>
             </Styled.ViewScope>
-            <Text tag='H4' color="light">{capitalize(permission)}</Text>
+            <Text tag="H4" color="light">{capitalize(permission)}</Text>
           </Styled.ViewItem>
         ))}
       </Styled.View>
@@ -124,10 +124,10 @@ const Scopes = ({ mode }: Props) => {
 
   return (
     <ContentIcon icon="scopes">
-      <Text tag='H2' color="light">Scopes</Text>
+      <Text tag="H2" color="light">Scopes</Text>
       <Styled.Content>
         <Styled.Description>
-          <Text tag='H5' color="dark">
+          <Text tag="H5" color="dark">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
             <DocumentationLink

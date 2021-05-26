@@ -62,7 +62,7 @@ export const MenuItems = ({ isExpanded, expandMenu }: Props) => {
         isActive={isActive(link.id)}
       />
       {isExpanded && (
-        <Styled.LinkText tag='H5' isActive={isActive(link.id)}>
+        <Styled.LinkText tag="H5" isActive={isActive(link.id)}>
           {link.text}
         </Styled.LinkText>
       )}

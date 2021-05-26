@@ -110,24 +110,24 @@ const Account = () => {
               {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
-                  <Text tag='H6' color="error">{errors.name.message}</Text>
+                  <Text tag="H6" color="error">{errors.name.message}</Text>
                 </Styled.FieldErrorWrapper>
               )}
             </>
           ) : (
-            <Text tag='H2' color="light">{user.name}</Text>
+            <Text tag="H2" color="light">{user.name}</Text>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
-          <Text tag='H2' color="light">E-mail</Text>
-          <Text tag='H5' color="dark">{email}</Text>
+          <Text tag="H2" color="light">E-mail</Text>
+          <Text tag="H5" color="dark">{email}</Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text tag='H2' color="light">User group</Text>
+          <Text tag="H2" color="light">User group</Text>
         </ContentIcon>
       </Styled.Layer>
     </>
@@ -141,7 +141,7 @@ const Account = () => {
           marginContent="5px"
           onClick={() => setToggleModal(true)}
         >
-          <Text tag='H5' color="dark">Change password</Text>
+          <Text tag="H5" color="dark">Change password</Text>
         </LabeledIcon>
       )}
     </Styled.Actions>

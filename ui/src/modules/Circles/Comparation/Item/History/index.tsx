@@ -85,7 +85,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
       <Styled.Layer>
         <Styled.Title>
           <Icon name="clock" color="dark" size={'25px'} />
-          <Text tag='H2' color="light">History</Text>
+          <Text tag="H2" color="light">History</Text>
         </Styled.Title>
         <InfiniteScroll
             hasMore={hasMoreData}
@@ -97,7 +97,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
           <Styled.NoHistoryPlaceholder
             icon="error-403"
           >
-            <Styled.NoHistoryText tag='H2' color="dark" weight="bold" align="center">
+            <Styled.NoHistoryText tag="H2" color="dark" weight="bold" align="center">
               No deployment history available
             </Styled.NoHistoryText>
           </Styled.NoHistoryPlaceholder>
@@ -106,15 +106,15 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
           <>
             <Styled.DeploymentRow key={index}>
               <Styled.TableRow>
-                <Styled.TableTextName tag='H4' color="light" title={release.authorEmail}>
+                <Styled.TableTextName tag="H4" color="light" title={release.authorEmail}>
                   {release.authorEmail}
                 </Styled.TableTextName>
-                <Styled.TableDate tag='H4' color="light" >
+                <Styled.TableDate tag="H4" color="light" >
                   {getActionDateTime(release.deployedAt, release.undeployedAt) }
                 </Styled.TableDate>
                 <Styled.TableDeployStatus>
                   <Styled.Dot status={camelCase(getReleaseStatus(release.status))}/>
-                  <Styled.TableDeployStatusName tag='H4' color="light">
+                  <Styled.TableDeployStatusName tag="H4" color="light">
                     {startCase(getReleaseStatus(release.status))}
                   </Styled.TableDeployStatusName>
                 </Styled.TableDeployStatus>
@@ -126,7 +126,7 @@ const DeployHistory = ({ onGoBack, id }: Props) => {
                 />
               </Styled.TableRow>
               <Styled.ReleaseRow>
-                <Styled.TableTextRelease tag='H4' color="light" title={release.tag}>
+                <Styled.TableTextRelease tag="H4" color="light" title={release.tag}>
                   {release.tag}
                 </Styled.TableTextRelease>
               </Styled.ReleaseRow>

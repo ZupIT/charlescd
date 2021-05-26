@@ -58,7 +58,7 @@ const Checkbox = forwardRef(
     };
 
     const renderDescription = () => (
-      <Styled.Description tag='H5' color="dark">{description}</Styled.Description>
+      <Styled.Description tag="H5" color="dark">{description}</Styled.Description>
     );
 
     return (
@@ -76,7 +76,7 @@ const Checkbox = forwardRef(
             {...rest}
           />
           <Styled.Toggle data-testid={`checkbox-toggle-${label}`} />
-          {label && <Styled.Label tag='H4' data-testid={`checkbox-${label}`} color="light">
+          {label && <Styled.Label tag="H4" data-testid={`checkbox-${label}`} color="light">
             {label}
           </Styled.Label>}
         </Styled.Checkbox>

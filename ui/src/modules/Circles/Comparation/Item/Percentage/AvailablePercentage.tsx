@@ -15,8 +15,8 @@ const AvailablePercentage = ({ responseGetCircles, circle }: Props) => {
   return (
     <Styled.AvailableContainer>
       <Styled.AvailableItem data-testid="available-percentage-open-sea">
-        <Text tag='H4' color="light">Open sea</Text>
-        <Text tag='H4'
+        <Text tag="H4" color="light">Open sea</Text>
+        <Text tag="H4"
           data-testid="available-percentage-open-sea-value"
           color="light"
         >
@@ -25,8 +25,8 @@ const AvailablePercentage = ({ responseGetCircles, circle }: Props) => {
       </Styled.AvailableItem>
       {circle && (
         <Styled.AvailableItem data-testid="configured-circle-percentage">
-          <Text tag='H4' color="light">Percent Configured</Text>
-          <Text tag='H4'
+          <Text tag="H4" color="light">Percent Configured</Text>
+          <Text tag="H4"
             data-testid="configured-circle-percentage-value"
             color="light"
           >

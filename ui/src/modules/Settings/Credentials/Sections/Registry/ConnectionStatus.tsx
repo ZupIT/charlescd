@@ -27,7 +27,7 @@ export interface Props {
 const ConnectionStatus = ({ type, message }: Props) => (
   <Styled.Message data-testid={`connection-${type}`} status={type}>
     <Icon name={type} />
-    <Text tag='H5'>{message}</Text>
+    <Text tag="H5">{message}</Text>
   </Styled.Message>
 );
 

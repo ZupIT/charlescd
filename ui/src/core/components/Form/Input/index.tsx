@@ -140,7 +140,7 @@ const Input = React.forwardRef(
             {label}
           </Styled.Label>
         )}
-        {error && <Styled.Error tag='H6' color="error" role="alert">{error}</Styled.Error>}
+        {error && <Styled.Error tag="H6" color="error" role="alert">{error}</Styled.Error>}
         {isLoading && <Styled.Loading name="ellipse-loading" color="light" />}
         {isTip && <Styled.Tip>{renderTip()}</Styled.Tip>}
         {icon && <Styled.Icon name={icon} />}

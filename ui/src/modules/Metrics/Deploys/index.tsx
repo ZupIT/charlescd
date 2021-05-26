@@ -82,7 +82,7 @@ const Deploys = () => {
             isLoading={loading}
             data-testid="metrics-deploy-apply"
           >
-            <Text tag='H5' weight="bold" align="center" color="light">
+            <Text tag="H5" weight="bold" align="center" color="light">
               Apply
             </Text>
           </Styled.Button>
@@ -91,20 +91,20 @@ const Deploys = () => {
 
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
-          <Text tag='H4' color="dark">Deploy</Text>
-          <Text tag='H1' color="light">
+          <Text tag="H4" color="dark">Deploy</Text>
+          <Text tag="H1" color="light">
             {loading ? <Loader.Card /> : response?.successfulDeployments}
           </Text>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text tag='H4' color="dark">Error</Text>
-          <Text tag='H1' color="light">
+          <Text tag="H4" color="dark">Error</Text>
+          <Text tag="H1" color="light">
             {loading ? <Loader.Card /> : response?.failedDeployments}
           </Text>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text tag='H4' color="dark">Average time</Text>
-          <Text tag='H1' color="light">
+          <Text tag="H4" color="dark">Average time</Text>
+          <Text tag="H1" color="light">
             {loading ? (
               <Loader.Card />
             ) : (
