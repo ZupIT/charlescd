@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Styled from './styled';
 import { HEADINGS_FONT_SIZE } from './enums';
 
 export interface Props {
-  fontSize?: HEADINGS_FONT_SIZE;
   lineHeight?: number;
   color?: string;
   fontStyle?: 'normal' | 'italic' | 'oblique';
@@ -27,12 +26,19 @@ export interface Props {
   align?: 'left' | 'center' | 'right';
   children: ReactNode;
   className?: string;
-  title?: string;
   onClick?: () => void;
   role?: string;
+  title?: string;
 }
 
-const Text = (props: Props) => {
+export interface TextProps extends Props {
+  fontSize: HEADINGS_FONT_SIZE;
+}
+
+/**
+ * Primary UI component for user interaction
+ */
+export const Text = (props: TextProps) => {
   const {
     color = 'primary',
     weight = 'normal',
@@ -43,7 +49,8 @@ const Text = (props: Props) => {
     children,
     className,
     onClick,
-    role = ''
+    role = '',
+    title
   } = props;
 
   return (
@@ -58,6 +65,7 @@ const Text = (props: Props) => {
       className={className}
       lineHeight={lineHeight}
       role={role}
+      title={title}
     >
       {children}
     </Styled.Text>
@@ -70,7 +78,7 @@ const TextComponent = {
   h3: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h3} {...props} />,
   h4: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h4} {...props} />,
   h5: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h5} {...props} />,
-  h6: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h6} {...props} />
+  h6: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h6} {...props} />,
 };
 
 export default TextComponent;
