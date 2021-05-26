@@ -17,6 +17,7 @@
 import React from 'react';
 import map from 'lodash/map';
 import { ChangeInputEvent } from 'core/interfaces/InputEvents';
+import Text from 'core/components/Text';
 import Styled from './styled';
 
 export type RadioButtonProps = {
@@ -52,9 +53,9 @@ const RadioButton = ({ name, items, onChange, className }: Props) => (
           />
           <Styled.Label icon={item.icon} value={item.value} htmlFor={id}>
             {item.icon && <Styled.Icon name={item.icon} color="dark" />}
-            <Styled.Text color="dark">
+            <Text tag='H6' color="dark">
               {item.name ? item.name : item.value}
-            </Styled.Text>
+            </Text>
           </Styled.Label>
         </Styled.Radio>
       );

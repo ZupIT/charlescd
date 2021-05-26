@@ -28,8 +28,8 @@ const CustomOption = (props: OptionProps<OptionTypeBase, false>) => {
           <Styled.Icon name="checkmark" color="light" size="20px" />
         </Styled.Check>
         <Styled.Content>
-          <Styled.Label color="light">{label}</Styled.Label>
-          <Styled.Description color="dark">{description}</Styled.Description>
+          <Styled.Label tag='H4' color="light">{label}</Styled.Label>
+          <Styled.Description tag='H5' color="dark">{description}</Styled.Description>
         </Styled.Content>
       </Styled.Wrapper>
     </components.Option>

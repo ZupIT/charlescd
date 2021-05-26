@@ -35,7 +35,7 @@ const Radio = styled.div``;
 
 const Icon = styled(ComponentIcon)``;
 
-const Text = styled(ComponentText.h6)``;
+const Text = styled(ComponentText)``;
 
 const Label = styled.label<LabelProps>`
   padding: ${({ icon }) =>

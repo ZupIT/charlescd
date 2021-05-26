@@ -54,12 +54,12 @@ const ImportCSV = ({ id, name, onSaveCircle }: Props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmitValue)}>
-      <Styled.HelpText color="dark">
+      <Styled.HelpText tag='H5' color="dark">
         To import a file, your table must have only one column and be formatted
         according to the example below:
       </Styled.HelpText>
       <ExampleSVG />
-      <Styled.HelpText color="dark">
+      <Styled.HelpText tag='H5' color="dark">
         Type the name in cell A1 of your file (this will be your key):
       </Styled.HelpText>
       <Styled.Input
@@ -68,7 +68,7 @@ const ImportCSV = ({ id, name, onSaveCircle }: Props) => {
         name="keyName"
       />
       <Styled.InputWrapper>
-        <Styled.HelpText color="dark">
+        <Styled.HelpText tag='H5' color="dark">
           Select the .CSV to upload:
         </Styled.HelpText>
         <InputFile ref={register({ required: true })} />
@@ -80,7 +80,7 @@ const ImportCSV = ({ id, name, onSaveCircle }: Props) => {
         isDisabled={isSaving}
         isValid={isValid}
       >
-        <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
+        <Text tag='H6' color={isValid ? 'light' : 'dark'}>Save</Text>
       </Styled.ButtonDefault>
     </form>
   );

@@ -106,16 +106,16 @@ const Scopes = ({ mode }: Props) => {
     return (
       <Styled.View>
         <Styled.ViewHead>
-          <Text.h5 color="dark">Scopes</Text.h5>
-          <Text.h5 color="dark">Permissions</Text.h5>
+          <Text tag='H5' color="dark">Scopes</Text>
+          <Text tag='H5' color="dark">Permissions</Text>
         </Styled.ViewHead>
         {map(scopes, ({ subject, permission }, index)=> (
           <Styled.ViewItem key={index} data-testid={subject}>
             <Styled.ViewScope>
               <Icon name="checkmark" size="12px" color="light" />
-              <Text.h4 color="light">{capitalize(subject)}</Text.h4>
+              <Text tag='H4' color="light">{capitalize(subject)}</Text>
             </Styled.ViewScope>
-            <Text.h4 color="light">{capitalize(permission)}</Text.h4>
+            <Text tag='H4' color="light">{capitalize(permission)}</Text>
           </Styled.ViewItem>
         ))}
       </Styled.View>
@@ -124,10 +124,10 @@ const Scopes = ({ mode }: Props) => {
 
   return (
     <ContentIcon icon="scopes">
-      <Text.h2 color="light">Scopes</Text.h2>
+      <Text tag='H2' color="light">Scopes</Text>
       <Styled.Content>
         <Styled.Description>
-          <Text.h5 color="dark">
+          <Text tag='H5' color="dark">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
             <DocumentationLink
@@ -135,7 +135,7 @@ const Scopes = ({ mode }: Props) => {
               text="documentation"
             />
             for further details.
-          </Text.h5>
+          </Text>
         </Styled.Description>
         {mode === 'create' ? renderSubjects() : renderView()}
       </Styled.Content>

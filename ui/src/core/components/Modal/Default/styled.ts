@@ -87,7 +87,7 @@ const Content = styled.div`
   max-height: 100vh;
 `;
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   text-align: left;
   margin-bottom: 20px;
   color: ${({ theme }) => theme.modal.default.text};

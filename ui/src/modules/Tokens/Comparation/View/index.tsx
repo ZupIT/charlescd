@@ -50,24 +50,24 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
     <>
       <Styled.Layer>
         <ContentIcon icon="modules">
-          <Text.h2 color="light">{module?.name}</Text.h2>
+          <Text tag='H2' color="light">{module?.name}</Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="git">
-          <Text.h2 color="light">Git URL</Text.h2>
+          <Text tag='H2' color="light">Git URL</Text>
           <Styled.FormLink name="git" link={module?.gitRepositoryAddress} />
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="helm">
-          <Text.h2 color="light">Helm URL</Text.h2>
+          <Text tag='H2' color="light">Helm URL</Text>
           <Styled.FormLink name="helm" link={module?.helmRepository} />
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="component">
-          <Text.h2 color="light">Components</Text.h2>
+          <Text tag='H2' color="light">Components</Text>
           <Can I="write" a="modules" passThrough>
             <Styled.ButtonRounded
               name="add"
@@ -99,13 +99,13 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               <Styled.Component.Wrapper>
                 <Styled.Component.Info>
                   <Icon name="latency" size="10px" color="light" />
-                  <Text.h5 color="light">
+                  <Text tag='H5' color="light">
                     {component?.latencyThreshold} ms
-                  </Text.h5>
+                  </Text>
                 </Styled.Component.Info>
                 <Styled.Component.Info>
                   <Icon name="error-threshold" size="10px" color="light" />
-                  <Text.h5 color="light">{component?.errorThreshold} %</Text.h5>
+                  <Text tag='H5' color="light">{component?.errorThreshold} %</Text>
                 </Styled.Component.Info>
               </Styled.Component.Wrapper>
             </Styled.Component.Card>

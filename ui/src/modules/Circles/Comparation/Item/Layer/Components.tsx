@@ -36,7 +36,7 @@ const LayerComponents = ({ components }: Props) => {
       key={`${module}-${name}-${version}`}
       data-testid={`deployed-module-${module}-${name}-${version}`}
     >
-      <Text.h5 color="light">{`${module}/${name}:${version}`}</Text.h5>
+      <Text tag='H5' color="light">{`${module}/${name}:${version}`}</Text>
     </Panel.Section>
   );
 
@@ -50,7 +50,7 @@ const LayerComponents = ({ components }: Props) => {
   return (
     <Styled.Layer>
       <ContentIcon icon="modules">
-        <Text.h2 color="light">Deployed modules</Text.h2>
+        <Text tag='H2' color="light">Deployed modules</Text>
       </ContentIcon>
       <Styled.Content>{renderComponents()}</Styled.Content>
     </Styled.Layer>

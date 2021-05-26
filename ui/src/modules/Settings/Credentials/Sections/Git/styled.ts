@@ -15,10 +15,10 @@
  */
 
 import styled from 'styled-components';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 import Button from 'core/components/Button';
 
-const Title = styled(ComponentText.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -28,12 +28,12 @@ const Title = styled(ComponentText.h2)`
   }
 `;
 
-const Subtitle = styled(ComponentText.h5)`
+const Subtitle = styled(Text)`
   margin-bottom: 10px;
   margin-top: 20px;
 `;
 
-const Info = styled(ComponentText.h5)`
+const Info = styled(Text)`
   margin-bottom: 20px;
 `;
 

@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 import { Input } from 'core/components/Form';
 import ContentIconComponent from 'core/components/ContentIcon';
 
@@ -109,7 +109,7 @@ const ButtonOutlineRounded = styled(ButtonComponent.Rounded)`
   justify-content: center;
 
   span {
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 `;
 

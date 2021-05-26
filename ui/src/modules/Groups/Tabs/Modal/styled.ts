@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 import AvatarName from 'core/components/AvatarName';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 import { Input } from 'core/components/Form';
 
 interface WrapperProps {
@@ -139,14 +139,14 @@ const ItemPhoto = styled(AvatarName)`
   margin-right: 10px;
 `;
 
-const ItemName = styled(ComponentText.h4)`
+const ItemName = styled(Text)`
   font-size: 14px;
   font-weight: 900;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
 
-const ItemEmail = styled(ComponentText.h4)`
+const ItemEmail = styled(Text)`
   font-weight: 300;
   text-overflow: ellipsis;
   overflow: hidden;

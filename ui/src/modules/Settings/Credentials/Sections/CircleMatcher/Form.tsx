@@ -56,9 +56,9 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
       onContinue={() => save(circleMatcher)}
       onDismiss={() => setCircleMatcher(null)}
     >
-      <Text.h4 color="light">
+      <Text tag='H4' color="light">
         This operation will syncronize all data from this workspace to the Circle Matcher.
-      </Text.h4>
+      </Text>
     </Modal.Trigger>
   );
 
@@ -83,7 +83,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
     <Fragment>
       {isConfimation && renderConfirmation()}
       <Styled.Content>
-        <Text.h2 color="light">
+        <Text tag='H2' color="light">
           Add Circle Matcher
           <Popover
             title="Why we ask for Circle Matcher?"
@@ -92,7 +92,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
             linkLabel="View documentation"
             description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. See our documentation for further details."
           />
-        </Text.h2>
+        </Text>
         {renderForm()}
       </Styled.Content>
     </Fragment>

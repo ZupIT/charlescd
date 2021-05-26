@@ -112,9 +112,9 @@ const FormUser = ({ onFinish }: Props) => {
   return (
     <Styled.Content data-testid="content-create-user">
       <Styled.Title>
-        <Text.h2 weight="bold" color="light">
+        <Text tag='H2' weight="bold" color="light">
           Create User
-        </Text.h2>
+        </Text>
         <Popover
           title="Creating a new user"
           icon="info"

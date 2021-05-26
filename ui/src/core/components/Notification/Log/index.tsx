@@ -26,7 +26,7 @@ const Log = ({ type, content }: Props) => (
   <Styled.Log type={type} data-testid={`log-${type}`}>
     <Styled.Icon name={type} type={type} size="12px" />
     <Styled.Content>
-      <Styled.Text type={type}>{content}</Styled.Text>
+      <Styled.LogText tag='H5' type={type}>{content}</Styled.LogText>
     </Styled.Content>
   </Styled.Log>
 );

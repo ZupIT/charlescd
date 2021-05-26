@@ -38,9 +38,9 @@ const NavTabs = ({ children }: Props) => {
           onClick={() => setActiveTab(index)}
           data-testid={`tab-${index}`}
         >
-          <Text.h4 weight="bold" color={index === activeTab ? 'light' : 'dark'}>
+          <Text tag='H4' weight="bold" color={index === activeTab ? 'light' : 'dark'}>
             {child.props.title}
-          </Text.h4>
+          </Text>
         </Styled.TabItem>
       ))}
     </Styled.TabList>

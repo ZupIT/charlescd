@@ -18,7 +18,7 @@ import styled, { css } from 'styled-components';
 import ComponentPopover, {
   Props as PopoverProps
 } from 'core/components/Popover';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 
 interface LabelProps {
   icon?: string;
@@ -71,9 +71,9 @@ const Radio = styled.div<WrapperProps>`
     `}
 `;
 
-const Title = styled(ComponentText.h4)``;
+const Title = styled(Text)``;
 
-const Description = styled(ComponentText.h5)``;
+const Description = styled(Text)``;
 
 const Label = styled.label<LabelProps>`
   padding: 15px 13px 15px 53px;

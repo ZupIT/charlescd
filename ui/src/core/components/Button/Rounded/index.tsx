@@ -61,9 +61,9 @@ const ButtonRounded = ({
     ) : (
       icon && <Icon name={icon} size="15px" color={color} />
     )}
-    <Text.h5 color={color} weight="bold" align="left">
+    <Text tag='H5' color={color} weight="bold" align="left">
       {children}
-    </Text.h5>
+    </Text>
   </Styled.Button>
 );
 

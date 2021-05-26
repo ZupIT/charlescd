@@ -45,7 +45,7 @@ const MenuItem = ({ id, name }: Props) => {
       data-testid={`menu-item-circle-${id}`}
     >
       <Styled.ListItem icon="circle-menu" isActive={isActive()}>
-        <Text.h4 color="light">{name}</Text.h4>
+        <Text tag='H4' color="light">{name}</Text>
       </Styled.ListItem>
     </Styled.Link>
   );

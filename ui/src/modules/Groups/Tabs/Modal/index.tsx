@@ -76,8 +76,8 @@ const UserItem = ({ id, name, email, checked, onSelected }: UserItemProps) => {
       <Styled.Item.Profile>
         <Styled.Item.Photo name={name} />
         <Styled.Item.Content>
-          <Styled.Item.Name color="light">{name}</Styled.Item.Name>
-          <Styled.Item.Email color="light">{email}</Styled.Item.Email>
+          <Styled.Item.Name tag='H4' color="light">{name}</Styled.Item.Name>
+          <Styled.Item.Email tag='H4' color="light">{email}</Styled.Item.Email>
         </Styled.Item.Content>
       </Styled.Item.Profile>
       <MemberChecked checked={isChecked} onSelected={onSelected} />
@@ -122,10 +122,10 @@ const AddUserModal = ({
   const renderPlaceHolder = () => (
     <Styled.Placeholder>
       <Icon name="user-not-found" />
-      <Text.h4 color="light">User not found</Text.h4>
-      <Text.h4 color="light">
+      <Text tag='H4' color="light">User not found</Text>
+      <Text tag='H4' color="light">
         If you want to register, go to the users page
-      </Text.h4>
+      </Text>
     </Styled.Placeholder>
   );
 

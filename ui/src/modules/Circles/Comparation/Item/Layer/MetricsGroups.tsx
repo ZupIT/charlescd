@@ -63,6 +63,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
       return (
         <Styled.MetricsGroupsCard key={metric?.id}>
           <Styled.MetricsGroupsNameContent
+            tag='H5'
             color={'light'}
             title={metric?.name}
             data-testid={`${metric.name}-group-name`}
@@ -70,6 +71,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
             {metric?.name}
           </Styled.MetricsGroupsNameContent>
           <Styled.MetricsGroupsCountContent
+            tag='H5'
             color={'light'}
             data-testid={`${metric.name}-group-count`}
           >
@@ -87,14 +89,15 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
                 data-for={`thresholdTooltip-${metric.id}`}
               />
             )}
-            <Text.h5
+            <Text 
+              tag='H5'
               color={'light'}
               title={`${metric.thresholdsReached} / ${metric.thresholds}`}
             >
               {metric.thresholds === 0
                 ? 'Not configured'
                 : `${metric.thresholdsReached} / ${metric.thresholds}`}
-            </Text.h5>
+            </Text>
           </Styled.MetricsGroupsThresholdsContent>
           {!(metric.thresholds === 0) && (
             <ReactTooltip id={`thresholdTooltip-${metric.id}`} place="left">
@@ -109,15 +112,15 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
     return (
       <Styled.MetricsGroupsContent>
         <Styled.MetricsGroupsHeader>
-          <Text.h4 color="dark">Group name</Text.h4>
-          <Text.h4 color="dark">Metrics</Text.h4>
-          <Text.h4 color="dark">Thresholds</Text.h4>
+          <Text tag='H4' color="dark">Group name</Text>
+          <Text tag='H4' color="dark">Metrics</Text>
+          <Text tag='H4' color="dark">Thresholds</Text>
         </Styled.MetricsGroupsHeader>
         {status.isResolved && renderMetricsGroupsCard(resume)}
         <Styled.MetricsGroupsFooter>
-          <Text.h4 color="dark" onClick={onClickCreate}>
+          <Text tag='H4' color="dark" onClick={onClickCreate}>
             View more groups
-          </Text.h4>
+          </Text>
           <Icon name={'arrow-right'} color={'dark'} onClick={onClickCreate} />
         </Styled.MetricsGroupsFooter>
       </Styled.MetricsGroupsContent>
@@ -127,7 +130,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   return (
     <Layer data-testid="layer-metrics-groups">
       <ContentIcon icon="group-metrics">
-        <Text.h2 color="light">Metrics Groups</Text.h2>
+        <Text tag='H2' color="light">Metrics Groups</Text>
       </ContentIcon>
       <Styled.Content>
         {renderAddMetricsGroups()}

@@ -52,7 +52,7 @@ const Icon = styled(IconComponent)`
   padding-left: 5px;
 `;
 
-const H5 = styled(Text.h5)`
+const H5 = styled(Text)`
   padding-right: 16px;
 `;
 

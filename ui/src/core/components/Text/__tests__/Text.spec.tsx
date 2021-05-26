@@ -17,40 +17,40 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import Text from '../';
-import { HEADINGS_FONT_SIZE } from '../enums';
+import { baseFontSize } from '../constants';
 import { dark as textTheme } from 'core/assets/themes/text';
 
 test('renders text component with default properties', () => {
-  render(<Text.h1>hello</Text.h1>);
+  render(<Text tag='H1'>hello</Text>);
 
   const textElement = screen.getByText('hello');
   expect(textElement).toHaveStyle(`color: ${textTheme.primary};`);
   expect(textElement).toHaveStyle('font-weight: normal;');
-  expect(textElement).toHaveStyle(`font-size: ${HEADINGS_FONT_SIZE.h1};`);
+  expect(textElement).toHaveStyle(`font-size: ${baseFontSize.H1};`);
   expect(textElement).toHaveStyle('text-align: left;');
 });
 
 test('renders text component with color, weight and align props', () => {
   render(
-    <Text.h2 color="dark" align="center" weight="bold">
+    <Text tag='H2' color="dark" align="center" weight="bold">
       hello
-    </Text.h2>
+    </Text>
   );
 
   const textElement = screen.getByText('hello');
   expect(textElement).toHaveStyle(`color: ${textTheme.dark};`);
   expect(textElement).toHaveStyle('font-weight: bold;');
-  expect(textElement).toHaveStyle(`font-size: ${HEADINGS_FONT_SIZE.h2};`);
+  expect(textElement).toHaveStyle(`font-size: ${baseFontSize.H2};`);
   expect(textElement).toHaveStyle('text-align: center;');
 });
 
 test('renders anothers text variations', () => {
   render(
     <>
-      <Text.h3>hello</Text.h3>
-      <Text.h4>hello</Text.h4>
-      <Text.h5>hello</Text.h5>
-      <Text.h6>hello</Text.h6>
+      <Text tag='H3'>hello</Text>
+      <Text tag='H4'>hello</Text>
+      <Text tag='H5'>hello</Text>
+      <Text tag='H6'>hello</Text>
     </>
   );
 

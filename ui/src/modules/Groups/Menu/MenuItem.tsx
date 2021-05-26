@@ -30,7 +30,7 @@ const MenuItem = ({ id, name, onSelect, isActive }: Props) => (
     data-testid={`group-menu-item-${id}`}
   >
     <Styled.ListItem icon="users" marginContent="8px">
-      <Styled.Item color="light">{name}</Styled.Item>
+      <Styled.Item tag='H4' color="light">{name}</Styled.Item>
     </Styled.ListItem>
   </Styled.Link>
 );

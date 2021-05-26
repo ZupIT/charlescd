@@ -92,9 +92,9 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
+      <Text tag='H5' color="dark">
         Fill in the fields below with your information:
-      </Text.h5>
+      </Text>
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}

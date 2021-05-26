@@ -51,8 +51,8 @@ const Radio = ({ name, data, onChange }: Props) => {
         onChange={onChange}
       />
       <Styled.Label value={value} htmlFor={id}>
-        <Styled.Title color="dark">{title}</Styled.Title>
-        <Styled.Description color="dark">{description}</Styled.Description>
+        <Styled.Title tag='H4' color="dark">{title}</Styled.Title>
+        <Styled.Description tag='H5' color="dark">{description}</Styled.Description>
       </Styled.Label>
       <Styled.Checkmark onClick={() => radioRef.current.click()} />
     </Styled.Radio>

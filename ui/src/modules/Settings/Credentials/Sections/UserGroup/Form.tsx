@@ -111,13 +111,13 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
   const renderForm = () => (
     <>
       <Styled.Description>
-        <Text.h5 color="dark">
+        <Text tag='H5' color="dark">
           Select permissions for the group selected above.
-        </Text.h5>
-        <Text.h5 color="dark" fontStyle="italic">
+        </Text>
+        <Text tag='H5' color="dark" fontStyle="italic">
           After saving it, you can combine another group of users with different
           permissions.
-        </Text.h5>
+        </Text>
       </Styled.Description>
       {renderRoles()}
     </>
@@ -151,12 +151,12 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
   return (
     <Styled.Content>
       <Styled.Title>
-        <Text.h2 weight="bold" color="light">
+        <Text tag='H2' weight="bold" color="light">
           Add user group
-        </Text.h2>
+        </Text>
       </Styled.Title>
       <Styled.Description>
-        <Text.h4 color="dark" data-testid="user-group-help-text">
+        <Text tag='H4' color="dark" data-testid="user-group-help-text">
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
           See our{' '}
@@ -167,7 +167,7 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
             documentation
           </Styled.DocumentationLink>{' '}
           for further details.
-        </Text.h4>
+        </Text>
       </Styled.Description>
       {renderFields()}
       {group && renderForm()}

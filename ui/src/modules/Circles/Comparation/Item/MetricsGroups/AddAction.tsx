@@ -147,16 +147,16 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">
+        <Text tag='H2' color="light">
           {action?.id ? 'Update action' : 'Add action'}
-        </Text.h2>
+        </Text>
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h5 color="dark">
+        <Text tag='H5' color="dark">
           {`Fill in the information below to ${
             action?.id ? 'update' : 'create'
           } an action.`}
-        </Text.h5>
+        </Text>
       </Styled.Layer>
       <Styled.Form
         onSubmit={handleSubmit(onSubmit)}
@@ -172,9 +172,9 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           {!!errors.nickname && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">
+              <Text tag='H6' color="error">
                 {errors.nickname.message || 'Type a valid nickname'}
-              </Text.h6>
+              </Text>
             </Styled.FieldErrorWrapper>
           )}
           {!loadingActionsData && !isLoadingActionData && (

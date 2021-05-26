@@ -41,7 +41,7 @@ const TabPanel = ({
       <Styled.Tab>
         <Styled.Title>
           <Icon name={name} size={size} color="light" />
-          <Styled.Text color="light">{title}</Styled.Text>
+          <Styled.TabPanelText tag='H5' color="light">{title}</Styled.TabPanelText>
         </Styled.Title>
         {onClose && (
           <Icon name="cancel" size="15px" color="dark" onClick={onClose} />

@@ -46,7 +46,7 @@ const UserMenu = ({ onSearch, children }: Props) => {
         <Styled.Actions>
           <Styled.Button onClick={() => toggleUser('create')} isActive={false}>
             <LabeledIcon icon="plus-circle" marginContent="5px">
-              <Text.h5 color="dark">Create user</Text.h5>
+              <Text tag='H5' color="dark">Create user</Text>
             </LabeledIcon>
           </Styled.Button>
         </Styled.Actions>

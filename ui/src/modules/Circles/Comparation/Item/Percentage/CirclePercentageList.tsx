@@ -25,7 +25,7 @@ const CirclePercentageList = ({ responseGetCircles }: Props) => {
             name={showCircleList ? 'up' : 'alternate-down'}
             size="18"
           />
-          <Text.h4 color="dark">See consumption by active circles.</Text.h4>
+          <Text tag='H4' color="dark">See consumption by active circles.</Text>
         </Styled.CirclesListButton>
         <Styled.CirclesListWrapper>
           {showCircleList && (
@@ -35,8 +35,8 @@ const CirclePercentageList = ({ responseGetCircles }: Props) => {
                   data-testid={`circle-percentage-list-item-${circle.id}`}
                   key={circle.id}
                 >
-                  <Text.h4 color="light">{circle.name}</Text.h4>
-                  <Text.h4 color="light">{circle.percentage}%</Text.h4>
+                  <Text tag='H4' color="light">{circle.name}</Text>
+                  <Text tag='H4' color="light">{circle.percentage}%</Text>
                 </Styled.AvailableItem>
               ))}
             </Styled.AvailableContainer>

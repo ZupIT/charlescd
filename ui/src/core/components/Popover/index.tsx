@@ -81,12 +81,12 @@ const Popover = (props: Props) => {
           data-testid={`popover-${title}`}
           className="popover-container"
         >
-          <Text.h4 color="light">{title}</Text.h4>
+          <Text tag='H4' color="light">{title}</Text>
           <Styled.Content>
-            <Text.h5 color="dark">{description}</Text.h5>
+            <Text tag='H5' color="dark">{description}</Text>
           </Styled.Content>
           <Styled.Link href={link} target="_blank">
-            <Text.h6 color="light">{linkLabel}</Text.h6>
+            <Text tag='H6' color="light">{linkLabel}</Text>
           </Styled.Link>
         </Styled.Popover>
       )}

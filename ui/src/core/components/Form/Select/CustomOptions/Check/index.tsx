@@ -27,7 +27,7 @@ const CheckOption = (props: OptionProps<OptionTypeBase, false>) => {
       <Styled.Wrapper>
         <Checkbox checked={props.isSelected} />
         <Styled.Content>
-          <Styled.Label color="light">{label}</Styled.Label>
+          <Styled.Label tag='H5' color="light">{label}</Styled.Label>
         </Styled.Content>
       </Styled.Wrapper>
     </components.Option>

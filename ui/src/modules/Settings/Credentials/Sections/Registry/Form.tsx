@@ -216,9 +216,9 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
+      <Text tag='H5' color="dark">
         Fill in the fields below with your {registryName} information:
-      </Text.h5>
+      </Text>
       <Styled.Fields>
         <Form.Input
           ref={register(isRequiredAndNotBlank)}
@@ -287,7 +287,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
   return (
     <Styled.Content>
       <Styled.Title color="light">Add Registry</Styled.Title>
-      <Text.h5 color="dark" data-testid="registry-help-text">
+      <Text tag='H5' color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
         deploy them. See our{' '}
@@ -296,7 +296,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           documentationLink={`${CHARLES_DOC}/reference/registry`}
         />{' '}
         for further details.
-      </Text.h5>
+      </Text>
       <Styled.Select
         placeholder="Choose which one you want to add:"
         customOption={CustomOption.Icon}
