@@ -63,10 +63,10 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
       onContinue={() => onRemove()}
       onDismiss={() => setShowConfirmation(false)}
     >
-      <Text.h4 color="light">
+      <Text tag="H4" color="light">
         This operation will remove all data from this workspace to the Circle
         Matcher.
-      </Text.h4>
+      </Text>
     </Modal.Trigger>
   );
 

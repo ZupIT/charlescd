@@ -69,7 +69,7 @@ const Config = ({
 
   const renderBody = () => (
     <Styled.Body onClick={onClick}>
-      <Text.h4 color="light">{description}</Text.h4>
+      <Text tag="H4" color="light">{description}</Text>
       {children}
     </Styled.Body>
   );

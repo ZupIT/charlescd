@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 import SelectComponent from 'core/components/Form/Select';
 import Button from 'core/components/Button';
 import { fadeIn } from 'core/assets/style/animate';
@@ -107,7 +107,7 @@ const HealthWrapper = styled.div`
   display: flex;
 `;
 
-const Placeholder = styled(TextComponent.h4)`
+const Placeholder = styled(Text)`
   pointer-events: none;
   margin-left: 47px;
   opacity: 60%;

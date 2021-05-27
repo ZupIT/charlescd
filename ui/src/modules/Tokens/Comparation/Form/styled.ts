@@ -20,7 +20,7 @@ import ButtonComponent from 'core/components/Button';
 import IconComponent from 'core/components/Icon';
 import Text from 'core/components/Text';
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
 

@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 import ComponentModal from 'core/components/Modal';
 import ComponentAceEditor from 'core/components/AceEditor';
 import ComponentPlaceholder from 'core/components/Placeholder';
@@ -69,7 +69,7 @@ const ReleaseRow = styled.div`
     theme.circleDeploymentHistory.content.release};
 `;
 
-const TableTextName = styled(ComponentText.h4)`
+const TableTextName = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -77,7 +77,7 @@ const TableTextName = styled(ComponentText.h4)`
   padding-left: 20px;
 `;
 
-const TableTextRelease = styled(ComponentText.h4)`
+const TableTextRelease = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -90,7 +90,7 @@ const TableExpand = styled(ComponentIcon)`
   margin-right: 13px;
 `;
 
-const TableDate = styled(ComponentText.h4)`
+const TableDate = styled(Text)`
   padding-left: 15px;
   width: 155px;
 `;
@@ -114,7 +114,7 @@ const TableDeployStatus = styled.div`
   margin-left: 10px;
 `;
 
-const TableDeployStatusName = styled(ComponentText.h4)`
+const TableDeployStatusName = styled(Text)`
   display: flex;
   align-items: center;
 
@@ -135,7 +135,7 @@ const NoHistoryPlaceholder = styled(ComponentPlaceholder)`
   margin-top: 20px;
 `;
 
-const NoHistoryText = styled(ComponentText.h2)`
+const NoHistoryText = styled(Text)`
   top: -20px;
   position: relative;
 `;

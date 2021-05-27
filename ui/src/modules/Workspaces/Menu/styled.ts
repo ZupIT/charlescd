@@ -71,7 +71,7 @@ const Button = styled(ButtonComponent.Default)`
   height: auto;
 `;
 
-const Item = styled(Text.h4)`
+const Item = styled(Text)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

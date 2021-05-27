@@ -135,7 +135,7 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
       onContinue={onContinue}
       onDismiss={onDismissWarningMessage}
     >
-      <Text.h4 color="light">{getWarningText(warningMessage)}</Text.h4>
+      <Text tag="H4" color="light">{getWarningText(warningMessage)}</Text>
     </Modal.Trigger>
   );
   return (
@@ -145,10 +145,10 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
         <Icon name="arrow-left" color="dark" onClick={() => onGoBack()} />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 weight="bold" color="light">
+        <Text tag="H2" weight="bold" color="light">
           {isEditing ? 'Edit' : 'Create'} Segments
-        </Text.h2>
-        <Styled.HelpText color="dark">
+        </Text>
+        <Styled.HelpText tag="H5" color="dark">
           You can create a segment manually or importing a .CSV file to link
           multiple values to a key, or segment by percentage.
         </Styled.HelpText>

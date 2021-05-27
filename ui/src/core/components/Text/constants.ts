@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * CopyrigHt 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import AreaChart from './Area';
-import ColumnChart from './Column';
-import MixedChart from './Mixed';
-
-export { AreaChart, ColumnChart, MixedChart };
+export const baseFontSize = {
+  H1: '32px',
+  H2: '18px',
+  H3: '16px',
+  H4: '14px',
+  H5: '12px',
+  H6: '10px'
+}

@@ -64,22 +64,22 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Release Name</Text.h5>
+            <Text tag="H5" color="dark">Release Name</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Circles</Text.h5>
+            <Text tag="H5" color="dark">Circles</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Deploy data</Text.h5>
+            <Text tag="H5" color="dark">Deploy data</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Deploy duration</Text.h5>
+            <Text tag="H5" color="dark">Deploy duration</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Undeploy data</Text.h5>
+            <Text tag="H5" color="dark">Undeploy data</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Responsible</Text.h5>
+            <Text tag="H5" color="dark">Responsible</Text>
           </Styled.TableColumn>
         </Styled.TableHead>
         <InfiniteScroll

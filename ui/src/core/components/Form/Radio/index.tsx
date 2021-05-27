@@ -48,7 +48,7 @@ const Radio = forwardRef(
           {...rest}
         />
         <Styled.Label htmlFor={id}>
-          <Text.h4 color="light">{label}</Text.h4>
+          <Text tag="H4" color="light">{label}</Text>
         </Styled.Label>
         <Styled.Checkmark onClick={() => radioRef.current.click()} />
       </Styled.Radio>

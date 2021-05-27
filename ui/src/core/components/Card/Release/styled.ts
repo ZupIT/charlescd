@@ -20,7 +20,7 @@ import CardBody from 'core/components/Card/Body';
 import Text from 'core/components/Text';
 import { Props } from '.';
 
-const CustomText = styled(Text.h4)``;
+const CustomText = styled(Text)``;
 
 const CardRelease = styled(CardBase)<Partial<Props>>`
   background-color: ${({ theme, status }) =>

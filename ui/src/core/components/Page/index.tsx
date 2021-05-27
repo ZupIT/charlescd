@@ -69,14 +69,14 @@ Page.Placeholder = ({
             <Icon name={icon} />
             <Styled.PlaceholderText>
               {title && (
-                <Text.h1 color="dark" weight="bold" align="center">
+                <Text tag="H1" color="dark" weight="bold" align="center">
                   {title}
-                </Text.h1>
+                </Text>
               )}
               {subtitle && (
-                <Text.h1 color="dark" weight="bold" align="center">
+                <Text tag="H1" color="dark" weight="bold" align="center">
                   {subtitle}
-                </Text.h1>
+                </Text>
               )}
             </Styled.PlaceholderText>
             {hasCards && (
@@ -86,9 +86,9 @@ Page.Placeholder = ({
                     {!(currentPage === icon) && 
                       <Styled.PlaceholderCard to={linkTo} data-testid={icon} key={icon}>
                         <Icon name={icon} color="dark" size="15px" />
-                        <Text.h4 color="dark" weight="bold">
+                        <Text tag="H4" color="dark" weight="bold">
                           {text}
-                        </Text.h4>
+                        </Text>
                       </Styled.PlaceholderCard>
                     }
                   </>

@@ -44,8 +44,14 @@ const Main = (props: Props) => {
     <Styled.Card data-testid="card-main" color={color} width={width}>
       {header && <CardHeader action={action}>{header}</CardHeader>}
       <CardBody>
-        {title && <Styled.Title color="light">{title}</Styled.Title>}
-        <Styled.Description color="light">{description}</Styled.Description>
+        {title && (
+          <Styled.Title tag="H4" color="light">
+            {title}
+          </Styled.Title>
+        )}
+        <Styled.Description tag="H5" color="light">
+          {description}
+        </Styled.Description>
         {children && <Styled.Content>{children}</Styled.Content>}
       </CardBody>
     </Styled.Card>

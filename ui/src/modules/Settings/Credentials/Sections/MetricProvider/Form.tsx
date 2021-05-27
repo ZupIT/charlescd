@@ -108,7 +108,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
               label={input.label}
             />
             {(input.name === 'url' && showPlaceholder) &&
-              <Styled.Placeholder color="light">
+              <Styled.Placeholder tag="H4" color="light">
                 {datasourcePlaceholder}
               </Styled.Placeholder>
             }
@@ -160,8 +160,8 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">Add Datasource</Text.h2>
-      <Text.h4 color="dark" data-testid="text-datasource">
+      <Text tag="H2" color="light">Add Datasource</Text>
+      <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to do metrics generation since
         this can vary from workspace to another. See our{' '}
         <DocumentationLink
@@ -169,7 +169,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
           documentationLink={`${CHARLES_DOC}/reference/metrics`}
         />
         for further details.
-      </Text.h4>
+      </Text>
       {renderForm()}
     </Styled.Content>
   );

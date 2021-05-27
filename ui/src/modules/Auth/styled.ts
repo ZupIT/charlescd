@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Icon from 'core/components/Icon';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 import ButtonComponent from 'core/components/Button';
 import { upDown } from 'core/assets/style/animate';
 
@@ -71,7 +71,7 @@ const Background = styled.div`
   }
 `;
 
-const Copyright = styled(TextComponent.h5)`
+const Copyright = styled(Text)`
   position: absolute;
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@ const Content = styled.div`
   margin-left: 141px;
 `;
 
-const Title = styled(TextComponent.h3)`
+const Title = styled(Text)`
   margin: 39px 0 30px;
 `;
 
@@ -106,7 +106,7 @@ const Field = styled.div`
   margin-top: 28px;
 `;
 
-const Error = styled(TextComponent.h6)`
+const Error = styled(Text)`
   margin-top: 5px;
 `;
 

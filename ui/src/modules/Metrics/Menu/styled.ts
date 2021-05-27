@@ -53,7 +53,7 @@ const ListItem = styled(LabeledIcon)`
   display: flex;
 `;
 
-const Item = styled(Text.h4)`
+const Item = styled(Text)`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -80,7 +80,7 @@ const ModalInput = styled(Form.Input)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
