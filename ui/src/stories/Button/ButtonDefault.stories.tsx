@@ -16,7 +16,7 @@ export default {
 const Template: Story<Props> = (props: Props) => <ButtonDefault {...props} />;
 export const buttonDefault = Template.bind({});
 buttonDefault.args = {
-  children: 'my button',
+  children: 'text',
 };
 
 buttonDefault.storyName = 'Default';
