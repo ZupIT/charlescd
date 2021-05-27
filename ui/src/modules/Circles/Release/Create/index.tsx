@@ -158,11 +158,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="submit"
           size="SMALL"
           isLoading={savingBuild}
-<<<<<<< HEAD
-          isDisabled={(isEmptyFields || !isEmpty(errors) || !isEmpty(error))}
-=======
           isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
->>>>>>> 81a40fd5f7a99faa40d8e4365a4c4005077b453b
         >
           Deploy
         </Styled.Submit>
