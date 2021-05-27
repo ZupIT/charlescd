@@ -16,7 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import FormComponent from 'core/components/Form';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/Default';
 import IconComponent from 'core/components/Icon';
 import Text from 'core/components/Text';
 
@@ -59,7 +59,7 @@ const Input = styled(FormComponent.Input)`
   margin-bottom: 12px;
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   margin-top: 10px;
 `;
 

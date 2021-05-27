@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/Rounded';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Layer from 'core/components/Layer';
@@ -45,7 +45,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
-    <Button.Rounded
+    <ButtonRounded
       name="add"
       icon="add"
       color="dark"
@@ -53,7 +53,7 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
       isDisabled={!circle?.id}
     >
       Add metrics group
-    </Button.Rounded>
+    </ButtonRounded>
   );
 
   const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) =>

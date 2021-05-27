@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import { MixedChart as MixedChartComponent } from 'core/components/Charts';
-import ComponentButton from 'core/components/Button';
+import ComponentButtonDefault from 'core/components/Button/Default';
 import SelectComponent from 'core/components/Form/Select';
 
 const Content = styled.div`
@@ -82,7 +82,7 @@ const MultiSelect = styled(SelectComponent.MultiCheck)`
   ${StyledSelect}
 `;
 
-const Button = styled(ComponentButton.Default)`
+const Button = styled(ComponentButtonDefault)`
   border-radius: 30px;
   margin-top: 10px;
 `;

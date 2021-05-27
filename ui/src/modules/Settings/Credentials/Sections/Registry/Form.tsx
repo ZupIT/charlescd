@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { CHARLES_DOC } from 'core/components/Popover';
@@ -253,7 +253,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           errorMessage={testConnectionResponse?.message}
           status={testConnectionResponse?.status}
         />
-        <Button.Default
+        <ButtonDefault
           type="button"
           id="test-connection"
           onClick={onClick}
@@ -261,16 +261,16 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           isLoading={loadingConnectionResponse}
         >
           Test connection
-        </Button.Default>
+        </ButtonDefault>
       </Styled.Fields>
-      <Button.Default
+      <ButtonDefault
         id="submit-registry"
         type="submit"
         isLoading={loadingSave || loadingAdd}
         isDisabled={!isValid}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 

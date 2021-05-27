@@ -16,7 +16,7 @@
 
 import { useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import { CHARLES_DOC } from 'core/components/Popover';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
@@ -71,13 +71,13 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
         name="gitToken"
         label="Enter the Git token"
       />
-      <Button.Default
+      <ButtonDefault
         type="submit"
         isDisabled={!isValid}
         isLoading={loadingAdd || loadingSave}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 

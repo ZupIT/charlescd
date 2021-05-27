@@ -20,7 +20,7 @@ import omit from 'lodash/omit';
 import size from 'lodash/size';
 import isEmpty from 'lodash/isEmpty';
 import includes from 'lodash/includes';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';
@@ -156,13 +156,13 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           defaultChecked={size(data?.events) < size(EVENTS) && isEditMode}
         />
         {watchEventType === 'individual' && renderOptions()}
-        <Button.Default
+        <ButtonDefault
           type="submit"
           isDisabled={!isValid}
           isLoading={status === 'pending'}
         >
           Save
-        </Button.Default>
+        </ButtonDefault>
       </Styled.Fields>
     </Styled.Form>
   );

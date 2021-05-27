@@ -19,7 +19,7 @@ import useForm from 'core/hooks/useForm';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -129,13 +129,13 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
           Test connection
         </Styled.TestConnectionButton>
       </Styled.Fields>
-      <Button.Default
+      <ButtonDefault
         type="submit"
         isDisabled={!isValid}
         isLoading={loadingSave || loadingAdd}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 

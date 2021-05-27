@@ -15,7 +15,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/Rounded';
 import ContentIcon from 'core/components/ContentIcon';
 import Layer from 'core/components/Layer';
 import Text from 'core/components/Text';
@@ -41,9 +41,9 @@ const Section = ({
   type
 }: Props) => {
   const renderAction = () => (
-    <Button.Rounded name="add" icon="add" color="dark" onClick={action}>
+    <ButtonRounded name="add" icon="add" color="dark" onClick={action}>
       {`Add ${name}`}
-    </Button.Rounded>
+    </ButtonRounded>
   );
 
   return (

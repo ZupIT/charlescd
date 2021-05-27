@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/Default';
 
 const Empty = styled.div`
   margin: 48px 30px 18px 30px;
@@ -43,7 +43,7 @@ const ModalTitle = styled(Text.h2)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 155px;
   padding-left: 0;
   padding-right: 0;

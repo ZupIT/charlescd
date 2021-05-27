@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -69,13 +69,13 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
         name="url"
         label="Insert URL Circle Matcher"
       />
-      <Button.Default
+      <ButtonDefault
         type="submit"
         isDisabled={!isValid}
         isLoading={loadingAdd}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 

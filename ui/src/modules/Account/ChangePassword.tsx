@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import { useForm } from 'react-hook-form';
 import { isRequired } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';
@@ -95,7 +95,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         })}
       />
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
-      <Button.Default
+      <ButtonDefault
         id="change-password"
         type="submit"
         size="EXTRA_SMALL"
@@ -103,7 +103,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         isDisabled={!formState.isValid}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.ChangePassword>
   );
 };

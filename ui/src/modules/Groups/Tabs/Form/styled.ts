@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/Rounded';
 import AvatarName from 'core/components/AvatarName';
 
 const LayerTitle = styled.div`
@@ -26,7 +26,7 @@ const LayerUsers = styled.div`
   margin-top: 40px;
 `;
 
-const ButtonAdd = styled(Button.Rounded)`
+const ButtonAdd = styled(ButtonRounded)`
   margin-top: 10px;
   margin-bottom: 5px;
 `;

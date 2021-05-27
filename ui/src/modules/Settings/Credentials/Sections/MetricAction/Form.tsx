@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Card from 'core/components/Card';
 import { normalizeSelectOptions } from 'core/utils/select';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import { usePlugins, useCreateAction } from './hooks';
 import { Props } from '../interfaces';
 import Styled from './styled';
@@ -138,14 +138,14 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
           )}
         </Styled.Wrapper>
       )}
-      <Button.Default
+      <ButtonDefault
         id="save"
         type="submit"
         isDisabled={!isValid}
         isLoading={status.isPending}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </>
   );
 
@@ -171,13 +171,13 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         options={pluginsOptions}
         rules={{ required: true }}
       />
-      <Button.Default
+      <ButtonDefault
         id="next"
         isDisabled={!isValid}
         onClick={() => setShowConfigAction(true)}
       >
         Next
-      </Button.Default>
+      </ButtonDefault>
     </Styled.FormContent>
   );
 

@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import { CHARLES_DOC } from 'core/components/Popover';
@@ -147,13 +147,13 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       {renderSelect()}
       {plugin && renderFields()}
       <div>
-        <Button.Default
+        <ButtonDefault
           type="submit"
           isLoading={loadingSave || loadingAdd}
           isDisabled={!formState.isValid}
         >
           Save
-        </Button.Default>
+        </ButtonDefault>
       </div>
     </Styled.Form>
   );

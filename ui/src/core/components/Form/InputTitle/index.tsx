@@ -15,7 +15,7 @@
  */
 
 import React, { useRef, useState, useImperativeHandle } from 'react';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/Default';
 import Styled from './styled';
 
 interface Props {
@@ -73,7 +73,7 @@ const InputTitle = React.forwardRef(
             defaultValue={defaultValue}
           />
           {!isResumed && !readOnly && (
-            <Button.Default
+            <ButtonDefault
               id="submit"
               type="submit"
               size="EXTRA_SMALL"
@@ -81,7 +81,7 @@ const InputTitle = React.forwardRef(
               isDisabled={isDisabled}
             >
               {buttonText}
-            </Button.Default>
+            </ButtonDefault>
           )}
         </Styled.Field>
         {error && <Styled.Error color="error">{error}</Styled.Error>}
