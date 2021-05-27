@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import { MixedChart as MixedChartComponent } from 'core/components/Charts';
-import ComponentButtonDefault from 'core/components/Button/Default';
+import ComponentButtonDefault from 'core/components/Button/ButtonDefault';
 import SelectComponent from 'core/components/Form/Select';
 
 const Content = styled.div`

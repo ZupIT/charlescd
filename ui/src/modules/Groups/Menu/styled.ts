@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import ComponentText from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';

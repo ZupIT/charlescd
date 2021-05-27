@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import useForm from 'core/hooks/useForm';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';

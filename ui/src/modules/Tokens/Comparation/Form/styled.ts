@@ -16,7 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import FormComponent from 'core/components/Form';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import IconComponent from 'core/components/Icon';
 import Text from 'core/components/Text';
 

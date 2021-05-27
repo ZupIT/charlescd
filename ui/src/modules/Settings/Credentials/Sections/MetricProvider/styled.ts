@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
 import TextComponent from 'core/components/Text';
 import SelectComponent from 'core/components/Form/Select';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { fadeIn } from 'core/assets/style/animate';
 import Switch from 'core/components/Switch';
 

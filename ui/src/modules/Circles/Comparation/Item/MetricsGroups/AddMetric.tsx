@@ -31,7 +31,7 @@ import {
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
-import Button from 'core/components/Button/Default';
+import Button from 'core/components/Button/ButtonDefault';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 type Props = {

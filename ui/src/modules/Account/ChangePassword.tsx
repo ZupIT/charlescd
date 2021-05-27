@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { useForm } from 'react-hook-form';
 import { isRequired } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';

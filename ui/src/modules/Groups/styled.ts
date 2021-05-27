@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Form from 'core/components/Form';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 
 const LayerTitle = styled.div``;

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Icon from 'core/components/Icon';
 import TextComponent from 'core/components/Text';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { upDown } from 'core/assets/style/animate';
 
 const Wrapper = styled.div`

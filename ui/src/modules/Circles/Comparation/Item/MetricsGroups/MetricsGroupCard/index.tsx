@@ -23,7 +23,7 @@ import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import NavTabs from 'core/components/NavTabs';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Summary from 'core/components/Summary';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';

@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Card from 'core/components/Card';
 import { normalizeSelectOptions } from 'core/utils/select';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { usePlugins, useCreateAction } from './hooks';
 import { Props } from '../interfaces';
 import Styled from './styled';

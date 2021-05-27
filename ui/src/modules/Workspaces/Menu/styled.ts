@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 import LoaderMenuComponent from './Loaders';
 

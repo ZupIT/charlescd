@@ -21,7 +21,7 @@ import first from 'lodash/first';
 import last from 'lodash/last';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 import List from './Content/List';
 import { options, Option } from './constants';

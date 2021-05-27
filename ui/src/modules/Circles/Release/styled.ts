@@ -20,7 +20,7 @@ import FormComponent from 'core/components/Form';
 import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 

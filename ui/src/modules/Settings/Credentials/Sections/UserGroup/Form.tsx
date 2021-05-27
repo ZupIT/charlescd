@@ -20,7 +20,7 @@ import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
 import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { CHARLES_DOC } from 'core/components/Popover';
 import { Option } from 'core/components/Form/Select/interfaces';
 import CustomOption from 'core/components/Form/Select/CustomOptions';

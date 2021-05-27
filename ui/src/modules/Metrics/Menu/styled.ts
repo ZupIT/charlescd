@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';

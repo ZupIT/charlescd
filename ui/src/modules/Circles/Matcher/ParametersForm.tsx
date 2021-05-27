@@ -17,7 +17,7 @@
 import React from 'react';
 import { useFieldArray, FieldValues, useFormContext } from 'react-hook-form';
 import Icon from 'core/components/Icon';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { blankParameter } from './constants';
 import Styled from './styled';
 

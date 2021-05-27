@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 
 const Empty = styled.div`
   margin: 48px 30px 18px 30px;

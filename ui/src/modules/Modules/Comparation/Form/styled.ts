@@ -19,7 +19,7 @@ import FormComponent from 'core/components/Form';
 import ComponentPopover, {
   Props as PopoverProps
 } from 'core/components/Popover';
-import ButtonComponentDefault from 'core/components/Button/Default';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import IconComponent from 'core/components/Icon';
 import Text, { Props as TextProps } from 'core/components/Text';
 import { slideInRight } from 'core/assets/style/animate';

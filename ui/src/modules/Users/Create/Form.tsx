@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { maxLength, isRequired, emailPattern } from 'core/utils/validations';

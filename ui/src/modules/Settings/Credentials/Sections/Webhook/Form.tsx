@@ -20,7 +20,7 @@ import omit from 'lodash/omit';
 import size from 'lodash/size';
 import isEmpty from 'lodash/isEmpty';
 import includes from 'lodash/includes';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';

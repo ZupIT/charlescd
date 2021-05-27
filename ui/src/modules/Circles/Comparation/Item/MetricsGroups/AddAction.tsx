@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button/Default';
+import Button from 'core/components/Button/ButtonDefault';
 import isUndefined from 'lodash/isUndefined';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';

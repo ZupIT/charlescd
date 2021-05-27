@@ -25,7 +25,7 @@ import { UserChecked } from '../../interfaces/UserChecked';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import useOutsideClick from 'core/hooks/useClickOutside';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Styled from './styled';
 
 interface UserItemProps extends User {

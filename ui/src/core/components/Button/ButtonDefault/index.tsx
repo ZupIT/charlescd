@@ -35,7 +35,7 @@ export enum HEIGHT {
   EXTRA_LARGE = '60px'
 }
 
-const Button = ({
+const ButtonDefault = ({
   children,
   onClick,
   className,
@@ -63,4 +63,4 @@ const Button = ({
   </Styled.Button>
 );
 
-export default Button;
+export default ButtonDefault;

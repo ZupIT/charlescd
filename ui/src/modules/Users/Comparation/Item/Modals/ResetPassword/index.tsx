@@ -15,7 +15,7 @@
  */
 
 import React, { Fragment, useState, useEffect } from 'react';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 import InputAction from 'core/components/Form/InputAction';
 import { User } from 'modules/Users/interfaces/User';

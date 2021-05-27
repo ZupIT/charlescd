@@ -19,7 +19,7 @@ import {
   Input as InputComponent,
   Select as SelectComponent
 } from 'core/components/Form';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Icon from 'core/components/Icon';
 import {
   RULE_SIZE,

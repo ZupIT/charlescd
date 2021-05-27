@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import ComponentText from 'core/components/Text';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 
 const Title = styled(ComponentText.h2)`
   display: flex;

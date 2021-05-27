@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import ButtonDefault from 'core/components/Button/Default';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import { CHARLES_DOC } from 'core/components/Popover';
