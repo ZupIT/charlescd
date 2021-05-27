@@ -15,7 +15,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import ButtonRounded from 'core/components/Button/Rounded';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import ContentIcon from 'core/components/ContentIcon';
 import Layer from 'core/components/Layer';
 import Text from 'core/components/Text';

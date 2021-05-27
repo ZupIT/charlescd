@@ -17,7 +17,7 @@
 import React from 'react';
 import Card from 'core/components/Card';
 import ContentIcon from 'core/components/ContentIcon';
-import ButtonRounded from 'core/components/Button/Rounded';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';

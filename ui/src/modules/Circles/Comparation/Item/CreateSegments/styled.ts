@@ -17,7 +17,7 @@
 import styled, { css } from 'styled-components';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
 import { Input as InputComponent } from 'core/components/Form';
 import TextComponent from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';

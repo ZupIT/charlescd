@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { useRouter } from 'core/utils/routes';
-import ButtonRounded from 'core/components/Button/Rounded';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import routes from 'core/constants/routes';
 import Placeholder from 'core/components/Placeholder';
 import Styled from '../styled';

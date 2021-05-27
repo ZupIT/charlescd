@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
-import ButtonRounded from 'core/components/Button/Rounded';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Layer from 'core/components/Layer';

@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import ButtonRounded from 'core/components/Button/Rounded';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import AvatarName from 'core/components/AvatarName';
 
 const LayerTitle = styled.div`

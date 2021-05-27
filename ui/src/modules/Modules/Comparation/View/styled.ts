@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Card from 'core/components/Card';
-import ButtonComponentRounded from 'core/components/Button/Rounded';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import Form from 'core/components/Form';
 import ContentIcon from 'core/components/ContentIcon';
 import ComponentDropdown from 'core/components/Dropdown';

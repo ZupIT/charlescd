@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
-import ButtonComponentRounded from 'core/components/Button/Rounded';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import IconComponent from 'core/components/Icon';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 import { Input } from 'core/components/Form';

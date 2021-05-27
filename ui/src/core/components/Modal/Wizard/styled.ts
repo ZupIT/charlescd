@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Text from 'core/components/Text';
-import ButtonComponent from 'core/components/Button/Rounded';
+import ButtonComponent from 'core/components/Button/ButtonRounded';
 import IconComponent from 'core/components/Icon';
 import SwitchComponet from 'core/components/Switch';
 

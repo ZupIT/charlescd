@@ -15,7 +15,7 @@
  */
 
 import styled, { css } from 'styled-components';
-import ButtonComponentRounded from 'core/components/Button/Rounded';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 
 const Button = styled(ButtonComponentRounded)`
   margin-top: 10px;

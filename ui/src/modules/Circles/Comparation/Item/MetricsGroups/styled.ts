@@ -17,8 +17,8 @@
 import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
-import ButtonComponentRounded from 'core/components/Button/Rounded';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
+import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
 import SelectComponent from 'core/components/Form/Select';
 import InputNumberComponent from 'core/components/Form/Number';
 import Text from 'core/components/Text';

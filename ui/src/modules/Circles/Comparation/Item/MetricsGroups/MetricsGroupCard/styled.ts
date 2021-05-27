@@ -17,7 +17,7 @@
 import styled, { css } from 'styled-components';
 import SelectComponent from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
 import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 
 interface FilterOpenProps {
