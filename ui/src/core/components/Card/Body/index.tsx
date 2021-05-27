@@ -23,10 +23,10 @@ export interface Props {
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const CardBody = ({ children, className, onClick }: Props) => (
+const Body = ({ children, className, onClick }: Props) => (
   <Styled.CardBody className={className} onClick={onClick}>
     {children}
   </Styled.CardBody>
 );
 
-export default CardBody;
+export default Body;

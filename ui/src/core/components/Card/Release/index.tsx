@@ -33,14 +33,20 @@ import Styled from './styled';
 import CardExpand from '../Expand';
 
 export interface Props {
-  status: string;
+  status:
+    | 'DEPLOYED'
+    | 'DEPLOYING'
+    | 'UNDEPLOYING'
+    | 'BUILT'
+    | 'BUILDING'
+    | 'BUILD_FAILED';
   description: string;
   action?: ReactNode;
   children?: ReactNode;
   expandItems?: Artifact[];
 }
 
-const CardRelease = forwardRef(
+const Release = forwardRef(
   (
     { status, description, action, children }: Props,
     ref: Ref<HTMLDivElement>
@@ -88,4 +94,4 @@ const CardRelease = forwardRef(
   }
 );
 
-export default CardRelease;
+export default Release;

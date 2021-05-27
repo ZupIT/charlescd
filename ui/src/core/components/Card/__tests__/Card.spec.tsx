@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import CardBase from '../Base';
-import CardBody from '../Body';
+import { base as CardBase } from 'stories/Cards/CardBase.stories';
+import { body as CardBody } from 'stories/Cards/CardBody.stories';
 
 test('render Card', () => {
   render(

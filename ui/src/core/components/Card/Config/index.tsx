@@ -34,7 +34,7 @@ export interface Props {
   className?: string;
 }
 
-const CardConfig = ({
+const Config = ({
   id,
   icon,
   description,
@@ -86,4 +86,4 @@ const CardConfig = ({
   );
 };
 
-export default CardConfig;
+export default Config;

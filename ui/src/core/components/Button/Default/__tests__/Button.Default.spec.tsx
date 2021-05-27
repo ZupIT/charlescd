@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import Button from 'core/components/Button';
@@ -23,7 +22,9 @@ test('render Button default component', () => {
   const click = jest.fn();
   const id = 'test';
   render(
-    <Button.Default id={id} onClick={click}>button</Button.Default>
+    <Button.Default id={id} onClick={click}>
+      button
+    </Button.Default>
   );
 
   const buttonDefault = screen.getByTestId(`button-default-${id}`);
@@ -35,7 +36,9 @@ test('render Button default component', () => {
 test('render Button default in disabled mode', () => {
   const click = jest.fn();
   render(
-    <Button.Default id="test" onClick={click} isDisabled={true}>button</Button.Default>
+    <Button.Default id="test" onClick={click} isDisabled={true}>
+      button
+    </Button.Default>
   );
 
   const buttonDefault = screen.getByTestId('button-default-test');
@@ -45,7 +48,9 @@ test('render Button default in disabled mode', () => {
 
 test('render Button default in loading mode', () => {
   render(
-    <Button.Default id="test" isLoading={true}>button</Button.Default>
+    <Button.Default id="test" isLoading={true}>
+      button
+    </Button.Default>
   );
 
   const buttonDefault = screen.getByTestId('button-default-test');
