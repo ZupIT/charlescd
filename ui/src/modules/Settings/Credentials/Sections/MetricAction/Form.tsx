@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { normalizeSelectOptions } from 'core/utils/select';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { usePlugins, useCreateAction } from './hooks';
@@ -25,12 +25,12 @@ import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
 import DocumentationLink from 'core/components/DocumentationLink';
-import { 
+import {
   isRequired,
   urlPattern,
   isRequiredAndNotBlank,
   isNotBlank,
-  trimValue
+  trimValue,
 } from 'core/utils/validations';
 
 const actionPlaceholder = 'charlescd-custom-path-example';
@@ -44,8 +44,8 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const formMethods = useForm<ActionForm>({
     mode: 'onChange',
     defaultValues: {
-      configuration: 'https://'
-    }
+      configuration: 'https://',
+    },
   });
   const {
     handleSubmit,
@@ -53,7 +53,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     control,
     watch,
     errors,
-    formState: { isValid }
+    formState: { isValid },
   } = formMethods;
   const nickname = watch('nickname') as string;
   const configuration = watch('configuration') as string;
@@ -68,7 +68,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   useEffect(() => {
     setLoadingPlugins(true);
     getPlugins('action')
-      .then(pluginsResponse => {
+      .then((pluginsResponse) => {
         const normalizedOptions = normalizeSelectOptions(pluginsResponse);
         setPluginsOptions(normalizedOptions);
       })
@@ -79,19 +79,19 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     const payload = buildActionPayload(data, isDefault) as ActionPayload;
 
     createAction(payload)
-      .then(response => {
+      .then((response) => {
         if (response) {
           onFinish();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
   const renderActionConfig = () => (
     <>
-      <Card.Config
+      <CardConfig
         icon="action"
         description={nickname}
         onClose={() => setShowConfigAction(false)}
@@ -123,10 +123,10 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
             ref={register({
               required: isRequired(),
               validate: {
-                notBlank: isNotBlank
+                notBlank: isNotBlank,
               },
               setValueAs: trimValue,
-              pattern: urlPattern()
+              pattern: urlPattern(),
             })}
             error={errors?.configuration?.message}
             label="Enter a action configuration"

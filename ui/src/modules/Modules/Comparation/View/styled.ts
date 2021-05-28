@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import Form from 'core/components/Form';
 import ContentIcon from 'core/components/ContentIcon';
@@ -25,7 +25,7 @@ const Layer = styled.div`
   margin: 40px 0;
 `;
 
-const ComponentCard = styled(Card.Config)`
+const ComponentCard = styled(CardConfig)`
   margin-top: 10px;
   margin-bottom: 10px;
 `;

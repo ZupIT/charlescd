@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import Card from 'core/components/Card';
+import CardRelease from 'core/components/Card/Release';
 import ContentIcon from 'core/components/ContentIcon';
 import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
@@ -34,7 +34,7 @@ interface Props {
 const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
-      <Card.Release
+      <CardRelease
         status={circle?.deployment?.status}
         description={tag}
         expandItems={artifacts}
@@ -73,7 +73,8 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
           <Styled.WarningPercentageContainer>
             <Icon name="alert" color="warning" />
             <Text tag="H4" color="warning">
-              The configured percentage is bigger than the available in open sea.
+              The configured percentage is bigger than the available in open
+              sea.
             </Text>
           </Styled.WarningPercentageContainer>
         )}

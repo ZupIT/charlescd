@@ -22,7 +22,7 @@ import take from 'lodash/take';
 import size from 'lodash/size';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import ContentIcon from 'core/components/ContentIcon';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { Mode } from '../../helpers';
@@ -42,7 +42,9 @@ const Workspaces = ({ mode }: Props) => {
   const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
   const watchAllWorkspaces = watch('allWorkspaces') as boolean;
-  const preview = isShowMore ? take(workspaces, MAX_ITEMS) : take(workspaces, MIN_ITEMS)
+  const preview = isShowMore
+    ? take(workspaces, MAX_ITEMS)
+    : take(workspaces, MIN_ITEMS);
   const isAddMode = isEmpty(preview);
 
   const validateWorkspaces = useCallback(() => {
@@ -52,8 +54,8 @@ const Workspaces = ({ mode }: Props) => {
   }, [getValues]);
 
   useEffect(() => {
-    register({ name: "allWorkspaces" });
-    register({ name: "workspaces" }, { validate: validateWorkspaces });
+    register({ name: 'allWorkspaces' });
+    register({ name: 'workspaces' }, { validate: validateWorkspaces });
   }, [register, validateWorkspaces]);
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
@@ -71,68 +73,69 @@ const Workspaces = ({ mode }: Props) => {
     }
 
     trigger('workspaces');
-  }
+  };
 
-  const renderItems = () => (
-   map(preview, (workspace) => (
-      <Card.Config
+  const renderItems = () =>
+    map(preview, (workspace) => (
+      <CardConfig
         key={workspace?.id}
         icon="workspaces"
         description={workspace?.name}
       />
-    ))
-  )
+    ));
 
-  const ShowMore = () => (
-    size(workspaces) > MIN_ITEMS &&
-      <Styled.ShowMore
-        data-testid="showmore-toggle"
-        onClick={toggleShowMore}
-      >
+  const ShowMore = () =>
+    size(workspaces) > MIN_ITEMS && (
+      <Styled.ShowMore data-testid="showmore-toggle" onClick={toggleShowMore}>
         <Icon
           color="light"
           name={isShowMore ? 'up' : 'alternate-down'}
           size="18"
         />
-        <Text tag="H4" color="dark">Showing {size(preview)} of {size(workspaces)} workspaces</Text>
+        <Text tag="H4" color="dark">
+          Showing {size(preview)} of {size(workspaces)} workspaces
+        </Text>
       </Styled.ShowMore>
-  )
+    );
 
-  const renderModal = () => 
-    isOpen &&
+  const renderModal = () =>
+    isOpen && (
       <Modal
         workspaces={workspaces}
         onClose={toggleIsOpen}
         onContinue={onContinue}
       />
-  
+    );
+
   return (
     <Fragment>
       {renderModal()}
       <ContentIcon icon="workspaces">
-        <Text tag="H2" color="light">Associated Workspaces</Text>
+        <Text tag="H2" color="light">
+          Associated Workspaces
+        </Text>
         <Styled.Caption tag="H5" color="dark">
-          {
-            watchAllWorkspaces
-              ? 'Your token has access to all workspaces (including new ones)'
-              : 'Your token have access only on these workspaces'
-          }
+          {watchAllWorkspaces
+            ? 'Your token has access to all workspaces (including new ones)'
+            : 'Your token have access only on these workspaces'}
         </Styled.Caption>
         <Styled.Content>
           {preview && !watchAllWorkspaces && renderItems()}
         </Styled.Content>
         <ShowMore />
-        {mode === 'create' && <Styled.Button
-          name={iconByMode(isAddMode)}
-          icon={iconByMode(isAddMode)}
-          color="dark"
-          onClick={toggleIsOpen}
-        >
-          {labelByMode(isAddMode)}
-        </Styled.Button>}
+        {mode === 'create' && (
+          <Styled.Button
+            name={iconByMode(isAddMode)}
+            icon={iconByMode(isAddMode)}
+            color="dark"
+            onClick={toggleIsOpen}
+          >
+            {labelByMode(isAddMode)}
+          </Styled.Button>
+        )}
       </ContentIcon>
     </Fragment>
-  )
-}
+  );
+};
 
 export default Workspaces;

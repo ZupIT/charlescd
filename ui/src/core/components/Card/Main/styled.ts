@@ -49,7 +49,7 @@ const Card = styled(CardBase)<Partial<Props>>`
   :hover {
     ${Title}, ${Description} {
       white-space: normal;
-      overflow: visible;
+      overflow: auto;
     }
   }
 `;
