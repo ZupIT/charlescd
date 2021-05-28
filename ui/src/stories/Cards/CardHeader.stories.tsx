@@ -10,7 +10,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Basic component to attach header an card',
+        component: 'Basic component to attach a header within a card',
       },
     },
   },
