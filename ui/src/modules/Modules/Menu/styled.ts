@@ -93,7 +93,7 @@ const ModalInput = styled(Form.Input)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 

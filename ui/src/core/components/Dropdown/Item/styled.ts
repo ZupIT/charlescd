@@ -22,7 +22,7 @@ import ReactTooltip from 'react-tooltip';
 
 const Icon = styled(ComponentIcon)``;
 
-const Text = styled(ComponentText.h5)``;
+const Text = styled(ComponentText)``;
 
 const Item = styled.button<Partial<Props>>`
   color: ${({ theme }) => theme.dropdown.color};

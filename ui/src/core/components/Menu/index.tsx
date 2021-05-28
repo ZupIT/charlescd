@@ -67,7 +67,7 @@ const Menu = ({
           )}
           {icon && <Icon name={icon} />}
         </Styled.WrapperIcon>
-        <Styled.H5 color="dark">{label}</Styled.H5>
+        <Styled.MenuText tag="H5" color="dark">{label}</Styled.MenuText>
       </Styled.Action>
     ));
 

@@ -50,7 +50,7 @@ const Element = ({
 
   const renderTooltip = () => (
     <ReactTooltip id={id} place="right" effect="solid">
-      <Text.h6 color="dark">Not allowed</Text.h6>
+      <Text tag="H6" color="dark">Not allowed</Text>
     </ReactTooltip>
   );
 

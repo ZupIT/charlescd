@@ -53,7 +53,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        <Text.h2 color="light">Add workspaces</Text.h2>
+        <Text tag="H2" color="light">Add workspaces</Text>
         <Select
           options={options}
           defaultValue={type}
@@ -62,7 +62,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         />
       </Styled.Header>
       <Styled.Caption>
-        <Text.h5 color="dark">
+        <Text tag="H5" color="dark">
           {renderDescription()}
           Read our 
           <DocumentationLink
@@ -70,7 +70,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
             text="documentation"
           />
           for further details.
-        </Text.h5>
+        </Text>
       </Styled.Caption>
       {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
       <Styled.Item>

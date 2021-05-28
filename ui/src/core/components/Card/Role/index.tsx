@@ -31,9 +31,9 @@ const CardRole = ({ title, children }: Props) => {
   return (
     <Styled.Card>
       <Card.Header action={renderIcon}>
-        <Text.h4 color="light" weight="bold">
+        <Text tag="H4" color="light" weight="bold">
           {title}
-        </Text.h4>
+        </Text>
       </Card.Header>
       <Styled.Body>{children}</Styled.Body>
     </Styled.Card>

@@ -62,13 +62,13 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
 
   return (
     <Styled.Modal onClose={() => onClose(false)}>
-      <Text.h2 weight="bold" color="light">
+      <Text tag="H2" weight="bold" color="light">
         Reset password
-      </Text.h2>
-      <Text.h4 color="dark">
+      </Text>
+      <Text tag="H4" color="dark">
         Are you sure you want to reset <strong>{user.email}</strong>
         {`'`}s password?
-      </Text.h4>
+      </Text>
       <ButtonDefault
         id="reset-password"
         size="EXTRA_SMALL"
@@ -80,9 +80,9 @@ const ModalResetPassword = ({ user, onClose }: Props) => {
       </ButtonDefault>
       {isNewPassword && (
         <Fragment>
-          <Text.h4 color="dark">
+          <Text tag="H4" color="dark">
             New password generated. Contact the user and send the new password.
-          </Text.h4>
+          </Text>
           <InputAction
             isDisabled
             name="new-password"

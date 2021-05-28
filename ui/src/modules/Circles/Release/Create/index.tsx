@@ -108,7 +108,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         data-testid="create-release"
       >
-        <Text.h5 color="dark">Type a name for release:</Text.h5>
+        <Text tag="H5" color="dark">Type a name for release:</Text>
         <Styled.Input
           name="releaseName"
           ref={register(isRequiredAndNotBlank)}
@@ -124,7 +124,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             isNotUnique={isNotUnique}
           />
         ))}
-        <Styled.Module.Info color="dark">
+        <Styled.Module.Info tag="H5" color="dark">
           You can add other modules:
         </Styled.Module.Info>
         <Styled.Module.Button

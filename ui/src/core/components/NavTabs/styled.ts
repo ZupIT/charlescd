@@ -49,7 +49,7 @@ const Placeholder = styled.div`
   margin-left: 120px;
 `;
 
-const PlaceholderTitle = styled(Text.h2)`
+const PlaceholderTitle = styled(Text)`
   margin-bottom: 10px;
 `;
 

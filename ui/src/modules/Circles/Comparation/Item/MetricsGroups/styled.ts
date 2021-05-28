@@ -25,7 +25,7 @@ import Text from 'core/components/Text';
 import InputComponent from 'core/components/Form/Input';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 
 interface ButtonDefaultProps {
   isValid: boolean;
@@ -75,11 +75,11 @@ const Form = styled.form`
   width: 540px;
 `;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 20px 0;
 `;
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   margin-top: 40px;
 `;
 
@@ -127,7 +127,7 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
 
   span {
     font-weight: normal;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 
   ${({ isActive }: ButtonIconProps) =>
@@ -156,7 +156,7 @@ const ModalInput = styled(InputComponent)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 

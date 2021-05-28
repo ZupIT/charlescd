@@ -58,7 +58,7 @@ const Content = styled.div`
   opacity: 1.2;
 `;
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   text-align: left;
   margin-bottom: 0;
 `;

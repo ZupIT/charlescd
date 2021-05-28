@@ -91,11 +91,11 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
   const isUnable = !isEditing && limitPercentage === 0;
 
   const renderWarningNoPercentageAvailable = () => (
-    <Text.h5 color="error">
+    <Text tag="H5" color="error">
       The sum of active segmentations has reached 100%, there is no available
       space for a new segmentation. Please adjust the others segmentations per
       percentage to make it possible to segment this circle
-    </Text.h5>
+    </Text>
   );
 
   const renderSlider = () => {
@@ -105,11 +105,11 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
 
     return (
       <Fragment>
-        <Styled.HelpText color="dark">
+        <Styled.HelpText tag="H5" color="dark">
           Add the proportion of users by the percentage factor available for the
           open sea
         </Styled.HelpText>
-        <Styled.HelpText color="dark">Circle {name}</Styled.HelpText>
+        <Styled.HelpText tag="H5" color="dark">Circle {name}</Styled.HelpText>
         <SliderPercentage limitValue={limit} isDisabled={isSaving} />
         {isSaving && <Loader />}
         <Styled.ButtonDefault
@@ -119,7 +119,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
           isDisabled={isSaving}
           isValid={isValid}
         >
-          <Text.h6 color={isValid ? 'light' : 'dark'}>Save</Text.h6>
+          <Text tag="H6" color={isValid ? 'light' : 'dark'}>Save</Text>
         </Styled.ButtonDefault>
       </Fragment>
     );
@@ -129,7 +129,7 @@ const Percentage = ({ id, circle, onSaveCircle, isEditing }: Props) => {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmitValue)}>
         <Styled.FieldPopover>
-          <Text.h5 color="dark">Quantity available for consumption.</Text.h5>
+          <Text tag="H5" color="dark">Quantity available for consumption.</Text>
           <Styled.Popover
             title=""
             icon="info"

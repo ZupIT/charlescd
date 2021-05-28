@@ -16,15 +16,14 @@
 
 import styled, { css } from 'styled-components';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
 import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
+import { baseFontSize } from 'core/components/Text/constants';
 import { Input as InputComponent } from 'core/components/Form';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';
 import PopoverComponent, {
   Props as PopoverProps
 } from 'core/components/Popover';
-import Text from 'core/components/Text';
 import NumberInput from 'core/components/Form/Number';
 
 interface ButtonIconProps {
@@ -39,7 +38,7 @@ interface SliderValueProps {
   valueIsValid: boolean;
 }
 
-const HelpText = styled(TextComponent.h5)`
+const HelpText = styled(Text)`
   margin-top: 20px;
   margin-bottom: 10px;
 `;
@@ -55,7 +54,7 @@ const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
 
   span {
     font-weight: bold;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 
   ${({ isActive }: ButtonIconProps) =>
@@ -142,7 +141,7 @@ const Slider = styled.input`
   }
 `;
 
-const SliderValue = styled(Text.h4)<SliderValueProps>`
+const SliderValue = styled(Text)<SliderValueProps>`
   border-bottom: ${({ theme }) => `1px solid ${theme.slider.valueBorderColor}`};
   padding-bottom: 3px;
   width: 40px;

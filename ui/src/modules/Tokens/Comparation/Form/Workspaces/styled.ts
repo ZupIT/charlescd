@@ -46,7 +46,7 @@ const Content = styled.div`
   }
 `;
 
-const Caption = styled(Text.h5)`
+const Caption = styled(Text)`
   margin-top: 10px;
 `;
 

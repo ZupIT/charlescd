@@ -52,10 +52,10 @@ const Login = () => {
     <Fragment>
       <Icon name="charles-logo" />
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Title color="light">
+        <Styled.Title tag="H3" color="light">
           Sign in with your Charles Account
         </Styled.Title>
-        {error && <Styled.Error color="error">{errorMessage}</Styled.Error>}
+        {error && <Styled.Error tag="H6" color="error">{errorMessage}</Styled.Error>}
         <Styled.Field>
           <Form.Input
             type="email"
@@ -64,7 +64,7 @@ const Login = () => {
             label="Email address"
           />
           {errors.email && (
-            <Styled.Error color="error">Required Field</Styled.Error>
+            <Styled.Error tag="H6" color="error">Required Field</Styled.Error>
           )}
         </Styled.Field>
         <Styled.Field>
@@ -74,7 +74,7 @@ const Login = () => {
             label="Enter your password"
           />
           {errors.password && (
-            <Styled.Error color="error">Required Field</Styled.Error>
+            <Styled.Error tag="H6" color="error">Required Field</Styled.Error>
           )}
         </Styled.Field>
         <Styled.Button

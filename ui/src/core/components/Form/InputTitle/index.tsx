@@ -84,7 +84,7 @@ const InputTitle = React.forwardRef(
             </ButtonDefault>
           )}
         </Styled.Field>
-        {error && <Styled.Error color="error">{error}</Styled.Error>}
+        {error && <Styled.Error tag="H6" color="error">{error}</Styled.Error>}
       </Styled.Wrapper>
     );
   }

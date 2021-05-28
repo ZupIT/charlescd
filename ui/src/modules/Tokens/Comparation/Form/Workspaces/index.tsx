@@ -94,7 +94,7 @@ const Workspaces = ({ mode }: Props) => {
           name={isShowMore ? 'up' : 'alternate-down'}
           size="18"
         />
-        <Text.h4 color="dark">Showing {size(preview)} of {size(workspaces)} workspaces</Text.h4>
+        <Text tag="H4" color="dark">Showing {size(preview)} of {size(workspaces)} workspaces</Text>
       </Styled.ShowMore>
   )
 
@@ -110,8 +110,8 @@ const Workspaces = ({ mode }: Props) => {
     <Fragment>
       {renderModal()}
       <ContentIcon icon="workspaces">
-        <Text.h2 color="light">Associated Workspaces</Text.h2>
-        <Styled.Caption color="dark">
+        <Text tag="H2" color="light">Associated Workspaces</Text>
+        <Styled.Caption tag="H5" color="dark">
           {
             watchAllWorkspaces
               ? 'Your token has access to all workspaces (including new ones)'
