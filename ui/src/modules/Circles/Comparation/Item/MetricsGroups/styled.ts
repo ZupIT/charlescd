@@ -16,8 +16,8 @@
 
 import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import SelectComponent from 'core/components/Form/Select';
 import InputNumberComponent from 'core/components/Form/Number';
 import Text from 'core/components/Text';
@@ -51,7 +51,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const ButtonAdd = styled(ButtonComponent.Rounded)`
+const ButtonAdd = styled(ButtonComponentRounded)`
   margin-top: 15px;
   margin-bottom: 15px;
 `;
@@ -61,7 +61,7 @@ const Input = styled(InputComponent)`
   margin: 10px 0 20px;
 `;
 
-const ButtonDefault = styled(ButtonComponent.Default)<ButtonDefaultProps>`
+const ButtonDefault = styled(ButtonComponentDefault)<ButtonDefaultProps>`
   background-color: ${({ theme, isValid }) => {
     const { saveButton } = theme.circleSegmentation.importCSV;
     return isValid
@@ -120,7 +120,7 @@ const Actions = styled.div`
   }
 `;
 
-const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+const ButtonIconRounded = styled(ButtonComponentRounded)`
   height: 40px;
   padding: 13px 25px;
 
@@ -159,7 +159,7 @@ const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 155px;
   padding-left: 0;
   padding-right: 0;

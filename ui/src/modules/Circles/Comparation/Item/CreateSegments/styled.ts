@@ -15,9 +15,9 @@
  */
 
 import styled, { css } from 'styled-components';
-import Button from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import { baseFontSize } from 'core/components/Text/constants';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
 import { Input as InputComponent } from 'core/components/Form';
 import Text from 'core/components/Text';
 import LayerComponent from 'core/components/Layer';
@@ -47,7 +47,7 @@ const Actions = styled.div`
   display: flex;
 `;
 
-const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+const ButtonIconRounded = styled(ButtonComponentRounded)`
   height: 40px;
   padding: 13px 25px;
   margin-right: 15px;
@@ -74,7 +74,7 @@ const Input = styled(InputComponent)`
   width: 180px;
 `;
 
-const ButtonDefault = styled(Button.Default)<ButtonDefaultProps>`
+const ButtonDefault = styled(ButtonComponentDefault)<ButtonDefaultProps>`
   height: 30px;
   background-color: ${({ theme, isValid }) => {
     const { saveButton } = theme.circleSegmentation.importCSV;

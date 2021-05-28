@@ -15,13 +15,13 @@
  */
 
 import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 
-const CreateMetricDashboard = styled(ButtonComponent.Default)`
+const CreateMetricDashboard = styled(ButtonComponentDefault)`
   background: transparent;
   padding: 0 16px;
 
@@ -84,7 +84,7 @@ const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 155px;
   padding-left: 0;
   padding-right: 0;

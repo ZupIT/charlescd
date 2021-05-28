@@ -37,7 +37,7 @@ const ButtonRounded = ({
   children,
   name,
   icon,
-  color,
+  color= 'dark',
   onClick,
   isLoading,
   className,

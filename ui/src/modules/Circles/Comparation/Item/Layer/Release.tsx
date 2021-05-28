@@ -17,7 +17,7 @@
 import React from 'react';
 import CardRelease from 'core/components/Card/Release';
 import ContentIcon from 'core/components/ContentIcon';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
@@ -52,7 +52,7 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   };
 
   const renderButton = () => (
-    <Button.Rounded
+    <ButtonRounded
       icon="add"
       name="add"
       color="dark"
@@ -60,7 +60,7 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
       isDisabled={checkIfButtonIsDisabled()}
     >
       Insert release
-    </Button.Rounded>
+    </ButtonRounded>
   );
 
   return (

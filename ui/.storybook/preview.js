@@ -8,10 +8,13 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  layout: 'centered',
 }
 
 export const decorators = [
   (Story) => (
-    <ThemeProvider theme={THEME.dark}><Story /></ThemeProvider>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
+      <ThemeProvider theme={THEME.dark}><Story /></ThemeProvider>
+    </div>
   )
 ]

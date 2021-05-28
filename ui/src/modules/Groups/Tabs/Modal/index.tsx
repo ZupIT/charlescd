@@ -25,7 +25,7 @@ import { UserChecked } from '../../interfaces/UserChecked';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import useOutsideClick from 'core/hooks/useClickOutside';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Styled from './styled';
 
 interface UserItemProps extends User {
@@ -165,7 +165,7 @@ const AddUserModal = ({
             {isEmpty(users) ? renderPlaceHolder() : renderItems()}
           </Styled.Content>
           <Styled.Button.Update>
-            <Button.Default
+            <ButtonDefault
               isDisabled={isDisabled}
               onClick={() => {
                 onSelected(changedUsers);
@@ -174,7 +174,7 @@ const AddUserModal = ({
               }}
             >
               Update
-            </Button.Default>
+            </ButtonDefault>
           </Styled.Button.Update>
         </Styled.Container>
       </Styled.Dialog>

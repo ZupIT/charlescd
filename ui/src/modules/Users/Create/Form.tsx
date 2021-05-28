@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { maxLength, isRequired, emailPattern } from 'core/utils/validations';
@@ -97,7 +97,7 @@ const FormUser = ({ onFinish }: Props) => {
           error={errors?.password?.message}
         />
       </Styled.Fields>
-      <Button.Default
+      <ButtonDefault
         data-testid="button-create-user"
         size="EXTRA_SMALL"
         type="submit"
@@ -105,7 +105,7 @@ const FormUser = ({ onFinish }: Props) => {
         isLoading={status === 'idle'}
       >
         Create User
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 

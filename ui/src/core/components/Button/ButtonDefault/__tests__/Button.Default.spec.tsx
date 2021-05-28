@@ -16,15 +16,15 @@
 
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 
 test('render Button default component', () => {
   const click = jest.fn();
   const id = 'test';
   render(
-    <Button.Default id={id} onClick={click}>
+    <ButtonDefault id={id} onClick={click}>
       button
-    </Button.Default>
+    </ButtonDefault>
   );
 
   const buttonDefault = screen.getByTestId(`button-default-${id}`);
@@ -36,9 +36,9 @@ test('render Button default component', () => {
 test('render Button default in disabled mode', () => {
   const click = jest.fn();
   render(
-    <Button.Default id="test" onClick={click} isDisabled={true}>
+    <ButtonDefault id="test" onClick={click} isDisabled={true}>
       button
-    </Button.Default>
+    </ButtonDefault>
   );
 
   const buttonDefault = screen.getByTestId('button-default-test');
@@ -48,9 +48,9 @@ test('render Button default in disabled mode', () => {
 
 test('render Button default in loading mode', () => {
   render(
-    <Button.Default id="test" isLoading={true}>
+    <ButtonDefault id="test" isLoading={true}>
       button
-    </Button.Default>
+    </ButtonDefault>
   );
 
   const buttonDefault = screen.getByTestId('button-default-test');

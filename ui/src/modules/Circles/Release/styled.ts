@@ -20,7 +20,7 @@ import FormComponent from 'core/components/Form';
 import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 
@@ -105,7 +105,7 @@ const Info = styled(Text)`
   margin-bottom: 10px;
 `;
 
-const AddModule = styled(ButtonComponent.Default)`
+const AddModule = styled(ButtonComponentDefault)`
   display: flex;
   background-color: transparent;
   border: 2px solid ${({ theme }) => theme.button.default.outline.border};
@@ -120,7 +120,7 @@ const AddModule = styled(ButtonComponent.Default)`
   }
 `;
 
-const Submit = styled(ButtonComponent.Default)`
+const Submit = styled(ButtonComponentDefault)`
   width: 80px;
 `;
 

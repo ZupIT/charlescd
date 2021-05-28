@@ -20,7 +20,7 @@ import Text from 'core/components/Text';
 import Segments from 'modules/Circles/Segments';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
-import ButtonIconRounded from 'core/components/Button/Rounded';
+import ButtonIconRounded from 'core/components/Button/ButtonRounded';
 import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
 import { SECTIONS } from '../enums';
 import CirclePercentageList from '../Percentage/CirclePercentageList';

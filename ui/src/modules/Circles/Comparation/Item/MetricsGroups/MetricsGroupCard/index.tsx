@@ -23,7 +23,7 @@ import { normalizeSelectOptionsNickname } from 'core/utils/select';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import { allOption } from 'core/components/Form/Select/MultiCheck/constants';
 import NavTabs from 'core/components/NavTabs';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Summary from 'core/components/Summary';
 import isUndefined from 'lodash/isUndefined';
 import map from 'lodash/map';
@@ -182,12 +182,12 @@ const MetricsGroupCard = ({
             />
           )}
           <Styled.MetricsGroupsFooter>
-            <Button.Default
+            <ButtonDefault
               onClick={() => handleAddMetric(metricGroup)}
               id="add-metric"
             >
               Add metric
-            </Button.Default>
+            </ButtonDefault>
           </Styled.MetricsGroupsFooter>
         </NavTabs.Tab>
         <NavTabs.Tab title="Actions">
@@ -200,12 +200,12 @@ const MetricsGroupCard = ({
             />
           )}
           <Styled.MetricsGroupsFooter>
-            <Button.Default
+            <ButtonDefault
               onClick={() => handleAddAction(metricGroup)}
               id={'add-action'}
             >
               Add action
-            </Button.Default>
+            </ButtonDefault>
           </Styled.MetricsGroupsFooter>
         </NavTabs.Tab>
       </NavTabs>
