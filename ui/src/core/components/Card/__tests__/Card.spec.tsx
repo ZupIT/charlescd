@@ -15,8 +15,8 @@
  */
 
 import { render, screen } from 'unit-test/testUtils';
-import { base as CardBase } from 'stories/Cards/CardBase.stories';
-import { body as CardBody } from 'stories/Cards/CardBody.stories';
+import CardBase from 'core/components/Card/Base';
+import CardBody from 'core/components/Card/Body';
 
 test('render Card', () => {
   render(
