@@ -16,7 +16,7 @@
 
 import styled, { css } from 'styled-components';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
-import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import { baseFontSize } from 'core/components/Text/constants';
 import { Input as InputComponent } from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -47,7 +47,7 @@ const Actions = styled.div`
   display: flex;
 `;
 
-const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+const ButtonIconRounded = styled(ButtonComponentRounded)`
   height: 40px;
   padding: 13px 25px;
   margin-right: 15px;
