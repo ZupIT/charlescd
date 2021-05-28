@@ -18,7 +18,6 @@ import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
-import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
 import SelectComponent from 'core/components/Form/Select';
 import InputNumberComponent from 'core/components/Form/Number';
 import Text from 'core/components/Text';
@@ -121,7 +120,7 @@ const Actions = styled.div`
   }
 `;
 
-const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+const ButtonIconRounded = styled(ButtonComponentRounded)`
   height: 40px;
   padding: 13px 25px;
 
