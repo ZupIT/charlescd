@@ -21,7 +21,7 @@ import first from 'lodash/first';
 import last from 'lodash/last';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 import List from './Content/List';
 import { options, Option } from './constants';
@@ -74,7 +74,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
       </Styled.Caption>
       {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
       <Styled.Item>
-        <Button.Default
+        <ButtonDefault
           id="continue"
           type="button"
           size="SMALL"
@@ -82,7 +82,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
           onClick={() => onContinue(draft, type)}
         >
           Next
-        </Button.Default>
+        </ButtonDefault>
       </Styled.Item>
     </Styled.Modal>
   )

@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Card from 'core/components/Card';
-import Button from 'core/components/Button';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import Form from 'core/components/Form';
 import ContentIcon from 'core/components/ContentIcon';
 
@@ -44,7 +44,7 @@ const ComponentIfon = styled.div`
   }
 `;
 
-const ButtonRounded = styled(Button.Rounded)`
+const ButtonRounded = styled(ButtonComponentRounded)`
   margin: 10px 0px;
 `;
 

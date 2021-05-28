@@ -19,7 +19,7 @@ import FormComponent from 'core/components/Form';
 import ComponentPopover, {
   Props as PopoverProps
 } from 'core/components/Popover';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import IconComponent from 'core/components/Icon';
 import Text, { Props as TextProps } from 'core/components/Text';
 import { slideInRight } from 'core/assets/style/animate';
@@ -97,7 +97,7 @@ const Popover = styled(ComponentPopover)<PopoverProps>`
   right: -25px;
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   margin-top: 20px;
 `;
 
@@ -135,7 +135,7 @@ const ComponentTrash = styled(IconComponent)`
   left: -20px;
 `;
 
-const ComponentButton = styled(ButtonComponent.Default)`
+const ComponentButton = styled(ButtonComponentDefault)`
   display: flex;
   align-items: center;
   border: 2px solid ${({ theme }) => theme.button.default.outline.border};
@@ -150,7 +150,7 @@ const ComponentButton = styled(ButtonComponent.Default)`
   }
 `;
 
-const MoreOptionsButton = styled(ButtonComponent.Default)`
+const MoreOptionsButton = styled(ButtonComponentDefault)`
   display: flex;
   align-items: center;
   border: 2px solid ${({ theme }) => theme.button.default.outline.border};

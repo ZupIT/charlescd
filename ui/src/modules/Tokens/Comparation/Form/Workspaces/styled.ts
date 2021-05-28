@@ -15,10 +15,10 @@
  */
 
 import styled from 'styled-components';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 
-const Button = styled(ButtonComponent.Rounded)`
+const Button = styled(ButtonComponentRounded)`
   margin-top: 10px;
 `;
 

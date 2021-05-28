@@ -18,7 +18,7 @@ import styled, { css } from 'styled-components';
 import ComponentInput from 'core/components/Form/Input';
 import SelectComponent from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
 import { baseFontSize } from 'core/components/Text/constants';
 import { fadeIn } from 'core/assets/style/animate';
 

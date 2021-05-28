@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Form from 'core/components/Form';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 
 const LayerTitle = styled.div``;
@@ -35,7 +35,7 @@ const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 155px;
   padding-left: 0;
   padding-right: 0;

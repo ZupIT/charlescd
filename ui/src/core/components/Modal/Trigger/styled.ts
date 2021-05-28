@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Text from 'core/components/Text';
-import DefaultButton from 'core/components/Button/Default';
+import DefaultButton from 'core/components/Button/ButtonDefault';
 
 const Wrapper = styled.div``;
 

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { upDown } from 'core/assets/style/animate';
 
 const Wrapper = styled.div`
@@ -110,7 +110,7 @@ const Error = styled(Text)`
   margin-top: 5px;
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   position: absolute;
   border-radius: 30px;
   margin-top: 28px;

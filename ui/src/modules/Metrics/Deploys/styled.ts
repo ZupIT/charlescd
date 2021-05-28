@@ -15,8 +15,8 @@
  */
 
 import styled from 'styled-components';
+import ComponentButtonDefault from 'core/components/Button/ButtonDefault';
 import Chart from 'core/components/Chart';
-import ComponentButton from 'core/components/Button';
 import SelectComponent from 'core/components/Form/Select';
 
 const Content = styled.div`
@@ -82,7 +82,7 @@ const MultiSelect = styled(SelectComponent.MultiCheck)`
   ${StyledSelect}
 `;
 
-const Button = styled(ComponentButton.Default)`
+const Button = styled(ComponentButtonDefault)`
   border-radius: 30px;
   margin-top: 10px;
 `;

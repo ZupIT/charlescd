@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
 import LoaderMenuComponent from './Loaders';
 
@@ -63,7 +63,7 @@ const Link = styled.button`
   text-decoration: none;
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   border: none;
   background-color: transparent;
   padding: 0;

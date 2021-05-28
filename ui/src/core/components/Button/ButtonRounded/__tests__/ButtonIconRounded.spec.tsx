@@ -17,7 +17,7 @@
 import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import ButtonIconRounded from '../';
+import ButtonIconRounded from '..';
 
 test('render ButtonIconRounded default component', () => {
   const click = jest.fn();
