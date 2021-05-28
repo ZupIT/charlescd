@@ -19,22 +19,22 @@
 package middlewares
 
 import (
+	"context"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"strings"
-
-	"github.com/didip/tollbooth"
+	"time"
 
 	"github.com/ZupIT/charlescd/compass/internal/moove"
-	"github.com/dgrijalva/jwt-go"
-
-	"github.com/google/uuid"
-
-	"github.com/ZupIT/charlescd/compass/web/api/util"
-
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/didip/tollbooth"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -111,23 +111,23 @@ func (api api.Api) ValidatorMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func extractToken(authorization string) (AuthToken, errors.Error) {
-	rToken := strings.TrimSpace(authorization)
-	if rToken == "" {
-		return AuthToken{}, errors.NewError("Extract token error", "token is require").
-			WithOperations("extractToken.tokenIsNil")
-	}
-
-	splitToken := strings.Split(rToken, "Bearer ")
-
-	token, _, err := new(jwt.Parser).ParseUnverified(splitToken[1], &AuthToken{})
-	if err != nil {
-		return AuthToken{}, errors.NewError("Extract token error", fmt.Sprintf("Error parsing token: %s", err.Error())).
-			WithOperations("extractToken.ParseWithClaims")
-	}
-
-	return *token.Claims.(*AuthToken), nil
-}
+//func extractToken(authorization string) (AuthToken, errors.Error) {
+//	rToken := strings.TrimSpace(authorization)
+//	if rToken == "" {
+//		return AuthToken{}, errors.NewError("Extract token error", "token is require").
+//			WithOperations("extractToken.tokenIsNil")
+//	}
+//
+//	splitToken := strings.Split(rToken, "Bearer ")
+//
+//	token, _, err := new(jwt.Parser).ParseUnverified(splitToken[1], &AuthToken{})
+//	if err != nil {
+//		return AuthToken{}, errors.NewError("Extract token error", fmt.Sprintf("Error parsing token: %s", err.Error())).
+//			WithOperations("extractToken.ParseWithClaims")
+//	}
+//
+//	return *token.Claims.(*AuthToken), nil
+//}
 
 func (api api.Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
 	user, err := api.mooveMain.FindUserByEmail(email)
@@ -175,4 +175,48 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		w.WriteHeader(recorderWrite.Code)
 		recorderWrite.Body.WriteTo(w)
 	})
+}
+
+func ContextLogger(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		logger, err := logging.NewLogger()
+		if err != nil {
+			return err
+		}
+		defer logger.Sync()
+
+		sugar := logger.Sugar().With("request-id", echoCtx.Response().Header().Get("x-request-id"))
+
+		ctx := context.WithValue(echoCtx.Request().Context(), logging.LoggerFlag, sugar)
+		echoCtx.SetRequest(echoCtx.Request().Clone(ctx))
+
+		return next(echoCtx)
+	}
+}
+
+func Logger(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		start := time.Now()
+		err := next(echoCtx)
+
+		ctx := echoCtx.Request().Context()
+
+		req := echoCtx.Request()
+		resp := echoCtx.Response()
+
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			echoCtx.Error(err)
+		}
+
+		if logger, ok := logging.LoggerFromContext(ctx); ok {
+			logger.Infow("finished request",
+				"path", req.RequestURI,
+				"method", req.Method,
+				"status", strconv.Itoa(resp.Status),
+				"time", time.Since(start).String())
+		}
+
+		return nil
+	}
 }

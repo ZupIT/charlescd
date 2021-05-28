@@ -19,68 +19,62 @@
 package handlers
 
 import (
+	"github.com/labstack/echo/v4"
 	"net/http"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-
 	"github.com/ZupIT/charlescd/compass/internal/action"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/google/uuid"
 )
 
-func Create(actionMain action.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		request, err := actionMain.ParseAction(r.Body)
+func Create(actionMain action.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+
+		request, err := actionMain.ParseAction(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
-		workspaceID := r.Header.Get("x-workspace-id")
+		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		request.WorkspaceId = uuid.MustParse(workspaceID)
 
 		if err := actionMain.ValidateAction(request); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		createdAction, err := actionMain.SaveAction(request)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusCreated, createdAction)
+		return echoCtx.JSON(http.StatusCreated, createdAction)
 	}
 }
 
-func List(actionMain action.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		workspaceID := r.Header.Get("x-workspace-id")
+func List(actionMain action.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		workspaceUUID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		actions, err := actionMain.FindAllActionsByWorkspace(workspaceUUID)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, actions)
+		return echoCtx.JSON(http.StatusOK, actions)
 	}
 }
 
-func Delete(actionMain action.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["actionID"]
+func Delete(actionMain action.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("actionId")
 
 		err := actionMain.DeleteAction(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusNoContent, nil)
+		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }
