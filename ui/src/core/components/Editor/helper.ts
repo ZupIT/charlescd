@@ -28,3 +28,17 @@ export const printJSONByString = (jsonStr: string) => {
     console.error(e);
   }
 }
+
+type Key = "{" | "(" | "[" | "'"| '"';
+
+export const shouldComplete = (key: string) => {
+  const keys = {
+    "{": "}",
+    "(": ")",
+    "[": "]",
+    "'": "'",
+    '"': '"'
+  }
+  
+  return keys[key as Key] || "";
+}

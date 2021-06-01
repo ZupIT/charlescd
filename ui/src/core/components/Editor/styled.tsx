@@ -34,10 +34,21 @@ const Numbers = styled.ul`
   margin: 0 5px 0 0;
   padding: 0;
 `;
+
 const Content = styled.div``;
+
+const Editor = styled.textarea`
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  resize: none;
+  color: white;
+`;
 
 export default {
   Wrapper,
   Numbers,
   Content,
+  Editor,
 };

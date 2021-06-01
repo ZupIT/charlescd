@@ -28,6 +28,7 @@ import Modal from 'core/components/Modal';
 import Menu from './Menu';
 import Styled from './styled';
 import { getProfileByKey } from 'core/utils/profile';
+import Editor from 'core/components/Editor';
 
 const Workspaces = () => {
   const profileName = getProfileByKey('name');
@@ -36,14 +37,14 @@ const Workspaces = () => {
   const {
     save,
     response: saveWorkspaceResponse,
-    loading: saveWorkspaceLoading
+    loading: saveWorkspaceLoading,
   } = useSaveWorkspace();
   const history = useHistory();
   const {
     register,
     handleSubmit,
     errors,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const Workspaces = () => {
               validate: {
                 notBlank: isNotBlank,
               },
-              maxLength: maxLength()
+              maxLength: maxLength(),
             })}
           />
           <Styled.Modal.Button
@@ -100,6 +101,7 @@ const Workspaces = () => {
         <Menu onCreate={() => setToggleModal(true)} />
       </Page.Menu>
       <Page.Content>
+        <Editor />
         <Placeholder
           icon="empty-workspaces"
           title={`Hello, ${profileName}!`}
