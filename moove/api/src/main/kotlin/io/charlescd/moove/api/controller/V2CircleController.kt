@@ -138,8 +138,8 @@ class V2CircleController(
     @PostMapping("/csv", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithCsv(
-        @RequestHeader(value = "Authorization", required = false) authorization: String,
-        @RequestHeader(value = "x-charles-token", required = false) token: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
         @RequestParam("keyName") keyName: String,
