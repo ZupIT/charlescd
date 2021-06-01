@@ -22,6 +22,7 @@ import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.request.PatchUserRequest
 import io.charlescd.moove.application.user.response.SimpleUserResponse
+import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.PageRequest
@@ -50,7 +51,7 @@ class V2UserController(
     fun findByEmail(
         @RequestHeader(value = "Authorization") authorization: String,
         @PathVariable email: String
-    ): SimpleUserResponse {
+    ): SimpleUserWithUserGroupResponse {
         return findUserByEmailInteractor.execute(email, authorization)
     }
 
@@ -71,7 +72,7 @@ class V2UserController(
         @RequestParam("name", required = false) name: String?,
         @RequestParam("email", required = false) email: String?,
         @Valid pageable: PageRequest
-    ): ResourcePageResponse<SimpleUserResponse> {
+    ): ResourcePageResponse<SimpleUserWithUserGroupResponse> {
         return this.findAllUsersInteractor.execute(name, email, authorization, pageable)
     }
 

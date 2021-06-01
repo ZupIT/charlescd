@@ -19,6 +19,7 @@ package io.charlescd.moove.application.user.impl
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
 import io.charlescd.moove.application.user.response.SimpleUserResponse
+import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import java.util.*
 import javax.inject.Named
@@ -26,18 +27,20 @@ import javax.inject.Named
 @Named
 class FindUserByEmailInteractorImpl(private val userService: UserService) : FindUserByEmailInteractor {
 
-    override fun execute(email: String, authorization: String): SimpleUserResponse {
+    override fun execute(email: String, authorization: String): SimpleUserWithUserGroupResponse {
         val requestEmail = String(Base64.getDecoder().decode(email)).toLowerCase().trim()
         val user = userService.findByAuthorizationToken(authorization)
-        if (user.root || user.email == requestEmail) {
+        if (user.root) {
             return getUser(requestEmail)
+        }
+        if (user.email == requestEmail) {
+            return SimpleUserWithUserGroupResponse.from(user)
         }
         throw ForbiddenException()
     }
 
-    private fun getUser(email: String): SimpleUserResponse {
-        return SimpleUserResponse.from(
-            userService.findByEmail(email)
-        )
+    private fun getUser(email: String): SimpleUserWithUserGroupResponse {
+        val user = userService.findByEmail(email)
+        return SimpleUserWithUserGroupResponse.from(user)
     }
 }
