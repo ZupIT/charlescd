@@ -265,6 +265,6 @@ class PatchUserInteractorImplTest extends Specification {
     }
 
     private static User getDummyUser(String id, Boolean root) {
-        new User(id, "charles", "email@mail", "http://charles.com/dummy_photo.jpg", [], root, LocalDateTime.now())
+        new User(id, "charles", "email@mail", "http://charles.com/dummy_photo.jpg", [], [], root, LocalDateTime.now())
     }
 }

@@ -1,5 +1,6 @@
 package io.charlescd.moove.fixture
 
+import io.charlescd.moove.domain.SimpleUserGroup
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WorkspacePermissions
 
@@ -16,6 +17,7 @@ class UserFixture {
     String name
     String email
     String photoUrl
+    List<SimpleUserGroup> userGroups
     List<WorkspacePermissions> workspaces
     Boolean root
     LocalDateTime createdAt
@@ -24,6 +26,7 @@ class UserFixture {
                 String name,
                 String email,
                 String photoUrl,
+                List<SimpleUserGroup> userGroups,
                 List<WorkspacePermissions> workspaces,
                 Boolean root,
                 LocalDateTime createdAt) {
@@ -31,6 +34,7 @@ class UserFixture {
         this.name = name
         this.email = email
         this.photoUrl = photoUrl
+        this.userGroups = userGroups
         this.workspaces = workspaces
         this.root = root
         this.createdAt = createdAt
@@ -41,6 +45,7 @@ class UserFixture {
                 DEFAULT_NAME,
                 DEFAULT_EMAIL,
                 DEFAULT_PHOTO,
+                [],
                 [],
                 false,
                 LocalDateTime.now())
@@ -82,6 +87,6 @@ class UserFixture {
     }
 
     User build() {
-        new User(id, name, email, photoUrl, workspaces, root, createdAt)
+        new User(id, name, email, photoUrl, userGroups, workspaces, root, createdAt)
     }
 }

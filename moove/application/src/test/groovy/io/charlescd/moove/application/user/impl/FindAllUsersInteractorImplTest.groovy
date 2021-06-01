@@ -85,10 +85,10 @@ class FindAllUsersInteractorImplTest extends Specification {
     def "when there are users and request is made by user root should list them"() {
         given:
         def pageRequest = new PageRequest()
-        def author = new User("author-id", "charles-author", "author@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = new User("author-id", "charles-author", "author@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
-        def user = new User("user-id", "charles-user", "user@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
+        def user = new User("user-id", "charles-user", "user@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [workspacePermission], false, LocalDateTime.now())
         def page = new Page([user], 0, 20, 1)
         def authorization = TestUtils.authorization
         when:
