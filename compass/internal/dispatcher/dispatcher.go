@@ -120,7 +120,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 }
 
 func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
-	return time.ParseDuration(configuration.GetConfiguration("DISPATCHER_INTERVAL"))
+	return time.ParseDuration(configuration.Get("DISPATCHER_INTERVAL"))
 }
 
 func (dispatcher *Dispatcher) Start(stopChan chan bool) error {

@@ -6,6 +6,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
@@ -16,7 +17,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 type persistenceManager struct {
@@ -26,6 +26,8 @@ type persistenceManager struct {
 	metricsGroupRepository metricsgroup.UseCases
 	metricsGroupAction     metricsgroupaction.UseCases
 	pluginRepository       plugin.UseCases
+	metricDispatcher       dispatcher.UseCases
+	actionDispatcher       dispatcher.UseCases
 }
 
 var initialValues = map[string]string{
@@ -59,17 +61,12 @@ func prepareDatabase() (persistenceManager, error) {
 		return persistenceManager{}, err
 	}
 
-	mooveDB, err := connectMooveDatabase()
-	if err != nil {
-		return persistenceManager{}, err
-	}
-
 	err = runMigrations(sqlDB)
 	if err != nil {
 		return persistenceManager{}, err
 	}
 
-	return loadPersistenceManager(gormDB, mooveDB)
+	return loadPersistenceManager(gormDB)
 }
 
 func connectDatabase() (*sql.DB, *gorm.DB, error) {
@@ -97,53 +94,14 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 	return sqlDb, gormDb, nil
 }
 
-func runMigrations(sqlDb *sql.DB) error {
-	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
-	dbMigrated, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file://%s", "resources/migrations"),
-		configuration.Get("DB_NAME"), driver)
-	if err != nil {
-		return err
-	}
-
-	if err := dbMigrated.Up(); err != nil && err != migrate.ErrNoChange {
-		return err
-	}
-
-	return nil
-}
-
-func loadPersistenceManager(db, mooveDB *gorm.DB) (persistenceManager, error) {
-	pluginRepo := plugin.NewMain()
-
-	actionRepo := action.NewMain(db, pluginRepo)
-
-	datasourceRepo := datasource.NewMain(db, pluginRepo)
-
-	metricRepo := metric.NewMain(db, datasourceRepo, pluginRepo)
-
-	metricsGroupActionRepo := metricsgroupaction.NewMain(db, pluginRepo, actionRepo)
-
-	metricsGroupRepo := metricsgroup.NewMain(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
-
-	return persistenceManager{
-		actionRepository:       actionRepo,
-		datasourceRepository:   datasourceRepo,
-		metricRepository:       metricRepo,
-		metricsGroupRepository: metricsGroupRepo,
-		metricsGroupAction:     metricsGroupActionRepo,
-		pluginRepository:       pluginRepo,
-	}, nil
-}
-
 func connectMooveDatabase() (*gorm.DB, error) {
 	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		GetConfiguration("MOOVE_DB_HOST"),
-		GetConfiguration("MOOVE_DB_PORT"),
-		GetConfiguration("MOOVE_DB_USER"),
-		GetConfiguration("MOOVE_DB_NAME"),
-		GetConfiguration("MOOVE_DB_PASSWORD"),
-		GetConfiguration("MOOVE_DB_SSL"),
+		configuration.Get("MOOVE_DB_HOST"),
+		configuration.Get("MOOVE_DB_PORT"),
+		configuration.Get("MOOVE_DB_USER"),
+		configuration.Get("MOOVE_DB_NAME"),
+		configuration.Get("MOOVE_DB_PASSWORD"),
+		configuration.Get("MOOVE_DB_SSL"),
 	))
 	if err != nil {
 		return nil, err
@@ -160,11 +118,47 @@ func connectMooveDatabase() (*gorm.DB, error) {
 	return gormDb, nil
 }
 
-func GetConfiguration(configuration string) string {
-	env := os.Getenv(configuration)
-	if env == "" {
-		return initialValues[configuration]
+func runMigrations(sqlDb *sql.DB) error {
+	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
+	dbMigrated, err := migrate.NewWithDatabaseInstance(
+		fmt.Sprintf("file://%s", "resources/migrations"),
+		configuration.Get("DB_NAME"), driver)
+	if err != nil {
+		return err
 	}
 
-	return env
+	if err := dbMigrated.Up(); err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+
+	return nil
+}
+
+func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
+	pluginRepo := plugin.NewMain()
+
+	actionRepo := action.NewMain(db, pluginRepo)
+
+	datasourceRepo := datasource.NewMain(db, pluginRepo)
+
+	metricRepo := metric.NewMain(db, datasourceRepo, pluginRepo)
+
+	metricsGroupActionRepo := metricsgroupaction.NewMain(db, pluginRepo, actionRepo)
+
+	metricsGroupRepo := metricsgroup.NewMain(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
+
+	metricDispatcher := dispatcher.NewDispatcher(metricRepo)
+
+	actionDispatcher := dispatcher.NewActionDispatcher(metricsGroupRepo, actionRepo, pluginRepo, metricRepo, metricsGroupActionRepo)
+
+	return persistenceManager{
+		actionRepository:       actionRepo,
+		datasourceRepository:   datasourceRepo,
+		metricRepository:       metricRepo,
+		metricsGroupRepository: metricsGroupRepo,
+		metricsGroupAction:     metricsGroupActionRepo,
+		pluginRepository:       pluginRepo,
+		metricDispatcher:       metricDispatcher,
+		actionDispatcher:       actionDispatcher,
+	}, nil
 }

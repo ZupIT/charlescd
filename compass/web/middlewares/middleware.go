@@ -20,22 +20,19 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/labstack/echo/v4"
-	"net/http"
-	"net/http/httptest"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/web/api/util"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/didip/tollbooth"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"time"
 )
 
 var whitelistPaths = []string{
@@ -129,34 +126,34 @@ func (api api.Api) ValidatorMiddleware(next http.Handler) http.Handler {
 //	return *token.Claims.(*AuthToken), nil
 //}
 
-func (api api.Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
-	user, err := api.mooveMain.FindUserByEmail(email)
-	if err != nil {
-		return false, err.WithOperations("authorizeUser.FindUserByEmail")
-	} else if user == (moove.User{}) {
-		return false, errors.NewError("Find error", "invalid user").
-			WithOperations("authorizeUser.FindUserByEmail")
-	} else if user.IsRoot {
-		return true, nil
-	}
-
-	permissions, err := api.mooveMain.GetUserPermissions(user.ID, workspaceID)
-	if err != nil {
-		return false, err.WithOperations("authorizeUser.GetUserPermissions")
-	}
-
-	for _, permission := range permissions {
-		allowed, enforcerErr := api.enforcer.Enforce(permission, url, method)
-		if enforcerErr != nil {
-			return false, errors.NewError("Authorize error", enforcerErr.Error()).
-				WithOperations("authorizeUser.Enforce")
-		} else if allowed {
-			return true, nil
-		}
-	}
-
-	return false, nil
-}
+//func (api api.Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
+//	user, err := api.mooveMain.FindUserByEmail(email)
+//	if err != nil {
+//		return false, err.WithOperations("authorizeUser.FindUserByEmail")
+//	} else if user == (moove.User{}) {
+//		return false, errors.NewError("Find error", "invalid user").
+//			WithOperations("authorizeUser.FindUserByEmail")
+//	} else if user.IsRoot {
+//		return true, nil
+//	}
+//
+//	permissions, err := api.mooveMain.GetUserPermissions(user.ID, workspaceID)
+//	if err != nil {
+//		return false, err.WithOperations("authorizeUser.GetUserPermissions")
+//	}
+//
+//	for _, permission := range permissions {
+//		allowed, enforcerErr := api.enforcer.Enforce(permission, url, method)
+//		if enforcerErr != nil {
+//			return false, errors.NewError("Authorize error", enforcerErr.Error()).
+//				WithOperations("authorizeUser.Enforce")
+//		} else if allowed {
+//			return true, nil
+//		}
+//	}
+//
+//	return false, nil
+//}
 
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

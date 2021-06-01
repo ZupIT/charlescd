@@ -23,5 +23,5 @@ import (
 )
 
 func IsDeveloperRunning() bool {
-	return configuration.GetConfiguration("ENV") == "DEV"
+	return configuration.Get("ENV") == "DEV"
 }

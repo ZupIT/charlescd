@@ -7,13 +7,14 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/casbin/casbin/v2"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
 )
 
 type AuthMiddleware struct {
-	mooveService moove.ApiUseCases
+	mooveService moove.UseCases
 	enforcer     *casbin.Enforcer
 }
 
@@ -23,7 +24,7 @@ type AuthToken struct {
 	jwt.StandardClaims
 }
 
-func NewAuthMiddleware(mooveService moove.ApiUseCases, enforcer *casbin.Enforcer) AuthMiddleware {
+func NewAuthMiddleware(mooveService moove.UseCases, enforcer *casbin.Enforcer) AuthMiddleware {
 	return AuthMiddleware{
 		mooveService: mooveService,
 		enforcer:     enforcer,
@@ -34,6 +35,8 @@ func NewAuthMiddleware(mooveService moove.ApiUseCases, enforcer *casbin.Enforcer
 //do a check in a more complex way
 func (a AuthMiddleware) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+		var allowed bool
+
 		openedToken, err := extractToken(echoCtx.Request().Header.Get("Authorization"))
 		if err != nil {
 			return echoCtx.JSON(http.StatusForbidden, logging.NewError("Token not informed or invalid", err, nil))
@@ -42,9 +45,25 @@ func (a AuthMiddleware) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			logger.Infow(fmt.Sprintf("%v", openedToken))
 		}
 
-		allowed, enforcerErr := a.enforcer.Enforce("write", echoCtx.Request().URL.Path, echoCtx.Request().Method)
-		if enforcerErr != nil {
-			return echoCtx.JSON(http.StatusForbidden, logging.NewError("Token not informed or invalid", enforcerErr, nil))
+		user, err := a.mooveService.FindUserByEmail(openedToken.Email)
+		if err != nil || user == (moove.User{}) {
+			return echoCtx.JSON(http.StatusUnauthorized, logging.NewError("Not allowed", err, nil))
+		} else if user.IsRoot {
+			return next(echoCtx)
+		}
+
+		permissions, err := a.mooveService.GetUserPermissions(user.ID, uuid.MustParse(echoCtx.Request().Header.Get("x-workspace-id")))
+		if err != nil {
+			return echoCtx.JSON(http.StatusUnauthorized, logging.NewError("Not allowed", err, nil))
+		}
+
+		for _, permission := range permissions {
+			allowed, enforcerErr := a.enforcer.Enforce(permission, echoCtx.Request().URL.Path, echoCtx.Request().Method)
+			if enforcerErr != nil {
+				return echoCtx.JSON(http.StatusForbidden, logging.NewError("Token not informed or invalid", err, nil))
+			} else if allowed {
+				return next(echoCtx)
+			}
 		}
 
 		if !allowed {

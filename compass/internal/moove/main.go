@@ -20,11 +20,11 @@ package moove
 
 import (
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"gorm.io/gorm"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type ApiUseCases interface {
@@ -50,8 +50,8 @@ type Main struct {
 }
 
 type UseCases interface {
-	FindUserByEmail(email string) (User, errors.Error)
-	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, errors.Error)
+	FindUserByEmail(email string) (User, error)
+	GetUserPermissions(userID, workspaceID uuid.UUID) ([]string, error)
 }
 
 func NewMain(mooveDb *gorm.DB) UseCases {

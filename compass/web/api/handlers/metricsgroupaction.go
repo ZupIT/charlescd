@@ -19,27 +19,23 @@
 package handlers
 
 import (
-	"net/http"
-
-	"github.com/gorilla/mux"
-
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
-func CreateMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(r.Body)
+func CreateMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		workspaceID := r.Header.Get("x-workspace-id")
+		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		workspaceUUID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		newActionGroup.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
@@ -48,27 +44,25 @@ func CreateMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases
 		}
 
 		if err := metricsgroupactionMain.ValidateGroupAction(newActionGroup, workspaceUUID); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		created, err := metricsgroupactionMain.SaveGroupAction(newActionGroup)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusCreated, created)
+		return echoCtx.JSON(http.StatusCreated, created)
 	}
 }
 
-func Update(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricgroupactionID"]
-		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(r.Body)
+func Update(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricgroupactionID")
+
+		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		newActionGroup.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
@@ -76,51 +70,47 @@ func Update(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.Resp
 			NumberOfCycles: 1,
 		}
 
-		workspaceID := r.Header.Get("x-workspace-id")
+		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		workspaceUUID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		if err := metricsgroupactionMain.ValidateGroupAction(newActionGroup, workspaceUUID); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		updated, err := metricsgroupactionMain.UpdateGroupAction(id, newActionGroup)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, updated)
+		return echoCtx.JSON(http.StatusOK, updated)
 	}
 }
 
-func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricgroupactionID"]
+func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricgroupactionID")
 
 		act, err := metricsgroupactionMain.FindGroupActionById(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, act)
+		return echoCtx.JSON(http.StatusOK, act)
 	}
 }
 
-func DeleteMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricgroupactionID"]
+func DeleteMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricgroupactionID")
 
 		err := metricsgroupactionMain.DeleteGroupAction(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusNoContent, nil)
+		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }

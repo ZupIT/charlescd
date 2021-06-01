@@ -162,7 +162,7 @@ func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []met
 }
 
 func (dispatcher *ActionDispatcher) getInterval() (time.Duration, error) {
-	return time.ParseDuration(configuration.GetConfiguration("DISPATCHER_INTERVAL"))
+	return time.ParseDuration(configuration.Get("DISPATCHER_INTERVAL"))
 }
 
 func (dispatcher *ActionDispatcher) Start(stopChan chan bool) error {

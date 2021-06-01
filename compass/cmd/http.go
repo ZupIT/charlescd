@@ -60,6 +60,11 @@ func createHttpServerInstance() *echo.Echo {
 	return httpServer
 }
 
+func (s server) start(port string) error {
+	s.registerRoutes()
+	return s.httpServer.Start(fmt.Sprintf(":%s", port))
+}
+
 func casbinEnforcer() (*casbin.Enforcer, error) {
 	enforcer, err := casbin.NewEnforcer("./resources/auth.conf", "./resources/policy.csv")
 	if err != nil {
@@ -113,9 +118,9 @@ func buildCustomValidator() *CustomValidator {
 
 func (s server) registerRoutes() {
 	authMiddleware := middlewares.NewAuthMiddleware(s.sm.mooveService, s.enforcer)
-
 	s.httpServer.GET("/health", handlers.Health())
 	s.httpServer.GET("/metrics", handlers.Metrics())
+
 	api := s.httpServer.Group("/api")
 	{
 		v1 := api.Group("/v1")
@@ -129,45 +134,44 @@ func (s server) registerRoutes() {
 			}
 			datasourceHandler := v1.Group("/datasources")
 			{
-				datasourceHandler.GET("", handlers.FindAllByWorkspace(api.datasourceMain))
-				datasourceHandler.POST("", handlers.CreateDatasource(api.datasourceMain))
-				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(api.datasourceMain))
-				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(api.datasourceMain))
-				datasourceHandler.POST("/test-connection", handlers.TestConnection(api.datasourceMain))
+				datasourceHandler.GET("", handlers.FindAllByWorkspace(s.pm.datasourceRepository))
+				datasourceHandler.POST("", handlers.CreateDatasource(s.pm.datasourceRepository))
+				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(s.pm.datasourceRepository))
+				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(s.pm.datasourceRepository))
+				datasourceHandler.POST("/test-connection", handlers.TestConnection(s.pm.datasourceRepository))
 
 			}
 			metricsGroupHandler := v1.Group("/metrics-groups")
 			{
-				metricsGroupHandler.POST("", handlers.CreateMetricsGroup(api.metricsGroupMain))
-				metricsGroupHandler.GET("", handlers.GetAll(api.metricsGroupMain))
-				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(api.metricsGroupMain))
-				metricsGroupHandler.GET("/:metricGroupID/query", handlers.Query(api.metricsGroupMain))
-				metricsGroupHandler.GET("/:metricGroupID}/result", handlers.Result(api.metricsGroupMain))
-				metricsGroupHandler.PUT("/:metricGroupID", handlers.UpdateMetricsGroup(api.metricsGroupMain))
-				metricsGroupHandler.PATCH("/:metricGroupID", handlers.UpdateName(api.metricsGroupMain)) // TODO: Discutir necessidade desse patch
-				metricsGroupHandler.DELETE("/:metricGroupID", handlers.DeleteMetricsGroup(api.metricsGroupMain))
-				v1.GET("/resume/metrics-groups", handlers.Resume(api.metricsGroupMain))
+				metricsGroupHandler.POST("", handlers.CreateMetricsGroup(s.pm.metricsGroupRepository))
+				metricsGroupHandler.GET("", handlers.GetAll(s.pm.metricsGroupRepository))
+				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(s.pm.metricsGroupRepository))
+				metricsGroupHandler.GET("/:metricGroupID/query", handlers.Query(s.pm.metricsGroupRepository))
+				metricsGroupHandler.GET("/:metricGroupID}/result", handlers.Result(s.pm.metricsGroupRepository))
+				metricsGroupHandler.PUT("/:metricGroupID", handlers.UpdateMetricsGroup(s.pm.metricsGroupRepository))
+				metricsGroupHandler.PATCH("/:metricGroupID", handlers.UpdateName(s.pm.metricsGroupRepository))
+				metricsGroupHandler.DELETE("/:metricGroupID", handlers.DeleteMetricsGroup(s.pm.metricsGroupRepository))
+				v1.GET("/resume/metrics-groups", handlers.Resume(s.pm.metricsGroupRepository))
 			}
 			{
-				metricsGroupHandler.POST("/:metricGroupID/metrics", handlers.CreateMetric(api.metricMain, api.metricsGroupMain))
-				metricsGroupHandler.PUT("/:metricGroupID/metrics/:metricID", handlers.UpdateMetric(api.metricMain))
-				metricsGroupHandler.DELETE(fmt.Sprintf("%s/{metricGroupID}/metrics/{metricID}", path), handlers.DeleteMetric(api.metricMain))
+				metricsGroupHandler.POST("/:metricGroupID/metrics", handlers.CreateMetric(s.pm.metricRepository, s.pm.metricsGroupRepository))
+				metricsGroupHandler.PUT("/:metricGroupID/metrics/:metricID", handlers.UpdateMetric(s.pm.metricRepository))
+				metricsGroupHandler.DELETE("/:metricGroupID/metrics/:metricID", handlers.DeleteMetric(s.pm.metricRepository))
 			}
-
 			groupActionHandler := v1.Group("/group-actions")
 			{
-				groupActionHandler.POST("", handlers.CreateMetricsGroupAction(api.metricGroupActionMain))
-				groupActionHandler.GET("/:metricgroupactionID", handlers.FindByID(api.metricGroupActionMain))
-				groupActionHandler.PUT("/:metricgroupactionID", handlers.Update(api.metricGroupActionMain))
-				groupActionHandler.DELETE("/:metricgroupactionID", handlers.DeleteMetricsGroupAction(api.metricGroupActionMain))
+				groupActionHandler.POST("", handlers.CreateMetricsGroupAction(s.pm.metricsGroupAction))
+				groupActionHandler.GET("/:metricgroupactionID", handlers.FindByID(s.pm.metricsGroupAction))
+				groupActionHandler.PUT("/:metricgroupactionID", handlers.Update(s.pm.metricsGroupAction))
+				groupActionHandler.DELETE("/:metricgroupactionID", handlers.DeleteMetricsGroupAction(s.pm.metricsGroupAction))
 			}
 			circleHandler := v1.Group("/circles")
 			{
-				circleHandler.GET("/:circleID/metrics-groups", handlers.ListMetricGroupInCircle(api.metricsGroupMain))
+				circleHandler.GET("/:circleID/metrics-groups", handlers.ListMetricGroupInCircle(s.pm.metricsGroupRepository))
 			}
 			pluginHandler := v1.Group("/plugins")
 			{
-				pluginHandler.GET("", handlers.ListPlugins(api.pluginMain))
+				pluginHandler.GET("", handlers.ListPlugins(s.pm.pluginRepository))
 			}
 		}
 	}

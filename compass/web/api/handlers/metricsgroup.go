@@ -19,195 +19,177 @@
 package handlers
 
 import (
+	"github.com/labstack/echo/v4"
 	"net/http"
 
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-
-	"github.com/gorilla/mux"
-
-	"github.com/google/uuid"
-
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"github.com/google/uuid"
 )
 
-func GetAll(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		workspaceId := r.Header.Get("x-workspace-id")
+func GetAll(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		workspaceId := echoCtx.Request().Header.Get("x-workspace-id")
 
 		parsedWorkspaceId, parseErr := uuid.Parse(workspaceId)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		list, err := metricsgroupMain.FindAllByWorkspaceId(parsedWorkspaceId)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, list)
+		return echoCtx.JSON(http.StatusOK, list)
 	}
 }
 
-func Resume(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		circleId := r.URL.Query().Get("circleId")
+func Resume(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		circleId := echoCtx.QueryParam("circleId")
 
 		metricGroups, err := metricsgroupMain.ResumeByCircle(circleId)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, metricGroups)
+		return echoCtx.JSON(http.StatusOK, metricGroups)
 	}
 }
 
-func CreateMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		metricsGroup, err := metricsgroupMain.Parse(r.Body)
+func CreateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		metricsGroup, err := metricsgroupMain.Parse(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
-		workspaceID := r.Header.Get("x-workspace-id")
+
+		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		workspaceUUID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
-			util.NewResponse(w, http.StatusInternalServerError, parseErr)
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 		metricsGroup.WorkspaceID = workspaceUUID
 
 		if err := metricsgroupMain.Validate(metricsGroup); len(err.Get().Errors) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		createdCircle, err := metricsgroupMain.Save(metricsGroup)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, createdCircle)
+		return echoCtx.JSON(http.StatusOK, createdCircle)
 	}
 }
 
-func Show(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
+func Show(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
+
 		metricsGroup, err := metricsgroupMain.FindById(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, metricsGroup)
+		return echoCtx.JSON(http.StatusOK, metricsGroup)
 	}
 }
 
-func Query(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
+func Query(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
 
-		periodParameter := r.URL.Query().Get("period")
-		intervalParameter := r.URL.Query().Get("interval")
+		periodParameter := echoCtx.QueryParam("period")
+		intervalParameter := echoCtx.QueryParam("interval")
 		if periodParameter == "" || intervalParameter == "" {
-			util.NewResponse(w, http.StatusInternalServerError, errors.NewError("Invalid parameters", "Period or interval params is required"))
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, errors.NewError("Invalid parameters", "Period or interval params is required"))
 		}
 
 		ragePeriod, err := metricsgroupMain.PeriodValidate(periodParameter)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		interval, err := metricsgroupMain.PeriodValidate(intervalParameter)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		queryResult, err := metricsgroupMain.QueryByGroupID(id, ragePeriod, interval)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, queryResult)
+		return echoCtx.JSON(http.StatusOK, queryResult)
 	}
 }
 
-func Result(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
+func Result(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
 
 		queryResult, err := metricsgroupMain.ResultByID(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, queryResult)
+		return echoCtx.JSON(http.StatusOK, queryResult)
 	}
 }
 
-func UpdateMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
-		metricsGroup, err := metricsgroupMain.Parse(r.Body)
+func UpdateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
+
+		metricsGroup, err := metricsgroupMain.Parse(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		updatedWorkspace, err := metricsgroupMain.Update(id, metricsGroup)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, updatedWorkspace)
+		return echoCtx.JSON(http.StatusOK, updatedWorkspace)
 	}
 }
 
-func UpdateName(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
-		metricsGroupAux, err := metricsgroupMain.Parse(r.Body)
+func UpdateName(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
+		metricsGroupAux, err := metricsgroupMain.Parse(echoCtx.Request().Body)
 
 		metricsGroup, err := metricsgroupMain.FindById(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		metricsGroup.Name = metricsGroupAux.Name
 		if err := metricsgroupMain.Validate(metricsGroup); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		updatedWorkspace, err := metricsgroupMain.UpdateName(id, metricsGroup)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
-		util.NewResponse(w, http.StatusOK, updatedWorkspace)
+		return echoCtx.JSON(http.StatusOK, updatedWorkspace)
 	}
 }
 
-func DeleteMetricsGroup(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["metricGroupID"]
+func DeleteMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("metricGroupID")
+
 		err := metricsgroupMain.Remove(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusNoContent, nil)
+		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }

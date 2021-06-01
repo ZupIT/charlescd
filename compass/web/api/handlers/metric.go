@@ -19,87 +19,79 @@
 package handlers
 
 import (
+	"github.com/labstack/echo/v4"
 	"net/http"
 
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/google/uuid"
 )
 
-func CreateMetric(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		metricgroupId := mux.Vars(r)["metricGroupID"]
+func CreateMetric(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		metricgroupId := echoCtx.Param("metricGroupID")
 
-		newMetric, err := metricMain.ParseMetric(r.Body)
+		newMetric, err := metricMain.ParseMetric(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		metricGroup, err := metricsgroupMain.FindById(metricgroupId)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		newMetric.MetricsGroupID = uuid.MustParse(metricgroupId)
 		newMetric.CircleID = metricGroup.CircleID
 
 		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		list, err := metricMain.SaveMetric(newMetric)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusCreated, list)
+		return echoCtx.JSON(http.StatusCreated, list)
 	}
 }
 
-func UpdateMetric(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		metricId := mux.Vars(r)["metricID"]
-		metricGroupId := mux.Vars(r)["metricGroupID"]
+func UpdateMetric(metricMain metric.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		metricId := echoCtx.Param("metricID")
+		metricGroupId := echoCtx.Param("metricGroupID")
 
-		newMetric, err := metricMain.ParseMetric(r.Body)
+		newMetric, err := metricMain.ParseMetric(echoCtx.Request().Body)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
 		newMetric.ID = uuid.MustParse(metricId)
 		newMetric.MetricsGroupID = uuid.MustParse(metricGroupId)
+
 		updateMetric, err := metricMain.UpdateMetric(newMetric)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
-		util.NewResponse(w, http.StatusOK, updateMetric)
+
+		return echoCtx.JSON(http.StatusOK, updateMetric)
 	}
 }
 
-func DeleteMetric(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		metricId := mux.Vars(r)["metricID"]
+func DeleteMetric(metricMain metric.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		metricId := echoCtx.Param("metricID")
+
 		err := metricMain.RemoveMetric(metricId)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusNoContent, nil)
+		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }

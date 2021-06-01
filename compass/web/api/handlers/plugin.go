@@ -19,21 +19,20 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
-func ListPlugins(pluginMain plugin.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		category := r.URL.Query().Get("category")
+func ListPlugins(pluginMain plugin.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		category := echoCtx.Param("category")
+
 		plugins, err := pluginMain.FindAll(category)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, plugins)
+		return echoCtx.JSON(http.StatusOK, plugins)
 	}
 }

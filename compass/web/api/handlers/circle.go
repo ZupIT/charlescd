@@ -19,22 +19,20 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/web/api/util"
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
-func ListMetricGroupInCircle(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		id := mux.Vars(r)["circleID"]
+func ListMetricGroupInCircle(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		id := echoCtx.Param("circleID")
+
 		list, err := metricsgroupMain.ListAllByCircle(id)
 		if err != nil {
-			util.NewResponse(w, http.StatusInternalServerError, err)
-			return
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		util.NewResponse(w, http.StatusOK, list)
+		return echoCtx.JSON(http.StatusOK, list)
 	}
 }
