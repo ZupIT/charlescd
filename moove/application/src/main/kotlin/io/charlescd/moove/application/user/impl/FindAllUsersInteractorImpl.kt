@@ -21,7 +21,6 @@ package io.charlescd.moove.application.user.impl
 import io.charlescd.moove.application.ResourcePageResponse
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindAllUsersInteractor
-import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 import io.charlescd.moove.domain.Page
 import io.charlescd.moove.domain.PageRequest
@@ -35,7 +34,12 @@ class FindAllUsersInteractorImpl @Inject constructor(
     private val userService: UserService
 ) : FindAllUsersInteractor {
 
-    override fun execute(name: String?, email: String?, authorization: String, pageRequest: PageRequest): ResourcePageResponse<SimpleUserWithUserGroupResponse> {
+    override fun execute(
+        name: String?,
+        email: String?,
+        authorization: String,
+        pageRequest: PageRequest
+    ): ResourcePageResponse<SimpleUserWithUserGroupResponse> {
         val user = userService.findByAuthorizationToken(authorization)
         if (user.root) {
             return convert(userService.findAll(name, email, pageRequest))

@@ -18,7 +18,6 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindUserByEmailInteractor
-import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 import io.charlescd.moove.domain.exceptions.ForbiddenException
 import java.util.*

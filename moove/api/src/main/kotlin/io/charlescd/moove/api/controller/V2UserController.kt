@@ -21,7 +21,6 @@ import io.charlescd.moove.application.user.*
 import io.charlescd.moove.application.user.request.ChangeUserPasswordRequest
 import io.charlescd.moove.application.user.request.CreateUserRequest
 import io.charlescd.moove.application.user.request.PatchUserRequest
-import io.charlescd.moove.application.user.response.SimpleUserResponse
 import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 import io.charlescd.moove.application.user.response.UserResponse
 import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
