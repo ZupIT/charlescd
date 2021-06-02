@@ -1,0 +1,501 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Button Default 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <button
+    className="sc-gtsrHT huvehu"
+    data-testid="button-default-undefined"
+    size="SMALL"
+    type="button"
+  >
+    text
+  </button>
+</div>
+`;
+
+exports[`Storyshots Components/Button Rounded 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <button
+    className="sc-eCApnc nHXyc"
+    data-testid="button-iconRounded-undefined"
+    size="default"
+    type="button"
+  >
+    <span
+      className="sc-hKFxyN bCdbzg"
+      color="dark"
+      fontSize="12px"
+      fontStyle="normal"
+      role=""
+    >
+      text
+    </span>
+  </button>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Base Base 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj iSUDHf"
+    color="gray"
+  >
+    ...
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Body Body 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj iSUDHf"
+    color="gray"
+  >
+    <div
+      className="sc-gKAaRy jnlYvh"
+    >
+      body
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Config Config 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj fnLrDW sc-jrsJWt hYbVig"
+  >
+    <div
+      className="sc-iCoGMd iEpziq"
+    >
+      <div
+        className="sc-fujyAs hQJiDC"
+      >
+        <i
+          className="sc-bdnxRM emkmca"
+          color="light"
+          data-testid="icon-workspace"
+          size="15px"
+        >
+          
+        </i>
+      </div>
+    </div>
+    <div
+      className="sc-gKAaRy jnlYvh sc-kEqXSa hFzMvM"
+    >
+      <span
+        className="sc-hKFxyN DBFMA"
+        color="light"
+        fontSize="14px"
+        fontStyle="normal"
+        role=""
+      />
+      ...
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Expand Expand 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj fnLrDW sc-jrsJWt hYbVig"
+  >
+    <div
+      className="sc-iCoGMd iEpziq"
+    >
+      <div
+        className="sc-fujyAs hQJiDC"
+      >
+        <i
+          className="sc-bdnxRM emkmca"
+          color="light"
+          data-testid="icon-undefined"
+          size="15px"
+        >
+          
+        </i>
+      </div>
+    </div>
+    <div
+      className="sc-gKAaRy jnlYvh sc-kEqXSa hFzMvM"
+    >
+      <span
+        className="sc-hKFxyN DBFMA"
+        color="light"
+        fontSize="14px"
+        fontStyle="normal"
+        role=""
+      />
+      <div
+        className="sc-gKAaRy fmxIyB"
+        onClick={[Function]}
+      >
+        click here
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Header Header 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj iSUDHf"
+    color="gray"
+  >
+    <div
+      className="sc-iCoGMd iEpziq"
+    >
+      header
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Main Main 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj beDKOy sc-iemWCZ dYTiSf"
+    color="dark"
+    data-testid="card-main"
+  >
+    <div
+      className="sc-gKAaRy jnlYvh"
+    >
+      <span
+        className="sc-hKFxyN esiAEk sc-fFSPTT iygANH"
+        color="light"
+        fontSize="12px"
+        fontStyle="normal"
+        role=""
+      />
+      <div
+        className="sc-bkbkJK JWECF"
+      >
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Release Release 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-jSFjdj lfBsYp sc-dlMDgC hAFjXT"
+    onClick={[Function]}
+  >
+    <div
+      className="sc-iCoGMd iEpziq"
+    >
+      <div
+        className="sc-fujyAs hQJiDC"
+      >
+        <i
+          className="sc-bdnxRM emkmca"
+          color="light"
+          data-testid="icon-info"
+          size="15px"
+        >
+          
+        </i>
+      </div>
+      <div
+        className="sc-dIvrsQ kuLLZq"
+      >
+        <span
+          className="sc-hKFxyN bnziHE"
+          color="light"
+          data-testid="badge-Deployed"
+          fontSize="10px"
+          fontStyle="normal"
+          role=""
+        >
+          Deployed
+        </span>
+      </div>
+    </div>
+    <div
+      className="sc-gKAaRy jnlYvh sc-kfYoZR dxwuUw"
+    >
+      <span
+        className="sc-hKFxyN DBFMA sc-hHEiqL"
+        color="light"
+        data-testid="release-card-description"
+        fontSize="14px"
+        fontStyle="normal"
+        role=""
+      >
+        ...
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Chart Chart 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-fKgJPI beTGCQ"
+    height={200}
+    options={
+      Object {
+        "chart": Object {
+          "sparkline": Object {
+            "enabled": false,
+          },
+          "toolbar": Object {
+            "show": false,
+          },
+          "zoom": Object {
+            "enabled": true,
+          },
+        },
+        "dataLabels": Object {
+          "enabled": false,
+        },
+        "grid": Object {
+          "padding": Object {
+            "left": 0,
+            "right": 0,
+          },
+          "show": true,
+          "xaxis": Object {
+            "lines": Object {
+              "show": false,
+            },
+          },
+          "yaxis": Object {
+            "lines": Object {
+              "show": false,
+            },
+          },
+        },
+        "markers": Object {
+          "size": 0,
+          "style": "hollow",
+        },
+        "noData": Object {
+          "align": "center",
+          "offsetX": 0,
+          "offsetY": 0,
+          "style": Object {
+            "color": "#FFF",
+            "fontSize": "14px",
+          },
+          "text": "No available data",
+          "verticalAlign": "middle",
+        },
+        "stroke": Object {
+          "curve": "straight",
+          "dashArray": 0,
+          "lineCap": "butt",
+          "show": true,
+          "width": 1.4,
+        },
+        "theme": Object {
+          "mode": "dark",
+          "palette": "palette4",
+        },
+        "tooltip": Object {
+          "theme": "dark",
+        },
+        "xaxis": Object {
+          "axisBorder": Object {
+            "show": false,
+          },
+          "convertedCatToNumeric": false,
+          "tickAmount": 2,
+          "type": "numeric",
+        },
+        "yaxis": Object {
+          "labels": Object {
+            "style": Object {
+              "color": "#fff",
+            },
+          },
+          "tickAmount": 2,
+        },
+      }
+    }
+    series={
+      Array [
+        Object {
+          "data": Array [
+            Object {
+              "x": 1000,
+              "y": 10,
+            },
+          ],
+          "name": "test 1",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "x": 500,
+              "y": 5,
+            },
+          ],
+          "name": "test 2",
+        },
+      ]
+    }
+    type="bar"
+    width={500}
+  />
+</div>
+`;
+
+exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <div
+    className="sc-iwajpm bqfvJR"
+    data-testid="tabpanel-Untitled"
+  >
+    <div
+      className="sc-bCwfaz iTwTpM"
+    >
+      <div
+        className="sc-ezzafa hzDqBm"
+      >
+        <div
+          className="sc-iJCRrE kViRIn"
+        >
+          <i
+            className="sc-bdnxRM eBZKdm"
+            color="light"
+            data-testid="icon-undefined"
+          >
+            
+          </i>
+          <span
+            className="sc-hKFxyN esiAEk sc-giAqHp isGRfO"
+            color="light"
+            fontSize="12px"
+            fontStyle="normal"
+            role=""
+          >
+            Untitled
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      className="sc-cxNHIi hYlWbm tabpanel-content"
+    >
+      Tab
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Text Text 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "justifyContent": "center",
+    }
+  }
+>
+  <span
+    className="sc-hKFxyN dgNvOT"
+    color="primary"
+    fontStyle="normal"
+    role=""
+  >
+    Text
+  </span>
+</div>
+`;
