@@ -14,16 +14,14 @@
 * limitations under the License.
 */
 
+export const getLines = (content = "") => {
+  const len = content.match(/\n/g)?.length || 0;
+  return len + 1;
+};
+
 export const printJSONByString = (jsonStr: string) => {
   try {
-    const content = JSON.stringify(JSON.parse(jsonStr), null, 2);
-    const count = content.match(/\n/g)?.length + 1;
-
-    return {
-      content,
-      count 
-    };
-
+    return JSON.stringify(JSON.parse(jsonStr), null, 2);
   } catch (e) {
     console.error(e);
   }
