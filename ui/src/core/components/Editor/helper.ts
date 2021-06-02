@@ -19,12 +19,11 @@ export const getLines = (content = "") => {
   return len + 1;
 };
 
-export const printJSONByString = (jsonStr: string) => {
+export const formatJSON = (jsonStr: string | object) => {
   try {
-    return JSON.stringify(JSON.parse(jsonStr), null, 2);
-  } catch (e) {
-    console.error(e);
-  }
+    const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
+    return JSON.stringify(data, null, 2);
+  } catch (e) {}
 }
 
 type Key = "{" | "(" | "[" | "'"| '"';

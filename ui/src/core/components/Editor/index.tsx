@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 import { useState } from 'react';
-import { getLines, printJSONByString, shouldComplete } from './helper';
+import { getLines, formatJSON, shouldComplete } from './helper';
 import Styled from './styled';
-
-const obj = '{"login":"leandroqo","email":"leandro.queiroz@zup.com.br"}';
 
 export interface EditorProps {
   mode?: 'view' | 'edit';
+  data?: string | object;
 }
 
-const Editor = ({ mode = 'view' }: EditorProps) => {
-  const [content, setContent] = useState('');
+const Editor = ({ mode = 'edit', data = '' }: EditorProps) => {
+  const [content, setContent] = useState(formatJSON(data));
 
   const renderNumbers = (json: string) => (
     <Styled.Numbers>
@@ -35,17 +34,6 @@ const Editor = ({ mode = 'view' }: EditorProps) => {
         ))}
     </Styled.Numbers>
   );
-
-  const renderView = () => {
-    const json = printJSONByString(obj);
-
-    return (
-      <>
-        {renderNumbers(json)}
-        <Styled.Content>{json}</Styled.Content>
-      </>
-    );
-  };
 
   const onChangeEditor = (event: any) => {
     const { selectionStart, selectionEnd, value } = event.target;
@@ -62,16 +50,14 @@ const Editor = ({ mode = 'view' }: EditorProps) => {
     event.target.selectionEnd = selectionStart;
   };
 
-  const renderEditor = () => (
-    <>
-      {renderNumbers(content)}
-      <Styled.Editor onChange={onChangeEditor}></Styled.Editor>
-    </>
-  );
-
   return (
     <Styled.Wrapper>
-      {mode === 'view' ? renderView() : renderEditor()}
+      {renderNumbers(content)}
+      <Styled.Editor
+        disabled={mode === 'view'}
+        onChange={onChangeEditor}
+        value={content}
+      ></Styled.Editor>
     </Styled.Wrapper>
   );
 };
