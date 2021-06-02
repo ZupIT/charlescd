@@ -25,7 +25,7 @@ import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
 import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 import Joi = require('joi')
-import {Metadata} from "../interfaces/deployment.interface";
+import { Metadata } from '../interfaces/deployment.interface'
 
 export interface JsonAPIError {
     errors: {
