@@ -50,5 +50,4 @@ class FindAllBuildsInteractorImpl @Inject constructor(
             totalPages = page.totalPages()
         )
     }
-
 }
