@@ -117,14 +117,12 @@ func buildCustomValidator() *CustomValidator {
 }
 
 func (s server) registerRoutes() {
-	authMiddleware := middlewares.NewAuthMiddleware(s.sm.mooveService, s.enforcer)
 	s.httpServer.GET("/health", handlers.Health())
 	s.httpServer.GET("/metrics", handlers.Metrics())
 
 	api := s.httpServer.Group("/api")
 	{
 		v1 := api.Group("/v1")
-		v1.Use(authMiddleware.Auth)
 		{
 			actionHandler := v1.Group("/actions")
 			{
