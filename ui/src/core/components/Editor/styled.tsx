@@ -15,11 +15,20 @@
  */
 import styled, { css } from 'styled-components';
 
-const Wrapper = styled.pre`
+type WrapperProps = {
+  width: string;
+  height: string;
+};
+
+const Wrapper = styled.pre<WrapperProps>`
   display: flex;
-  width: 200px;
-  height: 100px;
-  margin: 50px;
+  ${({ width, height }) =>
+    css &&
+    `
+    width: ${width};
+    height: ${height};
+  `};
+  margin-top: 20px;
   border-radius: 4px;
   ${({ theme }) =>
     css &&
@@ -27,15 +36,20 @@ const Wrapper = styled.pre`
     color: ${theme.editor.color};
     background-color: ${theme.editor.background};
   `}
-  padding: 10px;
+  padding: 10px 10px 10px 0;
 `;
 
 const Numbers = styled.ul`
   list-style: none;
-  width: 40px;
+  width: 35px;
   height: 100%;
   text-align: right;
-  border-right: 1px solid ${({ theme }) => theme.editor.lineBorder.background};
+  ${({ theme }) =>
+    css &&
+    `
+    color: ${theme.editor.color};
+    border-right: 1px solid ${theme.editor.lineBorder.background};
+  `}
   margin: 0 5px 0 0;
   padding: 0 10px 0 0;
   overflow: hidden;

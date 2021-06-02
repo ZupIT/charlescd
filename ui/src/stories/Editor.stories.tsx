@@ -8,4 +8,7 @@ export default {
 
 const Template: Story<Props> = (props: Props) => <Editor {...props} />;
 export const editor = Template.bind({});
-editor.args = {};
+editor.args = {
+  width: '400px',
+  height: '200px',
+};

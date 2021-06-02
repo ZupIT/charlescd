@@ -20,18 +20,25 @@ import Styled from './styled';
 export interface Props {
   mode?: 'view' | 'edit';
   data?: string | object;
+  width?: string;
+  height?: string;
 }
 
-const Editor = ({ mode = 'edit', data = '' }: Props) => {
+const Editor = ({
+  mode = 'edit',
+  data = '',
+  width = '100%',
+  height = '100%',
+}: Props) => {
   const numberRef = useRef<HTMLUListElement>(null);
   const [content, setContent] = useState(formatJSON(data));
 
   const renderNumbers = (json: string) => (
     <Styled.Numbers ref={numberRef}>
       {Array(getLines(json))
-        .fill(0)
+        .fill(1)
         .map((_, index) => (
-          <li key={index}>{index}</li>
+          <li key={index}>{index + 1}</li>
         ))}
     </Styled.Numbers>
   );
@@ -56,7 +63,7 @@ const Editor = ({ mode = 'edit', data = '' }: Props) => {
   };
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper width={width} height={height}>
       {renderNumbers(content)}
       <Styled.Editor
         disabled={mode === 'view'}
