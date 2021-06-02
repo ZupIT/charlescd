@@ -43,7 +43,7 @@ class FindAllBuildsInteractorImpl @Inject constructor(
 
     private fun convert(page: Page<Build>): ResourcePageResponse<BuildResponse> {
         return ResourcePageResponse(
-            content = page.content.map { BuildResponse.from(this.sortByLastDeployment(it)) },
+            content = page.content.map { BuildResponse.from(it.withLastDeployment()) },
             page = page.pageNumber,
             size = page.size(),
             isLast = page.isLast(),
@@ -51,15 +51,4 @@ class FindAllBuildsInteractorImpl @Inject constructor(
         )
     }
 
-    private fun sortByLastDeployment(build: Build): Build {
-        return build.copy(
-            deployments = build.deployments
-                .takeIf { deployments -> deployments.isNotEmpty() }
-                ?.sortedByDescending { it.deployedAt }
-                ?.let {
-                listOf(
-                    it.first()
-                )
-            } ?: emptyList())
-    }
 }

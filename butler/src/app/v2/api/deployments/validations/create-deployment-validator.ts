@@ -25,6 +25,7 @@ import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
 import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 import Joi = require('joi')
+import {Metadata} from "../interfaces/deployment.interface";
 
 export interface JsonAPIError {
     errors: {
@@ -113,16 +114,8 @@ export class CreateDeploymentValidator {
       callbackUrl: Joi.string().required().max(255),
       timeoutInSeconds: Joi.number().integer().min(5).optional(),
       metadata: Joi.allow(null).custom( (metadata, helper) => {
-        if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
-          const invalidMetadata = Object.keys(metadata.content).find(
-            key => !this.isValidKeyAndValue(key, metadata.content[key])
-          )
-          if (Object.keys(metadata.content).length === 0 || invalidMetadata != null) {
-            return helper.error('invalid.metadata')
-          }
-
-        } else {
-          throw new ExceptionBuilder('Invalid metadata scope', HttpStatus.BAD_REQUEST).build()
+        if (!this.isValidMetadata(metadata)) {
+          return helper.error('invalid.metadata')
         }
       }).messages(
         {
@@ -130,6 +123,17 @@ export class CreateDeploymentValidator {
         }
       )
     })
+  }
+
+  private isValidMetadata(metadata: Metadata) {
+    if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
+      const invalidMetadata = Object.keys(metadata.content).find(
+        key => !this.isValidKeyAndValue(key, metadata.content[key])
+      )
+      return Object.keys(metadata.content).length > 0 && invalidMetadata == null
+    } else {
+      throw new ExceptionBuilder('Invalid metadata scope', HttpStatus.BAD_REQUEST).build()
+    }
   }
 
   private componentSchema() {
@@ -184,7 +188,6 @@ export class CreateDeploymentValidator {
   }
 
   private isValidKeyAndValue(key: string, value: string): boolean {
-    console.log(this.isValidLength(key, 63) && this.isValidLength(value, 253))
     return this.isValidLength(key, 63) && this.isValidLength(value, 253)
   }
 
