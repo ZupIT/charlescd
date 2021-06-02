@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { getLines, formatJSON, shouldComplete } from './helper';
 import Styled from './styled';
 
-export interface EditorProps {
+export interface Props {
   mode?: 'view' | 'edit';
   data?: string | object;
 }
 
-const Editor = ({ mode = 'edit', data = '' }: EditorProps) => {
+const Editor = ({ mode = 'edit', data = '' }: Props) => {
+  const numberRef = useRef<HTMLUListElement>(null);
   const [content, setContent] = useState(formatJSON(data));
 
   const renderNumbers = (json: string) => (
-    <Styled.Numbers>
+    <Styled.Numbers ref={numberRef}>
       {Array(getLines(json))
         .fill(0)
         .map((_, index) => (
@@ -50,12 +51,17 @@ const Editor = ({ mode = 'edit', data = '' }: EditorProps) => {
     event.target.selectionEnd = selectionStart;
   };
 
+  const onScrollEditor = (event: any) => {
+    numberRef.current?.scrollTo(0, event.target.scrollTop);
+  };
+
   return (
     <Styled.Wrapper>
       {renderNumbers(content)}
       <Styled.Editor
         disabled={mode === 'view'}
         onChange={onChangeEditor}
+        onScroll={onScrollEditor}
         value={content}
       ></Styled.Editor>
     </Styled.Wrapper>

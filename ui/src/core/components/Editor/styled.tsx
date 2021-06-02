@@ -13,26 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.pre`
   display: flex;
-  width: 400px;
-  height: 400px;
+  width: 200px;
+  height: 100px;
   margin: 50px;
   border-radius: 4px;
-  background-color: ${({ theme }) => theme.circleMatcher.editor.background};
+  ${({ theme }) =>
+    css &&
+    `
+    color: ${theme.editor.color};
+    background-color: ${theme.editor.background};
+  `}
   padding: 10px;
-  color: white;
 `;
 
 const Numbers = styled.ul`
   list-style: none;
-  width: 20px;
+  width: 40px;
   height: 100%;
-  border-right: 1px solid white;
+  text-align: right;
+  border-right: 1px solid ${({ theme }) => theme.editor.lineBorder.background};
   margin: 0 5px 0 0;
-  padding: 0;
+  padding: 0 10px 0 0;
+  overflow: hidden;
 `;
 
 const Content = styled.div``;
@@ -43,7 +49,8 @@ const Editor = styled.textarea`
   background: none;
   border: none;
   resize: none;
-  color: white;
+  color: ${({ theme }) => theme.editor.color};
+  outline: none;
 `;
 
 export default {
