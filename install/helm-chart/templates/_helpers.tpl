@@ -109,13 +109,18 @@ env:
 - name: TLS_CERT
   valueFrom:
     secretKeyRef:
-      name: "moove-tls-cert"
+      name: "butler-tls-cert"
       key: "tls.crt"
 - name: TLS_KEY
   valueFrom:
     secretKeyRef:
-      name: "moove-tls-cert"
+      name: "butler-tls-cert"
       key: "tls.key"
+- name: MOOVE_CERT
+  valueFrom:
+    secretKeyRef:
+      name: "moove-tls-cert"
+      key: "tls.crt"
 {{- end -}}
 
 {{- define "test.moove-envs" -}}
@@ -165,16 +170,6 @@ env:
     secretKeyRef:
       name: "gate-aes256-key"
       key: "encryption-key"
-- name: MOOVE_TLS_CERT
-  valueFrom:
-    secretKeyRef:
-      name: "moove-tls-cert"
-      key: "tls.crt"
-- name: MOOVE_TLS_KEY
-  valueFrom:
-    secretKeyRef:
-      name: "moove-tls-cert"
-      key: "tls.key"
 {{- end -}}
 
 {{- define "test.circle-matcher-envs" -}}

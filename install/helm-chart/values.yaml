@@ -61,10 +61,11 @@ CharlesApplications:
       path: /actuator/health
       port: 8080
       initialDelay: 180
+
     image:
       registry: thallesf
       application: moove-operator
-      tag: tls-8
+      tag: tls-105
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -74,6 +75,26 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+    volumeMounts:
+      - name: moove-certs
+        mountPath: /certs/moove
+        readOnly: true
+      - name: butler-certs
+        mountPath: /certs/butler
+        readOnly: true
+    volumes:
+      - name: moove-certs
+        secret:
+          secretName: "moove-tls-cert"
+          items:
+            - key: store.p12
+              path: moove-store.p12
+      - name: butler-certs
+        secret:
+          secretName: "butler-tls-cert"
+          items:
+            - key: store.p12
+              path: butler-store.p12
     resources:
       limits:
         cpu: 1
@@ -395,6 +416,8 @@ postgresql:
 job:
   enabled: false
   name: init-db
+mtls:
+  enabled: true
 
 redis:
   enabled: true

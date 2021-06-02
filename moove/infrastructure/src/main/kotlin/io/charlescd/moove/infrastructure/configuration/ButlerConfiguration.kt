@@ -17,37 +17,26 @@
 package io.charlescd.moove.infrastructure.configuration
 
 import feign.Client
-import feign.Logger
-import feign.codec.Encoder
 import feign.codec.ErrorDecoder
-import feign.form.FormEncoder
 import org.apache.http.conn.ssl.NoopHostnameVerifier
-import org.apache.http.ssl.SSLContextBuilder
+import org.apache.http.ssl.SSLContexts
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.SpringEncoder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
-import java.io.ByteArrayInputStream
-import java.io.InputStream
+import org.springframework.core.io.Resource
 import java.security.KeyStore
-import java.security.cert.Certificate
-
-import java.security.cert.CertificateFactory
-import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManagerFactory
 
 
 @Configuration
 class ButlerConfiguration(
-    @Value("\${tls.key}")
-    val certKey: String,
-    @Value("\${tls.cert}")
-    val cert: String
+    @Value("\${key.store.password}")
+    val keyStorePassword: String,
+    @Value("\${butler.tls.store.path}")
+    val butlerStorePath: String,
+    @Value("\${moove.tls.store.path}")
+    val mooveStorePath: String
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     @Bean
@@ -61,25 +50,16 @@ class ButlerConfiguration(
     }
 
     fun getSSLSocketFactory(): SSLSocketFactory {
-        logger.info("Cert: ${this.cert}")
-        val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
-        val certStream: InputStream = ByteArrayInputStream(this.cert.toByteArray());
-        val root = cf.generateCertificate(certStream)
-        val keyStoreType = KeyStore.getDefaultType();
-
-        //Save Butler ca on key store
-        logger.info("Saving butler ca", root)
-        val keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", root);
-        //Set that the butler ca is a trusted certificate
-        val tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        val tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-        logger.info("butler ca  is trusted ${root}", root)
-        //Init context
-        val context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.trustManagers, null);
-        return context.socketFactory
+        val mooveStore = loadFromFile(mooveStorePath)
+        val butlerKeyStore = loadFromFile(butlerStorePath)
+        val sslContext = SSLContexts.custom().loadKeyMaterial(
+            mooveStore,keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
+        ).loadTrustMaterial(
+            butlerKeyStore, keyStorePassword.toCharArray()
+        ).build()
+        return sslContext.socketFactory
     }
+
+    fun loadFromFile(fileName: String) =
+        this.javaClass.classLoader.getResource("file:///$fileName") ?: throw IllegalStateException("File not found: $fileName")
 }

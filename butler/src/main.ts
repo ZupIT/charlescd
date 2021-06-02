@@ -43,11 +43,13 @@ healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
 async function bootstrap() {
   console.log('KEly-key'+ AppConstants.TLS_KEY)
   console.log('CERTIN'+ AppConstants.TLS_CERT)
+  console.log('moove_cert'+ AppConstants.MOOVE_CERT)
   const httpsOptions = {
     key: AppConstants.TLS_KEY,
     cert: AppConstants.TLS_CERT,
     requestCert: true,
     rejectUnauthorized: true,
+    ca: AppConstants.MOOVE_CERT
   }
   hpropagate({
     setAndPropagateCorrelationId: false,
