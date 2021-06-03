@@ -12,7 +12,7 @@ The user interface is responsible for providing an easy-to-use interface for all
 
 Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charles application] api.
 
-`* we are still using yarn only to run one test file`
+_* we are still using yarn only to run one test file_
 
 ### On terminal
 
