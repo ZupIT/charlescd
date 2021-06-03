@@ -8,11 +8,11 @@ The user interface is responsible for providing an easy-to-use interface for all
 
 - [Node]
 - [npm]
-- \*[yarn]
-
-`* we are still using yarn only to run one test file`
+- [yarn]*
 
 Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charles application] api.
+
+_* we are still using yarn only to run one test file_
 
 ### On terminal
 
@@ -58,6 +58,7 @@ Please check our [Contributing Guide].
 
 [node]: https://nodejs.org/en/download
 [yarn]: https://classic.yarnpkg.com/docs/install
+[npm]: https://www.npmjs.com/
 [environments/dev]: ./environments/dev
 [charles application]: https://github.com/ZupIT/charlescd/tree/master/moove
 [root folder]: ./
