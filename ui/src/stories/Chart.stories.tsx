@@ -27,6 +27,4 @@ chart.args = {
     ]
   }],
   type: 'bar',
-  width: 700,
-  height: 200
 };
