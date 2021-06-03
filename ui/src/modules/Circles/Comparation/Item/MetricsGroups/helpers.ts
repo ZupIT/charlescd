@@ -102,6 +102,8 @@ export const filterMetricsSeries = (
     );
   });
 
+  console.log('ChartData', filteredData as ChartData[])
+
   return filteredData as ChartData[];
 };
 
