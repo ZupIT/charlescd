@@ -1,18 +1,17 @@
 package tests
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/moove"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
 )
 
 type SuiteMoove struct {

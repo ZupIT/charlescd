@@ -48,7 +48,7 @@ type Plugin struct {
 
 func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, errors.Error) {
 	var plugins []Plugin
-	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
+	pluginsDir := configuration.Get("PLUGINS_DIR")
 	ps, err := ioutil.ReadDir(fmt.Sprintf("%s/%s", pluginsDir, categoryName))
 	if err != nil {
 		return []Plugin{}, errors.NewError("Get error", err.Error()).
@@ -83,7 +83,7 @@ func (main Main) FindAll(category string) ([]Plugin, errors.Error) {
 	}
 
 	var plugins []Plugin
-	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
+	pluginsDir := configuration.Get("PLUGINS_DIR")
 
 	categories, err := ioutil.ReadDir(pluginsDir)
 	if err != nil {
@@ -106,7 +106,7 @@ func (main Main) FindAll(category string) ([]Plugin, errors.Error) {
 }
 
 func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, errors.Error) {
-	pluginsDir := configuration.GetConfiguration("PLUGINS_DIR")
+	pluginsDir := configuration.Get("PLUGINS_DIR")
 	p, err := plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
 	if err != nil {
 		return nil, errors.NewError("Get error", err.Error()).

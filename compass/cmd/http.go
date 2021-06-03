@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
-	"github.com/ZupIT/charlescd/compass/web/middlewares"
+	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
 	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -49,8 +49,9 @@ func newServer(pm persistenceManager, sm serviceManager) (server, error) {
 func createHttpServerInstance() *echo.Echo {
 	httpServer := echo.New()
 	httpServer.Use(echoMiddleware.RequestID())
-	httpServer.Use(middlewares.ContextLogger)
-	httpServer.Use(middlewares.Logger)
+	httpServer.Use(middlewares2.ContextLogger)
+	httpServer.Use(middlewares2.Logger)
+	httpServer.Use(middlewares2.RequestLimiter)
 	httpServer.Validator = buildCustomValidator()
 	httpServer.Binder = echo.Binder(customBinder{})
 

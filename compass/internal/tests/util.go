@@ -21,8 +21,6 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"time"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -32,7 +30,9 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"os"
+	"time"
 )
 
 const dbLog = false
@@ -91,7 +91,7 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 
 	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id,  deleted_at, plugin_src)
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
-		entity.ID, entity.Name, entity.Data, configuration.GetConfiguration("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
+		entity.ID, entity.Name, entity.Data, configuration.Get("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
 }
 
 func newBasicMetric() metric.Metric {
@@ -134,7 +134,7 @@ func actionInsert(actionType string) (string, action.Response) {
 
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
 			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
-			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("ENCRYPTION_KEY")),
+			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.Get("ENCRYPTION_KEY")),
 		entity
 }
 

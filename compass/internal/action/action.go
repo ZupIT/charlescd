@@ -80,7 +80,7 @@ func (main Main) ParseAction(action io.ReadCloser) (Request, errors.Error) {
 	nAction.Description = strings.TrimSpace(nAction.Description)
 
 	if nAction.UseDefault {
-		nAction.Configuration = json.RawMessage(fmt.Sprintf(`{"mooveUrl": "%s"}`, configuration.GetConfiguration("MOOVE_PATH")))
+		nAction.Configuration = json.RawMessage(fmt.Sprintf(`{"mooveUrl": "%s"}`, configuration.Get("MOOVE_PATH")))
 	}
 
 	return *nAction, nil

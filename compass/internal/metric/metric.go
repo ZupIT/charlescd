@@ -25,10 +25,10 @@ import (
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"gorm.io/gorm"
 	"io"
 
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type Metric struct {
@@ -215,10 +215,10 @@ func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
 
 func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
-		db := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
-		if db.Error != nil {
-			logger.Error(util.UpdateMetricError, "UpdateMetric", db.Error, metric)
-			return db.Error
+		dbErr := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
+		if dbErr != nil {
+			logger.Error(util.UpdateMetricError, "UpdateMetric", dbErr, metric)
+			return dbErr
 		}
 
 		metric.MetricExecution.Status = MetricUpdated

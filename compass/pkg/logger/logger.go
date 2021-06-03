@@ -26,7 +26,7 @@ import (
 )
 
 func Info(msg string, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if configuration.Get("ENV") == "TEST" {
 		return
 	}
 
@@ -37,7 +37,7 @@ func Info(msg string, data interface{}) {
 }
 
 func Error(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if configuration.Get("ENV") == "TEST" {
 		return
 	}
 
@@ -47,7 +47,7 @@ func Error(msg string, functionName string, err error, data interface{}) {
 	}).WithTime(time.Now()).Errorln(msg)
 }
 func Panic(msg string, functionName string, err error, data interface{}) {
-	if configuration.GetConfiguration("ENV") == "TEST" {
+	if configuration.Get("ENV") == "TEST" {
 		return
 	}
 

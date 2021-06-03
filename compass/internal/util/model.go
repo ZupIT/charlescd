@@ -19,10 +19,9 @@
 package util
 
 import (
-	"time"
-
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type BaseModel struct {
@@ -30,7 +29,7 @@ type BaseModel struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-func (BaseModel *BaseModel) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("ID", uuid.New())
+func (baseModel *BaseModel) BeforeCreate(tx *gorm.DB) error {
+	baseModel.ID = uuid.New()
 	return nil
 }

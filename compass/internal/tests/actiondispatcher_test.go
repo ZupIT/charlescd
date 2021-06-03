@@ -20,10 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"os"
-	"testing"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -32,11 +28,13 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
-
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
+	"os"
+	"testing"
+	"time"
 )
 
 type SuiteActionDispatcher struct {

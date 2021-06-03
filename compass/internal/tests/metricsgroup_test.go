@@ -21,10 +21,12 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -33,10 +35,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
-
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )

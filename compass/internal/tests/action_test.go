@@ -20,6 +20,7 @@ package tests
 
 import (
 	"encoding/json"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -28,7 +29,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )

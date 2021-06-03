@@ -20,10 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"os"
-	"testing"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -31,11 +27,13 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
+	"os"
+	"testing"
+	"time"
 )
 
 type SuiteMetricExecution struct {

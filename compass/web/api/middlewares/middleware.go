@@ -20,26 +20,29 @@ package middlewares
 
 import (
 	"context"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth/limiter"
 	"github.com/labstack/echo/v4"
+	"log"
+	"net/http"
 	"strconv"
 	"time"
 )
 
-//func ValidatorMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-//	return func(echoCtx echo.Context) error {
-//		w.Header().Set("Content-type", "application/json")
-//
-//		reqErr := tollbooth.LimitByRequest(api.limiter, w, r)
-//		if reqErr != nil {
-//			err := errors.NewError("Request error", reqErr.Error()).
-//				WithOperations("ValidatorMiddleware.LimitByRequest")
-//			util.NewResponse(w, http.StatusForbidden, err)
-//			return
-//		}
-//
-//	}
-//}
+func RequestLimiter(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+		requestLimiter := configureRequestLimiter()
+
+		reqErr := tollbooth.LimitByRequest(requestLimiter, echoCtx.Response().Writer, echoCtx.Request())
+		if reqErr != nil {
+			return echoCtx.JSON(http.StatusForbidden, logging.NewError("Not allowed", reqErr, nil))
+		}
+
+		return next(echoCtx)
+	}
+}
 
 func ContextLogger(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
@@ -83,4 +86,27 @@ func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return nil
 	}
+}
+
+func configureRequestLimiter() *limiter.Limiter {
+	reqLimit, err := strconv.ParseFloat(configuration.Get("REQUESTS_PER_SECOND_LIMIT"), 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tokenTTL, err := strconv.Atoi(configuration.Get("LIMITER_TOKEN_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	headersTTL, err := strconv.Atoi(configuration.Get("LIMITER_HEADERS_TTL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	lmt := tollbooth.NewLimiter(reqLimit, nil)
+	lmt.SetTokenBucketExpirationTTL(time.Duration(tokenTTL) * time.Minute)
+	lmt.SetHeaderEntryExpirationTTL(time.Duration(headersTTL) * time.Minute)
+
+	return lmt
 }

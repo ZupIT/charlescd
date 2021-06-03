@@ -20,22 +20,19 @@ package metricsgroup
 
 import (
 	"encoding/json"
-
+	"github.com/ZupIT/charlescd/compass/internal/metric"
+	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"io"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-
-	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 )
 
 type MetricsGroup struct {
@@ -311,7 +308,7 @@ func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation,
 }
 
 func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
-	db := main.db.Table("metrics_groups").Where("id = ?", id).Update(&metricsGroup)
+	db := main.db.Table("metrics_groups").Where("id = ?", id).Updates(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, errors.NewError("Update error", db.Error.Error()).
 			WithOperations("Update.Update")

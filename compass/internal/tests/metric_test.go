@@ -20,21 +20,19 @@ package tests
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"strings"
-	"testing"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-
 	"github.com/google/uuid"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
+	"io/ioutil"
+	"strings"
+	"testing"
 )
 
 type SuiteMetric struct {
