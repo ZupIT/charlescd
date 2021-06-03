@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Components/Button Default 1`] = `
+exports[`Storyshots Components/Button/Default Default 1`] = `
 .c0 {
   position: relative;
   background-color: #5C37CC;
@@ -27,18 +27,11 @@ exports[`Storyshots Components/Button Default 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <button
-    className="c0"
+    class="c0"
     data-testid="button-default-undefined"
-    size="SMALL"
     type="button"
   >
     text
@@ -46,7 +39,7 @@ exports[`Storyshots Components/Button Default 1`] = `
 </div>
 `;
 
-exports[`Storyshots Components/Button Rounded 1`] = `
+exports[`Storyshots Components/Button/Rounded Rounded 1`] = `
 .c1 {
   -webkit-animation: 0.3s iHfShZ linear;
   animation: 0.3s iHfShZ linear;
@@ -96,25 +89,18 @@ exports[`Storyshots Components/Button Rounded 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <button
-    className="c0"
+    class="c0"
     data-testid="button-iconRounded-undefined"
-    size="default"
     type="button"
   >
     <span
-      className="c1"
+      class="c1"
       color="dark"
-      fontSize="12px"
-      fontStyle="normal"
+      font-size="12px"
+      font-style="normal"
       role=""
     >
       text
@@ -143,16 +129,10 @@ exports[`Storyshots Components/Cards/Base Base 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0"
+    class="c0"
     color="gray"
   >
     ...
@@ -186,20 +166,14 @@ exports[`Storyshots Components/Cards/Body Body 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0"
+    class="c0"
     color="gray"
   >
     <div
-      className="c1"
+      class="c1"
     >
       body
     </div>
@@ -297,41 +271,40 @@ exports[`Storyshots Components/Cards/Config Config 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0 c1"
+    class="c0 c1"
   >
     <div
-      className="c2"
+      class="c2"
     >
       <div
-        className="c3"
+        class="c3"
       >
         <i
-          className="c4"
+          class="c4"
           color="light"
           data-testid="icon-workspace"
-          size="15px"
         >
-          
+          <div>
+            <div>
+              <svg
+                src="workspace"
+              />
+            </div>
+          </div>
         </i>
       </div>
     </div>
     <div
-      className="c5 c6"
+      class="c5 c6"
     >
       <span
-        className="c7"
+        class="c7"
         color="light"
-        fontSize="14px"
-        fontStyle="normal"
+        font-size="14px"
+        font-style="normal"
         role=""
       />
       ...
@@ -437,46 +410,36 @@ exports[`Storyshots Components/Cards/Expand Expand 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0 c1"
+    class="c0 c1"
   >
     <div
-      className="c2"
+      class="c2"
     >
       <div
-        className="c3"
+        class="c3"
       >
         <i
-          className="c4"
+          class="c4"
           color="light"
           data-testid="icon-undefined"
-          size="15px"
-        >
-          
-        </i>
+        />
       </div>
     </div>
     <div
-      className="c5 c6"
+      class="c5 c6"
     >
       <span
-        className="c7"
+        class="c7"
         color="light"
-        fontSize="14px"
-        fontStyle="normal"
+        font-size="14px"
+        font-style="normal"
         role=""
       />
       <div
-        className="c8"
-        onClick={[Function]}
+        class="c8"
       >
         click here
       </div>
@@ -521,20 +484,14 @@ exports[`Storyshots Components/Cards/Header Header 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0"
+    class="c0"
     color="gray"
   >
     <div
-      className="c1"
+      class="c1"
     >
       header
     </div>
@@ -606,31 +563,25 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0 c1"
+    class="c0 c1"
     color="dark"
     data-testid="card-main"
   >
     <div
-      className="c2"
+      class="c2"
     >
       <span
-        className="c3 c4 c5"
+        class="c3 c4 c5"
         color="light"
-        fontSize="12px"
-        fontStyle="normal"
+        font-size="12px"
+        font-style="normal"
         role=""
       />
       <div
-        className="c6"
+        class="c6"
       >
         ...
       </div>
@@ -784,42 +735,40 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0 c1"
-    onClick={[Function]}
+    class="c0 c1"
   >
     <div
-      className="c2"
+      class="c2"
     >
       <div
-        className="c3"
+        class="c3"
       >
         <i
-          className="c4"
+          class="c4"
           color="light"
           data-testid="icon-info"
-          size="15px"
         >
-          
+          <div>
+            <div>
+              <svg
+                src="info"
+              />
+            </div>
+          </div>
         </i>
       </div>
       <div
-        className="c5"
+        class="c5"
       >
         <span
-          className="c6"
+          class="c6"
           color="light"
           data-testid="badge-Deployed"
-          fontSize="10px"
-          fontStyle="normal"
+          font-size="10px"
+          font-style="normal"
           role=""
         >
           Deployed
@@ -827,18 +776,78 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
       </div>
     </div>
     <div
-      className="c7 c8"
+      class="c7 c8"
     >
       <span
-        className="c9 "
+        class="c9 "
         color="light"
         data-testid="release-card-description"
-        fontSize="14px"
-        fontStyle="normal"
+        font-size="14px"
+        font-style="normal"
         role=""
       >
         ...
       </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Chart Chart 1`] = `
+.c0 {
+  padding-right: 15px;
+}
+
+.c0 .apexcharts-canvas,
+.c0 .apexcharts-canvas.apexcharts-theme-dark {
+  background-color: transparent;
+}
+
+.c0 .apexcharts-xaxis-tick {
+  display: none;
+}
+
+.c0 .apexcharts-yaxistooltip {
+  display: none;
+}
+
+.c0 .apexcharts-xaxistooltip {
+  display: none;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    data-testid="apexcharts-mock"
+    height="200"
+    options="[object Object]"
+    series="[object Object],[object Object]"
+    type="bar"
+    width="700"
+  >
+    <div>
+      <svg>
+        <g
+          class="apexcharts-yaxis"
+        >
+          <g>
+            <text
+              class="apexcharts-yaxis-label"
+            />
+          </g>
+        </g>
+        <g
+          class="apexcharts-xaxis"
+        >
+          <g>
+            <text
+              class="apexcharts-xaxis-label"
+            />
+          </g>
+        </g>
+      </svg>
     </div>
   </div>
 </div>
@@ -961,39 +970,31 @@ exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <div
-    className="c0"
+    class="c0"
     data-testid="tabpanel-Untitled"
   >
     <div
-      className="c1"
+      class="c1"
     >
       <div
-        className="c2"
+        class="c2"
       >
         <div
-          className="c3"
+          class="c3"
         >
           <i
-            className="c4"
+            class="c4"
             color="light"
             data-testid="icon-undefined"
-          >
-            
-          </i>
+          />
           <span
-            className="c5 c6"
+            class="c5 c6"
             color="light"
-            fontSize="12px"
-            fontStyle="normal"
+            font-size="12px"
+            font-style="normal"
             role=""
           >
             Untitled
@@ -1002,7 +1003,7 @@ exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
       </div>
     </div>
     <div
-      className="c7 tabpanel-content"
+      class="c7 tabpanel-content"
     >
       Tab
     </div>
@@ -1022,18 +1023,12 @@ exports[`Storyshots Components/Text Text 1`] = `
 }
 
 <div
-  style={
-    Object {
-      "alignItems": "center",
-      "display": "flex",
-      "justifyContent": "center",
-    }
-  }
+  style="display: flex; align-items: center; justify-content: center;"
 >
   <span
-    className="c0"
+    class="c0"
     color="primary"
-    fontStyle="normal"
+    font-style="normal"
     role=""
   >
     Text

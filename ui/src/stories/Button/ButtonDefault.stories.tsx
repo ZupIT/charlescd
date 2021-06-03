@@ -2,7 +2,7 @@ import { Story } from '@storybook/react';
 import ButtonDefault, { Props } from 'core/components/Button/ButtonDefault';
 
 export default {
-  title: 'Components/Button',
+  title: 'Components/Button/Default',
   component: ButtonDefault,
   parameters: {
     docs: {
