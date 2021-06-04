@@ -2,7 +2,7 @@ import { Story } from '@storybook/react';
 import ButtonRounded, { Props } from 'core/components/Button/ButtonRounded';
 
 export default {
-  title: 'Components/Button',
+  title: 'Components/Button/Rounded',
   component: ButtonRounded,
 };
 

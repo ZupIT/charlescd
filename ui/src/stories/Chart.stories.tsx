@@ -13,20 +13,18 @@ chart.args = {
     name: 'test 1',
     data: [
       {
-        y: 10,
-        x: 1000
+        x: 1000,
+        y: 10
       }
     ]
     }, {
     name: 'test 2',
     data: [
       {
-        y: 5,
-        x: 500
+        x: 500,
+        y: 5
       }
     ]
   }],
   type: 'bar',
-  width: 500,
-  height: 200
 };
