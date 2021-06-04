@@ -47,6 +47,25 @@ const Editor = ({
 
     event.target.selectionStart = selectionStart;
     event.target.selectionEnd = selectionStart;
+
+    console.log(event);
+  };
+
+  const onKeyDown = (e: any) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = e.target.selectionStart;
+      const end = e.target.selectionEnd;
+      const tab = '  ';
+
+      e.target.value =
+        e.target.value.substring(0, start) +
+        tab +
+        e.target.value.substring(end);
+
+      e.target.selectionEnd = end + tab.length;
+      e.target.selectionStart = end + tab.length;
+    }
   };
 
   const onScrollTextarea = (event: any) => {
@@ -82,6 +101,7 @@ const Editor = ({
       <Styled.TextArea
         spellCheck={false}
         onScroll={onScrollTextarea}
+        onKeyDown={onKeyDown}
         onChange={onChangeEditor}
         value={content}
       />
