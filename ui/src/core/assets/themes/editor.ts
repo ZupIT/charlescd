@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { COLOR_BASTILLE, COLOR_LAVENDER_GREY, COLOR_BLACK_MARLIN } from 'core/assets/colors';
+import { COLOR_BASTILLE, COLOR_LAVENDER_GREY, COLOR_BLACK_MARLIN, COLOR_WHITE, COLOR_GHOST_WHITE, COLOR_MALACHITE } from 'core/assets/colors';
 
 export const light = {};
 
@@ -23,5 +23,11 @@ export const dark = {
     color: COLOR_LAVENDER_GREY,
     lineBorder: {
       background: COLOR_BLACK_MARLIN
+    },
+    synthax: {
+      property: COLOR_MALACHITE,
+      operator: COLOR_WHITE,
+      punctuation: COLOR_GHOST_WHITE,
+      string: COLOR_LAVENDER_GREY
     }
 };

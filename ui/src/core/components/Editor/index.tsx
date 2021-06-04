@@ -56,15 +56,23 @@ const Editor = ({
   return (
     <Styled.Wrapper width={width} height={height}>
       <Highlight {...defaultProps} language="json" code={content}>
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <Styled.Pre ref={editorRef} className={className} style={style}>
+        {({ className, tokens, getLineProps, getTokenProps }) => (
+          <Styled.Pre ref={editorRef} className={className}>
             {tokens.map((line, i) => (
               <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
                 <Styled.Number>{i + 1}</Styled.Number>
                 <span>
-                  {line.map((token, key) => (
-                    <span key={key} {...getTokenProps({ token, key })} />
-                  ))}
+                  {line.map((token, key) => {
+                    const { className, children } = getTokenProps({
+                      token,
+                      key,
+                    });
+                    return (
+                      <span key={key} className={className}>
+                        {children}
+                      </span>
+                    );
+                  })}
                 </span>
               </Styled.Editor>
             ))}
@@ -72,6 +80,7 @@ const Editor = ({
         )}
       </Highlight>
       <Styled.TextArea
+        spellCheck={false}
         onScroll={onScrollTextarea}
         onChange={onChangeEditor}
         value={content}

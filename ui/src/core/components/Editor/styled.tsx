@@ -40,6 +40,26 @@ const Wrapper = styled.div<WrapperProps>`
 
 const Editor = styled.div`
   display: flex;
+
+  ${({ theme }) =>
+    css &&
+    `
+      .property {
+        color: ${theme.editor.synthax.property};
+      }
+
+      .operator {
+        color: ${theme.editor.synthax.operator};
+      }
+
+      .punctuation {
+        color: ${theme.editor.synthax.punctuation};
+      }
+
+      .string {
+        color: ${theme.editor.synthax.string};
+      }
+  `};
 `;
 
 const Number = styled.span`
