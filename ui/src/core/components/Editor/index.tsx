@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import Highlight, { defaultProps } from 'prism-react-renderer';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { formatJSON, shouldComplete } from './helper';
 import Styled from './styled';
 
@@ -32,6 +32,7 @@ const Editor = ({
   height = '100%',
 }: Props) => {
   const [content, setContent] = useState(formatJSON(data));
+  const editorRef = useRef<HTMLPreElement>(null);
 
   const onChangeEditor = (event: any) => {
     const { selectionStart, selectionEnd, value } = event.target;
@@ -48,11 +49,15 @@ const Editor = ({
     event.target.selectionEnd = selectionStart;
   };
 
+  const onScrollTextarea = (event: any) => {
+    editorRef.current.scrollTop = event.target.scrollTop;
+  };
+
   return (
     <Styled.Wrapper width={width} height={height}>
       <Highlight {...defaultProps} language="json" code={content}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <Styled.Pre className={className} style={style}>
+          <Styled.Pre ref={editorRef} className={className} style={style}>
             {tokens.map((line, i) => (
               <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
                 <Styled.Number>{i + 1}</Styled.Number>
@@ -66,7 +71,11 @@ const Editor = ({
           </Styled.Pre>
         )}
       </Highlight>
-      <Styled.TextArea onChange={onChangeEditor} value={content} />
+      <Styled.TextArea
+        onScroll={onScrollTextarea}
+        onChange={onChangeEditor}
+        value={content}
+      />
     </Styled.Wrapper>
   );
 };

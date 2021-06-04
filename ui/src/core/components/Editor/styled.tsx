@@ -58,20 +58,20 @@ const Number = styled.span`
 
 const TextArea = styled.textarea`
   position: absolute;
+  top: 0;
   right: 0;
   width: calc(100% - 54px);
   height: calc(100% - 20px);
   background: none;
   color: transparent;
   caret-color: ${({ theme }) => theme.editor.color};
-  /* border: ; */
+  border: none;
   resize: none;
   outline: none;
   margin: 10px 0;
   white-space: pre-wrap;
   word-break: keep-all;
   overflow-wrap: break-word;
-  overflow: hidden;
 `;
 
 const Pre = styled.pre`
