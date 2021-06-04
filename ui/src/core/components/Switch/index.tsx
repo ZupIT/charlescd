@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
@@ -29,8 +29,6 @@ export interface Props {
 const Switch = ({ label, active, onChange, name, className }: Props) => {
   const [isActive, setIsActive] = useState(active);
 
-  const id = `switch-${name}`;
-
   const onSwitch = () => {
     setIsActive(!isActive);
     onChange && onChange(isActive);
@@ -39,7 +37,7 @@ const Switch = ({ label, active, onChange, name, className }: Props) => {
   return (
     <Styled.Switch className={className}>
       <Styled.Input
-        data-testid={id}
+        data-testid={`switch-${name}`}
         type="checkbox"
         checked={isActive}
         onChange={onSwitch}
