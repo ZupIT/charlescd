@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   label: string;
   active?: boolean;
   onChange?: (value: boolean) => void;
