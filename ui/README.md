@@ -58,7 +58,6 @@ Please check the [Charles Documentation].
 Please check our [Contributing Guide].
 
 [node]: https://nodejs.org/en/download
-[yarn]: https://classic.yarnpkg.com/docs/install
 [npm]: https://www.npmjs.com/
 [environments/dev]: ./environments/dev
 [charles application]: https://github.com/ZupIT/charlescd/tree/master/moove
