@@ -8,11 +8,8 @@ The user interface is responsible for providing an easy-to-use interface for all
 
 - [Node]
 - [npm]
-- [yarn]*
 
 Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charles application] api.
-
-_* we are still using yarn to run single test_
 
 ### On terminal
 
@@ -39,6 +36,10 @@ npm run start:local
 ### Testing
 
 To run the tests execute `npm run test`.
+
+### Run single test
+
+To run single test execute `npm run test:watch -- --testPathPattern [your-file-path]`.
 
 ### Building & Deploying
 
