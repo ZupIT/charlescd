@@ -22,7 +22,7 @@ npm run start
 
 The app will start up on localhost:3000
 
-### Who to start the app with mocks
+### How to start the app with mocks
 
 Run the following commands in the [root folder] to get all dependencies installed in ui and to start the server:
 
