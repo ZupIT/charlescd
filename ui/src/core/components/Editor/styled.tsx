@@ -20,8 +20,8 @@ type WrapperProps = {
   height: string;
 };
 
-const Wrapper = styled.pre<WrapperProps>`
-  display: flex;
+const Wrapper = styled.div<WrapperProps>`
+  position: relative;
   ${({ width, height }) =>
     css &&
     `
@@ -36,13 +36,15 @@ const Wrapper = styled.pre<WrapperProps>`
     color: ${theme.editor.color};
     background-color: ${theme.editor.background};
   `}
-  padding: 10px 10px 10px 0;
 `;
 
-const Numbers = styled.ul`
-  list-style: none;
+const Editor = styled.div`
+  display: flex;
+`;
+
+const Number = styled.span`
+  min-width: 35px;
   width: 35px;
-  height: 100%;
   text-align: right;
   ${({ theme }) =>
     css &&
@@ -52,24 +54,38 @@ const Numbers = styled.ul`
   `}
   margin: 0 5px 0 0;
   padding: 0 10px 0 0;
+`;
+
+const TextArea = styled.textarea`
+  position: absolute;
+  right: 0;
+  width: calc(100% - 54px);
+  height: calc(100% - 20px);
+  background: none;
+  color: transparent;
+  caret-color: ${({ theme }) => theme.editor.color};
+  /* border: ; */
+  resize: none;
+  outline: none;
+  margin: 10px 0;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
   overflow: hidden;
 `;
 
-const Content = styled.div``;
-
-const Editor = styled.textarea`
-  width: 100%;
-  height: 100%;
-  background: none;
-  border: none;
-  resize: none;
-  color: ${({ theme }) => theme.editor.color};
-  outline: none;
+const Pre = styled.pre`
+  height: calc(100% - 20px);
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  overflow: auto;
 `;
 
 export default {
   Wrapper,
-  Numbers,
-  Content,
+  Number,
+  TextArea,
   Editor,
+  Pre,
 };

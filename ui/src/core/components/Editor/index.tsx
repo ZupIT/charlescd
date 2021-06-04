@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { useRef, useState } from 'react';
-import { getLines, formatJSON, shouldComplete } from './helper';
+import Highlight, { defaultProps } from 'prism-react-renderer';
+import { useState } from 'react';
+import { formatJSON, shouldComplete } from './helper';
 import Styled from './styled';
 
 export interface Props {
@@ -30,18 +31,7 @@ const Editor = ({
   width = '100%',
   height = '100%',
 }: Props) => {
-  const numberRef = useRef<HTMLUListElement>(null);
   const [content, setContent] = useState(formatJSON(data));
-
-  const renderNumbers = (json: string) => (
-    <Styled.Numbers ref={numberRef}>
-      {Array(getLines(json))
-        .fill(1)
-        .map((_, index) => (
-          <li key={index}>{index + 1}</li>
-        ))}
-    </Styled.Numbers>
-  );
 
   const onChangeEditor = (event: any) => {
     const { selectionStart, selectionEnd, value } = event.target;
@@ -58,19 +48,25 @@ const Editor = ({
     event.target.selectionEnd = selectionStart;
   };
 
-  const onScrollEditor = (event: any) => {
-    numberRef.current?.scrollTo(0, event.target.scrollTop);
-  };
-
   return (
     <Styled.Wrapper width={width} height={height}>
-      {renderNumbers(content)}
-      <Styled.Editor
-        disabled={mode === 'view'}
-        onChange={onChangeEditor}
-        onScroll={onScrollEditor}
-        value={content}
-      ></Styled.Editor>
+      <Highlight {...defaultProps} language="json" code={content}>
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <Styled.Pre className={className} style={style}>
+            {tokens.map((line, i) => (
+              <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
+                <Styled.Number>{i + 1}</Styled.Number>
+                <span>
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token, key })} />
+                  ))}
+                </span>
+              </Styled.Editor>
+            ))}
+          </Styled.Pre>
+        )}
+      </Highlight>
+      <Styled.TextArea onChange={onChangeEditor} value={content} />
     </Styled.Wrapper>
   );
 };

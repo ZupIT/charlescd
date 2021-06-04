@@ -14,16 +14,13 @@
 * limitations under the License.
 */
 
-export const getLines = (content = "") => {
-  const len = content.match(/\n/g)?.length || 0;
-  return len + 1;
-};
-
 export const formatJSON = (jsonStr: string | object) => {
   try {
     const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
     return JSON.stringify(data, null, 2);
-  } catch (e) {}
+  } catch (e) {
+    return "";
+  }
 }
 
 type Key = "{" | "(" | "[" | "'"| '"';
