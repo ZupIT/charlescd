@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/golang-migrate/migrate/v4"
 	pgMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -21,13 +20,11 @@ import (
 
 type persistenceManager struct {
 	actionRepository       action.UseCases
-	datasourceRepository   datasource.UseCases
+	datasourceRepository   repository.DatasourceRepository
 	metricRepository       metric.UseCases
 	metricsGroupRepository metricsgroup.UseCases
 	metricsGroupAction     metricsgroupaction.UseCases
 	pluginRepository       plugin.UseCases
-	metricDispatcher       dispatcher.UseCases
-	actionDispatcher       dispatcher.UseCases
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -69,30 +66,6 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 	return sqlDb, gormDb, nil
 }
 
-func connectMooveDatabase() (*gorm.DB, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		configuration.Get("MOOVE_DB_HOST"),
-		configuration.Get("MOOVE_DB_PORT"),
-		configuration.Get("MOOVE_DB_USER"),
-		configuration.Get("MOOVE_DB_NAME"),
-		configuration.Get("MOOVE_DB_PASSWORD"),
-		configuration.Get("MOOVE_DB_SSL"),
-	))
-	if err != nil {
-		return nil, err
-	}
-
-	gormDb, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
-	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		return nil, err
-	}
-	return gormDb, nil
-}
-
 func runMigrations(sqlDb *sql.DB) error {
 	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
 	dbMigrated, err := migrate.NewWithDatabaseInstance(
@@ -114,17 +87,13 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	actionRepo := action.NewMain(db, pluginRepo)
 
-	datasourceRepo := datasource.NewMain(db, pluginRepo)
+	datasourceRepo := repository.NewDatasourceRepository(db, pluginRepo)
 
 	metricRepo := metric.NewMain(db, datasourceRepo, pluginRepo)
 
 	metricsGroupActionRepo := metricsgroupaction.NewMain(db, pluginRepo, actionRepo)
 
 	metricsGroupRepo := metricsgroup.NewMain(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
-
-	metricDispatcher := dispatcher.NewDispatcher(metricRepo)
-
-	actionDispatcher := dispatcher.NewActionDispatcher(metricsGroupRepo, actionRepo, pluginRepo, metricRepo, metricsGroupActionRepo)
 
 	return persistenceManager{
 		actionRepository:       actionRepo,
@@ -133,7 +102,5 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 		metricsGroupRepository: metricsGroupRepo,
 		metricsGroupAction:     metricsGroupActionRepo,
 		pluginRepository:       pluginRepo,
-		metricDispatcher:       metricDispatcher,
-		actionDispatcher:       actionDispatcher,
 	}, nil
 }

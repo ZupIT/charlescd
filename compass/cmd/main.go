@@ -31,19 +31,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	serviceManager, err := prepareServices()
+	server, err := newServer(persistenceManager)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	server, err := newServer(persistenceManager, serviceManager)
-	if err != nil {
-		log.Fatal(err)
-	}
+	jobManager := prepareJobs(persistenceManager)
 
-	stopChan := make(chan bool, 0)
-	go server.pm.metricDispatcher.Start(stopChan)
-	go server.pm.actionDispatcher.Start(stopChan)
-
+	jobManager.startJobs()
 	log.Fatalln(server.start("8080"))
 }

@@ -21,22 +21,28 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	datasourceInteractor "github.com/ZupIT/charlescd/compass/use_case/datasource"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
 	"net/http"
 
-	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/google/uuid"
 )
 
-func FindAllByWorkspace(datasourceMain datasource.UseCases) echo.HandlerFunc {
+func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
-		if parseErr != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+
+		ctx := echoCtx.Request().Context()
+
+		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		dataSources, dbErr := datasourceMain.FindAllByWorkspace(workspaceUUID)
+		dataSources, dbErr := findAllDatasource.Execute(workspaceId)
 		if dbErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, []error{errors.New("error doing the process")})
 		}
@@ -45,26 +51,37 @@ func FindAllByWorkspace(datasourceMain datasource.UseCases) echo.HandlerFunc {
 	}
 }
 
-func CreateDatasource(datasourceMain datasource.UseCases) echo.HandlerFunc {
+func CreateDatasource(saveDatasource datasourceInteractor.SaveDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		dataSource, err := datasourceMain.Parse(echoCtx.Request().Body)
+		ctx := echoCtx.Request().Context()
+		var dataSource representation.DatasourceRequest
+
+		bindErr := echoCtx.Bind(&dataSource)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
+
+		validationErr := echoCtx.Validate(dataSource)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createDatasource.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+		}
+
+		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID := uuid.MustParse(workspaceID)
-
-		dataSource.WorkspaceID = workspaceUUID
-		if err := datasourceMain.Validate(dataSource); len(err.GetErrors()) > 0 {
+			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		createdDataSource, err := datasourceMain.Save(dataSource)
+		createdDatasource, err := saveDatasource.Execute(dataSource.RequestToDomain(workspaceId))
 		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, createdDataSource)
+		return echoCtx.JSON(http.StatusCreated, representation.FromDomainToResponse(createdDatasource))
 	}
 }
 
@@ -90,13 +107,19 @@ func TestConnection(datasourceMain datasource.UseCases) echo.HandlerFunc {
 	}
 }
 
-func DeleteDatasource(datasourceMain datasource.UseCases) echo.HandlerFunc {
+func DeleteDatasource(deleteDatasource datasourceInteractor.DeleteDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("datasourceID")
-		err := datasourceMain.Delete(id)
+
+		id, parseErr := uuid.Parse(echoCtx.Param("datasourceID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		err := deleteDatasource.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
+
 		return echoCtx.JSON(http.StatusNoContent, nil)
 	}
 }
@@ -104,10 +127,12 @@ func DeleteDatasource(datasourceMain datasource.UseCases) echo.HandlerFunc {
 func GetMetrics(datasourceMain datasource.UseCases) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("datasourceID")
+
 		metrics, err := datasourceMain.GetMetrics(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
+
 		return echoCtx.JSON(http.StatusOK, metrics)
 	}
 }

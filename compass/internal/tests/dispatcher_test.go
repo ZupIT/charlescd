@@ -20,6 +20,7 @@ package tests
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"gorm.io/gorm"
 	"os"
 	"testing"
@@ -27,7 +28,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/plugin"

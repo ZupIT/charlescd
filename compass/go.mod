@@ -4,7 +4,6 @@ go 1.14
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/casbin/casbin/v2 v2.1.2
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0

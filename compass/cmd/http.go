@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/ZupIT/charlescd/compass/use_case/datasource"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
 	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
-	"github.com/casbin/casbin/v2"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -21,9 +21,7 @@ import (
 
 type server struct {
 	pm         persistenceManager
-	sm         serviceManager
 	httpServer *echo.Echo
-	enforcer   *casbin.Enforcer
 }
 
 type customBinder struct{}
@@ -33,16 +31,10 @@ type CustomValidator struct {
 	translator *ut.UniversalTranslator
 }
 
-func newServer(pm persistenceManager, sm serviceManager) (server, error) {
-	enforcer, err := casbinEnforcer()
-	if err != nil {
-		return server{}, err
-	}
+func newServer(pm persistenceManager) (server, error) {
 	return server{
 		pm:         pm,
-		sm:         sm,
 		httpServer: createHttpServerInstance(),
-		enforcer:   enforcer,
 	}, nil
 }
 
@@ -64,15 +56,6 @@ func createHttpServerInstance() *echo.Echo {
 func (s server) start(port string) error {
 	s.registerRoutes()
 	return s.httpServer.Start(fmt.Sprintf(":%s", port))
-}
-
-func casbinEnforcer() (*casbin.Enforcer, error) {
-	enforcer, err := casbin.NewEnforcer("./resources/auth.conf", "./resources/policy.csv")
-	if err != nil {
-		return nil, err
-	}
-
-	return enforcer, nil
 }
 
 func (cb customBinder) Bind(i interface{}, c echo.Context) (err error) {
@@ -133,9 +116,9 @@ func (s server) registerRoutes() {
 			}
 			datasourceHandler := v1.Group("/datasources")
 			{
-				datasourceHandler.GET("", handlers.FindAllByWorkspace(s.pm.datasourceRepository))
-				datasourceHandler.POST("", handlers.CreateDatasource(s.pm.datasourceRepository))
-				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(s.pm.datasourceRepository))
+				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasource.NewFindAllDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.POST("", handlers.CreateDatasource(datasource.NewDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasource.NewDeleteDatasource(s.pm.datasourceRepository)))
 				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(s.pm.datasourceRepository))
 				datasourceHandler.POST("/test-connection", handlers.TestConnection(s.pm.datasourceRepository))
 
