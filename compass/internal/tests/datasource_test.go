@@ -20,6 +20,7 @@ package tests
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"os"
@@ -28,8 +29,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
-
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -55,7 +54,7 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 
 	s.DB.LogMode(dbLog)
 
-	var pluginMain = plugin.NewMain()
+	var pluginMain = repository.NewPluginRepository()
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
 	clearDatabase(s.DB)
 }

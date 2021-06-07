@@ -30,7 +30,7 @@ func (datasourceRequest DatasourceRequest) RequestToDomain(workspaceId uuid.UUID
 	}
 }
 
-func FromDomainToResponse(datasource domain.Datasource) DatasourceResponse {
+func DomainToResponse(datasource domain.Datasource) DatasourceResponse {
 	return DatasourceResponse{
 		BaseModel:   datasource.BaseModel,
 		Name:        datasource.Name,
@@ -38,4 +38,12 @@ func FromDomainToResponse(datasource domain.Datasource) DatasourceResponse {
 		Data:        datasource.Data,
 		WorkspaceID: datasource.WorkspaceID,
 	}
+}
+
+func DomainsToResponses(datasources []domain.Datasource) []DatasourceResponse {
+	var datasourceResponse []DatasourceResponse
+	for _, datasource := range datasources {
+		datasourceResponse = append(datasourceResponse, DomainToResponse(datasource))
+	}
+	return datasourceResponse
 }

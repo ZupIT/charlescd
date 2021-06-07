@@ -24,7 +24,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -54,7 +54,7 @@ func (s *SuiteMetric) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain()
+	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = metricRepo.NewMain(s.DB, datasourceMain, pluginMain)

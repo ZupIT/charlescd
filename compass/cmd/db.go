@@ -8,7 +8,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/golang-migrate/migrate/v4"
 	pgMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -24,7 +23,7 @@ type persistenceManager struct {
 	metricRepository       metric.UseCases
 	metricsGroupRepository metricsgroup.UseCases
 	metricsGroupAction     metricsgroupaction.UseCases
-	pluginRepository       plugin.UseCases
+	pluginRepository       repository.PluginRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -83,7 +82,7 @@ func runMigrations(sqlDb *sql.DB) error {
 }
 
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
-	pluginRepo := plugin.NewMain()
+	pluginRepo := repository.NewPluginRepository()
 
 	actionRepo := action.NewMain(db, pluginRepo)
 

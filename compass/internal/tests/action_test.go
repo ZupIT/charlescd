@@ -20,6 +20,7 @@ package tests
 
 import (
 	"encoding/json"
+	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
@@ -27,7 +28,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -39,7 +39,7 @@ type ActionSuite struct {
 
 	repository action.UseCases
 	actions    action.Action
-	plugins    plugin.UseCases
+	plugins    repository2.PluginRepository
 }
 
 func (s *ActionSuite) SetupSuite() {
@@ -54,7 +54,7 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	s.plugins = plugin.NewMain()
+	s.plugins = repository2.NewPluginRepository()
 	s.repository = action.NewMain(s.DB, s.plugins)
 	clearDatabase(s.DB)
 }

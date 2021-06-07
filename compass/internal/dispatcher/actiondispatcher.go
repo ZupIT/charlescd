@@ -20,6 +20,7 @@ package dispatcher
 
 import (
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"sync"
 	"time"
 
@@ -31,20 +32,19 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 )
 
 type ActionDispatcher struct {
 	metricGroupRepo metricsgroup.UseCases
 	actionRepo      action.UseCases
-	pluginRepo      plugin.UseCases
+	pluginRepo      repository.PluginRepository
 	metricRepo      metric.UseCases
 	groupActionRepo metricsgroupaction.UseCases
 	mux             sync.Mutex
 }
 
-func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo action.UseCases, pluginRepo plugin.UseCases,
+func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo action.UseCases, pluginRepo repository.PluginRepository,
 	metricRepo metric.UseCases, groupActionRepo metricsgroupaction.UseCases) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,

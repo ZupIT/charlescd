@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/use_case/datasource"
+	"github.com/ZupIT/charlescd/compass/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
 	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
 	"github.com/go-playground/locales/en"
@@ -152,7 +153,7 @@ func (s server) registerRoutes() {
 			}
 			pluginHandler := v1.Group("/plugins")
 			{
-				pluginHandler.GET("", handlers.ListPlugins(s.pm.pluginRepository))
+				pluginHandler.GET("", handlers.ListPlugins(plugin.NewListPlugins(s.pm.pluginRepository)))
 			}
 		}
 	}

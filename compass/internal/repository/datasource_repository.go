@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/repository/queries"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
@@ -24,10 +23,10 @@ type DatasourceRepository interface {
 
 type datasourceRepository struct {
 	db         *gorm.DB
-	pluginMain plugin.UseCases
+	pluginMain PluginRepository
 }
 
-func NewDatasourceRepository(db *gorm.DB, pluginMain plugin.UseCases) DatasourceRepository {
+func NewDatasourceRepository(db *gorm.DB, pluginMain PluginRepository) DatasourceRepository {
 	return datasourceRepository{db, pluginMain}
 }
 

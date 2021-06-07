@@ -19,20 +19,21 @@
 package handlers
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	pluginInteractor "github.com/ZupIT/charlescd/compass/use_case/plugin"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func ListPlugins(pluginMain plugin.UseCases) echo.HandlerFunc {
+func ListPlugins(listPlugin pluginInteractor.ListPlugins) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		category := echoCtx.Param("category")
 
-		plugins, err := pluginMain.FindAll(category)
+		plugins, err := listPlugin.Execute(category)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, plugins)
+		return echoCtx.JSON(http.StatusOK, representation.PluginToResponses(plugins))
 	}
 }

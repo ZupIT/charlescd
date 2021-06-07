@@ -19,7 +19,7 @@
 package tests
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
 	utils "github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -30,12 +30,12 @@ import (
 type SuiteDeveloper struct {
 	suite.Suite
 
-	repository plugin.UseCases
+	repository repository2.PluginRepository
 }
 
 func (s *SuiteDeveloper) SetupSuite() {
 	os.Setenv("ENV", "TEST")
-	s.repository = plugin.NewMain()
+	s.repository = repository2.NewPluginRepository()
 }
 
 func TestInitSuiteDeveloper(t *testing.T) {

@@ -19,6 +19,7 @@
 package metricsgroup
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"io"
@@ -26,7 +27,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 )
@@ -53,12 +53,12 @@ type Main struct {
 	db               *gorm.DB
 	metricMain       metric.UseCases
 	datasourceMain   datasource.UseCases
-	pluginMain       plugin.UseCases
+	pluginMain       repository.PluginRepository
 	groupActionsMain metricsgroupaction.UseCases
 }
 
 func NewMain(
-	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain plugin.UseCases, groupActionsMain metricsgroupaction.UseCases,
+	db *gorm.DB, metricMain metric.UseCases, datasourceMain datasource.UseCases, pluginMain repository.PluginRepository, groupActionsMain metricsgroupaction.UseCases,
 ) UseCases {
 	return Main{db, metricMain, datasourceMain, pluginMain, groupActionsMain}
 }

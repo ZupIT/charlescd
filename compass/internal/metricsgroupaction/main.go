@@ -20,7 +20,7 @@ package metricsgroupaction
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -43,10 +43,10 @@ type UseCases interface {
 
 type Main struct {
 	db         *gorm.DB
-	pluginRepo plugin.UseCases
+	pluginRepo repository.PluginRepository
 	actionRepo action.UseCases
 }
 
-func NewMain(db *gorm.DB, pluginRepo plugin.UseCases, actionRepo action.UseCases) UseCases {
+func NewMain(db *gorm.DB, pluginRepo repository.PluginRepository, actionRepo action.UseCases) UseCases {
 	return Main{db, pluginRepo, actionRepo}
 }

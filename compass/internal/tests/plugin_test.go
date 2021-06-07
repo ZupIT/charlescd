@@ -19,10 +19,9 @@
 package tests
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"os"
 	"testing"
-
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -31,12 +30,12 @@ import (
 type SuitePlugins struct {
 	suite.Suite
 
-	repository plugin.UseCases
+	repository repository.PluginRepository
 }
 
 func (s *SuitePlugins) SetupSuite() {
 	os.Setenv("ENV", "TEST")
-	s.repository = plugin.NewMain()
+	s.repository = repository.NewPluginRepository()
 }
 
 func TestInitPlugins(t *testing.T) {
@@ -68,7 +67,7 @@ func (s *SuitePlugins) TestFindAll() {
 		},
 	}
 
-	expectedPlugins := []plugin.Plugin{
+	expectedPlugins := []repository.Plugin{
 		{
 			ID:          "datasourceerrorconnection",
 			Category:    "datasource",

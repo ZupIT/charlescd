@@ -27,7 +27,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -62,7 +62,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain()
+	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
 	actionMain := action.NewMain(s.DB, pluginMain)

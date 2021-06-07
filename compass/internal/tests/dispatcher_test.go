@@ -21,6 +21,7 @@ package tests
 import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"gorm.io/gorm"
 	"os"
 	"testing"
@@ -30,7 +31,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -60,7 +60,7 @@ func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain()
+	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
 	s.repository = dispatcher.NewDispatcher(s.metricMain)

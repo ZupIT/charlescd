@@ -45,7 +45,7 @@ func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource
 			return echoCtx.JSON(http.StatusInternalServerError, []error{errors.New("error doing the process")})
 		}
 
-		return echoCtx.JSON(http.StatusOK, dataSources)
+		return echoCtx.JSON(http.StatusOK, representation.DomainsToResponses(dataSources))
 	}
 }
 
@@ -80,7 +80,7 @@ func CreateDatasource(saveDatasource datasourceInteractor.SaveDatasource) echo.H
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusCreated, representation.FromDomainToResponse(createdDatasource))
+		return echoCtx.JSON(http.StatusCreated, representation.DomainToResponse(createdDatasource))
 	}
 }
 

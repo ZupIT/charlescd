@@ -19,10 +19,10 @@
 package action
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"gorm.io/gorm"
 	"io"
 
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 )
@@ -39,9 +39,9 @@ type UseCases interface {
 
 type Main struct {
 	db         *gorm.DB
-	pluginRepo plugin.UseCases
+	pluginRepo repository.PluginRepository
 }
 
-func NewMain(db *gorm.DB, pluginRepo plugin.UseCases) UseCases {
+func NewMain(db *gorm.DB, pluginRepo repository.PluginRepository) UseCases {
 	return Main{db, pluginRepo}
 }

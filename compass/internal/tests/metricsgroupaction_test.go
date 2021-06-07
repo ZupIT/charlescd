@@ -23,7 +23,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -39,7 +39,7 @@ type MetricsGroupActionSuite struct {
 	DB *gorm.DB
 
 	repository metricsgroupaction.UseCases
-	pluginRepo plugin.UseCases
+	pluginRepo repository2.PluginRepository
 	actionRepo action.UseCases
 	mga        metricsgroupaction.MetricsGroupAction
 }
@@ -56,7 +56,7 @@ func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	s.pluginRepo = plugin.NewMain()
+	s.pluginRepo = repository2.NewPluginRepository()
 	s.actionRepo = action.NewMain(s.DB, s.pluginRepo)
 
 	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)

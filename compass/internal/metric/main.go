@@ -20,7 +20,7 @@ package metric
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"gorm.io/gorm"
@@ -46,11 +46,11 @@ type UseCases interface {
 type Main struct {
 	db             *gorm.DB
 	datasourceMain datasource.UseCases
-	pluginMain     plugin.UseCases
+	pluginMain     repository.PluginRepository
 }
 
 func NewMain(
-	db *gorm.DB, datasourceMain datasource.UseCases, pluginMain plugin.UseCases,
+	db *gorm.DB, datasourceMain datasource.UseCases, pluginMain repository.PluginRepository,
 ) UseCases {
 	return Main{db, datasourceMain, pluginMain}
 }

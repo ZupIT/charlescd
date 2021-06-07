@@ -21,6 +21,7 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
@@ -33,7 +34,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/plugin"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -60,7 +60,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 
 	s.DB.LogMode(dbLog)
 
-	pluginMain := plugin.NewMain()
+	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
 	actionMain := action.NewMain(s.DB, pluginMain)
