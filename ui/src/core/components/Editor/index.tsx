@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { forwardRef, Ref } from 'react';
 import Highlight, { defaultProps } from 'prism-react-renderer';
 import { useRef, useState } from 'react';
 import { formatJSON, handleKeyDown, shouldComplete } from './helper';
@@ -20,79 +21,82 @@ import Styled from './styled';
 
 export interface Props {
   mode?: 'view' | 'edit';
+  name?: string;
   data?: string | object;
   width?: string;
   height?: string;
 }
 
-const Editor = ({
-  mode = 'edit',
-  data = '',
-  width = '100%',
-  height = '100%',
-}: Props) => {
-  const [content, setContent] = useState(formatJSON(data));
-  const editorRef = useRef<HTMLPreElement>(null);
+const Editor = forwardRef(
+  (
+    { mode = 'edit', data = '', width = '100%', height = '100%', name }: Props,
+    ref: Ref<HTMLTextAreaElement>
+  ) => {
+    const [content, setContent] = useState(formatJSON(data));
+    const editorRef = useRef<HTMLPreElement>(null);
 
-  const onChangeEditor = (event: any) => {
-    const { selectionStart, selectionEnd, value } = event.target;
-    const { data } = event.nativeEvent;
+    const onChangeEditor = (event: any) => {
+      const { selectionStart, selectionEnd, value } = event.target;
+      const { data } = event.nativeEvent;
 
-    event.target.value =
-      value.substring(0, selectionStart) +
-      shouldComplete(data) +
-      value.substring(selectionEnd, value.length);
+      event.target.value =
+        value.substring(0, selectionStart) +
+        shouldComplete(data) +
+        value.substring(selectionEnd, value.length);
 
-    setContent(event.target.value);
+      setContent(event.target.value);
 
-    event.target.selectionStart = selectionStart;
-    event.target.selectionEnd = selectionStart;
-  };
+      event.target.selectionStart = selectionStart;
+      event.target.selectionEnd = selectionStart;
+    };
 
-  const onKeyDown = (e: any) => {
-    handleKeyDown(e);
-    setContent(e.target.value);
-  };
+    const onKeyDown = (e: any) => {
+      handleKeyDown(e);
+      setContent(e.target.value);
+    };
 
-  const onScrollTextarea = (event: any) => {
-    editorRef.current.scrollTop = event.target.scrollTop;
-  };
+    const onScrollTextarea = (event: any) => {
+      editorRef.current.scrollTop = event.target.scrollTop;
+    };
 
-  return (
-    <Styled.Wrapper width={width} height={height}>
-      <Highlight {...defaultProps} language="json" code={content}>
-        {({ className, tokens, getLineProps, getTokenProps }) => (
-          <Styled.Pre ref={editorRef} className={className}>
-            {tokens.map((line, i) => (
-              <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
-                <Styled.Number>{i + 1}</Styled.Number>
-                <span>
-                  {line.map((token, key) => {
-                    const { className, children } = getTokenProps({
-                      token,
-                      key,
-                    });
-                    return (
-                      <span key={key} className={className}>
-                        {children}
-                      </span>
-                    );
-                  })}
-                </span>
-              </Styled.Editor>
-            ))}
-          </Styled.Pre>
-        )}
-      </Highlight>
-      <Styled.TextArea
-        spellCheck={false}
-        onScroll={onScrollTextarea}
-        onKeyDown={onKeyDown}
-        onChange={onChangeEditor}
-        value={content}
-      />
-    </Styled.Wrapper>
-  );
-};
+    return (
+      <Styled.Wrapper width={width} height={height}>
+        <Highlight {...defaultProps} language="json" code={content}>
+          {({ className, tokens, getLineProps, getTokenProps }) => (
+            <Styled.Pre ref={editorRef} className={className}>
+              {tokens.map((line, i) => (
+                <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
+                  <Styled.Number>{i + 1}</Styled.Number>
+                  <span>
+                    {line.map((token, key) => {
+                      const { className, children } = getTokenProps({
+                        token,
+                        key,
+                      });
+                      return (
+                        <span key={key} className={className}>
+                          {children}
+                        </span>
+                      );
+                    })}
+                  </span>
+                </Styled.Editor>
+              ))}
+            </Styled.Pre>
+          )}
+        </Highlight>
+        <Styled.TextArea
+          ref={ref}
+          name={name}
+          spellCheck={false}
+          onScroll={onScrollTextarea}
+          onKeyDown={onKeyDown}
+          onChange={onChangeEditor}
+          value={content}
+        />
+      </Styled.Wrapper>
+    );
+  }
+);
 
 export default Editor;

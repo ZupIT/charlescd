@@ -41,6 +41,10 @@ const Wrapper = styled.div<WrapperProps>`
 const Editor = styled.div`
   display: flex;
 
+  :first-child {
+    margin-top: 10px;
+  }
+
   ${({ theme }) =>
     css &&
     `
