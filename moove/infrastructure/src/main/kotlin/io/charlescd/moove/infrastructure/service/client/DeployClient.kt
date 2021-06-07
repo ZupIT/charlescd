@@ -17,7 +17,6 @@
 package io.charlescd.moove.infrastructure.service.client
 
 import io.charlescd.moove.infrastructure.configuration.ButlerConfiguration
-import io.charlescd.moove.infrastructure.configuration.SimpleFeignEncoderConfiguration
 import io.charlescd.moove.infrastructure.service.client.request.DeployRequest
 import io.charlescd.moove.infrastructure.service.client.request.UndeployRequest
 import io.charlescd.moove.infrastructure.service.client.response.*

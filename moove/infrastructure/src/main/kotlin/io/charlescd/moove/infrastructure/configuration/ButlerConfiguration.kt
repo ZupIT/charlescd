@@ -18,16 +18,12 @@ package io.charlescd.moove.infrastructure.configuration
 
 import feign.Client
 import feign.codec.ErrorDecoder
-import org.apache.http.conn.ssl.NoopHostnameVerifier
+import javax.net.ssl.SSLSocketFactory
 import org.apache.http.ssl.SSLContexts
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.Resource
-import java.security.KeyStore
-import javax.net.ssl.SSLSocketFactory
-
 
 @Configuration
 class ButlerConfiguration(
@@ -37,7 +33,7 @@ class ButlerConfiguration(
     val butlerStorePath: String,
     @Value("\${moove.tls.store.path}")
     val mooveStorePath: String,
-    @Value("\${mtls.enabled}")
+    @Value("\${mtls.enabled:true}}")
     val mtlsEnabled: Boolean
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -57,7 +53,7 @@ class ButlerConfiguration(
         val mooveStore = loadFromFile(mooveStorePath)
         val butlerKeyStore = loadFromFile(butlerStorePath)
         val sslContext = SSLContexts.custom().loadKeyMaterial(
-            mooveStore,keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
+            mooveStore, keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
         ).loadTrustMaterial(
             butlerKeyStore, keyStorePassword.toCharArray()
         ).build()
