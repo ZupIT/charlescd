@@ -81,10 +81,8 @@ export const onPressEnter = (e: any) => {
     const insertion = `\n${tabs}`;
     const complete = isEmpty(lastTabs)
       ? `\n`
-      : `${tabs + tabs}\n${tabs + TAB}`;
-    const len = isEmpty(lastTabs) 
-      ? insertion.length
-      : insertion.length + (TAB.length * 2);
+      : `${tabs}\n${lastTabs}`;
+    const len = insertion.length;
 
     insertValue(e, `${insertion + complete}`, len);
 
