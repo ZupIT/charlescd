@@ -30,6 +30,7 @@ import { FIRST, ONE } from './constants';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { copyToClipboard } from 'core/utils/clipboard';
+import { hasPermission } from 'core/utils/auth';
 
 interface Props {
   module: Module;
@@ -122,7 +123,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               isLoading={loading}
               description={component?.name}
               actions={renderAction(component, index)}
-              onClick={() => onSelectComponent(component)}
+              onClick={() => hasPermission('maintenance_write') && onSelectComponent(component)}
             >
               <Styled.Component.Wrapper>
                 <Styled.Component.Info>
