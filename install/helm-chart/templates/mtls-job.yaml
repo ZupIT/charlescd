@@ -1,0 +1,32 @@
+{{ if .Values.mtls.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: {{ .Release.Name }}-{{ .Values.mtls.job.name }}
+    namespace: {{ .Release.Namespace }}
+spec:
+    backoffLimit: 20
+    template:
+        spec:
+            restartPolicy: OnFailure
+            serviceAccountName: mtls-job
+            containers:
+                -   name: {{ .Release.Name }}-{{ .Values.mtls.job.name }}
+                    image: "thallesf/cert-tls-gen:0.2"
+                    imagePullPolicy: Always
+                    env:
+                        - name: NAMESPACE
+                          value: {{ .Release.Namespace }}
+                        - name: DOMAIN
+                          value: {{ .Values.mtls.domain }}
+                        - name: MOOVE_ENABLED
+                          value: "{{ .Values.CharlesApplications.moove.enabled }}"
+                        - name: BUTLER_ENABLED
+                          value: "{{ .Values.CharlesApplications.butler.enabled }}"
+                        - name: KEY_PASSWORD
+                          valueFrom:
+                              secretKeyRef:
+                                  name: application-aes256-key
+                                  key: encryption-key
+{{- end -}}

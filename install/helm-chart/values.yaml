@@ -418,6 +418,9 @@ job:
   name: init-db
 mtls:
   enabled: true
+  domain: charlescd.io
+  job:
+    name: cert-generator
 
 redis:
   enabled: true

@@ -106,6 +106,7 @@ env:
     secretKeyRef:
       name: application-aes256-key
       key: encryption-key
+{{ if .ChartContext.Values.mtls.enabled }}
 - name: TLS_CERT
   valueFrom:
     secretKeyRef:
@@ -121,6 +122,7 @@ env:
     secretKeyRef:
       name: "moove-tls-cert"
       key: "tls.crt"
+{{ end }}
 {{- end -}}
 
 {{- define "test.moove-envs" -}}
