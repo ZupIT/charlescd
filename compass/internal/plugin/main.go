@@ -25,7 +25,7 @@ import (
 
 type UseCases interface {
 	FindAll(category string) ([]Plugin, errors.Error)
-	GetPluginBySrc(id string) (*plugin.Plugin, errors.Error)
+	GetPluginBySrc(id string) (*plugin.Plugin, error)
 }
 
 type Main struct {

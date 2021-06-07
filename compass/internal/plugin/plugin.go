@@ -105,12 +105,11 @@ func (main Main) FindAll(category string) ([]Plugin, errors.Error) {
 	return plugins, nil
 }
 
-func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, errors.Error) {
+func (main Main) GetPluginBySrc(src string) (*plugin.Plugin, error) {
 	pluginsDir := configuration.Get("PLUGINS_DIR")
 	p, err := plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
 	if err != nil {
-		return nil, errors.NewError("Get error", err.Error()).
-			WithOperations("GetPluginBySrc.Open")
+		return nil, err
 	}
 
 	return p, nil

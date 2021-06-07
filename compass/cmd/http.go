@@ -119,9 +119,8 @@ func (s server) registerRoutes() {
 				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasource.NewFindAllDatasource(s.pm.datasourceRepository)))
 				datasourceHandler.POST("", handlers.CreateDatasource(datasource.NewDatasource(s.pm.datasourceRepository)))
 				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasource.NewDeleteDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(s.pm.datasourceRepository))
-				datasourceHandler.POST("/test-connection", handlers.TestConnection(s.pm.datasourceRepository))
-
+				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(datasource.NewGetMetrics(s.pm.datasourceRepository)))
+				datasourceHandler.POST("/test-connection", handlers.TestConnection(datasource.NewTestConnection(s.pm.datasourceRepository)))
 			}
 			metricsGroupHandler := v1.Group("/metrics-groups")
 			{

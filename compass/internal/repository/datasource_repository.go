@@ -9,17 +9,16 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/repository/queries"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type DatasourceRepository interface {
 	FindAllByWorkspace(workspaceID uuid.UUID) ([]domain.Datasource, error)
-	FindById(id string) (domain.Datasource, errors.Error)
+	FindById(id uuid.UUID) (domain.Datasource, error)
 	Save(dataSource domain.Datasource) (domain.Datasource, error)
 	Delete(id uuid.UUID) error
-	GetMetrics(dataSourceID string) (datasource.MetricList, error)
+	GetMetrics(dataSourceID uuid.UUID) (datasource.MetricList, error)
 	TestConnection(pluginSrc string, datasourceData json.RawMessage) error
 }
 
@@ -37,7 +36,7 @@ func (main datasourceRepository) FindAllByWorkspace(workspaceID uuid.UUID) ([]do
 	var err error
 	dataSources := make([]models.DataSource, 0)
 
-	rows, err = main.db.Raw(queries.workspaceDatasourceQuery, workspaceID).Rows()
+	rows, err = main.db.Raw(queries.WorkspaceDatasourceQuery, workspaceID).Rows()
 	if err != nil {
 		return []domain.Datasource{}, err
 	}
@@ -56,15 +55,14 @@ func (main datasourceRepository) FindAllByWorkspace(workspaceID uuid.UUID) ([]do
 	return mapper.DatasourceModelToDomains(dataSources), nil
 }
 
-func (main datasourceRepository) FindById(id string) (domain.Datasource, errors.Error) {
+func (main datasourceRepository) FindById(id uuid.UUID) (domain.Datasource, error) {
 	dataSource := models.DataSource{}
-	row := main.db.Raw(queries.datasourceDecryptedQuery, id).Row()
+	row := main.db.Raw(queries.DatasourceDecryptedQuery, id).Row()
 
 	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
 		&dataSource.WorkspaceID, &dataSource.DeletedAt, &dataSource.PluginSrc)
 	if dbError != nil {
-		return domain.Datasource{}, errors.NewError("Find by id error", dbError.Error()).
-			WithOperations("FindById.ScanRows")
+		return domain.Datasource{}, dbError
 	}
 
 	return mapper.DatasourceModelToDomain(dataSource), nil
@@ -79,28 +77,26 @@ func (main datasourceRepository) Delete(id uuid.UUID) error {
 	return nil
 }
 
-func (main datasourceRepository) GetMetrics(dataSourceID string) (datasource.MetricList, error) {
+func (main datasourceRepository) GetMetrics(dataSourceID uuid.UUID) (datasource.MetricList, error) {
 	dataSourceResult, err := main.FindById(dataSourceID)
 	if err != nil {
-		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindById")
+		return datasource.MetricList{}, err
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		return datasource.MetricList{}, err.WithOperations("GetMetrics.GetPluginBySrc")
+		return datasource.MetricList{}, err
 	}
 
 	getList, lookupErr := plugin.Lookup("GetMetrics")
 	if lookupErr != nil {
-		return datasource.MetricList{}, errors.NewError("Lookup error", lookupErr.Error()).
-			WithOperations("GetMetrics.Lookup")
+		return datasource.MetricList{}, lookupErr
 	}
 
 	configurationData, _ := json.Marshal(dataSourceResult.Data)
 	list, getListErr := getList.(func(configurationData []byte) (datasource.MetricList, error))(configurationData)
 	if getListErr != nil {
-		return datasource.MetricList{}, errors.NewError("GetList error", getListErr.Error()).
-			WithOperations("GetMetrics.getList")
+		return datasource.MetricList{}, getListErr
 	}
 
 	return list, nil
@@ -109,20 +105,18 @@ func (main datasourceRepository) GetMetrics(dataSourceID string) (datasource.Met
 func (main datasourceRepository) TestConnection(pluginSrc string, datasourceData json.RawMessage) error {
 	plugin, err := main.pluginMain.GetPluginBySrc(pluginSrc)
 	if err != nil {
-		return err.WithOperations("TestConnection.GetPluginBySrc")
+		return err
 	}
 
 	testConnection, lookupError := plugin.Lookup("TestConnection")
 	if lookupError != nil {
-		return errors.NewError("Test Conn error", lookupError.Error()).
-			WithOperations("TestConnection.Lookup")
+		return lookupError
 	}
 
 	configurationData, _ := json.Marshal(datasourceData)
 	testConnError := testConnection.(func(configurationData []byte) error)(configurationData)
 	if testConnError != nil {
-		return errors.NewError("Test Conn error", testConnError.Error()).
-			WithOperations("TestConnection.Marshal")
+		return testConnError
 	}
 
 	return nil
@@ -134,7 +128,7 @@ func (main datasourceRepository) Save(dataSource domain.Datasource) (domain.Data
 	entity := models.DataSource{}
 
 	row := main.db.Exec(queries.Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data, dataSource.WorkspaceID)).
-		Raw(queries.datasourceSaveQuery, id).
+		Raw(queries.DatasourceSaveQuery, id).
 		Row()
 
 	dbError := row.Scan(&entity.ID, &entity.Name, &entity.CreatedAt,

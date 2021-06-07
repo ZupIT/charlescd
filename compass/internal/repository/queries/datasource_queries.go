@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const datasourceSaveQuery = `SELECT id,
+const DatasourceSaveQuery = `SELECT id,
 	  							name,
 	  							created_at,
 	  							workspace_id,
@@ -16,7 +16,7 @@ const datasourceSaveQuery = `SELECT id,
 						WHERE id = ?
 						AND deleted_at IS NULL`
 
-var datasourceDecryptedQuery = fmt.Sprintf(`SELECT id,
+var DatasourceDecryptedQuery = fmt.Sprintf(`SELECT id,
 	  							name,
 	  							created_at,
 	  							PGP_SYM_DECRYPT(data, '%s'),
@@ -27,7 +27,7 @@ var datasourceDecryptedQuery = fmt.Sprintf(`SELECT id,
 						WHERE id = ?
 						AND deleted_at IS NULL`, configuration.Get("ENCRYPTION_KEY"))
 
-const workspaceDatasourceQuery = `SELECT id,
+const WorkspaceDatasourceQuery = `SELECT id,
 	  							name,
 	  							created_at,
 	  							workspace_id,

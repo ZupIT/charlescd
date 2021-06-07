@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/pkg/datasource"
 	datasourceInteractor "github.com/ZupIT/charlescd/compass/use_case/datasource"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
@@ -35,7 +34,6 @@ func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-
 		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {
 			logging.LogErrorFromCtx(ctx, err)
@@ -53,6 +51,7 @@ func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource
 
 func CreateDatasource(saveDatasource datasourceInteractor.SaveDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		ctx := echoCtx.Request().Context()
 		var dataSource representation.DatasourceRequest
 
@@ -90,15 +89,16 @@ type TestConnectionData struct {
 	Data      json.RawMessage `json:"data"`
 }
 
-func TestConnection(datasourceMain datasource.UseCases) echo.HandlerFunc {
+func TestConnection(testConnection datasourceInteractor.TestConnection) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		var newTestConnection TestConnectionData
 		err := json.NewDecoder(echoCtx.Request().Body).Decode(&newTestConnection)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, []error{err})
 		}
 
-		testConnErr := datasourceMain.TestConnection(newTestConnection.PluginSrc, newTestConnection.Data)
+		testConnErr := testConnection.Execute(newTestConnection.PluginSrc, newTestConnection.Data)
 		if testConnErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, testConnErr)
 		}
@@ -124,11 +124,15 @@ func DeleteDatasource(deleteDatasource datasourceInteractor.DeleteDatasource) ec
 	}
 }
 
-func GetMetrics(datasourceMain datasource.UseCases) echo.HandlerFunc {
+func GetMetrics(getMetrics datasourceInteractor.GetMetrics) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("datasourceID")
 
-		metrics, err := datasourceMain.GetMetrics(id)
+		id, parseErr := uuid.Parse(echoCtx.Param("datasourceID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		metrics, err := getMetrics.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
