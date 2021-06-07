@@ -20,7 +20,7 @@ import { Webhook } from 'modules/Settings/Credentials/Sections/Webhook/interface
 
 export interface Workspace {
   id: string;
-  name?: string;
+  name: string;
   status?: string;
   createdAt?: string;
   circleMatcherUrl?: string;
@@ -29,6 +29,7 @@ export interface Workspace {
   deploymentConfiguration?: DeploymentConfiguration;
   metricConfiguration?: MetricConfiguration;
   registryConfiguration?: Configuration;
+  permissions?: string[];
   webhookConfiguration?: Webhook[];
 }
 

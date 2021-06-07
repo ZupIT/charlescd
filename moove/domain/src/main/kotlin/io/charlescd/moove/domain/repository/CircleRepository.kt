@@ -36,6 +36,8 @@ interface CircleRepository {
 
     fun find(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest): Page<Circle>
 
+    fun find(name: String?, except: String?, workspaceId: String, pageRequest: PageRequest): Page<SimpleCircle>
+
     fun findDefaultByWorkspaceId(workspaceId: String): Optional<Circle>
 
     fun countGroupedByStatus(workspaceId: String): List<CircleCount>
@@ -55,4 +57,6 @@ interface CircleRepository {
     fun countPercentageByWorkspaceId(workspaceId: String): Int
 
     fun findCirclesPercentage(workspaceId: String, name: String?, active: Boolean, pageRequest: PageRequest?): Page<Circle>
+
+    fun existsByNameAndWorkspaceId(name: String, workspaceId: String): Boolean
 }

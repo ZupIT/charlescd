@@ -23,6 +23,7 @@ import io.charlescd.moove.domain.repository.CircleRepository
 import io.charlescd.moove.infrastructure.repository.mapper.CircleExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleHistoryExtractor
 import io.charlescd.moove.infrastructure.repository.mapper.CircleMetricExtractor
+import io.charlescd.moove.infrastructure.repository.mapper.CircleSimpleExtractor
 import java.sql.Types
 import java.time.Duration
 import java.util.*
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Repository
 class JdbcCircleRepository(
     private val jdbcTemplate: JdbcTemplate,
     private val circleExtractor: CircleExtractor,
+    private val circleSimpleExtractor: CircleSimpleExtractor,
     private val circleMetricExtractor: CircleMetricExtractor,
     private val circleHistoryExtractor: CircleHistoryExtractor
 ) : CircleRepository {
@@ -95,8 +97,31 @@ class JdbcCircleRepository(
         )
     }
 
+    override fun find(name: String?, except: String?, workspaceId: String, pageRequest: PageRequest): Page<SimpleCircle> {
+        val result = this.jdbcTemplate.query(
+            createQueryLimit(name, except),
+            createParametersSimpleCircleArray(name, except, workspaceId, pageRequest),
+            circleSimpleExtractor
+        )
+
+        return Page(
+            result?.toList() ?: emptyList(),
+            pageRequest.page,
+            pageRequest.size,
+            executeSimpleCircleCountQuery(name, except, workspaceId) ?: 0
+        )
+    }
+
     private fun createQueryLimit(name: String?, active: Boolean?): String {
         val query = createQuery(name, active)
+        query.appendln("LIMIT ?")
+            .appendln("OFFSET ?")
+
+        return query.toString()
+    }
+
+    private fun createQueryLimit(name: String?, except: String?): String {
+        val query = createQuery(name, except)
         query.appendln("LIMIT ?")
             .appendln("OFFSET ?")
 
@@ -121,10 +146,44 @@ class JdbcCircleRepository(
         deleteCircleById(id)
     }
 
+    override fun existsByNameAndWorkspaceId(name: String, workspaceId: String): Boolean {
+        val baseCountQuery = """
+                SELECT count(*) AS total
+                FROM circles 
+                WHERE 1 = 1
+                """
+        val countStatement = StringBuilder(baseCountQuery)
+            .appendln("AND circles.workspace_id = ?")
+            .appendln("AND circles.name = ?")
+            .toString()
+        return applyCountQuery(
+            countStatement, arrayOf(workspaceId, name))
+    }
+
+    private fun applyCountQuery(statement: String, params: Array<String>): Boolean {
+        val count = this.jdbcTemplate.queryForObject(
+            statement,
+            params
+        ) { rs, _ -> rs.getInt(1) }
+        return count != null && count >= 1
+    }
+
     private fun createParametersArray(name: String?, active: Boolean?, workspaceId: String, pageRequest: PageRequest? = null): Array<Any> {
         val parameters = ArrayList<Any>()
         if (active != null && !active) parameters.add(workspaceId)
         name?.let { parameters.add("%$name%") }
+        parameters.add(workspaceId)
+        pageRequest?.let {
+            parameters.add(pageRequest.size)
+            parameters.add(pageRequest.offset())
+        }
+        return parameters.toTypedArray()
+    }
+
+    private fun createParametersSimpleCircleArray(name: String?, except: String?, workspaceId: String, pageRequest: PageRequest? = null): Array<Any> {
+        val parameters = ArrayList<Any>()
+        name?.let { parameters.add("%$name%") }
+        except?.let { parameters.add(except) }
         parameters.add(workspaceId)
         pageRequest?.let {
             parameters.add(pageRequest.size)
@@ -144,6 +203,10 @@ class JdbcCircleRepository(
         return executeCircleCountQuery(name, workspaceId)
     }
 
+    private fun executeSimpleCircleCountQuery(name: String?, except: String?, workspaceId: String): Int? {
+        return executeCircleSimpleCountQuery(name, except, workspaceId)
+    }
+
     private fun createQuery(name: String?, active: Boolean?): StringBuilder {
         if (active == null) {
             return createCircleQuery(name)
@@ -153,6 +216,10 @@ class JdbcCircleRepository(
             true -> createActiveCircleQuery(name)
             else -> createInactiveCircleQuery(name)
         }
+    }
+
+    private fun createQuery(name: String?, except: String?): StringBuilder {
+        return createSimpleCircleQuery(name, except)
     }
 
     private fun deleteCircleById(id: String) {
@@ -260,6 +327,26 @@ class JdbcCircleRepository(
         return this.jdbcTemplate.queryForObject(
             statement.toString(),
             createParametersArray(name, true, workspaceId)
+        ) { rs, _ ->
+            rs.getInt(1)
+        }
+    }
+
+    private fun executeCircleSimpleCountQuery(name: String?, except: String?, workspaceId: String): Int? {
+        val statement = StringBuilder(
+            """
+                SELECT DISTINCT COUNT(*)
+                FROM circles c                    
+                WHERE 1 = 1
+            """
+        )
+        name?.let { statement.appendln("AND c.name ILIKE ?") }
+        except?.let { statement.appendln("AND c.id <> ?") }
+        statement.appendln("AND c.workspace_id = ?")
+
+        return this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersSimpleCircleArray(name, except, workspaceId)
         ) { rs, _ ->
             rs.getInt(1)
         }
@@ -426,6 +513,30 @@ class JdbcCircleRepository(
         )
 
         name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        statement.appendln("AND circles.workspace_id = ?")
+        statement.appendln("ORDER BY circles.name")
+
+        return statement
+    }
+
+    private fun createSimpleCircleQuery(name: String?, except: String?): StringBuilder {
+        val statement = StringBuilder(
+            """
+                    SELECT circles.id                  AS circle_id,
+                           circles.name                AS circle_name,
+                           circles.reference           AS circle_reference,
+                           circles.created_at          AS circle_created_at,
+                           circles.imported_kv_records AS circle_imported_kv_records,
+                           circles.imported_at         AS circle_imported_at,
+                           circles.default_circle      AS circle_default,
+                           circles.workspace_id        AS circle_workspace_id                          
+                    FROM circles                             
+                    WHERE 1 = 1
+                """
+        )
+
+        name?.let { statement.appendln("AND circles.name ILIKE ?") }
+        except?.let { statement.appendln("AND circles.id <> ?") }
         statement.appendln("AND circles.workspace_id = ?")
         statement.appendln("ORDER BY circles.name")
 

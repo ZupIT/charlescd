@@ -11,7 +11,7 @@ on:
     tags:
       - '!*'
   pull_request:
-    branches: [ main ]
+    branches: [ main, charlescd-release-*.0 ]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'utils/matcher-s3-sync/**'

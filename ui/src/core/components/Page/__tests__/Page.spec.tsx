@@ -44,7 +44,7 @@ test('render circles Page placeholder', () => {
   );
 
   const placeholderIcon = screen.getByTestId('icon-placeholder-circles');
-  const placeholderCards = screen.getByTestId('circles');
+  const placeholderCards = screen.getByTestId('modules');
   const placeholderTitle = screen.getByText('Tilte');
   const placeholderSubtitle = screen.getByText('Subtitle');
 

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import toString from 'lodash/toString';
-import filter from 'lodash/filter';
 import Card from 'core/components/Card';
 import Dropdown from 'core/components/Dropdown';
 import Icon from 'core/components/Icon';
@@ -35,12 +34,25 @@ interface Props {
   form: string;
   setForm: Function;
   data?: Webhook[];
+  onSave: () => void;
 }
 
-const SectionWebhook = ({ form, setForm, data }: Props) => {
+const SectionWebhook = ({ form, setForm, onSave, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
   const [webhook, setWebhook] = useState<Webhook>();
   const { remove } = useWebhook();
+  
+  useEffect(() => {
+    if (webhooks !== data) {
+      setWebhooks(data);
+    }
+  }, [webhooks, data]);
+
+  useEffect(() => {
+    if (form === null) {
+      setWebhook(null);
+    }
+  }, [form]);
 
   const getStatus = (status: number): string => (
     status === HTTP_STATUS.teapot ? '' : toString(status)
@@ -48,10 +60,10 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
 
   const onDelete = async (id: string) => {
     await remove(id);
-    setWebhooks(filter(webhooks, item => item.id !== id));
+    onSave();
   };
 
-  const onEdit = (webhook: Webhook) => {
+  const onEdit = async (webhook: Webhook) => {
     setWebhook(webhook);
     setForm(FORM_WEBHOOK);
   };
@@ -100,7 +112,13 @@ const SectionWebhook = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_WEBHOOK) && (
       <Layer action={() => setForm(null)}>
-        <FormWebhook onFinish={() => setForm(null)} data={webhook} />
+        <FormWebhook
+          onFinish={() => {
+            onSave();
+            setForm(null);
+          }}
+          data={webhook}
+        />
       </Layer>
     );
 

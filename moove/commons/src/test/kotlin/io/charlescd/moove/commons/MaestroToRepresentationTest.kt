@@ -178,7 +178,6 @@ class MaestroToRepresentationTest {
         every { build.id } returns "build-id"
         val user = createUser()
         val component = createComponent(createModule(user))
-        println(component.id)
         val representation = component.toRepresentation()
 
         assertNotNull(representation)

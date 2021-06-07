@@ -17,7 +17,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { waitFor } from 'unit-test/testUtils';
 import { FetchMock } from 'jest-fetch-mock';
-import { useCreateUser, useUpdateName, useUser, useWorkspacesByUser, useUsers } from '../hooks';
+import { useCreateUser, useUpdateName, useUser, useUsers } from '../hooks';
 import { NewUser, User } from '../interfaces/User';
 import {userPagination} from './fixtures';
 
@@ -45,23 +45,6 @@ const user = {
   "createdAt": "12/12/2020",
   "root": true
 }
-
-const workspaces = [
-  {
-      id: "123",
-      name: "Charles",
-      permissions: [
-          "deploy_write",
-          "modules_read",
-          "hypothesis_write",
-          "hypothesis_read",
-          "modules_write",
-          "circles_read",
-          "circles_write",
-          "maintenance_write"
-      ]
-  }
-]
 
 test('create a new user', async () => {
   (fetch as FetchMock).mockResponseOnce(JSON.stringify(newUser));
@@ -106,12 +89,13 @@ test('useUpdateName hook trigger promise success', async () => {
   expect(result.current.status).toEqual('resolved');
 });
 
-test('useUpdateName hook trigger promise error', async () => {
+test('useUpdateName hook trigger promise rejected', async () => {
   (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
-
   const { result } = renderHook(() => useUpdateName());
 
-  await act(async () => result.current.updateNameById(newUser.id, newUser.name));
+  try {
+    await act(() => result.current.updateNameById(newUser.id, newUser.name));
+  } catch (e) { }
 
   expect(result.current.status).toEqual('rejected');
 });
@@ -141,36 +125,6 @@ test('should throw an error in useUser', async () => {
 
   await act(async () => {
     response = await current.findByEmail(user.email);
-  });
-
-  expect(response).toBeUndefined();
-});
-
-test('should get workspaces of a user (which is saved in profile of local storage)', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify(workspaces));
-
-  const { result } = renderHook(() => useWorkspacesByUser());
-  const { current } = result;
-
-  let response: Promise<User>;
-
-  await act(async () => {
-    response = await current.findWorkspacesByUser(user.id);
-  });
-
-  expect(response).toMatchObject(workspaces);
-});
-
-test('should throw an error in userWorkspacesByUser', async () => {
-  (fetch as FetchMock).mockRejectedValue(new Response(JSON.stringify({})));
-
-  const { result } = renderHook(() => useWorkspacesByUser());
-  const { current } = result;
-
-  let response: Promise<User>;
-
-  await act(async () => {
-    response = await current.findWorkspacesByUser(user.id);
   });
 
   expect(response).toBeUndefined();

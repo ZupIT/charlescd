@@ -32,6 +32,7 @@ describe('DeploymentController v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let manager: EntityManager
+
   beforeAll(async() => {
     const module = Test.createTestingModule({
       imports: [
@@ -197,6 +198,63 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     expect(executionsCount[1]).toEqual(1)
     const execution = await manager.findOneOrFail(Execution, { relations: ['deployment'] })
     expect(execution.deployment.id).toEqual(response.body.id)
+  })
+
+  it('returns bad request when tag not respect the dns label format ', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'default',
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      circle: {
+        id: '333365f8-bb29-49f7-bf2b-3ec956a71583',
+        default: false
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'UPPER-tag',
+          componentName: 'component-name'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+    }
+    const expectedError = {
+      errors: [
+        {
+          title: 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'components/0'
+          },
+          status: 400
+        }
+      ]
+    }
+    const response = await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'ab1c7726-a274-4fc3-9ec1-44e3563d58af')
+
+    expect(response.body).toEqual(expectedError)
+
   })
 
   it('returns a bad request error when the git token decryption fail', async() => {
@@ -498,6 +556,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
+
     const deployment = await manager.findOneOrFail(DeploymentEntityV2, response.body.id, { relations: ['components'] })
     expect(deployment.components.map(c => c.hostValue)).toEqual(['host-value-1'])
     expect(deployment.components.map(c => c.gatewayName)).toEqual(['gateway-name-1'])
@@ -575,8 +634,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           helmRepository: UrlConstants.helmRepository,
 
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'differentTag',
+          buildImageUrl: 'imageurl.com:some-tag',
+          buildImageTag: 'different-tag',
           componentName: 'my-component',
           hostValue: 'host-value-1',
           gatewayName: 'gateway-name-1'
@@ -585,8 +644,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           helmRepository: UrlConstants.helmRepository,
 
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
+          buildImageUrl: 'imageurl2.com:another-tag',
+          buildImageTag: 'another-tag',
           componentName: 'my-other-component'
         }
       ],
@@ -636,8 +695,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'someTag',
+          buildImageUrl: 'imageurl.com:some-tag',
+          buildImageTag: 'some-tag',
           componentName: 'my-component',
           hostValue: 'host-value-1',
           gatewayName: 'gateway-name-1'
@@ -645,8 +704,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
+          buildImageUrl: 'imageurl2.com:another-tag',
+          buildImageTag: 'another-tag',
           componentName: 'my-other-component'
         }
       ],
@@ -683,7 +742,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       errors: [
         {
           title: 'Invalid circle id.',
-          detail: 'Circle already has an active default deployment in a different namespace.',
+          detail: 'Namespace already has an active default deployment.',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -730,8 +789,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'someTag',
+          buildImageUrl: 'imageurl.com:some-tag',
+          buildImageTag: 'some-tag',
           componentName: 'my-component',
           hostValue: 'host-value-1',
           gatewayName: 'gateway-name-1'
@@ -739,8 +798,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
+          buildImageUrl: 'imageurl2.com:another-tag',
+          buildImageTag: 'another-tag',
           componentName: 'my-other-component'
         }
       ],
@@ -756,8 +815,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       [
         new ComponentEntityV2(
           UrlConstants.helmRepository,
-          'currenttag',
-          'imageurl.com:currenttag',
+          'current-tag',
+          'imageurl.com:current-tag',
           'my-component',
           '777765f8-bb29-49f7-bf2b-3ec956a71583',
           'host-value-1',
@@ -805,8 +864,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'someTag',
+          buildImageUrl: 'imageurl.com:some-tag',
+          buildImageTag: 'some-tag',
           componentName: 'my-component',
           hostValue: 'host-value-1',
           gatewayName: 'gateway-name-1'
@@ -814,8 +873,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
+          buildImageUrl: 'imageurl2.com:another-tag',
+          buildImageTag: 'another-tag',
           componentName: 'my-other-component'
         }
       ],
@@ -873,8 +932,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'someTag',
+          buildImageUrl: 'imageurl.com:some-tag',
+          buildImageTag: 'some-tag',
           componentName: 'my-component',
           hostValue: 'host-value-1',
           gatewayName: 'gateway-name-1'
@@ -882,8 +941,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         {
           helmRepository: UrlConstants.helmRepository,
           componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
+          buildImageUrl: 'imageurl2.com:another-tag',
+          buildImageTag: 'another-tag',
           componentName: 'my-other-component'
         }
       ],
@@ -912,92 +971,6 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
-      .expect(response => {
-        expect(response.body).toEqual(errorResponse)
-      })
-  })
-
-  it('returns an error when there is one active default deployment with the same circle id on a different namespace', async() => {
-    const createDeploymentRequest = {
-      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
-      namespace: 'some-namespace',
-      circle: {
-        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
-        default: true
-      },
-      git: {
-        token: Buffer.from('123123').toString('base64'),
-        provider: 'GITHUB'
-      },
-      components: [
-        {
-          helmRepository: UrlConstants.helmRepository,
-          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl.com:someTag',
-          buildImageTag: 'someTag',
-          componentName: 'my-component',
-          hostValue: 'host-value-1',
-          gatewayName: 'gateway-name-1'
-        },
-        {
-          helmRepository: UrlConstants.helmRepository,
-          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          buildImageUrl: 'imageurl2.com:anotherTag',
-          buildImageTag: 'anotherTag',
-          componentName: 'my-other-component'
-        }
-      ],
-      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
-    }
-
-    const sameCircleDiffNamespaceActiveDeployment = new DeploymentEntityV2(
-      '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3',
-      '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      'ad03d665-f689-42aa-b1de-d19653e89b86',
-      UrlConstants.deploymentCallbackUrl,
-      [
-        new ComponentEntityV2(
-          UrlConstants.helmRepository,
-          'currenttag',
-          'imageurl.com:currenttag',
-          'my-component',
-          '777765f8-bb29-49f7-bf2b-3ec956a71583',
-          'host-value-1',
-          'gateway-name-1',
-          []
-        )
-      ],
-      true,
-      'default',
-      120,
-    )
-    sameCircleDiffNamespaceActiveDeployment.current = true
-
-    await manager.save(sameCircleDiffNamespaceActiveDeployment)
-
-    const errorResponse = {
-      errors: [
-        {
-          title: 'Invalid namespace',
-          detail: 'Circle already has an active default deployment in a different namespace.',
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          },
-          source: {
-            pointer: 'namespace'
-          },
-          status: 409
-        }
-      ]
-    }
-
-    await request(app.getHttpServer())
-      .post('/v2/deployments')
-      .send(createDeploymentRequest)
-      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-      .expect(409)
       .expect(response => {
         expect(response.body).toEqual(errorResponse)
       })

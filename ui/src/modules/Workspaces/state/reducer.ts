@@ -35,6 +35,7 @@ export const workspaceInitialState: WorkspaceState = {
     status: WORKSPACE_STATUS.COMPLETE,
     createdAt: ''
   },
+  permissions: [],
   status: 'idle'
 };
 

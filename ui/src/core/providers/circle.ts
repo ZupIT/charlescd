@@ -143,3 +143,15 @@ export const findAllCirclesWithoutActive = (
 
   return baseRequest(`${endpoint}?${params}`);
 };
+
+export const findAllCirclesSimple = (
+  filter: CircleFilter = initialCircleFilter
+) => {
+  const params = new URLSearchParams({
+    size: `${DEFAULT_PAGE_SIZE}`,
+    name: filter?.name,
+    except: filter?.id
+  });
+
+  return baseRequest(`${endpoint}/simple?${params}`);
+};

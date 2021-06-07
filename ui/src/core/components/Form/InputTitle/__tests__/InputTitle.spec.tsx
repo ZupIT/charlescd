@@ -41,7 +41,7 @@ test('render inputTitle component in view mode', () => {
   };
 
   render(
-    <InputTitle name={props.name} defaultValue={props.defaultValue} />
+    <InputTitle name={props.name} defaultValue={props.defaultValue} resume={true} />
   );
 
   const saveButton = screen.queryByText('Save');

@@ -25,7 +25,10 @@ import io.charlescd.moove.application.circle.CreateCircleInteractor
 import io.charlescd.moove.application.circle.request.CreateCircleRequest
 import io.charlescd.moove.application.circle.response.CircleResponse
 import io.charlescd.moove.domain.Circle
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.Workspace
+import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.service.CircleMatcherService
 import javax.inject.Named
 import javax.transaction.Transactional
@@ -48,7 +51,14 @@ open class CreateCircleInteractorImpl(
 
     private fun createCircleOnCircleMatcher(workspaceId: String, circle: Circle) {
         val workspace = workspaceService.find(workspaceId)
+        checkIfWorkspaceHasMatcherUrl(workspace)
         this.circleMatcherService.create(circle, workspace.circleMatcherUrl!!)
+    }
+
+    private fun checkIfWorkspaceHasMatcherUrl(workspace: Workspace) {
+        if (!workspace.hasCircleMatcher()) {
+            throw BusinessException.of(MooveErrorCode.WORKSPACE_MATCHER_URL_IS_MISSING)
+        }
     }
 
     private fun createCircle(

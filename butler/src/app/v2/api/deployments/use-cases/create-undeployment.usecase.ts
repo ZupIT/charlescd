@@ -24,6 +24,7 @@ import { ReadUndeploymentDto } from '../dto/read-undeployment.dto'
 import { DeploymentEntityV2 as DeploymentEntity } from '../entity/deployment.entity'
 import { Execution } from '../entity/execution.entity'
 import { ExecutionTypeEnum } from '../enums'
+import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { ComponentsRepositoryV2 } from '../repository'
 
 @Injectable()
@@ -55,12 +56,21 @@ export class CreateUndeploymentUseCase {
 
   private async deleteDeploymentCRD(deployment: DeploymentEntity) {
     const activeComponents = await this.componentsRepository.findActiveComponents()
+    let status = DeploymentStatusEnum.UNDEPLOY_FAILED
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
       await this.k8sClient.applyUndeploymentCustomResource(deployment)
+      status = DeploymentStatusEnum.UNDEPLOYED
     } catch (error) {
       this.consoleLoggerService.error('ERROR_DELETING_DEPLOYMENT_CRD')
       throw error
+    } finally {
+      await this.mooveService.notifyDeploymentStatusV2(
+        deployment.id,
+        status,
+        deployment.callbackUrl,
+        deployment.circleId
+      )
     }
   }
 

@@ -23,7 +23,7 @@ import isUndefined from 'lodash/isUndefined';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
-import { useCircle, useCirclesActive } from 'modules/Circles/hooks';
+import { useCircle, useCircleSimple } from 'modules/Circles/hooks';
 import { normalizeSelectOptions } from 'core/utils/select';
 import {
   createActionPayload,
@@ -61,7 +61,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [selectedAction, setSelectedAction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
-  const { getCirclesData } = useCirclesActive();
+  const { getCirclesSimple } = useCircleSimple();
   const {
     getActionGroup,
     actionData,
@@ -127,11 +127,11 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   };
 
   const loadCirclesByName = debounce(
-    name =>
-      getCirclesData({ name }).then(response => {
+    (name) =>
+      getCirclesSimple({ name, id: circleId }).then(response => {
         const options = normalizeSelectOptions(response.content);
         setCurrentCircleOptions(options);
-        return options; 
+        return options;
       }
       ),
     500

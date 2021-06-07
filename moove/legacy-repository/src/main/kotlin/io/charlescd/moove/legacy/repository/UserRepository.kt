@@ -19,10 +19,17 @@ package io.charlescd.moove.legacy.repository
 import io.charlescd.moove.legacy.repository.entity.User
 import java.util.*
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface UserRepository : JpaRepository<User, String> {
 
     fun findByEmail(email: String): Optional<User>
 
     fun findBySystemTokenId(systemTokenId: String): Optional<User>
+
+    @Modifying
+    @Query("delete from user_groups_users ug where ug.user_id=:id", nativeQuery = true)
+    fun deleteFromUserGroupById(@Param("id") id: String): Unit
 }

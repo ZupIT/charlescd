@@ -77,10 +77,10 @@ export const useFindModule = (): {
   useEffect(() => {
     (async () => {
       if (error) {
-        const e = await error.json();
+        const e = await error?.json?.();
         dispatch(
           toogleNotification({
-            text: `${error.status}: ${e?.message}`,
+            text: `${error?.status}: ${e?.message}`,
             status: 'error'
           })
         );
@@ -167,16 +167,23 @@ export const useDeleteModule = (
   useEffect(() => {
     (async () => {
       if (error) {
-        const e = await error.json();
+        const e = await error?.json?.();
         dispatch(
           toogleNotification({
             text: `${error.status}: ${e?.message}`,
             status: 'error'
           })
         );
+      } else if(response) {
+        dispatch(
+          toogleNotification({
+            text: `The module ${module?.name} has been deleted`,
+            status: 'success'
+          })
+        );
       }
     })();
-  }, [dispatch, error]);
+  }, [dispatch, error, response, module]);
 
   return {
     removeModule,

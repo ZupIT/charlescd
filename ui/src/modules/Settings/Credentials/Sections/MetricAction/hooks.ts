@@ -16,6 +16,7 @@
 
 import { useState, useCallback } from 'react';
 import { useFetchData, useFetchStatus } from 'core/providers/base/hooks';
+import { HTTP_STATUS } from 'core/enums/HttpStatus';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import {
   getAllActions,
@@ -119,6 +120,7 @@ export const useCreateAction = () => {
   const createActionPayload = useFetchData<ActionPayload>(createActionRequest);
   const status = useFetchStatus();
   const [validationError, setValidationError] = useState<ValidationError>();
+  const dispatch = useDispatch();
 
   const createAction = useCallback(
     async (actionPayload: ActionPayload) => {
@@ -131,13 +133,29 @@ export const useCreateAction = () => {
         return saveActionResponse;
       } catch (e) {
         status.rejected();
+
+        if(e.status === HTTP_STATUS.gatewayTimeout) {
+          dispatch(
+            toogleNotification({
+              text: 'Gateway timeout',
+              status: 'error'
+            })
+          );
+        }
+
         e.text().then((errorMessage: string) => {
           const parsedError = JSON.parse(errorMessage);
           setValidationError(parsedError);
+          dispatch(
+            toogleNotification({
+              text: parsedError?.errors?.[0]?.detail,
+              status: 'error'
+            })
+          );
         });
       }
     },
-    [createActionPayload, status]
+    [createActionPayload, status, dispatch]
   );
 
   return {

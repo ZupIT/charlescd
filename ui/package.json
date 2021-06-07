@@ -89,7 +89,7 @@
     "debounce-promise": "^3.1.2",
     "jest-fetch-mock": "^3.0.3",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mutationobserver-shim": "^0.3.7",
     "react": "^17.0.1",
     "react-ace": "^8.1.0",
