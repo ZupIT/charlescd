@@ -49,18 +49,22 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
 
   const renderAction = (component: Component, index: number) => (
     <Styled.Dropdown color="light">
-      <Dropdown.Item
-        icon="edit"
-        name="Edit"
-        onClick={() => onSelectComponent(component)}
-      />
+      <Can I="write" a="modules" passThrough>
+        <Dropdown.Item
+          icon="edit"
+          name="Edit"
+          onClick={() => onSelectComponent(component)}
+        />
+      </Can>
       {(index !== FIRST || module.components.length > ONE)
         && (
-          <Dropdown.Item
-            icon="delete"
-            name="Delete"
-            onClick={() => removeComponent(module?.id, component?.id)}
-          />
+          <Can I="write" a="modules" passThrough>
+            <Dropdown.Item
+              icon="delete"
+              name="Delete"
+              onClick={() => removeComponent(module?.id, component?.id)}
+            />
+          </Can>
         )
       }
       <Dropdown.Item
