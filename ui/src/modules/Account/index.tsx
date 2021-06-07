@@ -88,7 +88,7 @@ const Account = () => {
       {renderModal()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
+          <Avatar key={currentUser.id} size={68} name={currentUser?.name} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
