@@ -13,15 +13,13 @@ spec:
             serviceAccountName: mtls-job
             containers:
                 -   name: {{ .Release.Name }}-{{ .Values.mtls.job.name }}
-                    image: "thallesf/cert-tls-gen:0.2"
+                    image: "thallesf/cert-tls-gen:0.0.4"
                     imagePullPolicy: Always
                     env:
                         - name: NAMESPACE
                           value: {{ .Release.Namespace }}
-                        - name: BUTLER_DOMAIN
-                          value: {{ Values.mtls.butler.domain }}
-                        - name: MOOVE_DOMAIN
-                            value: {{ Values.mtls.moove.domain }}
+                        - name: DOMAIN
+                          value: {{ .Values.mtls.domain }}
                         - name: KEY_PASSWORD
                           valueFrom:
                               secretKeyRef:
