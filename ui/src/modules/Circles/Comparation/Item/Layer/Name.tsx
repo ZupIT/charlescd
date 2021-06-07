@@ -21,6 +21,7 @@ import useForm from 'core/hooks/useForm';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import { isRequired, maxLength } from 'core/utils/validations';
+import { hasPermission } from 'core/utils/auth';
 
 interface Props {
   name: string;
@@ -57,7 +58,7 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
             defaultValue={name}
             isDisabled={!!errors.name}
             resume
-            readOnly={isDefault}
+            readOnly={isDefault || !hasPermission('maintenance_write')}
           />
           {errors.name && (
             <Styled.FieldErrorWrapper>
