@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { forwardRef, Ref } from 'react';
+import { forwardRef, Ref, useEffect } from 'react';
 import Highlight, { defaultProps } from 'prism-react-renderer';
 import { useRef, useState } from 'react';
 import { formatJSON, handleKeyDown, shouldComplete } from './helper';
@@ -32,8 +32,12 @@ const Editor = forwardRef(
     { mode = 'edit', data = '', width = '100%', height = '100%', name }: Props,
     ref: Ref<HTMLTextAreaElement>
   ) => {
-    const [content, setContent] = useState(formatJSON(data));
+    const [content, setContent] = useState('');
     const editorRef = useRef<HTMLPreElement>(null);
+
+    useEffect(() => {
+      setContent(formatJSON(data));
+    }, [data]);
 
     const onChangeEditor = (event: any) => {
       const { selectionStart, selectionEnd, value } = event.target;
@@ -90,6 +94,7 @@ const Editor = forwardRef(
           name={name}
           spellCheck={false}
           onScroll={onScrollTextarea}
+          readOnly={mode === 'view'}
           onKeyDown={onKeyDown}
           onChange={onChangeEditor}
           value={content}

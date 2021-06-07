@@ -18,7 +18,7 @@ import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import ComponentModal from 'core/components/Modal';
-import ComponentAceEditor from 'core/components/AceEditor';
+import ComponentEditor from 'core/components/Editor';
 import ComponentPlaceholder from 'core/components/Placeholder';
 import LayerComponent from 'core/components/Layer';
 import { slideInRight } from 'core/assets/style/animate';
@@ -126,7 +126,7 @@ const TableDeployStatusName = styled(Text)`
 
 const ModalFull = styled(ComponentModal.FullScreen)``;
 
-const AceEditor = styled(ComponentAceEditor)`
+const Editor = styled(ComponentEditor)`
   padding: 10px 0;
   height: 97%;
 `;
@@ -155,7 +155,7 @@ export default {
   ReleaseRow,
   TableDate,
   ModalFull,
-  AceEditor,
+  Editor,
   NoHistoryPlaceholder,
   NoHistoryText
 };

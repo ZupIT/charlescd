@@ -21,6 +21,7 @@ export const formatJSON = (jsonStr: string | object) => {
     const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
     return JSON.stringify(data, null, 2);
   } catch (e) {
+    console.error(e);
     return "";
   }
 }
