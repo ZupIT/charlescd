@@ -33,7 +33,7 @@ class ButlerConfiguration(
     val butlerStorePath: String,
     @Value("\${moove.tls.store.path}")
     val mooveStorePath: String,
-    @Value("\${mtls.enabled:true}}")
+    @Value("\${mtls.enabled:false}")
     val mtlsEnabled: Boolean
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)

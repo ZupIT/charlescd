@@ -397,10 +397,14 @@ job:
   name: init-db
 mtls:
   enabled: true
-  domain: charlescd.io
+  butler:
+    domain:
+      charlescd-butler.charles.svc.cluster.local
   job:
     name: cert-generator
   moove:
+    domain:
+      charlescd-moove.charles.svc.cluster.local
     volumeMounts:
       - name: moove-certs
         mountPath: /certs/moove
