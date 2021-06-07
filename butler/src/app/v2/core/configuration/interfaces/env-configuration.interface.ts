@@ -28,6 +28,13 @@ export default interface IEnvConfiguration {
 
   postgresSSL: boolean
 
+  mtls: {
+    enabled: boolean,
+    cert: string | undefined,
+    key: string | undefined,
+    mooveCert: string | undefined
+  }
+
   mooveUrl: string
 
   darwinNotificationUrl: string

@@ -24,7 +24,7 @@ import { AppModule } from './app/app.module'
 import { AppConstants } from './app/v2/core/constants'
 import { EntityNotFoundExceptionFilter } from './app/v2/core/filters/entity-not-found-exception.filter'
 import { ConsoleLoggerService } from './app/v2/core/logs/console'
-import { Request, Response, Router } from 'express'
+import { Express, Request, Response, Router } from 'express'
 import { HttpExceptionFilter } from './app/v2/core/filters/http-exception.filter'
 import * as bodyParser from 'body-parser'
 import { Configuration } from './app/v2/core/config/configurations'
@@ -41,16 +41,7 @@ healtCheckRouter.get('/healthcheck', (_req: Request, res: Response) : void => {
 })
 
 async function bootstrap() {
-  console.log('KEly-key'+ AppConstants.TLS_KEY)
-  console.log('CERTIN'+ AppConstants.TLS_CERT)
-  console.log('moove_cert'+ AppConstants.MOOVE_CERT)
-  const httpsOptions = {
-    key: AppConstants.TLS_KEY,
-    cert: AppConstants.TLS_CERT,
-    requestCert: true,
-    rejectUnauthorized: true,
-    ca: AppConstants.MOOVE_CERT
-  }
+
   hpropagate({
     setAndPropagateCorrelationId: false,
     headersToPropagate: [
@@ -59,8 +50,8 @@ async function bootstrap() {
   })
 
   const appModule: DynamicModule = await AppModule.forRootAsync()
-  const server = express()
-  const app = await NestFactory.create(
+  const server: Express = express()
+  const app: INestApplication = await NestFactory.create(
     appModule,
     new ExpressAdapter(server),
   )
@@ -83,7 +74,17 @@ async function bootstrap() {
   app.enableShutdownHooks()
   await app.init()
   http.createServer(server).listen(3000)
-  https.createServer(httpsOptions, server).listen(443)
+  if (Configuration.mtls.enabled) {
+    const httpsOptions = {
+      key: Configuration.mtls.key,
+      cert: Configuration.mtls.cert,
+      requestCert: true,
+      rejectUnauthorized: true,
+      ca: Configuration.mtls.mooveCert
+    }
+    https.createServer(httpsOptions, server).listen(443)
+  }
+
 }
 
 bootstrap()

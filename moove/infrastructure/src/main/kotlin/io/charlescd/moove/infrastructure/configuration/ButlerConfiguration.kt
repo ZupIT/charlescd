@@ -36,7 +36,9 @@ class ButlerConfiguration(
     @Value("\${butler.tls.store.path}")
     val butlerStorePath: String,
     @Value("\${moove.tls.store.path}")
-    val mooveStorePath: String
+    val mooveStorePath: String,
+    @Value("\${mtls.enabled}")
+    val mtlsEnabled: Boolean
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     @Bean
@@ -45,8 +47,10 @@ class ButlerConfiguration(
     }
     @Bean
     fun feignClient(): Client {
-        val trustSSLSockets = Client.Default(getSSLSocketFactory(),  NoopHostnameVerifier());
-        return trustSSLSockets;
+        return when (mtlsEnabled) {
+            true -> Client.Default(getSSLSocketFactory(), null)
+            else -> Client.Default(null, null)
+        }
     }
 
     fun getSSLSocketFactory(): SSLSocketFactory {

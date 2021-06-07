@@ -16,6 +16,7 @@
 
 import { ConfigurationConstants } from '../constants/application/configuration.constants'
 import IEnvConfiguration from '../configuration/interfaces/env-configuration.interface'
+import { AppConstants } from '../constants'
 
 export const Configuration: IEnvConfiguration = {
 
@@ -57,7 +58,12 @@ export const Configuration: IEnvConfiguration = {
     max: 5,
     retentionDays: 7
   },
-
+  mtls: {
+    enabled: (process.env.MTLS_ENABLED === 'true') || AppConstants.MTLS_ENABLED,
+    cert:    process.env.TLS_CERT,
+    key: process.env.TLS_KEY,
+    mooveCert: process.env.MOOVE_CERT,
+  },
   butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 
   butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE,

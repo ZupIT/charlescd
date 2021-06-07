@@ -72,9 +72,5 @@ export const ConfigurationConstants = {
 
   TLS_SKIP_VERIFY: false,
 
-  TLS_CERT: process.env.TLS_CERT,
-
-  TLS_KEY: process.env.TLS_KEY,
-
-  MOOVE_CERT: process.env.MOOVE_CERT
+  MTLS_ENABLED: false,
 }

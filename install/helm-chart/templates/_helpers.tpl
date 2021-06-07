@@ -122,6 +122,8 @@ env:
     secretKeyRef:
       name: "moove-tls-cert"
       key: "tls.crt"
+- name: MTLS_ENABLED
+  value: {{ .ChartContext.Values.mtls.enabled | quote }}
 {{ end }}
 {{- end -}}
 
@@ -172,6 +174,10 @@ env:
     secretKeyRef:
       name: "gate-aes256-key"
       key: "encryption-key"
+{{ if .ChartContext.Values.mtls.enabled }}
+- name: MTLS_ENABLED
+  value: {{ .ChartContext.Values.mtls.enabled | quote }}
+{{ end }}
 {{- end -}}
 
 {{- define "test.circle-matcher-envs" -}}

@@ -17,9 +17,8 @@ CharlesApplications:
       port: 3000
       initialDelay: 60
     image:
-      registry: thallesf
-      application: butler-operator
-      tag: tls-10
+      registry: zupcharles
+      application: charlescd-butler
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -63,9 +62,8 @@ CharlesApplications:
       initialDelay: 180
 
     image:
-      registry: thallesf
-      application: moove-operator
-      tag: tls-105
+      registry: zupcharles
+      application: charlescd-moove
     imagePullSecrets: false
     pullPolicy: Always
     service:
@@ -75,26 +73,7 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
-    volumeMounts:
-      - name: moove-certs
-        mountPath: /certs/moove
-        readOnly: true
-      - name: butler-certs
-        mountPath: /certs/butler
-        readOnly: true
-    volumes:
-      - name: moove-certs
-        secret:
-          secretName: "moove-tls-cert"
-          items:
-            - key: store.p12
-              path: moove-store.p12
-      - name: butler-certs
-        secret:
-          secretName: "butler-tls-cert"
-          items:
-            - key: store.p12
-              path: butler-store.p12
+
     resources:
       limits:
         cpu: 1
@@ -421,6 +400,27 @@ mtls:
   domain: charlescd.io
   job:
     name: cert-generator
+  moove:
+    volumeMounts:
+      - name: moove-certs
+        mountPath: /certs/moove
+        readOnly: true
+      - name: butler-certs
+        mountPath: /certs/butler
+        readOnly: true
+    volumes:
+        - name: moove-certs
+          secret:
+            secretName: "moove-tls-cert"
+            items:
+              - key: store.p12
+                path: moove-store.p12
+        - name: butler-certs
+          secret:
+            secretName: "butler-tls-cert"
+            items:
+              - key: store.p12
+                path: butler-store.p12
 
 redis:
   enabled: true
