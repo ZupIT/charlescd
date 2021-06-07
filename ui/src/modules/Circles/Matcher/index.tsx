@@ -21,7 +21,7 @@ import TabPanel from 'core/components/TabPanel';
 import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import routes from 'core/constants/routes';
-import AceEditor from 'core/components/AceEditor';
+import Editor from 'core/components/Editor';
 import ParametersForm from './ParametersForm';
 import { buildParameters } from './helpers';
 import Styled from './styled';
@@ -39,7 +39,7 @@ const CircleMatcher = () => {
   const [response, isLoading, identifyCircles] = useCircleMatcher();
   const formMethods = useForm({
     defaultValues: { parameters: [blankParameter] },
-    mode: 'onChange'
+    mode: 'onChange',
   });
   const [formattedParameters, setFormattedParameters] = useState('');
   const { watch } = formMethods;
@@ -59,7 +59,7 @@ const CircleMatcher = () => {
   const renderJsonEditor = () => {
     return (
       <Styled.EditorWrapper>
-        <AceEditor mode="json" value={formattedParameters} />
+        <Editor mode="view" height="190px" data={formattedParameters} />
       </Styled.EditorWrapper>
     );
   };
@@ -78,7 +78,9 @@ const CircleMatcher = () => {
       >
         <Styled.Layer>
           <ContentIcon icon="circle-matcher">
-            <Text tag="H2" color="light">Circle matcher</Text>
+            <Text tag="H2" color="light">
+              Circle matcher
+            </Text>
           </ContentIcon>
           <Styled.Content>
             {renderJsonEditor()}
