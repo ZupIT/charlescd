@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/use_case/datasource"
-	"github.com/ZupIT/charlescd/compass/use_case/plugin"
+	datasource2 "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
+	metrics_group2 "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
+	plugin2 "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
 	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
 	"github.com/go-playground/locales/en"
@@ -117,16 +118,16 @@ func (s server) registerRoutes() {
 			}
 			datasourceHandler := v1.Group("/datasources")
 			{
-				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasource.NewFindAllDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.POST("", handlers.CreateDatasource(datasource.NewDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasource.NewDeleteDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(datasource.NewGetMetrics(s.pm.datasourceRepository)))
-				datasourceHandler.POST("/test-connection", handlers.TestConnection(datasource.NewTestConnection(s.pm.datasourceRepository)))
+				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasource2.NewFindAllDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.POST("", handlers.CreateDatasource(datasource2.NewDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasource2.NewDeleteDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(datasource2.NewGetMetrics(s.pm.datasourceRepository)))
+				datasourceHandler.POST("/test-connection", handlers.TestConnection(datasource2.NewTestConnection(s.pm.datasourceRepository)))
 			}
 			metricsGroupHandler := v1.Group("/metrics-groups")
 			{
 				metricsGroupHandler.POST("", handlers.CreateMetricsGroup(s.pm.metricsGroupRepository))
-				metricsGroupHandler.GET("", handlers.GetAll(s.pm.metricsGroupRepository))
+				metricsGroupHandler.GET("", handlers.GetAll(metrics_group2.NewFindAllMetricsGroup(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(s.pm.metricsGroupRepository))
 				metricsGroupHandler.GET("/:metricGroupID/query", handlers.Query(s.pm.metricsGroupRepository))
 				metricsGroupHandler.GET("/:metricGroupID}/result", handlers.Result(s.pm.metricsGroupRepository))
@@ -153,7 +154,7 @@ func (s server) registerRoutes() {
 			}
 			pluginHandler := v1.Group("/plugins")
 			{
-				pluginHandler.GET("", handlers.ListPlugins(plugin.NewListPlugins(s.pm.pluginRepository)))
+				pluginHandler.GET("", handlers.ListPlugins(plugin2.NewListPlugins(s.pm.pluginRepository)))
 			}
 		}
 	}

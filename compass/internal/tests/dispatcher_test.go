@@ -30,7 +30,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -87,7 +86,7 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 	}
 	s.DB.Create(&datasource)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric.Metric{},
 		CircleID:    circleID,

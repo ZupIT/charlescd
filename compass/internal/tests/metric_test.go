@@ -23,7 +23,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
@@ -126,7 +125,7 @@ func (s *SuiteMetric) TestParseError() {
 func (s *SuiteMetric) TestSaveMetric() {
 	circleId := uuid.New()
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    uuid.New(),
@@ -167,7 +166,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 func (s *SuiteMetric) TestUpdateMetric() {
 	circleId := uuid.New()
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
@@ -229,7 +228,7 @@ func (s *SuiteMetric) TestRemoveMetricError() {
 func (s *SuiteMetric) TestFindMetricById() {
 	circleId := uuid.New()
 
-	metricGroup := metricsgroup.MetricsGroup{
+	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
@@ -316,7 +315,7 @@ func (s *SuiteMetric) TestFindMetricByIdError() {
 func (s *SuiteMetric) TestResultQueryGetPluginError() {
 	circleId := uuid.New()
 
-	metricGroup := metricsgroup.MetricsGroup{
+	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
@@ -352,7 +351,7 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 func (s *SuiteMetric) TestResultQuery() {
 	circleId := uuid.New()
 
-	metricGroup := metricsgroup.MetricsGroup{
+	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
@@ -383,7 +382,7 @@ func (s *SuiteMetric) TestResultQuery() {
 func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 	circleId := uuid.New()
 
-	metricGroup := metricsgroup.MetricsGroup{
+	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,
@@ -419,7 +418,7 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 func (s *SuiteMetric) TestQuery() {
 	circleId := uuid.New()
 
-	metricGroup := metricsgroup.MetricsGroup{
+	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metricRepo.Metric{},
 		CircleID:    circleId,

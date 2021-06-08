@@ -25,8 +25,8 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
@@ -57,8 +57,8 @@ func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM data_sources")
 }
 
-func newBasicMetricGroup() metricsgroup.MetricsGroup {
-	return metricsgroup.MetricsGroup{
+func newBasicMetricGroup() repository.MetricsGroup {
+	return repository.MetricsGroup{
 		Name:        "Name",
 		Metrics:     nil,
 		WorkspaceID: uuid.New(),

@@ -19,35 +19,38 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
+	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
-
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"github.com/google/uuid"
 )
 
-func GetAll(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func GetAll(findAllMetricsGroup metrics_group.FindAllMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		workspaceId := echoCtx.Request().Header.Get("x-workspace-id")
 
-		parsedWorkspaceId, parseErr := uuid.Parse(workspaceId)
-		if parseErr != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
-		}
-
-		list, err := metricsgroupMain.FindAllByWorkspaceId(parsedWorkspaceId)
+		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, list)
+		list, err := findAllMetricsGroup.Execute(workspaceId)
+		if err != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, err)
+		}
+
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupToResponses(list))
 	}
 }
 
-func Resume(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func Resume(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		circleId := echoCtx.QueryParam("circleId")
+		circleId, err := uuid.Parse(echoCtx.QueryParam("circleId"))
+		if err != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, err)
+		}
 
 		metricGroups, err := metricsgroupMain.ResumeByCircle(circleId)
 		if err != nil {
@@ -58,15 +61,14 @@ func Resume(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
 	}
 }
 
-func CreateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func CreateMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		metricsGroup, err := metricsgroupMain.Parse(echoCtx.Request().Body)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
+		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
@@ -85,7 +87,7 @@ func CreateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc
 	}
 }
 
-func Show(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func Show(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 
@@ -98,7 +100,7 @@ func Show(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
 	}
 }
 
-func Query(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func Query(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 
@@ -127,7 +129,7 @@ func Query(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
 	}
 }
 
-func Result(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func Result(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 
@@ -140,7 +142,7 @@ func Result(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
 	}
 }
 
-func UpdateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func UpdateMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 
@@ -158,7 +160,7 @@ func UpdateMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc
 	}
 }
 
-func UpdateName(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 		metricsGroupAux, err := metricsgroupMain.Parse(echoCtx.Request().Body)
@@ -181,7 +183,7 @@ func UpdateName(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
 	}
 }
 
-func DeleteMetricsGroup(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func DeleteMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("metricGroupID")
 

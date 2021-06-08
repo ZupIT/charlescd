@@ -19,12 +19,12 @@
 package handlers
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func ListMetricGroupInCircle(metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func ListMetricGroupInCircle(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("circleID")
 

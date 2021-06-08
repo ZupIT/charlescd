@@ -19,15 +19,15 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/labstack/echo/v4"
 	"net/http"
 
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/google/uuid"
 )
 
-func CreateMetric(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) echo.HandlerFunc {
+func CreateMetric(metricMain metric.UseCases, metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		metricgroupId := echoCtx.Param("metricGroupID")
 

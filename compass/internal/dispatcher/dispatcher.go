@@ -19,12 +19,12 @@
 package dispatcher
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"sync"
 	"time"
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -68,11 +68,11 @@ func (dispatcher *Dispatcher) dispatch() {
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {
 	switch condition {
-	case metricsgroup.EQUAL.String():
+	case repository.EQUAL.String():
 		return result == threshold
-	case metricsgroup.GREATER_THAN.String():
+	case repository.GREATER_THAN.String():
 		return result > threshold
-	case metricsgroup.LOWER_THAN.String():
+	case repository.LOWER_THAN.String():
 		return result < threshold
 	default:
 		return false

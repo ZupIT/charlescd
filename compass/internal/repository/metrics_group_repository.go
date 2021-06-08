@@ -16,14 +16,17 @@
  *
  */
 
-package metricsgroup
+package repository
 
 import (
 	"encoding/json"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/repository/models"
+	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -32,36 +35,51 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 )
 
-type MetricsGroup struct {
-	util.BaseModel
-	Name        string                                  `json:"name"`
-	Metrics     []metric.Metric                         `json:"metrics"`
-	WorkspaceID uuid.UUID                               `json:"-"`
-	CircleID    uuid.UUID                               `json:"circleId"`
-	Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`
-	DeletedAt   *time.Time                              `json:"-"`
+type MetricsGroupRepository interface {
+	PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error)
+	Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error)
+	FindAll() ([]MetricsGroup, errors.Error)
+	FindAllByWorkspaceId(workspaceId uuid.UUID) ([]domain.MetricsGroup, error)
+	ResumeByCircle(circleId uuid.UUID) ([]domain.MetricGroupResume, error)
+	Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	FindById(id string) (MetricsGroup, errors.Error)
+	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
+	Remove(id string) errors.Error
+	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, errors.Error)
+	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, errors.Error)
+	ResultByID(id string) ([]datasourcePKG.MetricResult, errors.Error)
+	ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, errors.Error)
+	Validate(metricsGroup MetricsGroup) errors.ErrorList
 }
 
-type MetricsGroupRepresentation struct {
-	ID      uuid.UUID                                             `json:"id"`
-	Name    string                                                `json:"name"`
-	Metrics []metric.Metric                                       `json:"metrics"`
-	Actions []metricsgroupaction.GroupActionExecutionStatusResume `json:"actions"`
+type metricsGroupRepository struct {
+	db               *gorm.DB
+	metricMain       metric.UseCases
+	datasourceMain   DatasourceRepository
+	pluginMain       PluginRepository
+	groupActionsMain metricsgroupaction.UseCases
 }
 
-type MetricGroupResume struct {
-	util.BaseModel
-	Name              string `json:"name"`
-	Thresholds        int    `json:"thresholds"`
-	ThresholdsReached int    `json:"thresholdsReached"`
-	Metrics           int    `json:"metricsCount"`
-	Status            string `json:"status"`
+func NewMetricsGroupRepository(
+	db *gorm.DB,
+	metricMain metric.UseCases,
+	datasourceMain DatasourceRepository,
+	pluginMain PluginRepository,
+	groupActionsMain metricsgroupaction.UseCases,
+) MetricsGroupRepository {
+	return metricsGroupRepository{
+		db:               db,
+		metricMain:       metricMain,
+		datasourceMain:   datasourceMain,
+		pluginMain:       pluginMain,
+		groupActionsMain: groupActionsMain,
+	}
 }
 
-func (main Main) Validate(metricsGroup MetricsGroup) errors.ErrorList {
+func (main metricsGroupRepository) Validate(metricsGroup MetricsGroup) errors.ErrorList {
 	ers := errors.NewErrorList()
 
 	if strings.TrimSpace(metricsGroup.Name) == "" {
@@ -108,7 +126,7 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main Main) PeriodValidate(currentPeriod string) (datasource.Period, errors.Error) {
+func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasource.Period, errors.Error) {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		return datasource.Period{}, errors.NewError("Invalid period", "Invalid period or interval").
@@ -141,7 +159,7 @@ func (main Main) PeriodValidate(currentPeriod string) (datasource.Period, errors
 	}, nil
 }
 
-func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error) {
 	var newMetricsGroup *MetricsGroup
 	err := json.NewDecoder(metricsGroup).Decode(&newMetricsGroup)
 	if err != nil {
@@ -153,7 +171,7 @@ func (main Main) Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error) 
 	return *newMetricsGroup, nil
 }
 
-func (main Main) FindAll() ([]MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) FindAll() ([]MetricsGroup, errors.Error) {
 	var metricsGroups []MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
@@ -163,17 +181,16 @@ func (main Main) FindAll() ([]MetricsGroup, errors.Error) {
 	return metricsGroups, nil
 }
 
-func (main Main) FindAllByWorkspaceId(workspaceId uuid.UUID) ([]MetricsGroup, errors.Error) {
-	var metricsGroups []MetricsGroup
+func (main metricsGroupRepository) FindAllByWorkspaceId(workspaceId uuid.UUID) ([]domain.MetricsGroup, error) {
+	var metricsGroups []models.MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Where("workspace_id=?", workspaceId).Find(&metricsGroups)
 	if db.Error != nil {
-		return []MetricsGroup{}, errors.NewError("FindAllByWorkspaceId error", db.Error.Error()).
-			WithOperations("FindAllByWorkspaceId.DBFind")
+		return []domain.MetricsGroup{}, logging.NewError("Find All error", db.Error, nil, "MetricsGroupRepository.FindAllByWorkspaceId.Find")
 	}
-	return metricsGroups, nil
+	return mapper.MetricsGroupModelToDomains(metricsGroups), nil
 }
 
-func (main Main) isMetricError(metrics []metric.Metric) bool {
+func (main metricsGroupRepository) isMetricError(metrics []metric.Metric) bool {
 	for _, currentMetric := range metrics {
 		if currentMetric.MetricExecution.Status == metric.MetricError {
 			return true
@@ -183,7 +200,7 @@ func (main Main) isMetricError(metrics []metric.Metric) bool {
 	return false
 }
 
-func (main Main) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, metrics []metric.Metric) string {
+func (main metricsGroupRepository) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, metrics []metric.Metric) string {
 	if main.isMetricError(metrics) {
 		return metric.MetricError
 	}
@@ -195,21 +212,19 @@ func (main Main) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, m
 	return metric.MetricActive
 }
 
-func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, errors.Error) {
+func (main metricsGroupRepository) ResumeByCircle(circleId uuid.UUID) ([]domain.MetricGroupResume, error) {
 	var db *gorm.DB
-	var metricsGroups []MetricsGroup
-	var metricsGroupsResume []MetricGroupResume
+	var metricsGroups []models.MetricsGroup
+	var metricsGroupsResume []models.MetricGroupResume
 
-	if circleId == "" {
+	if circleId == uuid.Nil {
 		db = main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	} else {
-		circleIdParsed, _ := uuid.Parse(circleId)
-		db = main.db.Set("gorm:auto_preload", true).Where("circle_id=?", circleIdParsed).Find(&metricsGroups)
+		db = main.db.Set("gorm:auto_preload", true).Where("circle_id=?", circleId).Find(&metricsGroups)
 	}
 
 	if db.Error != nil {
-		return []MetricGroupResume{}, errors.NewError("ResumeByCircle error", db.Error.Error()).
-			WithOperations("ResumeByCircle.DBFind")
+		return []domain.MetricGroupResume{}, logging.NewError("ResumeByCircle error", db.Error, nil, "MetricsGroupRepository.ResumeByCircle.Find")
 	}
 
 	for _, group := range metricsGroups {
@@ -229,7 +244,7 @@ func (main Main) ResumeByCircle(circleId string) ([]MetricGroupResume, errors.Er
 	return metricsGroupsResume, nil
 }
 
-func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
+func (main metricsGroupRepository) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 
 	sort.SliceStable(metricsGroupResume, func(i, j int) bool {
 
@@ -264,7 +279,7 @@ func (main Main) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
 	})
 }
 
-func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
 	db := main.db.Create(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, errors.NewError("Save error", db.Error.Error()).
@@ -273,7 +288,7 @@ func (main Main) Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
 	return metricsGroup, nil
 }
 
-func (main Main) FindById(id string) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) FindById(id string) (MetricsGroup, errors.Error) {
 	metricsGroup := MetricsGroup{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
@@ -283,18 +298,18 @@ func (main Main) FindById(id string) (MetricsGroup, errors.Error) {
 	return metricsGroup, nil
 }
 
-func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, errors.Error) {
-	var metricsGroups []MetricsGroupRepresentation
+func (main metricsGroupRepository) ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, errors.Error) {
+	var metricsGroups []models.MetricsGroupRepresentation
 	db := main.db.Table("metrics_groups").Select([]string{"name", "id"}).Where("circle_id = ? and deleted_at is null", circleId).Find(&metricsGroups)
 	if db.Error != nil {
-		return []MetricsGroupRepresentation{}, errors.NewError("Find error", db.Error.Error()).
+		return []models.MetricsGroupRepresentation{}, errors.NewError("Find error", db.Error.Error()).
 			WithOperations("ListAllByCircle.Find")
 	}
 
 	for idx := range metricsGroups {
 		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
-			return []MetricsGroupRepresentation{}, err.WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")
+			return []models.MetricsGroupRepresentation{}, err.WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")
 		}
 		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
@@ -307,7 +322,7 @@ func (main Main) ListAllByCircle(circleId string) ([]MetricsGroupRepresentation,
 	return metricsGroups, nil
 }
 
-func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Updates(&metricsGroup)
 	if db.Error != nil {
 		return MetricsGroup{}, errors.NewError("Update error", db.Error.Error()).
@@ -316,7 +331,7 @@ func (main Main) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, err
 	return metricsGroup, nil
 }
 
-func (main Main) UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", metricsGroup.Name)
 	if db.Error != nil {
 		return MetricsGroup{}, errors.NewError("UpdateName error", db.Error.Error()).
@@ -325,7 +340,7 @@ func (main Main) UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup,
 	return metricsGroup, nil
 }
 
-func (main Main) Remove(id string) errors.Error {
+func (main metricsGroupRepository) Remove(id string) errors.Error {
 	db := main.db.Where("id = ?", id).Delete(MetricsGroup{})
 	if db.Error != nil {
 		return errors.NewError("Remove error", db.Error.Error()).
@@ -334,7 +349,7 @@ func (main Main) Remove(id string) errors.Error {
 	return nil
 }
 
-func (main Main) QueryByGroupID(id string, period, interval datasource.Period) ([]datasource.MetricValues, errors.Error) {
+func (main metricsGroupRepository) QueryByGroupID(id string, period, interval datasource.Period) ([]datasource.MetricValues, errors.Error) {
 	var metricsValues []datasource.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
@@ -363,7 +378,7 @@ func (main Main) QueryByGroupID(id string, period, interval datasource.Period) (
 	return metricsValues, nil
 }
 
-func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, errors.Error) {
+func (main metricsGroupRepository) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, errors.Error) {
 	var metricsResults []datasource.MetricResult
 	for _, metr := range group.Metrics {
 
@@ -382,7 +397,7 @@ func (main Main) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, e
 	return metricsResults, nil
 }
 
-func (main Main) ResultByID(id string) ([]datasource.MetricResult, errors.Error) {
+func (main metricsGroupRepository) ResultByID(id string) ([]datasource.MetricResult, errors.Error) {
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
 		return []datasource.MetricResult{}, errors.NewError("Not found", "Not found metrics group: "+id).

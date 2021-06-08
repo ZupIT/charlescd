@@ -24,7 +24,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	metric2 "github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
@@ -41,7 +40,7 @@ type SuiteMetricExecution struct {
 	DB *gorm.DB
 
 	repository   metric.UseCases
-	metricsgroup *metricsgroup.MetricsGroup
+	metricsgroup *repository.MetricsGroup
 }
 
 func (s *SuiteMetricExecution) SetupSuite() {
@@ -82,7 +81,7 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 	}
 	s.DB.Create(&datasource)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric2.Metric{},
 		CircleID:    circleID,
@@ -151,7 +150,7 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	}
 	s.DB.Create(&datasource)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric2.Metric{},
 		CircleID:    circleID,
@@ -215,7 +214,7 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 	}
 	s.DB.Create(&datasource)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric2.Metric{},
 		CircleID:    circleID,

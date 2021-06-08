@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	datasourceInteractor "github.com/ZupIT/charlescd/compass/use_case/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -30,7 +30,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource) echo.HandlerFunc {
+func FindAllByWorkspace(findAllDatasource datasource.FindAllDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
@@ -49,7 +49,7 @@ func FindAllByWorkspace(findAllDatasource datasourceInteractor.FindAllDatasource
 	}
 }
 
-func CreateDatasource(saveDatasource datasourceInteractor.SaveDatasource) echo.HandlerFunc {
+func CreateDatasource(saveDatasource datasource.SaveDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
@@ -89,7 +89,7 @@ type TestConnectionData struct {
 	Data      json.RawMessage `json:"data"`
 }
 
-func TestConnection(testConnection datasourceInteractor.TestConnection) echo.HandlerFunc {
+func TestConnection(testConnection datasource.TestConnection) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		var newTestConnection TestConnectionData
@@ -107,7 +107,7 @@ func TestConnection(testConnection datasourceInteractor.TestConnection) echo.Han
 	}
 }
 
-func DeleteDatasource(deleteDatasource datasourceInteractor.DeleteDatasource) echo.HandlerFunc {
+func DeleteDatasource(deleteDatasource datasource.DeleteDatasource) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		id, parseErr := uuid.Parse(echoCtx.Param("datasourceID"))
@@ -124,7 +124,7 @@ func DeleteDatasource(deleteDatasource datasourceInteractor.DeleteDatasource) ec
 	}
 }
 
-func GetMetrics(getMetrics datasourceInteractor.GetMetrics) echo.HandlerFunc {
+func GetMetrics(getMetrics datasource.GetMetrics) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		id, parseErr := uuid.Parse(echoCtx.Param("datasourceID"))

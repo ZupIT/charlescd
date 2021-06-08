@@ -30,13 +30,12 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 )
 
 type ActionDispatcher struct {
-	metricGroupRepo metricsgroup.UseCases
+	metricGroupRepo repository.MetricsGroupRepository
 	actionRepo      action.UseCases
 	pluginRepo      repository.PluginRepository
 	metricRepo      metric.UseCases
@@ -44,7 +43,7 @@ type ActionDispatcher struct {
 	mux             sync.Mutex
 }
 
-func NewActionDispatcher(metricGroupRepo metricsgroup.UseCases, actionRepo action.UseCases, pluginRepo repository.PluginRepository,
+func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo action.UseCases, pluginRepo repository.PluginRepository,
 	metricRepo metric.UseCases, groupActionRepo metricsgroupaction.UseCases) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
@@ -65,7 +64,7 @@ func (dispatcher *ActionDispatcher) dispatch() {
 	}
 }
 
-func (dispatcher *ActionDispatcher) doAction(group metricsgroup.MetricsGroup) {
+func (dispatcher *ActionDispatcher) doAction(group repository.MetricsGroup) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 

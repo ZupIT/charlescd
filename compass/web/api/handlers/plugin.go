@@ -19,13 +19,13 @@
 package handlers
 
 import (
-	pluginInteractor "github.com/ZupIT/charlescd/compass/use_case/plugin"
+	"github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func ListPlugins(listPlugin pluginInteractor.ListPlugins) echo.HandlerFunc {
+func ListPlugins(listPlugin plugin.ListPlugins) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		category := echoCtx.Param("category")
 

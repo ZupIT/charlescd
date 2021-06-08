@@ -6,7 +6,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/golang-migrate/migrate/v4"
@@ -21,7 +20,7 @@ type persistenceManager struct {
 	actionRepository       action.UseCases
 	datasourceRepository   repository.DatasourceRepository
 	metricRepository       metric.UseCases
-	metricsGroupRepository metricsgroup.UseCases
+	metricsGroupRepository repository.MetricsGroupRepository
 	metricsGroupAction     metricsgroupaction.UseCases
 	pluginRepository       repository.PluginRepository
 }
@@ -92,7 +91,7 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	metricsGroupActionRepo := metricsgroupaction.NewMain(db, pluginRepo, actionRepo)
 
-	metricsGroupRepo := metricsgroup.NewMain(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
+	metricsGroupRepo := repository.NewMetricsGroupRepository(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
 
 	return persistenceManager{
 		actionRepository:       actionRepo,

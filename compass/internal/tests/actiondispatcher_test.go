@@ -25,7 +25,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroup"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
@@ -67,7 +66,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
 	actionMain := action.NewMain(s.DB, pluginMain)
 	s.metricsGroupActionMain = metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
-	metricsgroupMain := metricsgroup.NewMain(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
+	metricsgroupMain := repository.NewMetricsGroupRepository(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
 	s.repository = dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, s.metricMain, s.metricsGroupActionMain)
 
 	clearDatabase(s.DB)
@@ -95,7 +94,7 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	}
 	s.DB.Create(&datasourceStruct)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric.Metric{},
 		CircleID:    circleID,
@@ -167,7 +166,7 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	}
 	s.DB.Create(&datasourceStruct)
 
-	metricgroup := metricsgroup.MetricsGroup{
+	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
 		Metrics:     []metric.Metric{},
 		CircleID:    circleID,
