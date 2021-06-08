@@ -18,7 +18,7 @@ import isEmpty from 'lodash/isEmpty';
 
 export const formatJSON = (jsonStr: string | object) => {
   try {
-    const data = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
+    const data = typeof jsonStr === 'string' && !isEmpty(jsonStr) ? JSON.parse(jsonStr) : jsonStr;
     return JSON.stringify(data, null, 2);
   } catch (e) {
     console.error(e);

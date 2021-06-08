@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -39,6 +39,7 @@ import {
   isRequiredAndNotBlank,
   isNotBlank,
   trimValue,
+  validJSON,
 } from 'core/utils/validations';
 import Editor from 'core/components/Editor';
 
@@ -71,6 +72,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
     setValue,
     watch,
     errors,
+    trigger,
     formState: { isValid },
   } = useForm<Registry>({
     mode: 'onChange',
@@ -84,6 +86,13 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
 
   const form = watch();
   const { address: addressListener } = form;
+
+  /**
+   * workaround to solve a test, because useevent type doesnt trigger formState validation
+   */
+  useEffect(() => {
+    trigger();
+  }, [form.jsonKey, trigger]);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -174,11 +183,20 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           Enter the json key below:
         </Styled.Subtitle>
         <Editor
-          ref={register({ required: true })}
+          ref={register({
+            ...isRequiredAndNotBlank,
+            validate: {
+              ...isRequiredAndNotBlank.validate,
+              validJSON,
+            },
+          })}
           name="jsonKey"
           width="270px"
           height="190px"
         />
+        <Text tag="H5" color="error">
+          {errors?.jsonKey?.message}
+        </Text>
       </>
     );
   };

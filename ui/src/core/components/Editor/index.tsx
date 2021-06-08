@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { forwardRef, Ref, useEffect } from 'react';
+import { forwardRef, Ref, useEffect, useRef, useState } from 'react';
 import Highlight, { defaultProps } from 'prism-react-renderer';
-import { useRef, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import { formatJSON, handleKeyDown, shouldComplete } from './helper';
 import Styled from './styled';
 
@@ -29,14 +29,16 @@ export interface Props {
 
 const Editor = forwardRef(
   (
-    { mode = 'edit', data = '', width = '100%', height = '100%', name }: Props,
+    { mode = 'edit', data, width = '100%', height = '100%', name }: Props,
     ref: Ref<HTMLTextAreaElement>
   ) => {
     const [content, setContent] = useState('');
     const editorRef = useRef<HTMLPreElement>(null);
 
     useEffect(() => {
-      setContent(formatJSON(data));
+      if (!isEmpty(data)) {
+        setContent(formatJSON(data));
+      }
     }, [data]);
 
     const onChangeEditor = (event: any) => {
@@ -91,6 +93,7 @@ const Editor = forwardRef(
         </Highlight>
         <Styled.TextArea
           ref={ref}
+          data-testid={`input-text-${name}`}
           name={name}
           spellCheck={false}
           onScroll={onScrollTextarea}
