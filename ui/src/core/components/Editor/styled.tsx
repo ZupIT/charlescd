@@ -38,7 +38,7 @@ const Wrapper = styled.div<WrapperProps>`
   `}
 `;
 
-const Editor = styled.div`
+const Line = styled.div`
   display: flex;
 
   :first-child {
@@ -110,6 +110,6 @@ export default {
   Wrapper,
   Number,
   TextArea,
-  Editor,
+  Line,
   Pre,
 };

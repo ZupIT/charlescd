@@ -66,14 +66,18 @@ const Editor = forwardRef(
     };
 
     return (
-      <Styled.Wrapper width={width} height={height}>
+      <Styled.Wrapper data-testid="editor" width={width} height={height}>
         <Highlight {...defaultProps} language="json" code={content}>
           {({ className, tokens, getLineProps, getTokenProps }) => (
             <Styled.Pre ref={editorRef} className={className}>
               {tokens.map((line, i) => (
-                <Styled.Editor key={i} {...getLineProps({ line, key: i })}>
+                <Styled.Line
+                  data-testid={`line-${i}`}
+                  key={i}
+                  {...getLineProps({ line, key: i })}
+                >
                   <Styled.Number>{i + 1}</Styled.Number>
-                  <span>
+                  <span data-testid={`line-text-${i}`}>
                     {line.map((token, key) => {
                       const { className, children } = getTokenProps({
                         token,
@@ -86,7 +90,7 @@ const Editor = forwardRef(
                       );
                     })}
                   </span>
-                </Styled.Editor>
+                </Styled.Line>
               ))}
             </Styled.Pre>
           )}

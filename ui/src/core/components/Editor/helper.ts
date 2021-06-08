@@ -39,7 +39,7 @@ export const shouldComplete = (key: string) => {
   return keys[key as Key] || "";
 }
 
-const TAB = '  ';
+export const TAB = '  ';
 
 export const insertValue = (e: any, value: string, caretPosition = TAB.length) => {
   const start = e.target.selectionStart;
