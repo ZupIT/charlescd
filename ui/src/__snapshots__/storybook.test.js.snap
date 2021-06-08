@@ -1,0 +1,1037 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots Components/Button/Default Default 1`] = `
+.c0 {
+  position: relative;
+  background-color: #5C37CC;
+  border: none;
+  border-radius: 4px;
+  color: #FFF;
+  font-size: 10px;
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+  padding: 0 33px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.c0:hover {
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <button
+    class="c0"
+    data-testid="button-default-undefined"
+    type="button"
+  >
+    text
+  </button>
+</div>
+`;
+
+exports[`Storyshots Components/Button/Rounded Rounded 1`] = `
+.c1 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: bold;
+  color: #98989E;
+  text-align: left;
+  line-height: 12px;
+}
+
+.c0 {
+  border: none;
+  background: rgb(44,44,46);
+  height: 50px;
+  border-radius: 30px;
+  height: 50px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 15px 33px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.c0:hover {
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.c0 > * + * {
+  margin-left: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <button
+    class="c0"
+    data-testid="button-iconRounded-undefined"
+    type="button"
+  >
+    <span
+      class="c1"
+      color="dark"
+      font-size="12px"
+      font-style="normal"
+      role=""
+    >
+      text
+    </span>
+  </button>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Base Base 1`] = `
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+  background-color: gray;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    color="gray"
+  >
+    ...
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Body Body 1`] = `
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+  background-color: gray;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c1 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    color="gray"
+  >
+    <div
+      class="c1"
+    >
+      body
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Config Config 1`] = `
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 15px;
+  height: 15px;
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c4 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c7 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c5 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+}
+
+.c2 {
+  padding: 0px 17px;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c2 > * + * {
+  margin-left: 10px;
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c1 {
+  background-color: #5C37CC;
+}
+
+.c6 > :not(:first-child) {
+  margin-top: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0 c1"
+  >
+    <div
+      class="c2"
+    >
+      <div
+        class="c3"
+      >
+        <i
+          class="c4"
+          color="light"
+          data-testid="icon-workspace"
+        >
+          <div>
+            <div>
+              <svg
+                src="workspace"
+              />
+            </div>
+          </div>
+        </i>
+      </div>
+    </div>
+    <div
+      class="c5 c6"
+    >
+      <span
+        class="c7"
+        color="light"
+        font-size="14px"
+        font-style="normal"
+        role=""
+      />
+      ...
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Expand Expand 1`] = `
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 15px;
+  height: 15px;
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c4 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c7 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c5 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+}
+
+.c8 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+  cursor: pointer;
+}
+
+.c2 {
+  padding: 0px 17px;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c2 > * + * {
+  margin-left: 10px;
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c1 {
+  background-color: #5C37CC;
+}
+
+.c6 > :not(:first-child) {
+  margin-top: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0 c1"
+  >
+    <div
+      class="c2"
+    >
+      <div
+        class="c3"
+      >
+        <i
+          class="c4"
+          color="light"
+          data-testid="icon-undefined"
+        />
+      </div>
+    </div>
+    <div
+      class="c5 c6"
+    >
+      <span
+        class="c7"
+        color="light"
+        font-size="14px"
+        font-style="normal"
+        role=""
+      />
+      <div
+        class="c8"
+      >
+        click here
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Header Header 1`] = `
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+  background-color: gray;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c1 {
+  padding: 0px 17px;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c1 > * + * {
+  margin-left: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    color="gray"
+  >
+    <div
+      class="c1"
+    >
+      header
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Main Main 1`] = `
+.c3 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 12px;
+}
+
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+  background-color: dark;
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c2 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+}
+
+.c5 {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-top: 10px;
+}
+
+.c5:only-child {
+  margin-top: 0;
+}
+
+.c6 {
+  margin-top: 10px;
+}
+
+.c1 {
+  background-color: rgb(44,44,46);
+}
+
+.c1:hover .sc-fnVZcZ,
+.c1:hover .c4 {
+  white-space: normal;
+  overflow: auto;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0 c1"
+    color="dark"
+    data-testid="card-main"
+  >
+    <div
+      class="c2"
+    >
+      <span
+        class="c3 c4 c5"
+        color="light"
+        font-size="12px"
+        font-style="normal"
+        role=""
+      />
+      <div
+        class="c6"
+      >
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Cards/Release Release 1`] = `
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 15px;
+  height: 15px;
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c4 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c6 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: center;
+  line-height: 10px;
+}
+
+.c9 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c0 {
+  border-radius: 4px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: 10px 0px;
+  width: 269px;
+  cursor: pointer;
+}
+
+.c0:hover {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.c0 > * + * {
+  margin-top: 10px;
+}
+
+.c7 {
+  margin-left: 17px;
+  margin-right: 17px;
+  word-wrap: break-word;
+}
+
+.c2 {
+  padding: 0px 17px;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c2 > * + * {
+  margin-left: 10px;
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 {
+  border: 1px solid #F2F2F9;
+  color: #F2F2F9;
+  border-radius: 20px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-transform: lowercase;
+}
+
+.c5 *:first-letter {
+  text-transform: uppercase;
+}
+
+.c1 {
+  background-color: #10AA80;
+}
+
+.c1:hover .{
+  white-space: normal;
+  overflow: visible;
+}
+
+.c8 .{
+  width: 235px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0 c1"
+  >
+    <div
+      class="c2"
+    >
+      <div
+        class="c3"
+      >
+        <i
+          class="c4"
+          color="light"
+          data-testid="icon-info"
+        >
+          <div>
+            <div>
+              <svg
+                src="info"
+              />
+            </div>
+          </div>
+        </i>
+      </div>
+      <div
+        class="c5"
+      >
+        <span
+          class="c6"
+          color="light"
+          data-testid="badge-Deployed"
+          font-size="10px"
+          font-style="normal"
+          role=""
+        >
+          Deployed
+        </span>
+      </div>
+    </div>
+    <div
+      class="c7 c8"
+    >
+      <span
+        class="c9 "
+        color="light"
+        data-testid="release-card-description"
+        font-size="14px"
+        font-style="normal"
+        role=""
+      >
+        ...
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Chart Chart 1`] = `
+.c0 {
+  padding-right: 15px;
+}
+
+.c0 .apexcharts-canvas,
+.c0 .apexcharts-canvas.apexcharts-theme-dark {
+  background-color: transparent;
+}
+
+.c0 .apexcharts-xaxis-tick {
+  display: none;
+}
+
+.c0 .apexcharts-yaxistooltip {
+  display: none;
+}
+
+.c0 .apexcharts-xaxistooltip {
+  display: none;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    data-testid="apexcharts-mock"
+    height="200"
+    options="[object Object]"
+    series="[object Object],[object Object]"
+    type="bar"
+    width="700"
+  >
+    <div>
+      <svg>
+        <g
+          class="apexcharts-yaxis"
+        >
+          <g>
+            <text
+              class="apexcharts-yaxis-label"
+            />
+          </g>
+        </g>
+        <g
+          class="apexcharts-xaxis"
+        >
+          <g>
+            <text
+              class="apexcharts-xaxis-label"
+            />
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 12px;
+}
+
+.c1 {
+  height: 41px;
+  background-color: rgb(44,44,46);
+  padding-right: 16px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c0 {
+  width: 660px;
+  box-sizing: border-box;
+  border-right: 1px solid rgb(44,44,46);
+}
+
+.c7 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-top: 10px;
+  padding-right: 32px;
+  padding-left: 32px;
+  overflow: auto;
+  height: calc(100vh - 90px);
+}
+
+.c3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c3 > * + * {
+  margin-left: 8px;
+}
+
+.c6 {
+  width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.c2 {
+  color: #F2F2F9;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  width: 233px;
+  height: 41px;
+  box-sizing: border-box;
+  padding-left: 31px;
+  background-color: #3A3A3C;
+}
+
+.c2 > * + * {
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    data-testid="tabpanel-Untitled"
+  >
+    <div
+      class="c1"
+    >
+      <div
+        class="c2"
+      >
+        <div
+          class="c3"
+        >
+          <i
+            class="c4"
+            color="light"
+            data-testid="icon-undefined"
+          />
+          <span
+            class="c5 c6"
+            color="light"
+            font-size="12px"
+            font-style="normal"
+            role=""
+          >
+            Untitled
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="c7 tabpanel-content"
+    >
+      Tab
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Text Text 1`] = `
+.c0 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-weight: normal;
+  color: #0A84FF;
+  text-align: left;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <span
+    class="c0"
+    color="primary"
+    font-style="normal"
+    role=""
+  >
+    Text
+  </span>
+</div>
+`;
