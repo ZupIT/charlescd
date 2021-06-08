@@ -31,7 +31,7 @@ export default {
       },
       zoom: {
         enabled: true
-      }
+      },
     },
     yaxis: {
       tickAmount: 2,
@@ -44,9 +44,10 @@ export default {
     xaxis: {
       type: 'numeric',
       tickAmount: 2,
+      tickPlacement: 'on',
       axisBorder: {
         show: false
-      }
+      },
     },
     dataLabels: {
       enabled: false
@@ -67,10 +68,6 @@ export default {
           show: false
         }
       },
-      padding: {
-        left: 0,
-        right: 0
-      }
     },
     stroke: {
       show: true,
