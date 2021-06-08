@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Styled from './styled';
 
 export interface Props {
   children: ReactNode;
   href: string;
   isDisabled?: boolean;
-  target?: string;
+  target?: '_blank' | '_self';
 }
 
 const Link = ({
