@@ -54,7 +54,7 @@ const InputContentIcon = styled(ContentIcon)`
   }
 `;
 
-const FormLink = styled(Form.Link)`
+const FormLink = styled(Form.InputLink)`
   width: 393px;
 `;
 

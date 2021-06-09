@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import Styled from './styled';
+import { render, screen } from 'unit-test/testUtils';
+import Link from '..';
 
-interface Props {
-  name: string;
-  link: string;
-  className?: string;
-}
+test('render InputLink component', () => {
+  const props = {
+    name: 'test',
+    href: 'http://test.input.link'
+  };
 
-const Link = ({ name, link, className }: Props) => {
-  return (
-    <Styled.Wrapper className={className} data-testid={`input-link-${name}`}>
-      <Styled.Input name={name} disabled defaultValue={link} />
-      <Styled.Link href={link} target="_blank">
-        <Styled.Icon name="external-link" color="dark" size="15px" />
-      </Styled.Link>
-    </Styled.Wrapper>
-  );
-};
+  render(<Link name={props.name} href={props.link} />);
 
-export default Link;
+  const inputElement = screen.getByTestId(`input-link-${props.name}`);
+  expect(inputElement).toBeInTheDocument();
+});
+

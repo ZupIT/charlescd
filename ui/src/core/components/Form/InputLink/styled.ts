@@ -19,6 +19,7 @@ import InputComponent from 'core/components/Form/Input';
 import IconComponent from 'core/components/Icon';
 
 const Wrapper = styled.div`
+  width: 200px;
   position: relative;
 `;
 

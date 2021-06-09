@@ -22,8 +22,8 @@ import InputAction from './InputAction';
 import InputTitle from './InputTitle';
 import InputGroup from './InputGroup';
 import InputPhoto from './InputPhoto';
+import InputLink from './InputLink';
 import Number from './Number';
-import Link from './Link';
 import Checkbox from './Checkbox';
 import Radio from './Radio';
 
@@ -38,8 +38,8 @@ export default {
   InputTitle,
   InputGroup,
   InputPhoto,
+  InputLink,
   Number,
-  Link,
   Checkbox,
   Radio
 };
