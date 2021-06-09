@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen } from 'unit-test/testUtils';
-import AceEditor from '..';
+import { COLOR_BASTILLE, COLOR_LAVENDER_GREY, COLOR_BLACK_MARLIN, COLOR_WHITE, COLOR_GHOST_WHITE, COLOR_MALACHITE } from 'core/assets/colors';
 
-const props = {
-  mode: "json",
-}
+export const light = {};
 
-test('render Ace Editor', () => {
-
-  const { container } = render(
-    <AceEditor {...props} />
-  );
-
-  expect(container.innerHTML).toMatch("ace-editor")
-});
+export const dark = {
+    background: COLOR_BASTILLE,
+    color: COLOR_LAVENDER_GREY,
+    lineBorder: {
+      background: COLOR_BLACK_MARLIN
+    },
+    synthax: {
+      property: COLOR_MALACHITE,
+      operator: COLOR_WHITE,
+      punctuation: COLOR_GHOST_WHITE,
+      string: COLOR_LAVENDER_GREY
+    }
+};

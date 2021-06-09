@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
@@ -25,7 +25,6 @@ import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
-import AceEditorForm from 'core/components/Form/AceEditor';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -34,20 +33,22 @@ import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
 import DocumentationLink from 'core/components/DocumentationLink';
 import { useForm } from 'react-hook-form';
-import { 
+import {
   isRequired,
   urlPattern,
   isRequiredAndNotBlank,
   isNotBlank,
-  trimValue
+  trimValue,
+  validJSON,
 } from 'core/utils/validations';
+import Editor from 'core/components/Editor';
 
 const registryPlaceholder: Option = {
   AZURE: 'example.azurecr.io',
   AWS: 'account_id.dkr.ecr.region.amazonaws.com',
   GCP: 'gcr.io',
   DOCKER_HUB: 'registry.hub.docker.com',
-  HARBOR: 'harbor.exampleapi.com'
+  HARBOR: 'harbor.exampleapi.com',
 };
 
 const FormRegistry = ({ onFinish }: Props<Registry>) => {
@@ -61,30 +62,37 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
     save: testConnection,
-    reset: resetTestConnection
+    reset: resetTestConnection,
   } = useTestConnection(testRegistryConnection);
   const {
     register,
     handleSubmit,
     reset,
-    control,
     getValues,
     setValue,
     watch,
     errors,
-    formState: { isValid }
+    trigger,
+    formState: { isValid },
   } = useForm<Registry>({
     mode: 'onChange',
     defaultValues: {
       address: 'https://',
       name: '',
       provider: null,
-      jsonKey: ''
-    }
+      jsonKey: '',
+    },
   });
 
   const form = watch();
   const { address: addressListener } = form;
+
+  /**
+   * workaround to solve a test, because useevent type doesnt trigger formState validation
+   */
+  useEffect(() => {
+    trigger();
+  }, [form.jsonKey, trigger]);
 
   useEffect(() => {
     if (responseAdd) onFinish();
@@ -118,7 +126,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
   const onClick = () => {
     const registry = {
       ...getValues(),
-      provider: registryType
+      provider: registryType,
     };
     setLastTestedForm(getValues());
     testConnection(registry);
@@ -127,7 +135,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
   const onSubmit = (registry: Registry) => {
     save({
       ...registry,
-      provider: registryType
+      provider: registryType,
     });
   };
 
@@ -174,14 +182,21 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
         <Styled.Subtitle tag="H4" color="dark">
           Enter the json key below:
         </Styled.Subtitle>
-        <AceEditorForm
-          width="270px"
-          mode="json"
+        <Editor
+          ref={register({
+            ...isRequiredAndNotBlank,
+            validate: {
+              ...isRequiredAndNotBlank.validate,
+              validJSON,
+            },
+          })}
           name="jsonKey"
-          rules={{ required: true }}
-          control={control}
-          theme="monokai"
+          width="270px"
+          height="190px"
         />
+        <Text tag="H5" color="error">
+          {errors?.jsonKey?.message}
+        </Text>
       </>
     );
   };
@@ -231,10 +246,10 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
               ref={register({
                 required: isRequired(),
                 validate: {
-                  notBlank: isNotBlank
+                  notBlank: isNotBlank,
                 },
                 setValueAs: trimValue,
-                pattern: urlPattern()
+                pattern: urlPattern(),
               })}
               error={errors?.address?.message}
               name="address"
@@ -277,7 +292,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
   const renderRegistryIcon = () => {
     if (registryType) {
       const registryChoose = options.filter(
-        item => item.value === registryType
+        (item) => item.value === registryType
       );
       return registryChoose[0].icon;
     }
@@ -286,7 +301,9 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
 
   return (
     <Styled.Content>
-      <Styled.Title tag="H2" color="light">Add Registry</Styled.Title>
+      <Styled.Title tag="H2" color="light">
+        Add Registry
+      </Styled.Title>
       <Text tag="H5" color="dark" data-testid="registry-help-text">
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
@@ -302,7 +319,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
         customOption={CustomOption.Icon}
         icon={renderRegistryIcon()}
         options={options}
-        onChange={option => onChange(option as Option)}
+        onChange={(option) => onChange(option as Option)}
       />
       {registryType && renderForm()}
     </Styled.Content>

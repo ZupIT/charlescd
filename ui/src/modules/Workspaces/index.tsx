@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
 import { isRoot, logout } from 'core/utils/auth';
@@ -36,14 +36,14 @@ const Workspaces = () => {
   const {
     save,
     response: saveWorkspaceResponse,
-    loading: saveWorkspaceLoading
+    loading: saveWorkspaceLoading,
   } = useSaveWorkspace();
   const history = useHistory();
   const {
     register,
     handleSubmit,
     errors,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm({ mode: 'onChange' });
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const Workspaces = () => {
               validate: {
                 notBlank: isNotBlank,
               },
-              maxLength: maxLength()
+              maxLength: maxLength(),
             })}
           />
           <Styled.Modal.Button
