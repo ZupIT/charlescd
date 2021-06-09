@@ -33,6 +33,7 @@ const Actions = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   > :first-child, a {
     margin-right: 36px;
@@ -182,6 +183,8 @@ const FieldErrorWrapper = styled.div`
 
 const A = styled.a`
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 `;
 
 export default {
