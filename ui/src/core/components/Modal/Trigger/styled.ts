@@ -46,8 +46,8 @@ const Content = styled.div`
   display: flex-inline;
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.OVER_4};
-  top: 245px;
-  left: 650px;
+  top: 25%;
+  left: calc(50% - 204px);
   padding: 11px 41px 28px 40px;
   text-align: left;
   background: ${({ theme }) => theme.modal.trigger.background};
