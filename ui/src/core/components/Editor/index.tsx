@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { forwardRef, Ref, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  forwardRef,
+  KeyboardEvent,
+  Ref,
+  UIEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Highlight, { defaultProps } from 'prism-react-renderer';
 import isEmpty from 'lodash/isEmpty';
 import { formatJSON, handleKeyDown, shouldComplete } from './helper';
@@ -41,9 +50,9 @@ const Editor = forwardRef(
       }
     }, [data]);
 
-    const onChangeEditor = (event: any) => {
+    const onChangeEditor = (event: ChangeEvent<HTMLTextAreaElement>) => {
       const { selectionStart, selectionEnd, value } = event.target;
-      const { data } = event.nativeEvent;
+      const { data } = event.nativeEvent as Event & { data: string };
 
       event.target.value =
         value.substring(0, selectionStart) +
@@ -56,13 +65,14 @@ const Editor = forwardRef(
       event.target.selectionEnd = selectionStart;
     };
 
-    const onKeyDown = (e: any) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       handleKeyDown(e);
-      setContent(e.target.value);
+      const { value } = e.target as HTMLTextAreaElement;
+      setContent(value);
     };
 
-    const onScrollTextarea = (event: any) => {
-      editorRef.current.scrollTop = event.target.scrollTop;
+    const onScrollTextarea = (event: UIEvent<HTMLTextAreaElement>) => {
+      editorRef.current.scrollTop = event.currentTarget.scrollTop;
     };
 
     return (
