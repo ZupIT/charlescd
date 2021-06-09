@@ -15,6 +15,7 @@
 */
 
 import isEmpty from 'lodash/isEmpty';
+import { KeyboardEvent } from 'react';
 
 export const formatJSON = (jsonStr: string | object) => {
   try {
@@ -41,42 +42,44 @@ export const shouldComplete = (key: string) => {
 
 export const TAB = '  ';
 
-export const insertValue = (e: any, value: string, caretPosition = TAB.length) => {
-  const start = e.target.selectionStart;
-  const end = e.target.selectionEnd;
-  const targetValue = e.target.value;
+export const insertValue = (e: KeyboardEvent, value: string, caretPosition = TAB.length) => {
+  const target = e.target as HTMLTextAreaElement;
+  const start = target.selectionStart;
+  const end = target.selectionEnd;
+  const targetValue = target.value;
 
-  e.target.value =
+  target.value =
     targetValue.substring(0, start) +
     value +
     targetValue.substring(end);
 
-  e.target.selectionEnd = end + caretPosition;
-  e.target.selectionStart = end + caretPosition;
+  target.selectionEnd = end + caretPosition;
+  target.selectionStart = end + caretPosition;
 }
 
-export const getLastTabs = (e: any) => {
-  const value = e.target.value;
+export const getLastTabs = (target: HTMLTextAreaElement) => {
+  const value = target.value;
   const lastLine = value
-    .substring(0, e.target.selectionEnd)
+    .substring(0, target.selectionEnd)
     ?.split('\n')
     ?.reverse();
 
   return lastLine[0].split('"')[0]?.replace(/\{|\[/g, "");
 }
 
-export const onPressTab = (e: any) => {
+export const onPressTab = (e: KeyboardEvent) => {
   e.preventDefault();
   insertValue(e, TAB);
 }
 
-export const onPressEnter = (e: any) => {
+export const onPressEnter = (e: KeyboardEvent) => {
   e.preventDefault();
-  const start = e.target.selectionStart;
-  const lastChar = e.target.textContent.substring(start - 1, start);
+  const target = e.target as HTMLTextAreaElement;
+  const start = target.selectionStart;
+  const lastChar = target.textContent.substring(start - 1, start);
 
   if (['{', '['].includes(lastChar)) {
-    const lastTabs = getLastTabs(e);
+    const lastTabs = getLastTabs(target);
     const tabs = lastTabs + TAB;
     const insertion = `\n${tabs}`;
     const complete = isEmpty(lastTabs)
@@ -87,7 +90,7 @@ export const onPressEnter = (e: any) => {
     insertValue(e, `${insertion + complete}`, len);
 
   } else if (lastChar === ',') {
-    const tabs = getLastTabs(e);
+    const tabs = getLastTabs(target);
     const insertion = `\n${tabs}`;
     insertValue(e, `${insertion}`, insertion.length);
   } else {
@@ -95,7 +98,7 @@ export const onPressEnter = (e: any) => {
   }
 }
 
-export const handleKeyDown = (e: any) => {
+export const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Tab') {
     onPressTab(e);
   } else if (e.key === 'Enter') {

@@ -14,25 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
-import { getNameInitials } from './helper';
-
-export interface Props {
-  name?: string;
-  initials?: string;
-  className?: string;
-  size?: string;
-}
-
-const AvatarName = ({ name, initials, className, size = '40px' }: Props) => (
-  <Styled.Wrapper
-    className={`${className} avatar-initials`}
-    size={size}
-    data-testid={name}
-  >
-    {initials || getNameInitials(name)}
-  </Styled.Wrapper>
-);
-
-export default AvatarName;
+export const getInitials = (name: string) => {
+  const initials = name.match(/\b\w/g) || [];
+  return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+};

@@ -99,7 +99,8 @@ const TextArea = styled.textarea`
 `;
 
 const Pre = styled.pre`
-  height: calc(100% - 20px);
+  height: calc(100% - 10px);
+  margin-bottom: 0;
   white-space: pre-wrap;
   word-break: keep-all;
   overflow-wrap: break-word;
