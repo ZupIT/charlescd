@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import routes from 'core/constants/routes';
 import { isNotBlank, isRequired, maxLength } from 'core/utils/validations';
 import { removeWizard } from 'modules/Settings/helpers';
-import Modal from 'core/components/Modal';
+import ModalDefault from 'core/components/Modal/ModalDefault';
 import Menu from './Menu';
 import Styled from './styled';
 import { getProfileByKey } from 'core/utils/profile';
@@ -65,7 +65,7 @@ const Workspaces = () => {
 
   const renderModal = () =>
     isRoot() && (
-      <Modal.Default onClose={() => setToggleModal(false)}>
+      <ModalDefault onClose={() => setToggleModal(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Modal.Title tag="H2" color="light">
             Create workspace
@@ -90,7 +90,7 @@ const Workspaces = () => {
             Create workspace
           </Styled.Modal.Button>
         </form>
-      </Modal.Default>
+      </ModalDefault>
     );
 
   return (

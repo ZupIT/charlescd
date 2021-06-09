@@ -24,15 +24,19 @@ import { CircleMatcher } from './interfaces';
 import { Props } from '../interfaces';
 import { useCircleMatcher } from './hooks';
 import Styled from './styled';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import isEmpty from 'lodash/isEmpty';
 
 const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const [circleMatcher, setCircleMatcher] = useState<string>();
   const isConfimation = !isEmpty(circleMatcher);
   const { responseAdd, save, loadingAdd } = useCircleMatcher();
-  const { register, handleSubmit, formState: { isValid } } = useForm<CircleMatcher>({
-    mode: 'onChange'
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<CircleMatcher>({
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -48,7 +52,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   };
 
   const renderConfirmation = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Add Circle Matcher"
       dismissLabel="Cancel"
       continueLabel="Yes, save"
@@ -57,9 +61,10 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
       onDismiss={() => setCircleMatcher(null)}
     >
       <Text tag="H4" color="light">
-        This operation will syncronize all data from this workspace to the Circle Matcher.
+        This operation will syncronize all data from this workspace to the
+        Circle Matcher.
       </Text>
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const renderForm = () => (
@@ -69,11 +74,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
         name="url"
         label="Insert URL Circle Matcher"
       />
-      <ButtonDefault
-        type="submit"
-        isDisabled={!isValid}
-        isLoading={loadingAdd}
-      >
+      <ButtonDefault type="submit" isDisabled={!isValid} isLoading={loadingAdd}>
         Save
       </ButtonDefault>
     </Styled.Form>

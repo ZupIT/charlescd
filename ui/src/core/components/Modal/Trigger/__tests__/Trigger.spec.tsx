@@ -18,18 +18,20 @@ import React from 'react';
 import Text from 'core/components/Text';
 import { render, screen } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 
 test('render Trigger', () => {
   render(
-    <Modal.Trigger
+    <ModalTrigger
       title="Test"
       dismissLabel="dismiss"
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
-      <Text tag="H4" color="light">Test</Text>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        Test
+      </Text>
+    </ModalTrigger>
   );
 
   const modalElement = screen.getByTestId('modal-trigger');
@@ -42,9 +44,11 @@ test('render Trigger', () => {
 test('onDismiss button click', () => {
   const onDismiss = jest.fn();
   render(
-    <Modal.Trigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
-      <Text tag="H4" color="light">Test</Text>
-    </Modal.Trigger>
+    <ModalTrigger title="Test" dismissLabel="dismiss" onDismiss={onDismiss}>
+      <Text tag="H4" color="light">
+        Test
+      </Text>
+    </ModalTrigger>
   );
   const button = screen.getByTestId('button-default-dismiss');
   userEvent.click(button);
@@ -54,13 +58,16 @@ test('onDismiss button click', () => {
 test('onContinue button click', () => {
   const onContinue = jest.fn();
   render(
-    <Modal.Trigger title="Test"
+    <ModalTrigger
+      title="Test"
       dismissLabel="dismiss"
       onDismiss={jest.fn()}
       onContinue={onContinue}
     >
-      <Text tag="H4" color="light">Test</Text>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        Test
+      </Text>
+    </ModalTrigger>
   );
   const button = screen.getByTestId('button-default-continue');
   userEvent.click(button);
@@ -69,14 +76,14 @@ test('onContinue button click', () => {
 
 test('onClose button click', async () => {
   render(
-    <Modal.Trigger
+    <ModalTrigger
       title="Test"
       dismissLabel="dismiss"
       onDismiss={jest.fn()}
       onContinue={jest.fn()}
     >
       Test
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const modalElement = screen.getByTestId('modal-trigger');

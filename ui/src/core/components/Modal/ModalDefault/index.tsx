@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import Icon from 'core/components/Icon';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   children: React.ReactNode;
   className?: string;
   isOpen?: boolean;
@@ -27,12 +27,12 @@ interface Props {
   isOutsideClick?: boolean;
 }
 
-const Modal = ({
+const ModalDefault = ({
   children,
   className,
   isOpen = true,
   onClose,
-  isOutsideClick
+  isOutsideClick,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
 
@@ -61,4 +61,4 @@ const Modal = ({
   );
 };
 
-export default Modal;
+export default ModalDefault;
