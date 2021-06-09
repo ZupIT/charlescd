@@ -58,7 +58,7 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
             defaultValue={name}
             isDisabled={!!errors.name}
             resume
-            readOnly={isDefault || !hasPermission('maintenance_write')}
+            readOnly={isDefault || !hasPermission('circles_write')}
           />
           {errors.name && (
             <Styled.FieldErrorWrapper>
