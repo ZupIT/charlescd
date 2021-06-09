@@ -34,7 +34,7 @@ const Actions = styled.div`
   display: flex;
   flex-direction: row;
 
-  > :first-child {
+  > :first-child, a {
     margin-right: 36px;
   }
 

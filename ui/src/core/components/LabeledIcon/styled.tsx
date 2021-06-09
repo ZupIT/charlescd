@@ -24,7 +24,6 @@ const Wrapper = styled.div`
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  margin-right: 8px;
 `;
 
 const Label = styled.div<LabelProps>`
