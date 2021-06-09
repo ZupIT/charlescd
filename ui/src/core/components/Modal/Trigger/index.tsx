@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode, forwardRef, Ref } from 'react';
+import { useState, ReactNode, forwardRef, Ref } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -31,68 +31,75 @@ export interface Props {
   children: ReactNode;
 }
 
-const Trigger = forwardRef(({
-  className,
-  onContinue,
-  onDismiss,
-  continueLabel,
-  dismissLabel,
-  title,
-  isDisabled,
-  isLoading,
-  children
-}: Props, ref: Ref<HTMLDivElement>) => {
-  const [toggle, switchToggle] = useState(true);
+const Trigger = forwardRef(
+  (
+    {
+      className,
+      onContinue,
+      onDismiss,
+      continueLabel,
+      dismissLabel,
+      title,
+      isDisabled,
+      isLoading,
+      children,
+    }: Props,
+    ref: Ref<HTMLDivElement>
+  ) => {
+    const [toggle, switchToggle] = useState(true);
 
-  const handleDismiss = () => {
-    switchToggle(!toggle);
-    onDismiss();
-  };
+    const handleDismiss = () => {
+      switchToggle(!toggle);
+      onDismiss();
+    };
 
-  return (
-    toggle && (
-      <Styled.Wrapper data-testid="modal-trigger" className={className}>
-        <Styled.Background className="modal-background" />
-        <Styled.Content className="modal-content" ref={ref}>
-          <Styled.Button.Container>
-            <Icon
-              name="cancel"
-              size="22px"
-              onClick={() => handleDismiss()}
-              color="light"
-              data-testid="icon-cancel-modal"
-            />
-          </Styled.Button.Container>
-          <Styled.Title tag="H2" weight="bold" color="light">
-            {title}
-          </Styled.Title>
-          <Styled.Description>
-            {children}
-          </Styled.Description>
-          <Styled.Buttons className="modal-buttons">
-            <Styled.Button.Dismiss
-              id="dismiss"
-              className="modal-button-dismiss"
-              onClick={() => handleDismiss()}
-            >
-              <Text tag="H5" color="dark">{dismissLabel}</Text>
-            </Styled.Button.Dismiss>
-            {onContinue && (
-              <Styled.Button.Continue
-                id="continue"
-                className="modal-button-continue"
-                isLoading={isLoading}
-                isDisabled={isDisabled}
-                onClick={() => onContinue()}
+    return (
+      toggle && (
+        <Styled.Wrapper data-testid="modal-trigger" className={className}>
+          <Styled.Background className="modal-background" />
+          <Styled.Content className="modal-content" ref={ref}>
+            <Styled.Button.Container>
+              <Icon
+                name="cancel"
+                size="22px"
+                onClick={() => handleDismiss()}
+                color="light"
+                data-testid="icon-cancel-modal"
+              />
+            </Styled.Button.Container>
+            <Styled.Title tag="H2" weight="bold" color="light">
+              {title}
+            </Styled.Title>
+            <Styled.Description>{children}</Styled.Description>
+            <Styled.Buttons className="modal-buttons">
+              <Styled.Button.Dismiss
+                id="dismiss"
+                className="modal-button-dismiss"
+                onClick={() => handleDismiss()}
               >
-                <Text tag="H5" color="light">{continueLabel}</Text>
-              </Styled.Button.Continue>
-            )}
-          </Styled.Buttons>
-        </Styled.Content>
-      </Styled.Wrapper>
-    )
-  );
-});
+                <Text tag="H5" color="dark">
+                  {dismissLabel}
+                </Text>
+              </Styled.Button.Dismiss>
+              {onContinue && (
+                <Styled.Button.Continue
+                  id="continue"
+                  className="modal-button-continue"
+                  isLoading={isLoading}
+                  isDisabled={isDisabled}
+                  onClick={() => onContinue()}
+                >
+                  <Text tag="H5" color="light">
+                    {continueLabel}
+                  </Text>
+                </Styled.Button.Continue>
+              )}
+            </Styled.Buttons>
+          </Styled.Content>
+        </Styled.Wrapper>
+      )
+    );
+  }
+);
 
 export default Trigger;
