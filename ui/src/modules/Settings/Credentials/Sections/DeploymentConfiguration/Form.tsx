@@ -21,7 +21,7 @@ import { CHARLES_DOC } from 'core/components/Popover';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { gitProviders } from './constants';
 import { DeploymentConfiguration } from './interfaces';
 import { Props } from '../interfaces';
@@ -86,10 +86,9 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
       <Text tag="H2" color="light">Add Deployment Configuration</Text>
       <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding your Deployment Configuration tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. See our{' '}
-        <DocumentationLink
-          text="documentation"
-          documentationLink={`${CHARLES_DOC}/reference/cd-configuration`}
-        />
+        <Link href={`${CHARLES_DOC}/reference/cd-configuration`}>
+          documentation
+        </Link>
         for further details.
       </Text>
       {renderForm()}

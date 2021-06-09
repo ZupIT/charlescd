@@ -26,7 +26,7 @@ import Text from 'core/components/Text';
 import List from './Content/List';
 import { options, Option } from './constants';
 import Styled from './styled';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 
 export interface Props {
   workspaces: WorkspacePaginationItem[];
@@ -65,10 +65,9 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         <Text tag="H5" color="dark">
           {renderDescription()}
           Read our 
-          <DocumentationLink
-            documentationLink="https://docs.charlescd.io"
-            text="documentation"
-          />
+          <Link href="https://docs.charlescd.io">
+            documentation
+          </Link>
           for further details.
         </Text>
       </Styled.Caption>

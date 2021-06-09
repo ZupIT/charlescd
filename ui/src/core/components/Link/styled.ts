@@ -21,6 +21,8 @@ const Link = styled.a<Partial<Props>>`
   display: flex;
   align-items: center;
   cursor: pointer;
+  text-decoration: underline;
+  color: ${({ theme }) => theme.text.link};
 
   ${({ isDisabled }) =>
     isDisabled &&

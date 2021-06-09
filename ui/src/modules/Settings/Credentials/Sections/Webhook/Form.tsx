@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import omit from 'lodash/omit';
 import size from 'lodash/size';
@@ -29,7 +29,7 @@ import { EVENTS } from './constants';
 import { useWebhook } from './hooks';
 import Styled from './styled';
 import { CHARLES_DOC } from 'core/components/Popover';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { isRequired, maxLength, minLength, urlPattern } from 'core/utils/validations';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
@@ -99,10 +99,9 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       </Text>
       <Text tag="H5" color="dark">
         See our {' '}
-          <DocumentationLink
-            text="documentation"
-            documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}
-          />{' '}
+        <Link href={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}>
+          documentation
+        </Link>{' '}
         for further details.
       </Text>
       <Styled.Fields>

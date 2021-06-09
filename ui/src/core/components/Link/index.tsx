@@ -27,7 +27,7 @@ export interface Props {
 const Link = ({
   children,
   href,
-  target = '_self',
+  target = '_blank',
   isDisabled,
   ...rest
 }: Props) => (
