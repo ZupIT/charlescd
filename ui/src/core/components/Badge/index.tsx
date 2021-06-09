@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
