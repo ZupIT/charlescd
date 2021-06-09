@@ -15,7 +15,7 @@
  */
 
 import { useFormContext } from 'react-hook-form';
-import { isRequiredAndNotBlank } from 'core/utils/validations';
+import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 import Form from 'core/components/Form';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
@@ -43,13 +43,19 @@ const Fields = ({ remove, field, index }: Props) => {
       <Form.Input
         name={`metadata.content[${index}].key`}
         label="Key"
-        ref={register(isRequiredAndNotBlank)}
+        ref={register({
+          ...isRequiredAndNotBlank,
+          maxLength: maxLength(63)
+        })}
         defaultValue={field.key}
       />
       <Form.Input
         name={`metadata.content[${index}].value`}
         label="Value"
-        ref={register(isRequiredAndNotBlank)}
+        ref={register({
+          ...isRequiredAndNotBlank,
+          maxLength: maxLength(252)
+        })}
         defaultValue={field.value}
       />
     </Styled.Field>
