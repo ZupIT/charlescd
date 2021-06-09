@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
-import AvatarName from 'core/components/AvatarName';
+import Avatar from 'core/components/Avatar';
 import Text from 'core/components/Text';
 import { Input } from 'core/components/Form';
 
@@ -132,7 +132,7 @@ const ItemProfile = styled.div`
   flex-direction: row;
 `;
 
-const ItemPhoto = styled(AvatarName)`
+const ItemPhoto = styled(Avatar)`
   width: 40px;
   height: 40px;
   border-radius: 50%;
