@@ -6,11 +6,10 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
-	"net/http"
 )
 
 type QueryMetricsGroup interface {
-	Execute(id uuid.UUID, periodParameter, intervalParameter string) (domain.MetricsGroup, error)
+	Execute(id uuid.UUID, periodParameter, intervalParameter string) ([]domain.MetricValues, error)
 }
 
 type queryMetricsGroup struct {
@@ -23,26 +22,26 @@ func NewQueryMetricsGroup(d repository.MetricsGroupRepository) QueryMetricsGroup
 	}
 }
 
-func (s queryMetricsGroup) Execute(id uuid.UUID, periodParameter, intervalParameter string) (domain.MetricsGroup, error) {
+func (s queryMetricsGroup) Execute(id uuid.UUID, periodParameter, intervalParameter string) ([]domain.MetricValues, error) {
 
 	if periodParameter == "" || intervalParameter == "" {
-		return domain.MetricsGroup{}, logging.NewError("Period or interval params is required", errors.New("invalid parameters"), nil, "getMetricsGroup.Execute")
+		return []domain.MetricValues{}, logging.NewError("Period or interval params is required", errors.New("invalid parameters"), nil, "queryMetricsGroup.Execute")
 	}
 
 	ragePeriod, err := s.metricsGroupRepository.PeriodValidate(periodParameter)
 	if err != nil {
-		return echoCtx.JSON(http.StatusInternalServerError, err)
+		return []domain.MetricValues{}, logging.WithOperation(err, "queryMetricsGroup.Execute.PeriodValidate")
 	}
 
 	interval, err := s.metricsGroupRepository.PeriodValidate(intervalParameter)
 	if err != nil {
-		return echoCtx.JSON(http.StatusInternalServerError, err)
+		return []domain.MetricValues{}, logging.WithOperation(err, "queryMetricsGroup.Execute.PeriodValidate")
 	}
 
-	mg, err := s.metricsGroupRepository.QueryByGroupID(id, ragePeriod, interval)
+	query, err := s.metricsGroupRepository.QueryByGroupID(id, ragePeriod, interval)
 	if err != nil {
-		return domain.MetricsGroup{}, logging.WithOperation(err, "getMetricsGroup.Execute")
+		return []domain.MetricValues{}, logging.WithOperation(err, "queryMetricsGroup.Execute")
 	}
 
-	return mg, nil
+	return query, nil
 }

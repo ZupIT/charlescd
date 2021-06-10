@@ -24,6 +24,13 @@ type MetricsGroupRequest struct {
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
+type MetricsGroupUpdateRequest struct {
+	Name     string                                  `json:"name"`
+	Metrics  []metric.Metric                         `json:"metrics"`
+	CircleID uuid.UUID                               `json:"circleId"`
+	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
+}
+
 type MetricGroupResumeResponse struct {
 	util.BaseModel
 	Name              string `json:"name"`
@@ -40,6 +47,15 @@ func (metricsGroupRequest MetricsGroupRequest) RequestToDomain(workspaceId uuid.
 		WorkspaceID: workspaceId,
 		CircleID:    metricsGroupRequest.CircleID,
 		Actions:     metricsGroupRequest.Actions,
+	}
+}
+
+func (metricsGroupRequest MetricsGroupUpdateRequest) RequestToDomain() domain.MetricsGroup {
+	return domain.MetricsGroup{
+		Name:     strings.TrimSpace(metricsGroupRequest.Name),
+		Metrics:  metricsGroupRequest.Metrics,
+		CircleID: metricsGroupRequest.CircleID,
+		Actions:  metricsGroupRequest.Actions,
 	}
 }
 

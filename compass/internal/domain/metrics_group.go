@@ -26,3 +26,15 @@ type MetricGroupResume struct {
 	Metrics           int    `json:"metricsCount"`
 	Status            string `json:"status"`
 }
+
+type MetricValues struct {
+	ID       uuid.UUID   `json:"id"`
+	Nickname string      `json:"metric"`
+	Values   interface{} `json:"result"`
+}
+
+type MetricResult struct {
+	ID       uuid.UUID `json:"id"`
+	Nickname string    `json:"metric"`
+	Result   float64   `json:"result"`
+}

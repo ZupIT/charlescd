@@ -35,18 +35,18 @@ import (
 )
 
 type MetricsGroupRepository interface {
-	PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error)
-	FindAll() ([]MetricsGroup, errors.Error)
+	PeriodValidate(currentPeriod string) (datasourcePKG.Period, error)
+	FindAll() ([]domain.MetricsGroup, errors.Error)
 	FindAllByWorkspaceId(workspaceId uuid.UUID) ([]domain.MetricsGroup, error)
 	ResumeByCircle(circleId uuid.UUID) ([]domain.MetricGroupResume, error)
 	Save(metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error)
 	FindById(id uuid.UUID) (domain.MetricsGroup, error)
-	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
-	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
-	Remove(id string) errors.Error
-	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, errors.Error)
-	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, errors.Error)
-	ResultByID(id string) ([]datasourcePKG.MetricResult, errors.Error)
+	Update(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error)
+	UpdateName(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error)
+	Remove(id uuid.UUID) error
+	QueryByGroupID(id uuid.UUID, period, interval datasourcePKG.Period) ([]domain.MetricValues, error)
+	ResultByGroup(group domain.MetricsGroup) ([]domain.MetricResult, error)
+	ResultByID(id uuid.UUID) ([]domain.MetricResult, error)
 	ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, errors.Error)
 }
 
@@ -96,47 +96,43 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error) {
+func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasourcePKG.Period, error) {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
-		return datasource.Period{}, errors.NewError("Invalid period", "Invalid period or interval").
-			WithOperations("PeriodValidate.RegexCompile")
+		return datasourcePKG.Period{}, logging.NewError("Invalid period", err, nil, "MetricsGroupRepository.PeriodValidate.Compile")
 	}
 
 	if currentPeriod != "" && !reg.Match([]byte(currentPeriod)) {
-		return datasource.Period{}, errors.NewError("Invalid period", "Invalid period or interval: not found number").
-			WithOperations("PeriodValidate.RegexMatch")
+		return datasourcePKG.Period{}, logging.NewError("Invalid period", err, nil, "MetricsGroupRepository.PeriodValidate.RegexMatch")
 	}
 
 	unit := reg.ReplaceAllString(currentPeriod, "")
 	_, ok := Periods[unit]
 	if !ok && currentPeriod != "" {
-		return datasource.Period{}, errors.NewError("Invalid period", "Invalid period or interval: not found unit").
-			WithOperations("PeriodValidate.ReplaceAllString")
+		return datasourcePKG.Period{}, logging.NewError("Invalid period", err, nil, "MetricsGroupRepository.PeriodValidate.ReplaceAllString")
 	}
 
 	valueReg := regexp.MustCompile("[A-Za-z]").Split(currentPeriod, -1)
 
 	value, err := strconv.Atoi(valueReg[0])
 	if err != nil {
-		return datasource.Period{}, errors.NewError("Invalid period", err.Error()).
-			WithOperations("ReplaceAllString.Atoi")
+		return datasourcePKG.Period{}, logging.NewError("Invalid period", err, nil, "MetricsGroupRepository.PeriodValidate.Atoi")
 	}
 
-	return datasource.Period{
+	return datasourcePKG.Period{
 		Value: int64(value),
 		Unit:  unit,
 	}, nil
 }
 
-func (main metricsGroupRepository) FindAll() ([]MetricsGroup, errors.Error) {
-	var metricsGroups []MetricsGroup
+func (main metricsGroupRepository) FindAll() ([]domain.MetricsGroup, errors.Error) {
+	var metricsGroups []models.MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
-		return []MetricsGroup{}, errors.NewError("FindAll error", db.Error.Error()).
+		return []domain.MetricsGroup{}, errors.NewError("FindAll error", db.Error.Error()).
 			WithOperations("FindAll.DBFind")
 	}
-	return metricsGroups, nil
+	return mapper.MetricsGroupModelToDomains(metricsGroups), nil
 }
 
 func (main metricsGroupRepository) FindAllByWorkspaceId(workspaceId uuid.UUID) ([]domain.MetricsGroup, error) {
@@ -247,7 +243,7 @@ func (main metricsGroupRepository) Save(metricsGroup domain.MetricsGroup) (domai
 	return mapper.MetricsGroupModelToDomain(modelMetricsGroup), nil
 }
 
-func (main metricsGroupRepository) FindById(id string) (domain.MetricsGroup, error) {
+func (main metricsGroupRepository) FindById(id uuid.UUID) (domain.MetricsGroup, error) {
 	metricsGroup := models.MetricsGroup{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroup)
 	if db.Error != nil {
@@ -281,86 +277,83 @@ func (main metricsGroupRepository) ListAllByCircle(circleId string) ([]models.Me
 	return metricsGroups, nil
 }
 
-func (main metricsGroupRepository) Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
-	db := main.db.Table("metrics_groups").Where("id = ?", id).Updates(&metricsGroup)
+func (main metricsGroupRepository) Update(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error) {
+	modelMetricsGroup := mapper.MetricsGroupDomainToModel(metricsGroup)
+	db := main.db.Table("metrics_groups").Where("id = ?", id).Updates(&modelMetricsGroup)
 	if db.Error != nil {
-		return MetricsGroup{}, errors.NewError("Update error", db.Error.Error()).
-			WithOperations("Update.Update")
+		return domain.MetricsGroup{}, logging.NewError("Update Metric Group", db.Error, nil, "MetricsGroupRepository.Update.Updates")
 	}
-	return metricsGroup, nil
+	return mapper.MetricsGroupModelToDomain(modelMetricsGroup), nil
 }
 
-func (main metricsGroupRepository) UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) UpdateName(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", metricsGroup.Name)
 	if db.Error != nil {
-		return MetricsGroup{}, errors.NewError("UpdateName error", db.Error.Error()).
+		return domain.MetricsGroup{}, errors.NewError("UpdateName error", db.Error.Error()).
 			WithOperations("UpdateName.Update")
 	}
 	return metricsGroup, nil
 }
 
-func (main metricsGroupRepository) Remove(id string) errors.Error {
-	db := main.db.Where("id = ?", id).Delete(MetricsGroup{})
+func (main metricsGroupRepository) Remove(id uuid.UUID) error {
+	db := main.db.Where("id = ?", id).Delete(models.MetricsGroup{})
 	if db.Error != nil {
-		return errors.NewError("Remove error", db.Error.Error()).
-			WithOperations("Remove.Delete")
+		return logging.NewError("Delete Metric Group", db.Error, nil, "MetricsGroupRepository.Remove.Delete")
 	}
 	return nil
 }
 
-func (main metricsGroupRepository) QueryByGroupID(id string, period, interval datasource.Period) ([]datasource.MetricValues, errors.Error) {
-	var metricsValues []datasource.MetricValues
+func (main metricsGroupRepository) QueryByGroupID(id uuid.UUID, period, interval datasourcePKG.Period) ([]domain.MetricValues, error) {
+	var metricsValues []datasourcePKG.MetricValues
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
-		return []datasource.MetricValues{}, errors.NewError("Not found", "Not found metrics group: "+id).
-			WithOperations("QueryByGroupID.FindById")
+		return []domain.MetricValues{}, logging.NewError("Query error", err, nil, "MetricsGroupRepository.QueryByGroupID.FindById")
 	}
 
 	if len(metricsGroup.Metrics) == 0 {
-		return []datasource.MetricValues{}, nil
+		return []domain.MetricValues{}, nil
 	}
 
 	for _, metr := range metricsGroup.Metrics {
 
 		query, err := main.metricMain.Query(metr, period, interval)
 		if err != nil {
-			return []datasource.MetricValues{}, err.WithOperations("QueryByGroupID.Query")
+			return []domain.MetricValues{}, logging.NewError("Query error", err, nil, "MetricsGroupRepository.QueryByGroupID.Query")
 		}
 
-		metricsValues = append(metricsValues, datasource.MetricValues{
+		metricsValues = append(metricsValues, datasourcePKG.MetricValues{
 			ID:       metr.ID,
 			Nickname: metr.Nickname,
 			Values:   query,
 		})
 	}
 
-	return metricsValues, nil
+	return mapper.MetricValuesToDomains(metricsValues), nil
 }
 
-func (main metricsGroupRepository) ResultByGroup(group MetricsGroup) ([]datasource.MetricResult, errors.Error) {
-	var metricsResults []datasource.MetricResult
+func (main metricsGroupRepository) ResultByGroup(group domain.MetricsGroup) ([]domain.MetricResult, error) {
+	var metricsResults []datasourcePKG.MetricResult
 	for _, metr := range group.Metrics {
 
 		result, err := main.metricMain.ResultQuery(metr)
 		if err != nil {
-			return nil, err.WithOperations("ResultByGroup.ResultQuery")
+			return nil, logging.NewError("Result error", err, nil, "MetricsGroupRepository.ResultByGroup.ResultQuery")
 		}
 
-		metricsResults = append(metricsResults, datasource.MetricResult{
+		metricsResults = append(metricsResults, datasourcePKG.MetricResult{
 			ID:       metr.ID,
 			Nickname: metr.Nickname,
 			Result:   result,
 		})
 	}
 
-	return metricsResults, nil
+	return mapper.MetricResultsToDomains(metricsResults), nil
 }
 
-func (main metricsGroupRepository) ResultByID(id string) ([]datasource.MetricResult, errors.Error) {
+func (main metricsGroupRepository) ResultByID(id uuid.UUID) ([]domain.MetricResult, error) {
 	metricsGroup, err := main.FindById(id)
 	if err != nil {
-		return []datasource.MetricResult{}, errors.NewError("Not found", "Not found metrics group: "+id).
-			WithOperations("ResultByID.FindById")
+		return []domain.MetricResult{}, logging.NewError("Result error", err, nil, "MetricsGroupRepository.ResultByID.FindById")
 	}
 
 	return main.ResultByGroup(metricsGroup)

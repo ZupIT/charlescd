@@ -111,14 +111,17 @@ func Show(getMetricsGroup metricsGroupInteractor.GetMetricsGroup) echo.HandlerFu
 	}
 }
 
-func Query(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func Query(queryMetricsGroup metricsGroupInteractor.QueryMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
 
 		periodParameter := echoCtx.QueryParam("period")
 		intervalParameter := echoCtx.QueryParam("interval")
 
-		queryResult, err := metricsgroupMain.QueryByGroupID(id, ragePeriod, interval)
+		queryResult, err := queryMetricsGroup.Execute(id, periodParameter, intervalParameter)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
@@ -127,11 +130,14 @@ func Query(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc 
 	}
 }
 
-func Result(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func Result(resultMetrics metricsGroupInteractor.ResultMetrics) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
 
-		queryResult, err := metricsgroupMain.ResultByID(id)
+		queryResult, err := resultMetrics.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
@@ -140,35 +146,53 @@ func Result(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc
 	}
 }
 
-func UpdateMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func UpdateMetricsGroup(updateMetricsGroup metricsGroupInteractor.UpdateMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
 
-		metricsGroup, err := metricsgroupMain.Parse(echoCtx.Request().Body)
+		ctx := echoCtx.Request().Context()
+		var metricsGroup representation.MetricsGroupUpdateRequest
+
+		bindErr := echoCtx.Bind(&metricsGroup)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
+
+		updatedMetricsGroup, err := updateMetricsGroup.Execute(id, metricsGroup.RequestToDomain())
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		updatedWorkspace, err := metricsgroupMain.Update(id, metricsGroup)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		return echoCtx.JSON(http.StatusOK, updatedWorkspace)
+		return echoCtx.JSON(http.StatusOK, updatedMetricsGroup)
 	}
 }
 
 func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
-		metricsGroupAux, err := metricsgroupMain.Parse(echoCtx.Request().Body)
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		ctx := echoCtx.Request().Context()
+		var metricsGroupRequest representation.MetricsGroupUpdateRequest
+
+		bindErr := echoCtx.Bind(&metricsGroupRequest)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
 
 		metricsGroup, err := metricsgroupMain.FindById(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		metricsGroup.Name = metricsGroupAux.Name
+		metricsGroup.Name = metricsGroupRequest.Name
 		if err := metricsgroupMain.Validate(metricsGroup); len(err.GetErrors()) > 0 {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
@@ -181,11 +205,14 @@ func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.Handler
 	}
 }
 
-func DeleteMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func DeleteMetricsGroup(deleteMetricsGroup metricsGroupInteractor.DeleteMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
 
-		err := metricsgroupMain.Remove(id)
+		err := deleteMetricsGroup.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
