@@ -1232,7 +1232,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
-          'too-big-key': 'some-value'
+          'key': 'some@value'
         }
       }
     }

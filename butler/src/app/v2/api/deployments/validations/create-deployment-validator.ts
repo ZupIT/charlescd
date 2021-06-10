@@ -205,9 +205,9 @@ export class CreateDeploymentValidator {
 
   private hasDnsFormat(metadata: Metadata) {
     const invalidDnsMetadata = Object.keys(metadata.content).find(
-      key => !this.isValidDnsFormat(key) && !this.isValidDnsFormat(metadata.content[key])
+      key => !this.isValidDnsFormat(key) || !this.isValidDnsFormat(metadata.content[key])
     )
-    return invalidDnsMetadata === null
+    return invalidDnsMetadata == null
   }
 }
 
