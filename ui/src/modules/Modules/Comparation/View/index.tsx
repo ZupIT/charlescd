@@ -123,7 +123,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               isLoading={loading}
               description={component?.name}
               actions={renderAction(component, index)}
-              onClick={() => hasPermission('maintenance_write') && onSelectComponent(component)}
+              onClick={() => hasPermission('modules_write') && onSelectComponent(component)}
             >
               <Styled.Component.Wrapper>
                 <Styled.Component.Info>
