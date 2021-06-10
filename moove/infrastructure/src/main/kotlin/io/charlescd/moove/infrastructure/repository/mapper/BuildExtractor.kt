@@ -101,7 +101,7 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
     }
 
     private fun getBuildDeployment(deployments: HashSet<Deployment>, id: String): List<Deployment> {
-        return deployments.filter{
+        return deployments.filter {
             it.buildId == id
         }
     }
