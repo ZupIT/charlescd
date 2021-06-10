@@ -16,7 +16,7 @@
  *
  */
 
-package circleundeployment
+package main
 
 import (
 	"encoding/json"
