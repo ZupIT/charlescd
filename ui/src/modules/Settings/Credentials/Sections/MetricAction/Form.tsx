@@ -32,6 +32,7 @@ import {
   isNotBlank,
   trimValue,
 } from 'core/utils/validations';
+import { CHARLES_DOC } from 'core/components/Popover';
 
 const actionPlaceholder = 'charlescd-custom-path-example';
 
@@ -187,7 +188,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
       <Styled.Info tag="H5" color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         See our{' '}
-        <Link href="https://docs.charlescd.io/reference/metrics/action">
+        <Link href={`${CHARLES_DOC}/reference/metrics/action`}>
           documentation
         </Link>
         for further details.
