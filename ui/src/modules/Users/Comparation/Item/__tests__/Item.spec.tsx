@@ -27,32 +27,37 @@ beforeEach(() => {
 });
 
 beforeAll(() => {
-  saveProfile({ id: '123', name: 'User', email: 'user@zup.com.br', root: true });
+  saveProfile({
+    id: '123',
+    name: 'User',
+    email: 'user@zup.com.br',
+    root: true,
+  });
 });
 
 const props = {
   name: 'Charles',
-  email: 'test@zup.com.br'
+  email: 'test@zup.com.br',
 };
 
 test('render UsersComparationItem default component', async () => {
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
-  );
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
-  const userComparationElement = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  const userComparationElement = await screen.findByTestId(
+    `users-comparation-item-${props.email}`
+  );
   expect(userComparationElement).toBeInTheDocument();
 });
 
 test('should open a user and successfully update the name', async () => {
-  (fetch as FetchMock).mockResponse(JSON.stringify({
-    name: 'Charles',
-    email: 'charlescd@zup.com.br'
-  }))
-
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
+  (fetch as FetchMock).mockResponse(
+    JSON.stringify({
+      name: 'Charles',
+      email: 'charlescd@zup.com.br',
+    })
   );
+
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
   const InputNameWrapper = await screen.findByTestId('input-wrapper-name');
   expect(InputNameWrapper).toBeInTheDocument();
@@ -68,13 +73,13 @@ test('should open a user and successfully update the name', async () => {
 });
 
 test('render Modal.Trigger on UsersComparationItem component', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}))
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
 
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
+
+  const email = await screen.findByTestId(
+    `users-comparation-item-${props.email}`
   );
-
-  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
   expect(email).toBeInTheDocument();
 
   const dropdownButton = await screen.findByTestId('icon-vertical-dots');
@@ -84,7 +89,9 @@ test('render Modal.Trigger on UsersComparationItem component', async () => {
   expect(deleteIcon).toBeInTheDocument();
   userEvent.click(deleteIcon);
 
-  const Description = await screen.findByText('By deleting this user, all related information will also be deleted. Do you wish to continue?');
+  const Description = await screen.findByText(
+    'By deleting this user, all related information will also be deleted. Do you wish to continue?'
+  );
   expect(Description).toBeInTheDocument();
 
   const modal = screen.getByTestId('modal-trigger');
@@ -92,11 +99,11 @@ test('render Modal.Trigger on UsersComparationItem component', async () => {
 });
 
 test('click on Cancel button in Modal.Trigger component', async () => {
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
-  );
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
-  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  const email = await screen.findByTestId(
+    `users-comparation-item-${props.email}`
+  );
   expect(email).toBeInTheDocument();
 
   const dropdownButton = await screen.findByTestId('icon-vertical-dots');
@@ -108,7 +115,7 @@ test('click on Cancel button in Modal.Trigger component', async () => {
 
   const modal = await screen.findByTestId('modal-trigger');
   expect(modal).toBeInTheDocument();
-  
+
   const cancelButton = screen.getByTestId('button-default-dismiss');
   act(() => userEvent.click(cancelButton));
 
@@ -117,9 +124,7 @@ test('click on Cancel button in Modal.Trigger component', async () => {
 });
 
 test('click on Delete button in Modal.Trigger component', async () => {
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
-  );
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
   const email = screen.getByTestId(`users-comparation-item-${props.email}`);
   expect(email).toBeInTheDocument();
@@ -137,9 +142,7 @@ test('click on Delete button in Modal.Trigger component', async () => {
 
 test('close UsersComparationItem component', async () => {
   const delParamSpy = jest.spyOn(PathUtils, 'delParam');
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
-  );
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
   const email = screen.getByTestId(`users-comparation-item-${props.email}`);
   expect(email).toBeInTheDocument();
@@ -148,7 +151,12 @@ test('close UsersComparationItem component', async () => {
   expect(tabPanelCloseButton).toBeInTheDocument();
 
   userEvent.click(tabPanelCloseButton);
-  expect(delParamSpy).toHaveBeenCalledWith('user', '/users/compare', expect.anything(), props.email);
+  expect(delParamSpy).toHaveBeenCalledWith(
+    'user',
+    '/users/compare',
+    expect.anything(),
+    props.email
+  );
 });
 
 test('render UsersComparationItem component and trigger ModalResetPassword', async () => {
@@ -156,11 +164,11 @@ test('render UsersComparationItem component and trigger ModalResetPassword', asy
     JSON.stringify({ id: '123-456', password: '123457' })
   );
 
-  render(
-    <UsersComparationItem {...props} onChange={jest.fn} />
-  );
+  render(<UsersComparationItem {...props} onChange={jest.fn} />);
 
-  const email = await screen.findByTestId(`users-comparation-item-${props.email}`);
+  const email = await screen.findByTestId(
+    `users-comparation-item-${props.email}`
+  );
   expect(email).toBeInTheDocument();
 
   const resetPasswordButton = await screen.findByTestId('labeledIcon-shield');
