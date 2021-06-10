@@ -95,9 +95,15 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         return builds.map {
             it.copy(
                 features = features.toList(),
-                deployments = deployments.toList()
+                deployments = getBuildDeployment(deployments, it.id)
             )
         }.toHashSet()
+    }
+
+    private fun getBuildDeployment(deployments: HashSet<Deployment>, id: String): List<Deployment> {
+        return deployments.filter{
+            it.buildId == id
+        }
     }
 
     private fun composeFeatures(

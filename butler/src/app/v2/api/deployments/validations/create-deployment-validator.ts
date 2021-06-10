@@ -117,9 +117,14 @@ export class CreateDeploymentValidator {
         if (!this.isValidMetadata(metadata)) {
           return helper.error('invalid.metadata')
         }
+        if (!this.hasDnsFormat(metadata)){
+          return helper.error('imageTag.dns.format')
+        }
       }).messages(
         {
-          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253'
+          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          'imageTag.dns.format': 'Metadata key and value must consist of alphanumeric characters,' +
+              ' "-" or ".", and must start and end with an alphanumeric character'
         }
       )
     })
@@ -147,13 +152,10 @@ export class CreateDeploymentValidator {
       helmRepository: Joi.string().required().label('helmRepository')
     })
       .custom((obj, helper) => {
-        const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
 
         const { buildImageTag, componentName } = obj
 
-        const compareTag = buildImageTag.match(regExpr)?.join('-')
-
-        if (compareTag !== buildImageTag){
+        if (!this.isValidDnsFormat(buildImageTag)) {
           return helper.error('imageTag.dns.format')
         }
 
@@ -178,6 +180,12 @@ export class CreateDeploymentValidator {
         }
       )
   }
+  
+  private isValidDnsFormat(value: string) {
+    const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
 
   private extractTag(buildImageTag: string, buildImageUrl: string): string {
     const extractedTag = buildImageUrl.split(':')
@@ -193,6 +201,13 @@ export class CreateDeploymentValidator {
 
   private isValidLength(key: string, maxLength: number): boolean {
     return key.length  > 0 && key.length < maxLength
+  }
+
+  private hasDnsFormat(metadata: Metadata) {
+    const invalidDnsMetadata = Object.keys(metadata.content).find(
+      key => !this.isValidDnsFormat(key) && !this.isValidDnsFormat(metadata.content[key])
+    )
+    return invalidDnsMetadata === null
   }
 }
 

@@ -1205,6 +1205,64 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       })
   })
 
+  it('returns error for metadata when metadata key/label do not respect dns format', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'too-big-key': 'some-value'
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata key and value must consist of alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        console.log(response.body)
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
   it('returns logs from deployment id', async() => {
     const deploymentId = '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3'
     const deployment = new DeploymentEntityV2(
