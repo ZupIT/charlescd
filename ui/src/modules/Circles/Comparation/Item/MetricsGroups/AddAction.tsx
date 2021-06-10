@@ -206,6 +206,20 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               )}
             />
           )}
+          {selectedAction === 'circleundeployment' && !loading && (
+            <Styled.SelectAsync
+              control={control}
+              name="circleId"
+              label="Select a circle to undeploy"
+              isDisabled={false}
+              loadOptions={loadCirclesByName}
+              defaultOptions={currentCircleOptions}
+              defaultValue={getSelectDefaultValue(
+                actionData?.executionParameters.destinationCircleId,
+                currentCircleOptions
+              )}
+            />
+          )}
           <Button
             type="submit"
             isLoading={isSaving}
