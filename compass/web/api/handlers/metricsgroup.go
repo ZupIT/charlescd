@@ -19,8 +19,9 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
-	"github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
+	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
@@ -28,7 +29,7 @@ import (
 	"net/http"
 )
 
-func GetAll(findAllMetricsGroup metrics_group.FindAllMetricsGroup) echo.HandlerFunc {
+func GetAll(findAllMetricsGroup metricsGroupInteractor.FindAllMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
@@ -45,58 +46,68 @@ func GetAll(findAllMetricsGroup metrics_group.FindAllMetricsGroup) echo.HandlerF
 	}
 }
 
-func Resume(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func Resume(resumeByCircle metricsGroupInteractor.ResumeByCircleMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		circleId, err := uuid.Parse(echoCtx.QueryParam("circleId"))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		metricGroups, err := metricsgroupMain.ResumeByCircle(circleId)
+		metricGroups, err := resumeByCircle.Execute(circleId)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, metricGroups)
+		return echoCtx.JSON(http.StatusOK, representation.MetricGroupResumeToResponses(metricGroups))
 	}
 }
 
-func CreateMetricsGroup(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func CreateMetricsGroup(createMetricsGroup metricsGroupInteractor.CreateMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		metricsGroup, err := metricsgroupMain.Parse(echoCtx.Request().Body)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+
+		ctx := echoCtx.Request().Context()
+		var metricsGroup representation.MetricsGroupRequest
+
+		bindErr := echoCtx.Bind(&metricsGroup)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
+
+		validationErr := echoCtx.Validate(metricsGroup)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createDatasource.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
 		}
 
 		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if parseErr != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
-		}
-		metricsGroup.WorkspaceID = workspaceUUID
-
-		if err := metricsgroupMain.Validate(metricsGroup); len(err.Get().Errors) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Workspace-Id is invalid", bindErr, nil))
 		}
 
-		createdCircle, err := metricsgroupMain.Save(metricsGroup)
+		savedMetricsGroup, err := createMetricsGroup.Execute(metricsGroup.RequestToDomain(workspaceId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, createdCircle)
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupToResponse(savedMetricsGroup))
 	}
 }
 
-func Show(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func Show(getMetricsGroup metricsGroupInteractor.GetMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricGroupID")
+		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
 
-		metricsGroup, err := metricsgroupMain.FindById(id)
+		metricsGroup, err := getMetricsGroup.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, metricsGroup)
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupToResponse(metricsGroup))
 	}
 }
 

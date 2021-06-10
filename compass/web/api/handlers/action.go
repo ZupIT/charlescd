@@ -19,11 +19,10 @@
 package handlers
 
 import (
-	"github.com/labstack/echo/v4"
-	"net/http"
-
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 func Create(actionMain action.UseCases) echo.HandlerFunc {

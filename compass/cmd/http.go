@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	datasource2 "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
-	metrics_group2 "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
-	plugin2 "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
+	datasourceInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
+	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
+	pluginInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
 	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
 	"github.com/go-playground/locales/en"
@@ -118,23 +118,23 @@ func (s server) registerRoutes() {
 			}
 			datasourceHandler := v1.Group("/datasources")
 			{
-				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasource2.NewFindAllDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.POST("", handlers.CreateDatasource(datasource2.NewDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasource2.NewDeleteDatasource(s.pm.datasourceRepository)))
-				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(datasource2.NewGetMetrics(s.pm.datasourceRepository)))
-				datasourceHandler.POST("/test-connection", handlers.TestConnection(datasource2.NewTestConnection(s.pm.datasourceRepository)))
+				datasourceHandler.GET("", handlers.FindAllByWorkspace(datasourceInteractor.NewFindAllDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.POST("", handlers.CreateDatasource(datasourceInteractor.NewDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.DELETE("/:datasourceID", handlers.DeleteDatasource(datasourceInteractor.NewDeleteDatasource(s.pm.datasourceRepository)))
+				datasourceHandler.GET("/:datasourceID/metrics", handlers.GetMetrics(datasourceInteractor.NewGetMetrics(s.pm.datasourceRepository)))
+				datasourceHandler.POST("/test-connection", handlers.TestConnection(datasourceInteractor.NewTestConnection(s.pm.datasourceRepository)))
 			}
 			metricsGroupHandler := v1.Group("/metrics-groups")
 			{
-				metricsGroupHandler.POST("", handlers.CreateMetricsGroup(s.pm.metricsGroupRepository))
-				metricsGroupHandler.GET("", handlers.GetAll(metrics_group2.NewFindAllMetricsGroup(s.pm.metricsGroupRepository)))
-				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(s.pm.metricsGroupRepository))
+				metricsGroupHandler.POST("", handlers.CreateMetricsGroup(metricsGroupInteractor.NewCreateMetricsGroup(s.pm.metricsGroupRepository)))
+				metricsGroupHandler.GET("", handlers.GetAll(metricsGroupInteractor.NewFindAllMetricsGroup(s.pm.metricsGroupRepository)))
+				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(metricsGroupInteractor.NewGetMetricsGroup(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.GET("/:metricGroupID/query", handlers.Query(s.pm.metricsGroupRepository))
 				metricsGroupHandler.GET("/:metricGroupID}/result", handlers.Result(s.pm.metricsGroupRepository))
 				metricsGroupHandler.PUT("/:metricGroupID", handlers.UpdateMetricsGroup(s.pm.metricsGroupRepository))
 				metricsGroupHandler.PATCH("/:metricGroupID", handlers.UpdateName(s.pm.metricsGroupRepository))
 				metricsGroupHandler.DELETE("/:metricGroupID", handlers.DeleteMetricsGroup(s.pm.metricsGroupRepository))
-				v1.GET("/resume/metrics-groups", handlers.Resume(s.pm.metricsGroupRepository))
+				v1.GET("/resume/metrics-groups", handlers.Resume(metricsGroupInteractor.NewResumeByCircleMetricsGroup(s.pm.metricsGroupRepository)))
 			}
 			{
 				metricsGroupHandler.POST("/:metricGroupID/metrics", handlers.CreateMetric(s.pm.metricRepository, s.pm.metricsGroupRepository))
@@ -154,7 +154,7 @@ func (s server) registerRoutes() {
 			}
 			pluginHandler := v1.Group("/plugins")
 			{
-				pluginHandler.GET("", handlers.ListPlugins(plugin2.NewListPlugins(s.pm.pluginRepository)))
+				pluginHandler.GET("", handlers.ListPlugins(pluginInteractor.NewListPlugins(s.pm.pluginRepository)))
 			}
 		}
 	}
