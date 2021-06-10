@@ -117,19 +117,6 @@ func Query(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc 
 
 		periodParameter := echoCtx.QueryParam("period")
 		intervalParameter := echoCtx.QueryParam("interval")
-		if periodParameter == "" || intervalParameter == "" {
-			return echoCtx.JSON(http.StatusInternalServerError, errors.NewError("Invalid parameters", "Period or interval params is required"))
-		}
-
-		ragePeriod, err := metricsgroupMain.PeriodValidate(periodParameter)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		interval, err := metricsgroupMain.PeriodValidate(intervalParameter)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
 
 		queryResult, err := metricsgroupMain.QueryByGroupID(id, ragePeriod, interval)
 		if err != nil {

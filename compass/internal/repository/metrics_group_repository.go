@@ -96,7 +96,7 @@ func (c Condition) String() string {
 	return [...]string{"EQUAL", "GREATER_THAN", "LOWER_THAN"}[c]
 }
 
-func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasource.Period, errors.Error) {
+func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error) {
 	reg, err := regexp.Compile("[0-9]")
 	if err != nil {
 		return datasource.Period{}, errors.NewError("Invalid period", "Invalid period or interval").
