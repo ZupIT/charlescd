@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import map from 'lodash/map';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { checkPoints } from './helpers';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   password: string;
   confirmPass: string;
   className?: string;
@@ -35,7 +34,7 @@ const CheckPassword = ({
 }: Props) => {
   const renderCheckPoint = () => (
     <div {...rest} data-testid="check-password" className={className}>
-      {map(checkPoints, checkPoint => {
+      {map(checkPoints, (checkPoint) => {
         const isValid = checkPoint.rule(password, confirmPass);
         const icon = isValid ? 'checkmark' : 'close';
         const color = isValid ? 'success' : 'dark';
@@ -43,7 +42,9 @@ const CheckPassword = ({
         return (
           <Styled.Item key={checkPoint.name}>
             <Icon name={icon} color={color} size="14px" />
-            <Text tag="H5" color={color}>{checkPoint.name}</Text>
+            <Text tag="H5" color={color}>
+              {checkPoint.name}
+            </Text>
           </Styled.Item>
         );
       })}
