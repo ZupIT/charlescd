@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ResourceLoader
 
 @Configuration
 class ButlerConfiguration(
@@ -34,7 +35,8 @@ class ButlerConfiguration(
     @Value("\${moove.tls.store.path}")
     val mooveStorePath: String,
     @Value("\${mtls.enabled:false}")
-    val mtlsEnabled: Boolean
+    val mtlsEnabled: Boolean,
+    val resourceLoader: ResourceLoader
 ) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     @Bean
@@ -53,13 +55,14 @@ class ButlerConfiguration(
         val mooveStore = loadFromFile(mooveStorePath)
         val butlerKeyStore = loadFromFile(butlerStorePath)
         val sslContext = SSLContexts.custom().loadKeyMaterial(
-            mooveStore, keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
+            mooveStore.file, keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
         ).loadTrustMaterial(
-            butlerKeyStore, keyStorePassword.toCharArray()
+            butlerKeyStore.file, keyStorePassword.toCharArray()
         ).build()
+
         return sslContext.socketFactory
     }
 
     fun loadFromFile(fileName: String) =
-        this.javaClass.classLoader.getResource("file:///$fileName") ?: throw IllegalStateException("File not found: $fileName")
+        this.resourceLoader.getResource("file:///$fileName") ?: throw IllegalStateException("File not found: $fileName")
 }

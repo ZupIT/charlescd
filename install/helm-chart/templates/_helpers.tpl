@@ -122,6 +122,11 @@ env:
     secretKeyRef:
       name: "moove-tls-cert"
       key: "tls.crt"
+- name: CA_CERT
+  valueFrom:
+    secretKeyRef:
+      name: "butler-tls-cert"
+      key: "ca.crt"
 - name: MTLS_ENABLED
   value: {{ .ChartContext.Values.mtls.enabled | quote }}
 {{ end }}

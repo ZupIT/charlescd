@@ -63,6 +63,7 @@ export const Configuration: IEnvConfiguration = {
     cert:    process.env.TLS_CERT,
     key: process.env.TLS_KEY,
     mooveCert: process.env.MOOVE_CERT,
+    caCert: process.env.CA_CERT,
   },
   butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 

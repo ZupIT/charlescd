@@ -80,7 +80,10 @@ async function bootstrap() {
       cert: Configuration.mtls.cert,
       requestCert: true,
       rejectUnauthorized: true,
-      ca: Configuration.mtls.mooveCert
+      ca: [
+        Configuration.mtls.mooveCert,
+        Configuration.mtls.caCert
+      ] as string []
     }
     https.createServer(httpsOptions, server).listen(443)
   }

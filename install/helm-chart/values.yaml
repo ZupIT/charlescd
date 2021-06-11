@@ -413,14 +413,14 @@ mtls:
           secret:
             secretName: "moove-tls-cert"
             items:
-              - key: store.p12
-                path: moove-store.p12
+              - key: store.jks
+                path: moove-store.jks
         - name: butler-certs
           secret:
             secretName: "butler-tls-cert"
             items:
-              - key: store.p12
-                path: butler-store.p12
+              - key: store.jks
+                path: butler-store.jks
 
 redis:
   enabled: true

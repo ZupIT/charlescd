@@ -32,7 +32,8 @@ export default interface IEnvConfiguration {
     enabled: boolean,
     cert: string | undefined,
     key: string | undefined,
-    mooveCert: string | undefined
+    mooveCert: string | undefined,
+    caCert: string | undefined
   }
 
   mooveUrl: string
