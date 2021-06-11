@@ -182,7 +182,11 @@ export class CreateDeploymentValidator {
   }
   
   private isValidDnsFormat(value: string) {
-    const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
+    const startNameFormat  = '[A-Za-z0-9]'
+    const extensionNameFormat  = '[-A-Za-z0-9_.]'
+    const endNameFormat = '[A-Za-z0-9]'
+    const labelFormat = `(${startNameFormat}${extensionNameFormat}*)?${endNameFormat}`
+    const regExpr = new RegExp(labelFormat, 'g')
     const comparedValue = value.match(regExpr)?.join('-')
     return comparedValue === value
   }

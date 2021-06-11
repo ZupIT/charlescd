@@ -1232,7 +1232,9 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
-          'key': 'some@value'
+          'key': 'somevalue-',
+          'another-key': '-somevalue',
+          'more-key': 'some@value'
         }
       }
     }
@@ -1261,6 +1263,67 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         console.log(response.body)
         expect(response.body).toEqual(errorResponse)
       })
+  })
+
+  it('should allow metadata with label format', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'key': 'someValue',
+          'Key': 'SOMEVALUE',
+          'another-key': '012345',
+          'more-KEYS': 'value.key'
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata key and value must consist of alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+        .post('/v2/deployments')
+        .send(createDeploymentRequest)
+        .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+        .expect(400)
+        .expect(response => {
+          console.log(response.body)
+          expect(response.body).toEqual(errorResponse)
+        })
   })
 
   it('returns logs from deployment id', async() => {
