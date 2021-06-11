@@ -1266,7 +1266,14 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
   })
 
   it('should allow metadata with label format', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
 
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
       namespace: 'some-namespace',
@@ -1275,7 +1282,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         default: true
       },
       git: {
-        token: Buffer.from('123123').toString('base64'),
+        token: base64Token,
         provider: 'GITHUB'
       },
       components: [
@@ -1299,31 +1306,13 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       }
     }
-    const errorResponse = {
-      errors: [
-        {
-          title: 'Metadata key and value must consist of alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
-          meta: {
-            component: 'butler',
-            timestamp: expect.anything()
-          },
-          source: {
-            pointer: 'metadata'
-          },
-          status: 400
-        }
-      ]
-    }
 
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-      .expect(400)
-      .expect(response => {
-        console.log(response.body)
-        expect(response.body).toEqual(errorResponse)
-      })
+      .expect(201)
+
   })
 
   it('returns logs from deployment id', async() => {
