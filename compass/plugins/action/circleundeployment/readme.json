@@ -1,5 +1,5 @@
 {
-  "name": "Circle Undeployment",
+  "name": "Circle undeployment",
   "id": "circleundeployment",
   "description": "Circle undeployment",
   "inputParameters": {
@@ -13,8 +13,8 @@
     ],
     "executionInputs": [
       {
-        "name": "circleID",
-        "label": "Circle ID",
+        "name": "destinationCircleID",
+        "label": "Destination Circle ID",
         "type": "text",
         "required": true
       }
