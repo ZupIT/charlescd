@@ -20,6 +20,7 @@ import Icon from 'core/components/Icon';
 import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button/Default';
 import isUndefined from 'lodash/isUndefined';
+import partition from 'lodash/partition';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
@@ -61,6 +62,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [selectedAction, setSelectedAction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
+  const [optionsExcludeDefault, setOptionsExcludeDefault] = useState([]);
   const { getCirclesSimple } = useCircleSimple();
   const {
     getActionGroup,
@@ -131,6 +133,18 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
       getCirclesSimple({ name, id: circleId }).then(response => {
         const options = normalizeSelectOptions(response.content);
         setCurrentCircleOptions(options);
+        return options;
+      }
+      ),
+    500
+  );
+
+  const loadCirclesExclude = debounce(
+    (name) =>
+      getCirclesSimple({ name }).then(response => {
+        const options = partition(normalizeSelectOptions(response.content), { 'label': 'Default' })?.[1];
+        console.log(options);
+        setOptionsExcludeDefault(options);
         return options;
       }
       ),
@@ -212,11 +226,11 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               name="circleId"
               label="Select a circle to undeploy"
               isDisabled={false}
-              loadOptions={loadCirclesByName}
-              defaultOptions={currentCircleOptions}
+              loadOptions={loadCirclesExclude}
+              defaultOptions={optionsExcludeDefault}
               defaultValue={getSelectDefaultValue(
                 actionData?.executionParameters.destinationCircleId,
-                currentCircleOptions
+                optionsExcludeDefault
               )}
             />
           )}
