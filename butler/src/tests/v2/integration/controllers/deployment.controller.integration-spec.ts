@@ -1118,7 +1118,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
-          'key': `very-long-value${'4'.repeat(245)}`,
+          'key': `${'4'.repeat(254)}`,
         }
       }
     }
@@ -1175,7 +1175,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       metadata: {
         scope: MetadataScopeEnum.APPLICATION,
         content: {
-          'too-big-key-that-overcome-the-sixty-three-characters-limit-of-keys': 'some-value'
+          'too-big-key-that-overcome-the-sixty-three-characters-limit-of-ke': 'some-value'
         }
       }
     }
