@@ -143,7 +143,6 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
     (name) =>
       getCirclesSimple({ name }).then(response => {
         const options = partition(normalizeSelectOptions(response.content), { 'label': 'Default' })?.[1];
-        console.log(options);
         setOptionsExcludeDefault(options);
         return options;
       }
