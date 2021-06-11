@@ -33,10 +33,7 @@ const Actions = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: row;
-
-  > :first-child {
-    margin-right: 36px;
-  }
+  align-items: center;
 
   > :last-child {
     margin-left: 36px;
@@ -180,6 +177,11 @@ const FieldErrorWrapper = styled.div`
   }
 `;
 
+const ButtonWrapper = styled.div`
+  margin-right: 36px;
+  display: flex;
+`;
+
 export default {
   Link,
   Actions,
@@ -197,5 +199,6 @@ export default {
   MetricsGroupsCountContent,
   MetricsGroupsThresholdsContent,
   WarningPercentageContainer,
-  FieldErrorWrapper
+  FieldErrorWrapper,
+  ButtonWrapper,
 };
