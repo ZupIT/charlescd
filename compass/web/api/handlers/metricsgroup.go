@@ -20,9 +20,7 @@ package handlers
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
 	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -171,7 +169,7 @@ func UpdateMetricsGroup(updateMetricsGroup metricsGroupInteractor.UpdateMetricsG
 	}
 }
 
-func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func UpdateName(updateNameMetricsGroup metricsGroupInteractor.UpdateNameMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
@@ -179,7 +177,7 @@ func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.Handler
 		}
 
 		ctx := echoCtx.Request().Context()
-		var metricsGroupRequest representation.MetricsGroupUpdateRequest
+		var metricsGroupRequest representation.MetricsGroupRequest
 
 		bindErr := echoCtx.Bind(&metricsGroupRequest)
 		if bindErr != nil {
@@ -187,17 +185,19 @@ func UpdateName(metricsgroupMain repository.MetricsGroupRepository) echo.Handler
 			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
 		}
 
-		metricsGroup, err := metricsgroupMain.FindById(id)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Workspace-Id is invalid", bindErr, nil))
 		}
 
-		metricsGroup.Name = metricsGroupRequest.Name
-		if err := metricsgroupMain.Validate(metricsGroup); len(err.GetErrors()) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+		validationErr := echoCtx.Validate(metricsGroupRequest)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createDatasource.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
 		}
 
-		updatedWorkspace, err := metricsgroupMain.UpdateName(id, metricsGroup)
+		updatedWorkspace, err := updateNameMetricsGroup.Execute(id, metricsGroupRequest.RequestToDomain(workspaceId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}

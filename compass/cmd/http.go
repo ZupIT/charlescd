@@ -130,9 +130,9 @@ func (s server) registerRoutes() {
 				metricsGroupHandler.GET("", handlers.GetAll(metricsGroupInteractor.NewFindAllMetricsGroup(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.GET("/:metricGroupID", handlers.Show(metricsGroupInteractor.NewGetMetricsGroup(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.GET("/:metricGroupID/query", handlers.Query(metricsGroupInteractor.NewQueryMetricsGroup(s.pm.metricsGroupRepository)))
-				metricsGroupHandler.GET("/:metricGroupID}/result", handlers.Result(metricsGroupInteractor.NewResultMetrics(s.pm.metricsGroupRepository)))
+				metricsGroupHandler.GET("/:metricGroupID/result", handlers.Result(metricsGroupInteractor.NewResultMetrics(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.PUT("/:metricGroupID", handlers.UpdateMetricsGroup(metricsGroupInteractor.NewUpdateMetricsGroup(s.pm.metricsGroupRepository)))
-				metricsGroupHandler.PATCH("/:metricGroupID", handlers.UpdateName(s.pm.metricsGroupRepository))
+				metricsGroupHandler.PATCH("/:metricGroupID", handlers.UpdateName(metricsGroupInteractor.NewUpdateNameMetricsGroup(s.pm.metricsGroupRepository)))
 				metricsGroupHandler.DELETE("/:metricGroupID", handlers.DeleteMetricsGroup(metricsGroupInteractor.NewDeleteMetricsGroup(s.pm.metricsGroupRepository)))
 				v1.GET("/resume/metrics-groups", handlers.Resume(metricsGroupInteractor.NewResumeByCircleMetricsGroup(s.pm.metricsGroupRepository)))
 			}

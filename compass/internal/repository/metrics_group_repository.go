@@ -198,7 +198,7 @@ func (main metricsGroupRepository) ResumeByCircle(circleId uuid.UUID) ([]domain.
 	return mapper.MetricGroupResumeModelToDomains(metricsGroupsResume), nil
 }
 
-func (main metricsGroupRepository) sortResumeMetrics(metricsGroupResume []MetricGroupResume) {
+func (main metricsGroupRepository) sortResumeMetrics(metricsGroupResume []models.MetricGroupResume) {
 
 	sort.SliceStable(metricsGroupResume, func(i, j int) bool {
 
@@ -289,8 +289,7 @@ func (main metricsGroupRepository) Update(id uuid.UUID, metricsGroup domain.Metr
 func (main metricsGroupRepository) UpdateName(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error) {
 	db := main.db.Table("metrics_groups").Where("id = ?", id).Update("name", metricsGroup.Name)
 	if db.Error != nil {
-		return domain.MetricsGroup{}, errors.NewError("UpdateName error", db.Error.Error()).
-			WithOperations("UpdateName.Update")
+		return domain.MetricsGroup{}, logging.NewError("Update Name Metric Group", db.Error, nil, "MetricsGroupRepository.UpdateName.Update")
 	}
 	return metricsGroup, nil
 }
