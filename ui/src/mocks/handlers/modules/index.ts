@@ -29,9 +29,14 @@ export default [
       ctx.json(MODULES)
     )
   }),
+  rest.delete(`${basePath}/moove/v2/modules/:moduleId/components/:componentId`, (req, res, ctx) => {
+    return res(
+      ctx.status(204)
+    )
+  }),
   rest.delete(`${basePath}/moove/v2/modules/:moduleId`, (req, res, ctx) => {
     return res(
       ctx.status(204)
     )
-  })
+  }),
 ]
