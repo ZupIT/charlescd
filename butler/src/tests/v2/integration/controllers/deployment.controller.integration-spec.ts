@@ -1316,14 +1316,14 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     }
 
     await request(app.getHttpServer())
-        .post('/v2/deployments')
-        .send(createDeploymentRequest)
-        .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
-        .expect(400)
-        .expect(response => {
-          console.log(response.body)
-          expect(response.body).toEqual(errorResponse)
-        })
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        console.log(response.body)
+        expect(response.body).toEqual(errorResponse)
+      })
   })
 
   it('returns logs from deployment id', async() => {
