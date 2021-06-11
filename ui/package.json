@@ -12,9 +12,10 @@
     "build": "react-scripts build",
     "start": "cross-env ENVIRONMENT=development node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
     "start:local": "cross-env ENVIRONMENT=local node env-writer.js path=./public && cross-env BROWSER=none react-scripts start",
-    "test": "react-scripts test --watchAll=false --testPathIgnorePatterns='fixtures.ts'",
-    "test:coverage": "react-scripts test --watchAll=false --coverage --testPathIgnorePatterns='fixtures.ts'",
-    "test:watch": "react-scripts test --testPathIgnorePatterns='fixtures.ts'",
+    "test": "react-scripts test --watchAll=false --testPathIgnorePatterns='storybook.test.js|fixtures.ts'",
+    "test:coverage": "react-scripts test --watchAll=false --coverage --testPathIgnorePatterns='storybook.test.js|fixtures.ts'",
+    "test:watch": "react-scripts test --testPathIgnorePatterns='storybook.test.js|fixtures.ts'",
+    "test:storybook": "react-scripts test --testPathIgnorePatterns='setupTests'",
     "storybook": "start-storybook -p 6006 -s public --ci",
     "build:storybook": "build-storybook -s public"
   },

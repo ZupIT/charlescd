@@ -1,5 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots Components/Avatar Avatar 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: flex-end;
+  -webkit-box-align: flex-end;
+  -ms-flex-align: flex-end;
+  align-items: flex-end;
+}
+
+.c1 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(244,244,250);
+  color: #98989E;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    data-testid="avatar"
+  >
+    <div
+      class="c1"
+      data-testid="avatar-initials"
+      size="40"
+    >
+      C
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Badge Badge 1`] = `
+.c1 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: center;
+  line-height: 10px;
+}
+
+.c0 {
+  border: 1px solid #F2F2F9;
+  color: #F2F2F9;
+  border-radius: 20px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-transform: lowercase;
+}
+
+.c0 *:first-letter {
+  text-transform: uppercase;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+  >
+    <span
+      class="c1"
+      color="light"
+      data-testid="badge-text"
+      font-size="10px"
+      font-style="normal"
+      role=""
+    >
+      text
+    </span>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Components/Button/Default Default 1`] = `
 .c0 {
   position: relative;
@@ -182,6 +292,18 @@ exports[`Storyshots Components/Cards/Body Body 1`] = `
 `;
 
 exports[`Storyshots Components/Cards/Config Config 1`] = `
+.c7 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
 .c4 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -202,18 +324,6 @@ exports[`Storyshots Components/Cards/Config Config 1`] = `
 .c4 svg {
   width: 15px;
   height: 15px;
-}
-
-.c7 {
-  -webkit-animation: 0.3s iHfShZ linear;
-  animation: 0.3s iHfShZ linear;
-  display: block;
-  font-style: normal;
-  font-size: 14px;
-  font-weight: normal;
-  color: rgb(244,244,250);
-  text-align: left;
-  line-height: 14px;
 }
 
 .c0 {
@@ -314,6 +424,18 @@ exports[`Storyshots Components/Cards/Config Config 1`] = `
 `;
 
 exports[`Storyshots Components/Cards/Expand Expand 1`] = `
+.c7 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
 .c4 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -334,18 +456,6 @@ exports[`Storyshots Components/Cards/Expand Expand 1`] = `
 .c4 svg {
   width: 15px;
   height: 15px;
-}
-
-.c7 {
-  -webkit-animation: 0.3s iHfShZ linear;
-  animation: 0.3s iHfShZ linear;
-  display: block;
-  font-style: normal;
-  font-size: 14px;
-  font-weight: normal;
-  color: rgb(244,244,250);
-  text-align: left;
-  line-height: 14px;
 }
 
 .c0 {
@@ -556,7 +666,7 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
   background-color: rgb(44,44,46);
 }
 
-.c1:hover .sc-fnVZcZ,
+.c1:hover .sc-iemWCZ,
 .c1:hover .c4 {
   white-space: normal;
   overflow: auto;
@@ -591,28 +701,6 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
 `;
 
 exports[`Storyshots Components/Cards/Release Release 1`] = `
-.c4 {
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  color: rgb(244,244,250);
-  width: 15px;
-  height: 15px;
-}
-
-.c4 > div > div {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-}
-
-.c4 svg {
-  width: 15px;
-  height: 15px;
-}
-
 .c6 {
   -webkit-animation: 0.3s iHfShZ linear;
   animation: 0.3s iHfShZ linear;
@@ -635,6 +723,54 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
   color: rgb(244,244,250);
   text-align: left;
   line-height: 14px;
+}
+
+.c5 {
+  border: 1px solid #F2F2F9;
+  color: #F2F2F9;
+  border-radius: 20px;
+  padding: 0px 10px;
+  box-sizing: border-box;
+  height: 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-transform: lowercase;
+}
+
+.c5 *:first-letter {
+  text-transform: uppercase;
+}
+
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 15px;
+  height: 15px;
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c4 svg {
+  width: 15px;
+  height: 15px;
 }
 
 .c0 {
@@ -690,32 +826,6 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-}
-
-.c5 {
-  border: 1px solid #F2F2F9;
-  color: #F2F2F9;
-  border-radius: 20px;
-  padding: 0px 10px;
-  box-sizing: border-box;
-  height: 15px;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  text-transform: lowercase;
-}
-
-.c5 *:first-letter {
-  text-transform: uppercase;
 }
 
 .c1 {
@@ -823,9 +933,9 @@ exports[`Storyshots Components/Chart Chart 1`] = `
     data-testid="apexcharts-mock"
     height="200"
     options="[object Object]"
-    series="[object Object],[object Object]"
-    type="bar"
-    width="700"
+    series="[object Object]"
+    type="area"
+    width="500"
   >
     <div>
       <svg>
@@ -833,6 +943,39 @@ exports[`Storyshots Components/Chart Chart 1`] = `
           class="apexcharts-yaxis"
         >
           <g>
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
+            <text
+              class="apexcharts-yaxis-label"
+            />
             <text
               class="apexcharts-yaxis-label"
             />
@@ -845,6 +988,39 @@ exports[`Storyshots Components/Chart Chart 1`] = `
             <text
               class="apexcharts-xaxis-label"
             />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
+            <text
+              class="apexcharts-xaxis-label"
+            />
           </g>
         </g>
       </svg>
@@ -853,7 +1029,279 @@ exports[`Storyshots Components/Chart Chart 1`] = `
 </div>
 `;
 
+exports[`Storyshots Components/Editor Editor 1`] = `
+.c0 {
+  position: relative;
+  width: 400px;
+  height: 200px;
+  margin-top: 20px;
+  border-radius: 4px;
+  color: #C7C7D4;
+  background-color: rgb(44,44,46);
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c2:first-child {
+  margin-top: 10px;
+}
+
+.c2 .property {
+  color: #30D158;
+}
+
+.c2 .operator {
+  color: #FFF;
+}
+
+.c2 .punctuation {
+  color: rgb(244,244,250);
+}
+
+.c2 .string {
+  color: #C7C7D4;
+}
+
+.c3 {
+  min-width: 35px;
+  width: 35px;
+  text-align: right;
+  color: #C7C7D4;
+  border-right: 1px solid #3A3A3C;
+  margin: 0 5px 0 0;
+  padding: 0 10px 0 0;
+}
+
+.c4 {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: calc(100% - 54px);
+  height: calc(100% - 20px);
+  background: none;
+  color: transparent;
+  caret-color: #C7C7D4;
+  border: none;
+  resize: none;
+  outline: none;
+  margin: 10px 0;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.c1 {
+  height: calc(100% - 10px);
+  margin-bottom: 0;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  overflow: auto;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div
+    class="c0"
+    data-testid="editor"
+    height="200px"
+    width="400px"
+  >
+    <pre
+      class="c1 prism-code language-json"
+    >
+      <div
+        class="c2 token-line"
+        data-testid="line-0"
+        style="color: rgb(154, 134, 253);"
+      >
+        <span
+          class="c3"
+        >
+          1
+        </span>
+        <span
+          data-testid="line-text-0"
+        >
+          <span
+            class="token plain"
+          >
+            
+
+          </span>
+        </span>
+      </div>
+    </pre>
+    <textarea
+      class="c4"
+      data-testid="input-text-undefined"
+      spellcheck="false"
+    />
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Switch Switch 1`] = `
+.c5 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c4 {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 15px;
+  background-color: #C7C7D4;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
+}
+
+.c4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 11px;
+  background-color: rgb(44,44,46);
+  border-radius: 11px;
+  -webkit-transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  -ms-transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  -webkit-transition: all 0.25s linear;
+  transition: all 0.25s linear;
+}
+
+.c4::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 9px;
+  height: 9px;
+  background-color: #C7C7D4;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.c2 {
+  display: none;
+}
+
+.c2:checked + .c3 {
+  background-color: #5C37CC;
+}
+
+.c2:checked + .c3::before {
+  -webkit-transform: translate3d(10px,2px,0) scale3d(0,0,0);
+  -ms-transform: translate3d(10px,2px,0) scale3d(0,0,0);
+  transform: translate3d(10px,2px,0) scale3d(0,0,0);
+}
+
+.c2:checked + .c3::after {
+  -webkit-transform: translate3d(12px,2px,0);
+  -ms-transform: translate3d(12px,2px,0);
+  transform: translate3d(12px,2px,0);
+}
+
+.c0 {
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c0 > :last-child {
+  margin-left: 5px;
+}
+
+.c0:active .c1:checked + .c3::after {
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+}
+
+.c0:active .c3::after {
+  width: 10px;
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <label
+    class="c0"
+  >
+    <input
+      class="c1 c2"
+      data-testid="switch-undefined"
+      type="checkbox"
+    />
+    <i
+      class="c3 c4"
+    />
+    <span
+      class="c5"
+      color="light"
+      font-size="14px"
+      font-style="normal"
+      role=""
+    >
+      Global
+    </span>
+  </label>
+</div>
+`;
+
 exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
+.c5 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 12px;
+}
+
 .c4 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
@@ -867,18 +1315,6 @@ exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-}
-
-.c5 {
-  -webkit-animation: 0.3s iHfShZ linear;
-  animation: 0.3s iHfShZ linear;
-  display: block;
-  font-style: normal;
-  font-size: 12px;
-  font-weight: normal;
-  color: rgb(244,244,250);
-  text-align: left;
-  line-height: 12px;
 }
 
 .c1 {
