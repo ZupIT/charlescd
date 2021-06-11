@@ -19,6 +19,9 @@ import userEvent from '@testing-library/user-event';
 import * as clipboardUtils from 'core/utils/clipboard';
 import View from '..';
 import { FetchMock } from 'jest-fetch-mock/types';
+import { saveProfile } from 'core/utils/profile';
+import { setUserAbilities } from 'core/utils/abilities';
+import { saveWorkspace } from 'core/utils/workspace';
 
 const components = [
   {
@@ -98,7 +101,10 @@ test('render View and try Copy ID', async () => {
 });
 
 test('render View and try delete', async () => {
-  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}))
+  (fetch as FetchMock).mockResponseOnce(JSON.stringify({}));
+  saveWorkspace({id: '1', name: 'workspace 1', status: 'COMPLETE'});
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
+  setUserAbilities();
 
   render(<View {...props} module={{ ...props.module, components: components }}/>);
 
@@ -113,5 +119,5 @@ test('render View and try delete', async () => {
   expect(DropdownItemDelete).toBeInTheDocument();
 
   act(() => userEvent.click(DropdownItemDelete));
-  await waitFor(() => expect(props.onChange).toBeCalled());
+  await waitFor(() => expect(props.onChange).toHaveBeenCalledTimes(1));
 });
