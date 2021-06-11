@@ -210,7 +210,7 @@ export class CreateDeploymentValidator {
   }
 
   private isValidLength(key: string, maxLength: number): boolean {
-    return key.length  > 0 && key.length < maxLength
+    return key.length  > 0 && key.length <= maxLength
   }
 
   private hasLabelFormat(metadata: Metadata) {
