@@ -27,8 +27,8 @@ import (
 )
 
 type executionConfiguration struct {
-	CircleId    string `json:"circleId"`
-	WorkspaceID string `json:"workspaceId"`
+	DestinationCircleID string `json:"destinationCircleID"`
+	WorkspaceID         string `json:"workspaceId"`
 }
 
 type actionConfiguration struct {
@@ -50,24 +50,24 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	deployment, err := getCurrentDeploymentAtCircle(ec.CircleId, ec.WorkspaceID, ac.MooveURL)
+	deployment, err := getCurrentDeploymentAtCircle(ec.DestinationCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.CircleId, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("MooveUrl: %s, DestinationCircleID: %s, WorkspaceId: %s", ac.MooveURL, ec.DestinationCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
 	if deployment.BuildId == "" {
 		err = errors.New("circle has no active build")
-		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", ec.CircleId, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("DestinationCircleID: %s, WorkspaceId: %s", ec.DestinationCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
 	err = undeployBuildAtCircle(deployment.Id, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, CircleId: %s, BuildId: %s",
-			ac.MooveURL, ec.WorkspaceID, ec.CircleId, deployment.BuildId)
+		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleID: %s, BuildId: %s",
+			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId)
 		logger.Error("DO_CIRCLE_UNDEPLOYMENT", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
@@ -84,7 +84,7 @@ func ValidateExecutionConfiguration(executionConfig []byte) []error {
 		return append(errs, errors.New("error validating execution configuration"))
 	}
 
-	if strings.TrimSpace(config.CircleId) == "" {
+	if strings.TrimSpace(config.DestinationCircleID) == "" {
 		errs = append(errs, errors.New("circle id is required"))
 	}
 
