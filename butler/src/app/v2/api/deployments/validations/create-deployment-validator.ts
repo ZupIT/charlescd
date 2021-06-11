@@ -117,7 +117,7 @@ export class CreateDeploymentValidator {
         if (!this.isValidMetadata(metadata)) {
           return helper.error('invalid.metadata')
         }
-        if (!this.hasDnsFormat(metadata)){
+        if (!this.hasLabelFormat(metadata)){
           return helper.error('imageTag.dns.format')
         }
       }).messages(
@@ -182,6 +182,12 @@ export class CreateDeploymentValidator {
   }
   
   private isValidDnsFormat(value: string) {
+    const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
+
+  private isValidLabelFormat(value: string) {
     const startNameFormat  = '[A-Za-z0-9]'
     const extensionNameFormat  = '[-A-Za-z0-9_.]'
     const endNameFormat = '[A-Za-z0-9]'
@@ -207,11 +213,11 @@ export class CreateDeploymentValidator {
     return key.length  > 0 && key.length < maxLength
   }
 
-  private hasDnsFormat(metadata: Metadata) {
-    const invalidDnsMetadata = Object.keys(metadata.content).find(
-      key => !this.isValidDnsFormat(key) || !this.isValidDnsFormat(metadata.content[key])
+  private hasLabelFormat(metadata: Metadata) {
+    const invalidLabelFormat = Object.keys(metadata.content).find(
+      key => !this.isValidLabelFormat(key) || !this.isValidLabelFormat(metadata.content[key])
     )
-    return invalidDnsMetadata == null
+    return invalidLabelFormat == null
   }
 }
 
