@@ -36,7 +36,7 @@ class MetadataConstraintTest  extends Specification {
 
     }
 
-    def 'should return not valid if metadata content value is empty'() {
+    def 'should return valid if metadata content value is empty'() {
         given:
         def metadataValidator = new MetadataValidator();
         def metadataContent = new HashMap<String, String>()
@@ -47,7 +47,7 @@ class MetadataConstraintTest  extends Specification {
         def valid = metadataValidator.isValid(metadata, null)
 
         then:
-        assert !valid
+        assert valid
     }
 
     def 'should return not valid if metadata content key size is longer than 63 '() {
