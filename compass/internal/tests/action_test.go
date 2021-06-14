@@ -26,7 +26,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -37,8 +36,8 @@ type ActionSuite struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository action.UseCases
-	actions    action.Action
+	repository repository2.ActionRepository
+	actions    repository2.Action
 	plugins    repository2.PluginRepository
 }
 
@@ -55,7 +54,7 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 	s.DB.LogMode(dbLog)
 
 	s.plugins = repository2.NewPluginRepository()
-	s.repository = action.NewMain(s.DB, s.plugins)
+	s.repository = repository2.NewActionRepository(s.DB, s.plugins)
 	clearDatabase(s.DB)
 }
 
@@ -203,7 +202,7 @@ func (s *ActionSuite) TestSaveAction() {
 
 func (s *ActionSuite) TestSaveActionError() {
 	s.DB.Close()
-	actionStruct := action.Request{}
+	actionStruct := repository2.Request{}
 	_, err := s.repository.SaveAction(actionStruct)
 
 	require.NotNil(s.T(), err)

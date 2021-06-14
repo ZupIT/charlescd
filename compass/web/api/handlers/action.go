@@ -19,13 +19,13 @@
 package handlers
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func Create(actionMain action.UseCases) echo.HandlerFunc {
+func Create(actionMain repository.ActionRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		request, err := actionMain.ParseAction(echoCtx.Request().Body)
@@ -48,7 +48,7 @@ func Create(actionMain action.UseCases) echo.HandlerFunc {
 	}
 }
 
-func List(actionMain action.UseCases) echo.HandlerFunc {
+func List(actionMain repository.ActionRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
 		workspaceUUID, parseErr := uuid.Parse(workspaceID)
@@ -65,7 +65,7 @@ func List(actionMain action.UseCases) echo.HandlerFunc {
 	}
 }
 
-func Delete(actionMain action.UseCases) echo.HandlerFunc {
+func Delete(actionMain repository.ActionRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		id := echoCtx.Param("actionId")
 

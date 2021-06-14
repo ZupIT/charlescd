@@ -21,7 +21,7 @@ package metricsgroupaction
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/action"
+	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
@@ -113,7 +113,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		ers.Append(err)
 	}
 
-	var act action.Response
+	var act repository.Response
 	if metricsGroupAction.ActionID == uuid.Nil {
 		needConfigValidation = false
 		err := errors.NewError("Validate error", "action id is required").

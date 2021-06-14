@@ -27,7 +27,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
@@ -36,14 +35,14 @@ import (
 
 type ActionDispatcher struct {
 	metricGroupRepo repository.MetricsGroupRepository
-	actionRepo      action.UseCases
+	actionRepo      repository.ActionRepository
 	pluginRepo      repository.PluginRepository
 	metricRepo      metric.UseCases
 	groupActionRepo metricsgroupaction.UseCases
 	mux             sync.Mutex
 }
 
-func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo action.UseCases, pluginRepo repository.PluginRepository,
+func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
 	metricRepo metric.UseCases, groupActionRepo metricsgroupaction.UseCases) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,

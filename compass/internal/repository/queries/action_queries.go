@@ -1,4 +1,4 @@
-package action
+package queries
 
 import (
 	"fmt"
@@ -53,7 +53,7 @@ var idActionQuery = fmt.Sprintf(`SELECT id,
 					WHERE id = ?
 					AND deleted_at IS NULL`, configuration.Get("ENCRYPTION_KEY"))
 
-func Insert(id, nickname, actionType, description string, config []byte, workspaceId uuid.UUID) string {
+func InsertAction(id, nickname, actionType, description string, config []byte, workspaceId uuid.UUID) string {
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
 			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
 		id, workspaceId, nickname, actionType, description, config, configuration.Get("ENCRYPTION_KEY"))

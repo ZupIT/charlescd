@@ -20,7 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
@@ -64,7 +63,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
-	actionMain := action.NewMain(s.DB, pluginMain)
+	actionMain := repository.NewActionRepository(s.DB, pluginMain)
 	s.metricsGroupActionMain = metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
 	metricsgroupMain := repository.NewMetricsGroupRepository(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
 	s.repository = dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, s.metricMain, s.metricsGroupActionMain)
@@ -121,7 +120,7 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	}
 	s.DB.Create(&metricExec)
 
-	action := action.Action{
+	action := repository.Action{
 		WorkspaceId:   workspaceID,
 		Nickname:      "Action 1",
 		Type:          "circledeployment",
@@ -193,7 +192,7 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	}
 	s.DB.Create(&metricExec)
 
-	action := action.Action{
+	action := repository.Action{
 		WorkspaceId:   workspaceID,
 		Nickname:      "Action 1",
 		Type:          "circledeployment",

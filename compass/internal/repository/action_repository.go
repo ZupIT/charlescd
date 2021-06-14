@@ -16,20 +16,21 @@
  *
  */
 
-package action
+package repository
 
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"strings"
-	"time"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/repository/queries"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"io"
+	"strings"
+	"time"
 )
 
 type Action struct {
@@ -65,7 +66,26 @@ type Response struct {
 	DeletedAt     *time.Time      `json:"-"`
 }
 
-func (main Main) ParseAction(action io.ReadCloser) (Request, errors.Error) {
+type ActionRepository interface {
+	ValidateAction(action Request) errors.ErrorList
+	ParseAction(action io.ReadCloser) (Request, errors.Error)
+	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
+	FindActionById(id string) (Response, errors.Error)
+	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
+	SaveAction(action Request) (Response, errors.Error)
+	DeleteAction(id string) errors.Error
+}
+
+type actionRepository struct {
+	db         *gorm.DB
+	pluginRepo PluginRepository
+}
+
+func NewActionRepository(db *gorm.DB, pluginRepo PluginRepository) ActionRepository {
+	return actionRepository{db, pluginRepo}
+}
+
+func (main actionRepository) ParseAction(action io.ReadCloser) (Request, errors.Error) {
 	var nAction *Request
 
 	err := json.NewDecoder(action).Decode(&nAction)
@@ -86,7 +106,7 @@ func (main Main) ParseAction(action io.ReadCloser) (Request, errors.Error) {
 	return *nAction, nil
 }
 
-func (main Main) ValidateAction(action Request) errors.ErrorList {
+func (main actionRepository) ValidateAction(action Request) errors.ErrorList {
 	ers := errors.NewErrorList()
 	needConfigValidation := true
 
@@ -150,7 +170,7 @@ func (main Main) ValidateAction(action Request) errors.ErrorList {
 	return ers
 }
 
-func (main Main) validateActionConfig(actionType string, actionConfiguration json.RawMessage) errors.ErrorList {
+func (main actionRepository) validateActionConfig(actionType string, actionConfiguration json.RawMessage) errors.ErrorList {
 	ers := errors.NewErrorList()
 
 	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
@@ -184,9 +204,9 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error) {
+func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error) {
 	entity := Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
+	row := main.db.Set("gorm:auto_preload", true).Raw(action.decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
@@ -198,9 +218,9 @@ func (main Main) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response
 	return entity.toResponse(), nil
 }
 
-func (main Main) FindActionById(id string) (Response, errors.Error) {
+func (main actionRepository) FindActionById(id string) (Response, errors.Error) {
 	entity := Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(idActionQuery, id).Row()
+	row := main.db.Set("gorm:auto_preload", true).Raw(action.idActionQuery, id).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
@@ -212,10 +232,10 @@ func (main Main) FindActionById(id string) (Response, errors.Error) {
 	return entity.toResponse(), nil
 }
 
-func (main Main) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error) {
+func (main actionRepository) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error) {
 	var actions []Response
 
-	rows, err := main.db.Set("gorm:auto_preload", true).Raw(workspaceActionQuery, workspaceID).Rows()
+	rows, err := main.db.Set("gorm:auto_preload", true).Raw(action.workspaceActionQuery, workspaceID).Rows()
 	if err != nil {
 		return []Response{}, errors.NewError("Find all error", err.Error()).
 			WithOperations("FindAllActionsByWorkspace.Raw")
@@ -235,12 +255,12 @@ func (main Main) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, e
 	return actions, nil
 }
 
-func (main Main) SaveAction(action Request) (Response, errors.Error) {
+func (main actionRepository) SaveAction(action Request) (Response, errors.Error) {
 	id := uuid.New().String()
 	entity := Action{}
 
-	row := main.db.Exec(Insert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
-		Raw(actionQuery, id).
+	row := main.db.Exec(queries.InsertAction(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
+		Raw(action.actionQuery, id).
 		Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
@@ -253,7 +273,7 @@ func (main Main) SaveAction(action Request) (Response, errors.Error) {
 	return entity.toResponse(), nil
 }
 
-func (main Main) DeleteAction(id string) errors.Error {
+func (main actionRepository) DeleteAction(id string) errors.Error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {
 		return errors.NewError("Delete error", db.Error.Error()).

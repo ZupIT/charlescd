@@ -21,7 +21,6 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -108,8 +107,8 @@ func newBasicMetric() metric.Metric {
 	}
 }
 
-func newBasicAction() action.Action {
-	return action.Action{
+func newBasicAction() repository.Action {
+	return repository.Action{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
@@ -119,8 +118,8 @@ func newBasicAction() action.Action {
 	}
 }
 
-func actionInsert(actionType string) (string, action.Response) {
-	entity := action.Response{
+func actionInsert(actionType string) (string, repository.Response) {
+	entity := repository.Response{
 		BaseModel: util.BaseModel{
 			ID: uuid.New(),
 		},
@@ -138,8 +137,8 @@ func actionInsert(actionType string) (string, action.Response) {
 		entity
 }
 
-func newBasicActionRequest() action.Request {
-	return action.Request{
+func newBasicActionRequest() repository.Request {
+	return repository.Request{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",

@@ -28,7 +28,6 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
@@ -62,7 +61,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
-	actionMain := action.NewMain(s.DB, pluginMain)
+	actionMain := repository.NewActionRepository(s.DB, pluginMain)
 	groupActionMain := metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
 	s.repository = repository.NewMetricsGroupRepository(s.DB, metricMain, datasourceMain, pluginMain, groupActionMain)
 

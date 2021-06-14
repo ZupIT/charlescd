@@ -20,7 +20,6 @@ package tests
 
 import (
 	"encoding/json"
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
@@ -40,7 +39,7 @@ type MetricsGroupActionSuite struct {
 
 	repository metricsgroupaction.UseCases
 	pluginRepo repository2.PluginRepository
-	actionRepo action.UseCases
+	actionRepo repository2.ActionRepository
 	mga        metricsgroupaction.MetricsGroupAction
 }
 
@@ -57,7 +56,7 @@ func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 	s.DB.LogMode(dbLog)
 
 	s.pluginRepo = repository2.NewPluginRepository()
-	s.actionRepo = action.NewMain(s.DB, s.pluginRepo)
+	s.actionRepo = repository2.NewActionRepository(s.DB, s.pluginRepo)
 
 	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)
 	clearDatabase(s.DB)

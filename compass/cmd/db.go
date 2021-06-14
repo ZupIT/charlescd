@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
@@ -17,7 +16,7 @@ import (
 )
 
 type persistenceManager struct {
-	actionRepository       action.UseCases
+	actionRepository       repository.ActionRepository
 	datasourceRepository   repository.DatasourceRepository
 	metricRepository       metric.UseCases
 	metricsGroupRepository repository.MetricsGroupRepository
@@ -83,7 +82,7 @@ func runMigrations(sqlDb *sql.DB) error {
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 	pluginRepo := repository.NewPluginRepository()
 
-	actionRepo := action.NewMain(db, pluginRepo)
+	actionRepo := repository.NewActionRepository(db, pluginRepo)
 
 	datasourceRepo := repository.NewDatasourceRepository(db, pluginRepo)
 
