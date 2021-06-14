@@ -21,6 +21,8 @@ import {
 } from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
+import { saveProfile } from 'core/utils/profile';
+import { setUserAbilities } from 'core/utils/abilities';
 
 const circle: Circle = {
   id: '123',
@@ -28,7 +30,7 @@ const circle: Circle = {
   author: null,
   createdAt: '2021-01-01',
   rules: null,
-  deployment: null
+  deployment: null,
 }
 
 const deployment: Deployment = {
@@ -45,109 +47,112 @@ const deployment: Deployment = {
   }]
 }
 
-test("Test isBusy deploying", () => {
+test("isBusy deploying", () => {
   const busy = isBusy(DEPLOYMENT_STATUS.deploying);
 
   expect(busy).toBeTruthy();
 });
 
-test("Test isBusy undeploying", () => {
+test("isBusy undeploying", () => {
   const busy = isBusy(DEPLOYMENT_STATUS.undeploying);
 
   expect(busy).toBeTruthy();
 });
 
-test("Test isDeploying deploying", () => {
+test("isDeploying deploying to be truthy", () => {
   const deploying = isDeploying(DEPLOYMENT_STATUS.deploying);
 
   expect(deploying).toBeTruthy();
 });
 
-test("Test isDeploying undeploying", () => {
+test("isDeploying undeploying to be falsy", () => {
   const deploying = isDeploying(DEPLOYMENT_STATUS.undeploying);
 
   expect(deploying).toBeFalsy();
 });
 
-test("Test isDeploying deploying", () => {
+test("isDeploying deploying to be falsy", () => {
   const deploying = isUndeploying(DEPLOYMENT_STATUS.deploying);
 
   expect(deploying).toBeFalsy();
 });
 
-test("Test isDeploying undeploying", () => {
+test("isDeploying undeploying to be truthy", () => {
   const deploying = isUndeploying(DEPLOYMENT_STATUS.undeploying);
 
   expect(deploying).toBeTruthy();
 });
 
-test("Test if circleCannotBeDeleted could be truthy", () => {
+test("if circleCannotBeDeleted could be truthy", () => {
   const isCant = circleCannotBeDeleted({ ...circle, deployment });
 
   expect(isCant).toBeTruthy();
 });
 
-test("Test if circleCannotBeDeleted could be falsy", () => {
+test("if circleCannotBeDeleted could be falsy - default circle", () => {
   const isCant = circleCannotBeDeleted({ ...circle, name: 'Default'});
 
   expect(isCant).toBeTruthy();
 });
 
-test("Test if circleCannotBeDeleted could be falsy", () => {
+test("if circleCannotBeDeleted could be falsy", () => {
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
+  setUserAbilities();
+
   const isCant = circleCannotBeDeleted(circle);
 
   expect(isCant).toBeFalsy();
 });
 
-test("Test hasDeploy", () => {
+test("hasDeploy", () => {
   const has = hasDeploy({ ...circle, deployment });
 
   expect(has).toBeTruthy();
 });
 
-test("Test isUndeployable could not be undeploy", () => {
+test("isUndeployable could not be undeploy", () => {
   const is = isUndeployable(circle);
 
   expect(is).toBeFalsy();
 });
 
-test("Test isUndeployable could be undeploy", () => {
+test("isUndeployable could be undeploy", () => {
   const is = isUndeployable({ ...circle, deployment });
 
   expect(is).toBeTruthy();
 });
 
-test("Test pathCircleById is true", () => {
+test("pathCircleById is true", () => {
   const circlePath = pathCircleById(circle.id);
 
   expect(circlePath).toBe(`http://localhost/?circle=${circle.id}`);
 });
 
-test("Test isDefaultCircle is true", () => {
+test("isDefaultCircle is true", () => {
   const is = isDefaultCircle('Default');
 
   expect(is).toBeTruthy();
 });
 
-test("Test isDefaultCircle is false", () => {
+test("isDefaultCircle is false", () => {
   const is = isDefaultCircle('Circle');
 
   expect(is).toBeFalsy();
 });
 
-test("Test getTooltipMessage to cannotDeleteActiveCircleMessage", () => {
-  const tooltipMessage = getTooltipMessage(circle);
+test("getTooltipMessage to cannotDeleteActiveCircleMessage", () => {
+  const tooltipMessage = getTooltipMessage({ ...circle, deployment });
 
   expect(tooltipMessage).toBe('Active circle cannot be deleted,<br />you can undeploy first and then<br /> delete this circle.');
 });
 
-test("Test getTooltipMessage to cannotDeleteDefaultCircleMessage", () => {
+test("getTooltipMessage to cannotDeleteDefaultCircleMessage", () => {
   const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default', deployment });
 
   expect(tooltipMessage).toBe('Default circle is deployed to all<br /> users, so it cannot be deleted.');
 });
 
-test("Test getTooltipMessage to cannotDeleteInactiveDefaultCircleMessage", () => {
+test("getTooltipMessage to cannotDeleteInactiveDefaultCircleMessage", () => {
   const tooltipMessage = getTooltipMessage({ ...circle, name: 'Default' });
 
   expect(tooltipMessage).toBe('Default circle cannot be deleted.');
