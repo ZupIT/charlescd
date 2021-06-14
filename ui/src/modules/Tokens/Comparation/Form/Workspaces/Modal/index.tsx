@@ -23,10 +23,11 @@ import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/Workspace
 import Select from 'core/components/Form/Select/Single/Select';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
+import Link from 'core/components/Link';
+import { CHARLES_DOC } from 'core/components/Popover';
 import List from './Content/List';
 import { options, Option } from './constants';
 import Styled from './styled';
-import DocumentationLink from 'core/components/DocumentationLink';
 
 export interface Props {
   workspaces: WorkspacePaginationItem[];
@@ -65,10 +66,9 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         <Text tag="H5" color="dark">
           {renderDescription()}
           Read our 
-          <DocumentationLink
-            documentationLink="https://docs.charlescd.io"
-            text="documentation"
-          />
+          <Link href={CHARLES_DOC}>
+            documentation
+          </Link>
           for further details.
         </Text>
       </Styled.Caption>

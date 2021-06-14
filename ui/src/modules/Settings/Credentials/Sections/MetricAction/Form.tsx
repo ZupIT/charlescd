@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import CardConfig from 'core/components/Card/Config';
 import { normalizeSelectOptions } from 'core/utils/select';
@@ -24,7 +24,7 @@ import { Props } from '../interfaces';
 import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import {
   isRequired,
   urlPattern,
@@ -32,6 +32,7 @@ import {
   isNotBlank,
   trimValue,
 } from 'core/utils/validations';
+import { CHARLES_DOC } from 'core/components/Popover';
 
 const actionPlaceholder = 'charlescd-custom-path-example';
 
@@ -187,10 +188,9 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
       <Styled.Info tag="H5" color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         See our{' '}
-        <DocumentationLink
-          documentationLink="https://docs.charlescd.io/reference/metrics/action"
-          text="documentation"
-        />
+        <Link href={`${CHARLES_DOC}/reference/metrics/action`}>
+          documentation
+        </Link>
         for further details.
       </Styled.Info>
       <FormProvider {...formMethods}>

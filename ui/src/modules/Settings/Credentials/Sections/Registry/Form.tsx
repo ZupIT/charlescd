@@ -31,7 +31,7 @@ import { Option } from 'core/components/Form/Select/interfaces';
 import isEqual from 'lodash/isEqual';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import { testRegistryConnection } from 'core/providers/registry';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { useForm } from 'react-hook-form';
 import {
   isRequired,
@@ -308,10 +308,9 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
         deploy them. See our{' '}
-        <DocumentationLink
-          text="documentation"
-          documentationLink={`${CHARLES_DOC}/reference/registry`}
-        />{' '}
+        <Link href={`${CHARLES_DOC}/reference/registry`}>
+          documentation
+        </Link>{' '}
         for further details.
       </Text>
       <Styled.Select

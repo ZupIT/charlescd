@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
@@ -24,6 +24,7 @@ import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { CHARLES_DOC } from 'core/components/Popover';
 import { Option } from 'core/components/Form/Select/interfaces';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
+import Link from 'core/components/Link';
 import { getWorkspaceId } from 'core/utils/workspace';
 import Loader from './Loader';
 import { useUserGroup, useRole } from './hooks';
@@ -160,12 +161,9 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
           See our{' '}
-          <Styled.DocumentationLink
-            target="_blank"
-            href={`${CHARLES_DOC}/reference/users-group`}
-          >
+          <Link href={`${CHARLES_DOC}/reference/users-group`} >
             documentation
-          </Styled.DocumentationLink>{' '}
+          </Link>{' '}
           for further details.
         </Text>
       </Styled.Description>

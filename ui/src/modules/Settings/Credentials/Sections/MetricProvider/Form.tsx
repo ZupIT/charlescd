@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { Option } from 'core/components/Form/Select/interfaces';
@@ -30,7 +30,7 @@ import map from 'lodash/map';
 import { testDataSourceConnection } from 'core/providers/datasources';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 
 const datasourcePlaceholder = 'charlescd-data-source-example';
 
@@ -164,10 +164,9 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to do metrics generation since
         this can vary from workspace to another. See our{' '}
-        <DocumentationLink
-          text="documentation"
-          documentationLink={`${CHARLES_DOC}/reference/metrics`}
-        />
+        <Link href={`${CHARLES_DOC}/reference/metrics`}>
+          documentation
+        </Link>
         for further details.
       </Text>
       {renderForm()}

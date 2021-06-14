@@ -30,7 +30,7 @@ import { actionTemplate, displayAction, getScopes, subjectTemplate } from './hel
 import { useFormContext } from 'react-hook-form';
 import { Mode } from '../../helpers';
 import Icon from 'core/components/Icon';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { atLeastOne } from 'core/utils/validations';
 
 interface Props {
@@ -130,10 +130,9 @@ const Scopes = ({ mode }: Props) => {
           <Text tag="H5" color="dark">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
-            <DocumentationLink
-              documentationLink={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}
-              text="documentation"
-            />
+            <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
+              documentation
+            </Link>
             for further details.
           </Text>
         </Styled.Description>

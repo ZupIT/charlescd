@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import Styled from './styled';
-import { DocumentationLinkProps } from './interface';
 
-const DocumentationLink = ({
-  text,
-  documentationLink
-}: DocumentationLinkProps) => {
+export interface Props {
+  name: string;
+  href: string;
+  className?: string;
+}
+
+const InputLink = ({ name, href, className }: Props) => {
   return (
-    <>
-      <Styled.DocumentationLink target="_blank" href={documentationLink}>
-        {` ${text} `}
-      </Styled.DocumentationLink>
-    </>
+    <Styled.Wrapper className={className} data-testid={`input-link-${name}`}>
+      <Styled.Input name={name} disabled defaultValue={href} />
+      <Styled.Link href={href} target="_blank">
+        <Styled.Icon name="external-link" color="dark" size="15px" />
+      </Styled.Link>
+    </Styled.Wrapper>
   );
 };
 
-export default DocumentationLink;
+export default InputLink;

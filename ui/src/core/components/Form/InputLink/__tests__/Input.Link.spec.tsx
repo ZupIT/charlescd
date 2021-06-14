@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import { render, screen } from 'unit-test/testUtils';
+import Link from '..';
 
-const DocumentationLink = styled.a`
-  text-decoration: underline;
-  color: ${({ theme }) => theme.text.link};
-`;
+test('render InputLink component', () => {
+  const props = {
+    name: 'test',
+    href: 'http://test.input.link'
+  };
 
-export default {
-  DocumentationLink
-};
+  render(<Link name={props.name} href={props.link} />);
+
+  const inputElement = screen.getByTestId(`input-link-${props.name}`);
+  expect(inputElement).toBeInTheDocument();
+});
+

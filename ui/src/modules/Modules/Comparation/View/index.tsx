@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import map from 'lodash/map';
 import Text from 'core/components/Text';
@@ -81,13 +81,13 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
       <Styled.Layer>
         <ContentIcon icon="git">
           <Text tag="H2" color="light">Git URL</Text>
-          <Styled.FormLink name="git" link={module?.gitRepositoryAddress} />
+          <Styled.FormLink name="git" href={module?.gitRepositoryAddress} />
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="helm">
           <Text tag="H2" color="light">Helm URL</Text>
-          <Styled.FormLink name="helm" link={module?.helmRepository} />
+          <Styled.FormLink name="helm" href={module?.helmRepository} />
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
