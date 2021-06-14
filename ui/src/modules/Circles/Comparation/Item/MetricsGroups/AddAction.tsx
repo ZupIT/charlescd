@@ -117,7 +117,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
     );
 
     saveAction(newPayload)
-      .then(response => {
+      .then(response => { 
         if (response) {
           onGoBack();
         }
@@ -141,7 +141,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
 
   const loadCirclesExclude = debounce(
     (name) =>
-      getCirclesSimple({ name }).then(response => {
+      getCirclesSimple({ name, active: true }).then(response => {
         const options = partition(normalizeSelectOptions(response.content), { 'label': 'Default' })?.[1];
         setOptionsExcludeDefault(options);
         return options;

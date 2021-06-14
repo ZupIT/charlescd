@@ -150,7 +150,8 @@ export const findAllCirclesSimple = (
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name,
-    except: filter?.id
+    except: filter?.id,
+    active: `${filter?.active}`
   });
 
   return baseRequest(`${endpoint}/simple?${params}`);
