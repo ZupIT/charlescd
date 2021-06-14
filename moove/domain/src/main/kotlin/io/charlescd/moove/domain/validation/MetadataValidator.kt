@@ -6,7 +6,8 @@ import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
 class MetadataValidator : ConstraintValidator<MetadataConstraint, Metadata> {
-
+    private val maxKeySize = 64
+    private val maxValueSize = 254
     override fun isValid(metadata: Metadata?, context: ConstraintValidatorContext?): Boolean {
 
         if (metadata == null) {
@@ -23,13 +24,17 @@ class MetadataValidator : ConstraintValidator<MetadataConstraint, Metadata> {
     private fun hasValidContent(content: Map<String, String>): Boolean {
 
         val invalidMetadata = content.entries.filter {
-            !this.hasValidLength(it.key, 64) || !this.hasValidLength(it.value, 254)
+             !this.hasValidValue(it.value) || !this.hasValidKey(it.key)
         }
         return hasKeys(content) && invalidMetadata.isEmpty()
     }
 
-    private fun hasValidLength(value: String, exceededLimit: Int): Boolean {
-        return value.length in 1 until exceededLimit
+    private fun hasValidKey(key: String): Boolean {
+        return key.length in 1 until maxKeySize
+    }
+
+    private fun hasValidValue(value: String): Boolean {
+        return value.length in 0 until maxValueSize
     }
 
     private fun hasKeys(metadata: Map<String, String>): Boolean {

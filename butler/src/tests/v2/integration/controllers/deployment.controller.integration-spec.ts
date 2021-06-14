@@ -1011,7 +1011,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -1068,7 +1068,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -1091,7 +1091,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       })
   })
 
-  it('returns error for defined metadata when metadata value is too long', async() => {
+  it('returns error for defined metadata when metadata value is longer than 253', async() => {
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
@@ -1125,7 +1125,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -1148,7 +1148,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       })
   })
 
-  it('returns error for defined metadata when metadata key is too long', async() => {
+  it('returns error for defined metadata when metadata key is longer than ', async() => {
 
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
@@ -1182,7 +1182,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const errorResponse = {
       errors: [
         {
-          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
           meta: {
             component: 'butler',
             timestamp: expect.anything()
@@ -1260,7 +1260,6 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(400)
       .expect(response => {
-        console.log(response.body)
         expect(response.body).toEqual(errorResponse)
       })
   })

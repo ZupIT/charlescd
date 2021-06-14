@@ -122,7 +122,7 @@ export class CreateDeploymentValidator {
         }
       }).messages(
         {
-          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 1 and 253',
+          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
           'imageTag.dns.format': 'Metadata key and value must consist of alphanumeric characters,' +
               ' "-" or ".", and must start and end with an alphanumeric character'
         }
@@ -133,7 +133,7 @@ export class CreateDeploymentValidator {
   private isValidMetadata(metadata: Metadata) {
     if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
       const invalidMetadata = Object.keys(metadata.content).find(
-        key => !this.isValidKeyAndValue(key, metadata.content[key])
+        key => !this.isValidKey(key) || !this.isValidValue(metadata.content[key])
       )
       return Object.keys(metadata.content).length > 0 && invalidMetadata == null
     } else {
@@ -205,12 +205,9 @@ export class CreateDeploymentValidator {
     return extractedTag[extractedTag.length -1]
   }
 
-  private isValidKeyAndValue(key: string, value: string): boolean {
-    return this.isValidLength(key, 63) && this.isValidLength(value, 253)
-  }
 
-  private isValidLength(key: string, maxLength: number): boolean {
-    return key.length  > 0 && key.length <= maxLength
+  private isValidValue(value: string): boolean {
+    return value.length  >= 0 && value.length <= 253
   }
 
   private hasLabelFormat(metadata: Metadata) {
@@ -218,6 +215,10 @@ export class CreateDeploymentValidator {
       key => !this.isValidLabelFormat(key) || !this.isValidLabelFormat(metadata.content[key])
     )
     return invalidLabelFormat == null
+  }
+
+  private isValidKey(key: string) {
+    return key.length  > 0 && key.length <= 63
   }
 }
 
