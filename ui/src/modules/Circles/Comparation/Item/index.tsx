@@ -271,16 +271,14 @@ const CirclesComparationItem = ({
           onClick={() => copyToClipboard(pathCircleById(id))}
         />
       </Can>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          id="dropdown-item-delete-circle"
-          icon="delete"
-          name="Delete"
-          tooltip={getTooltipMessage(circle)}
-          isInactive={isInactive()}
-          onClick={() => setAction('Delete')}
-        />
-      </Can>
+      <Dropdown.Item
+        id="dropdown-item-delete-circle"
+        icon="delete"
+        name="Delete"
+        tooltip={getTooltipMessage(circle)}
+        isInactive={isInactive()}
+        onClick={() => setAction('Delete')}
+      />
     </Dropdown>
   );
 

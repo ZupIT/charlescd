@@ -20,6 +20,7 @@ import { generatePathV1 } from 'core/utils/path';
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { URL_PATH_POSITION, DEFAULT_CIRCLE } from './constants';
+import { hasPermission } from 'core/utils/auth';
 
 export type ChangeType = 'INCREASE' | 'DECREASE';
 
@@ -62,12 +63,16 @@ export const getTooltipMessage = (circle: Circle): string => {
     tooltipMessage = cannotDeleteInactiveDefaultCircleMessage;
   } else if (isDefaultCircle(circle?.name) && hasDeploy(circle)) {
     tooltipMessage = cannotDeleteDefaultCircleMessage;
-  } else {
+  } else if (hasDeploy(circle) && hasPermission('deploy_write')) {
     tooltipMessage = cannotDeleteActiveCircleMessage;
+  } else if (!hasPermission('deploy_write') && !hasDeploy(circle)) {
+    tooltipMessage = 'Not allowed';
+  } else if (!hasPermission('deploy_write')) {
+    tooltipMessage = 'Not allowed';
   }
   return tooltipMessage;
 };
 
 export const circleCannotBeDeleted = (circle: Circle): boolean => {
-  return isUndeployable(circle) || isDefaultCircle(circle?.name);
+  return isUndeployable(circle) || isDefaultCircle(circle?.name) || !hasPermission('circles_write');
 };
