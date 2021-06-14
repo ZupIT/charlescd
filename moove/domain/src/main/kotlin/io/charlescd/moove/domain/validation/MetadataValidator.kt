@@ -24,7 +24,7 @@ class MetadataValidator : ConstraintValidator<MetadataConstraint, Metadata> {
     private fun hasValidContent(content: Map<String, String>): Boolean {
 
         val invalidMetadata = content.entries.filter {
-             !this.hasValidValue(it.value) || !this.hasValidKey(it.key)
+            !this.hasValidValue(it.value) || !this.hasValidKey(it.key)
         }
         return hasKeys(content) && invalidMetadata.isEmpty()
     }
