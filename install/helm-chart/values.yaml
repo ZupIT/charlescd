@@ -21,6 +21,8 @@ CharlesApplications:
       application: charlescd-butler
     imagePullSecrets: false
     pullPolicy: Always
+    mtls:
+      enabled: false
     service:
       name: charlescd-butler
       type: ClusterIP
@@ -73,6 +75,29 @@ CharlesApplications:
         - name: http
           port: 8080
     replicaCount: 1
+#    mtls:
+#      enabled: true
+#      volumeMounts:
+#        - name: moove-certs
+#          mountPath: /certs/moove
+#          readOnly: true
+#        - name: butler-certs
+#          mountPath: /certs/butler
+#          readOnly: true
+#      volumes:
+#        - name: moove-certs
+#          secret:
+#            secretName: "moove-tls-cert"
+#            items:
+#              - key: store.jks
+#                path: moove-store.jks
+#        - name: butler-certs
+#          secret:
+#            secretName: "butler-tls-cert"
+#            items:
+#              - key: store.jks
+#                path: butler-store.jks
+
 
     resources:
       limits:
@@ -395,34 +420,6 @@ postgresql:
 job:
   enabled: false
   name: init-db
-mtls:
-  enabled: false
-  domain: svc.cluster.local
-  job:
-    name: cert-generator
-    enabled: false
-  moove:
-    volumeMounts:
-      - name: moove-certs
-        mountPath: /certs/moove
-        readOnly: true
-      - name: butler-certs
-        mountPath: /certs/butler
-        readOnly: true
-    volumes:
-        - name: moove-certs
-          secret:
-            secretName: "moove-tls-cert"
-            items:
-              - key: store.jks
-                path: moove-store.jks
-        - name: butler-certs
-          secret:
-            secretName: "butler-tls-cert"
-            items:
-              - key: store.jks
-                path: butler-store.jks
-
 redis:
   enabled: true
   fullnameOverride: charlescd-redis

@@ -106,7 +106,7 @@ env:
     secretKeyRef:
       name: application-aes256-key
       key: encryption-key
-{{ if .ChartContext.Values.mtls.enabled }}
+{{ if .RangeContext.mtls.enabled }}
 - name: TLS_CERT
   valueFrom:
     secretKeyRef:
@@ -128,7 +128,7 @@ env:
       name: "butler-tls-cert"
       key: "ca.crt"
 - name: MTLS_ENABLED
-  value: {{ .ChartContext.Values.mtls.enabled | quote }}
+  value: {{ .RangeContext.mtls.enabled | quote }}
 {{ end }}
 {{- end -}}
 
@@ -179,9 +179,9 @@ env:
     secretKeyRef:
       name: "gate-aes256-key"
       key: "encryption-key"
-{{ if .ChartContext.Values.mtls.enabled }}
+{{ if .RangeContext.mtls }}
 - name: MTLS_ENABLED
-  value: {{ .ChartContext.Values.mtls.enabled | quote }}
+  value: {{ .RangeContext.mtls.enabled | quote }}
 {{ end }}
 {{- end -}}
 

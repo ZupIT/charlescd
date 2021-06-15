@@ -1,0 +1,28 @@
+appname: charlescd
+mtls:
+  enabled: true
+  domain: svc.cluster.local
+  job:
+    name: cert-generator
+    enabled: true
+  moove:
+    volumeMounts:
+      - name: moove-certs
+        mountPath: /certs/moove
+        readOnly: true
+      - name: butler-certs
+        mountPath: /certs/butler
+        readOnly: true
+    volumes:
+      - name: moove-certs
+        secret:
+          secretName: "moove-tls-cert"
+          items:
+            - key: store.jks
+              path: moove-store.jks
+      - name: butler-certs
+        secret:
+          secretName: "butler-tls-cert"
+          items:
+            - key: store.jks
+              path: butler-store.jks

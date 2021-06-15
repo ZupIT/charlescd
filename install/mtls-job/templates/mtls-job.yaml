@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-    name: {{ .Release.Name }}-{{ .Values.mtls.job.name }}
+    name: {{ .Values.appname }}-{{ .Values.mtls.job.name }}
     namespace: {{ .Release.Namespace }}
 spec:
     backoffLimit: 20
@@ -12,14 +12,14 @@ spec:
             restartPolicy: OnFailure
             serviceAccountName: mtls-job
             containers:
-                -   name: {{ .Release.Name }}-{{ .Values.mtls.job.name }}
+                -   name: {{ .Values.appname }}-{{ .name }}
                     image: "thallesf/cert-tls-gen:0.2.2"
                     imagePullPolicy: Always
                     env:
                         - name: NAMESPACE
                           value: {{ .Release.Namespace }}
                         - name: DOMAIN
-                          value: {{ .Values.mtls.domain }}
+                          value: {{ .domain }}
                         - name: KEY_PASSWORD
                           valueFrom:
                               secretKeyRef:
