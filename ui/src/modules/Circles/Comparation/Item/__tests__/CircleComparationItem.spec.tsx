@@ -111,10 +111,11 @@ test('render CircleComparationItem with release', async () => {
     .mockResponseOnce(JSON.stringify(circle))
     .mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
     <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} />
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
     </AllTheProviders>
   );
 
@@ -133,9 +134,10 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+    <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
   );
 
   const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
@@ -206,9 +208,10 @@ test('should disable delete button and show tooltip when is an Active Default Ci
     .mockResponseOnce(JSON.stringify(defaultCircle))
     .mockResponseOnce(JSON.stringify(defaultCircle));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+    <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
   );
 
   const DropdownIcon = await screen.findByTestId('icon-vertical-dots');
@@ -231,9 +234,10 @@ test('should disable delete button and show tooltip when is an Inactive Default 
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(defaultCircleWithoutDeployment));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
-    <CirclesComparationItem id={props.id} onChange={handleChange} />
+    <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
   );
 
   const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
@@ -267,10 +271,11 @@ test('should disable delete button and show tooltip when is an Active Circle (i.
     .mockResponseOnce(JSON.stringify(circle))
     .mockResponseOnce(JSON.stringify(circle));
   const handleChange = jest.fn();
+  const updateCircle = jest.fn();
 
   render(
     <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} />
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
     </AllTheProviders>
   );
 
