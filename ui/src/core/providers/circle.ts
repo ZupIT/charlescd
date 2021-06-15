@@ -147,6 +147,12 @@ export const findAllCirclesWithoutActive = (
 export const findAllCirclesSimple = (
   filter: CircleFilter = initialCircleFilter
 ) => {
+  const paramsWithOurActive = new URLSearchParams({
+    size: `${DEFAULT_PAGE_SIZE}`,
+    name: filter?.name,
+    except: filter?.id,
+  });
+
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name,
@@ -154,5 +160,7 @@ export const findAllCirclesSimple = (
     active: `${filter?.active}`
   });
 
-  return baseRequest(`${endpoint}/simple?${params}`);
+  if(filter?.active) return baseRequest(`${endpoint}/simple?${params}`);
+
+  return baseRequest(`${endpoint}/simple?${paramsWithOurActive}`);
 };
