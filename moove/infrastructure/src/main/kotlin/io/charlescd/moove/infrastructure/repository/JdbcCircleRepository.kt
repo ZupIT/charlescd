@@ -364,7 +364,7 @@ class JdbcCircleRepository(
             """
                 SELECT DISTINCT COUNT(*)
                 FROM circles c                    
-                    INNER JOIN deployments ON circles.id = deployments.circle_id
+                    INNER JOIN deployments ON c.id = deployments.circle_id
                 WHERE 1 = 1
                     AND deployments.status NOT IN ('NOT_DEPLOYED', 'DEPLOY_FAILED')
             """
