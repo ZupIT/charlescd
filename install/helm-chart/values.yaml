@@ -396,10 +396,11 @@ job:
   enabled: false
   name: init-db
 mtls:
-  enabled: true
+  enabled: false
   domain: svc.cluster.local
   job:
     name: cert-generator
+    enabled: false
   moove:
     volumeMounts:
       - name: moove-certs

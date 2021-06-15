@@ -1,4 +1,4 @@
-{{ if .Values.mtls.enabled }}
+{{ if and (.Values.mtls.enabled) .Values.mtls.job.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job
