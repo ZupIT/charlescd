@@ -16,7 +16,7 @@
 
 import {
   isBusy, isDeploying, isUndeploying,
-  circleCannotBeDeleted, hasDeploy, pathCircleById,
+  cannotCircleBeDeleted, hasDeploy, pathCircleById,
   isUndeployable, isDefaultCircle, getTooltipMessage
 } from "../helpers"
 import { DEPLOYMENT_STATUS } from 'core/enums/DeploymentStatus';
@@ -84,13 +84,13 @@ test("isDeploying undeploying to be truthy", () => {
 });
 
 test("if circleCannotBeDeleted could be truthy", () => {
-  const isCant = circleCannotBeDeleted({ ...circle, deployment });
+  const isCant = cannotCircleBeDeleted({ ...circle, deployment });
 
   expect(isCant).toBeTruthy();
 });
 
 test("if circleCannotBeDeleted could be falsy - default circle", () => {
-  const isCant = circleCannotBeDeleted({ ...circle, name: 'Default'});
+  const isCant = cannotCircleBeDeleted({ ...circle, name: 'Default'});
 
   expect(isCant).toBeTruthy();
 });
@@ -99,7 +99,7 @@ test("if circleCannotBeDeleted could be falsy", () => {
   saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
   setUserAbilities();
 
-  const isCant = circleCannotBeDeleted(circle);
+  const isCant = cannotCircleBeDeleted(circle);
 
   expect(isCant).toBeFalsy();
 });
