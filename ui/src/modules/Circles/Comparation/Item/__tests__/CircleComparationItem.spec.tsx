@@ -256,7 +256,7 @@ test('should disable delete button and show tooltip when is an Inactive Default 
   expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
 });
 
-test('should show a tooltip when permission READER tries to delete an active circle', async () => {
+test('should show a tooltip when permission READER tries to delete a circle', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(circle))
     .mockResponseOnce(JSON.stringify(circle));
