@@ -24,7 +24,7 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import { COLOR_COMET } from 'core/assets/colors';
+import { COLOR_SANTAS_GREY } from 'core/assets/colors';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -63,7 +63,6 @@ const circle = {
 
 const circleWithoutDeployment = {
   name: 'Circle',
-  deployment: {}
 }
 
 const defaultCircle = {
@@ -157,16 +156,26 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
   expect(iconBack).toBeInTheDocument();
 });
 
-test('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
+test.only('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
   const handleChange = jest.fn();
   const updateCircle = jest.fn();
+  const temp = {
+    content: [{
+      name: 'circle 2 inactive',
+      id: '12,'
+    }],
+    page: 0,
+    size: 1,
+    totalPages: 1,
+    last: true,
+  }
 
   render(
     <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={temp} />
     </AllTheProviders>
   );
 
@@ -178,16 +187,12 @@ test('should not disable delete button and show tooltip when is an Inactive Circ
   expect(deleteButton).toBeInTheDocument();
 
   const deleteButtonText = await screen.findByText('Delete');
-  expect(deleteButtonText).not.toHaveStyle(`color: ${COLOR_COMET}`);
+  expect(deleteButtonText).toHaveStyle(`color: ${COLOR_SANTAS_GREY}`);
+  expect(deleteButtonText).not.toHaveStyle('opacity: 0.7');
 
   await act(async () => userEvent.click(deleteButton));
   const deleteCircleModal = screen.getByTestId('modal-trigger');
   expect(deleteCircleModal).toBeInTheDocument();
-
-  userEvent.hover(deleteButton);
-  expect(screen.queryByText('Active circle cannot be deleted,')).not.toBeInTheDocument();
-  expect(screen.queryByText('you can undeploy first and then')).not.toBeInTheDocument();
-  expect(screen.queryByText('delete this circle.')).not.toBeInTheDocument();
 });
 
 test('should disable delete button and show tooltip when is an Active Default Circle', async () => {
