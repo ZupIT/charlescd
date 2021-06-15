@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, useState, useRef, MouseEvent } from 'react';
+import { ReactNode, useState, useRef, MouseEvent } from 'react';
 import Icon from 'core/components/Icon';
 import useOutsideClick from 'core/hooks/useClickOutside';
-import Item from './Item';
+import Item from './DropdownItem';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   children: ReactNode;
   icon?: string;
   color?: 'primary' | 'dark' | 'error' | 'light' | 'medium' | 'success';
@@ -33,7 +33,7 @@ const Dropdown = ({
   icon = 'vertical-dots',
   color = 'dark',
   size = '15px',
-  className
+  className,
 }: Props) => {
   const [toggle, switchToggle] = useState(false);
   const ref = useRef<HTMLDivElement>();

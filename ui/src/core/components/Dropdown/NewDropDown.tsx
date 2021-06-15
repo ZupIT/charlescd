@@ -1,8 +1,8 @@
-import React, { useState, useRef, MouseEvent, ReactNode } from 'react';
+import { useState, useRef, MouseEvent, ReactNode } from 'react';
 import { usePopper } from 'react-popper';
 import useOutsideClick from 'core/hooks/useClickOutside';
 import Icon from 'core/components/Icon';
-import Item from './Item';
+import Item from './DropdownItem';
 import Styled from './styled';
 
 type Props = {
@@ -18,7 +18,7 @@ const Dropdown = ({
   icon = 'vertical-dots',
   color = 'dark',
   size = '15px',
-  className
+  className,
 }: Props) => {
   const [showPopper, setShowPopper] = useState(false);
 
@@ -39,16 +39,16 @@ const Dropdown = ({
         {
           name: 'arrow',
           options: {
-            element: arrowRef
-          }
+            element: arrowRef,
+          },
         },
         {
           name: 'offset',
           options: {
-            offset: [0, 10]
-          }
-        }
-      ]
+            offset: [0, 10],
+          },
+        },
+      ],
     }
   );
 
