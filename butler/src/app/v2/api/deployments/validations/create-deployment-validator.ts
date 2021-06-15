@@ -197,6 +197,19 @@ export class CreateDeploymentValidator {
     return comparedValue === value
   }
 
+  private isValidLabelValueFormat(value: string) {
+    if (value.length == 0) {
+      return true
+    }
+    const startNameFormat  = '[A-Za-z0-9]'
+    const extensionNameFormat  = '[-A-Za-z0-9_.]'
+    const endNameFormat = '[A-Za-z0-9]'
+    const labelFormat = `(${startNameFormat}${extensionNameFormat}*)?${endNameFormat}`
+    const regExpr = new RegExp(labelFormat, 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
+
   private extractTag(buildImageTag: string, buildImageUrl: string): string {
     const extractedTag = buildImageUrl.split(':')
     if (extractedTag.length === 1) {
@@ -212,7 +225,7 @@ export class CreateDeploymentValidator {
 
   private hasLabelFormat(metadata: Metadata) {
     const invalidLabelFormat = Object.keys(metadata.content).find(
-      key => !this.isValidLabelFormat(key) || !this.isValidLabelFormat(metadata.content[key])
+      key => !this.isValidLabelFormat(key) || !this.isValidLabelValueFormat(metadata.content[key])
     )
     return invalidLabelFormat == null
   }
@@ -220,5 +233,6 @@ export class CreateDeploymentValidator {
   private isValidKey(key: string) {
     return key.length  > 0 && key.length <= 63
   }
+
 }
 

@@ -1301,7 +1301,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           'key': 'someValue',
           'Key': 'SOMEVALUE',
           'another-key': '012345',
-          'more-KEYS': 'value.key'
+          'more-KEY': 'value.key',
+          'more-key': ''
         }
       }
     }
