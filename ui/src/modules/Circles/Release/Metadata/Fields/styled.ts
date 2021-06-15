@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const Field = styled.div`
+const Field = styled.div<{ hasErrors: boolean }>`
   width: 490px;
   display: flex;
   flex-direction: row;
@@ -30,6 +30,16 @@ const Field = styled.div`
   > :not(:first-child) {
     width: 150px;
   }
+
+  ${({ hasErrors }) => hasErrors && css`
+    display: flex;
+    align-items: start;
+    height: 100px;
+
+    > i {
+      margin-top: 27px;
+    }
+  `}
 `;
 
 export default {

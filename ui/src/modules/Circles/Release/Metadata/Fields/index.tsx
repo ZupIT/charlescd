@@ -15,10 +15,10 @@
  */
 
 import { useFormContext } from 'react-hook-form';
-import { isRequiredAndNotBlank, maxLength } from 'core/utils/validations';
 import Form from 'core/components/Form';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
+import { isEmpty } from 'lodash';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
@@ -27,11 +27,12 @@ interface Props {
 }
 
 const Fields = ({ remove, field, index }: Props) => {
-  const { register } = useFormContext();
+  const { register, errors } = useFormContext();
 
   return (
     <Styled.Field
       key={`field-${index}`}
+      hasErrors={!isEmpty(errors?.metadata?.content[index])}
       data-testid={`metadata.content[${index}]`}
     >
       <Icon
@@ -42,20 +43,16 @@ const Fields = ({ remove, field, index }: Props) => {
       />
       <Form.Input
         name={`metadata.content[${index}].key`}
+        error={errors?.metadata?.content[index]?.key?.message}
         label="Key"
-        ref={register({
-          ...isRequiredAndNotBlank,
-          maxLength: maxLength(63)
-        })}
+        ref={register()}
         defaultValue={field.key}
       />
       <Form.Input
         name={`metadata.content[${index}].value`}
+        error={errors?.metadata?.content[index]?.value?.message}
         label="Value"
-        ref={register({
-          ...isRequiredAndNotBlank,
-          maxLength: maxLength(252)
-        })}
+        ref={register()}
         defaultValue={field.value}
       />
     </Styled.Field>

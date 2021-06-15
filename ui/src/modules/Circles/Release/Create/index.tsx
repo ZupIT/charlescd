@@ -16,23 +16,21 @@
 
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
-import forEach from 'lodash/forEach';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Button from 'core/components/Button';
+import ConnectionStatus from 'core/components/ConnectionStatus';
 import Module from './Module';
 import Metadata from '../Metadata';
 import { ModuleForm } from '../interfaces/Module';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
-import Styled from '../styled';
-import ConnectionStatus from 'core/components/ConnectionStatus';
 import { Scope } from '../Metadata/interfaces';
 import { toKeyValue } from '../Search/helpers';
+import Styled from '../styled';
 
 const defaultValues = {
   modules: [MODULE],
@@ -57,7 +55,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     mode: 'onChange',
     resolver: validationResolver
   });
-  const { register, control, handleSubmit, watch, errors, getValues } = form;
+  const { register, control, handleSubmit, watch, getValues, formState } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -71,11 +69,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   useEffect(() => {
     if (watchFields) {
       let isValid = validFields(watchFields);
-      forEach(watchFields?.metadata?.content, (meta) => {
-        if (isEmpty(meta.key) || isEmpty(meta.value)) {
-          isValid = false;
-        }
-      });
       setIsEmptyFields(!isValid);
     }
   }, [watchFields]);
@@ -148,7 +141,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="button"
           size="EXTRA_SMALL"
           id="add-module"
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          isDisabled={isEmptyFields}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
@@ -164,7 +157,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="submit"
           size="SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
+          isDisabled={!formState.isValid || isDeploying || isEmptyFields}
         >
           Deploy
         </Styled.Submit>

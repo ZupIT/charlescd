@@ -15,7 +15,7 @@
  */
 
 import { Module } from 'modules/Modules/interfaces/Module';
-import { Module as IModule } from '../interfaces/Module';
+import { Module as ModuleProps, ModuleForm } from '../interfaces/Module';
 import { Tag } from '../interfaces/Tag';
 import map from 'lodash/map';
 import find from 'lodash/find';
@@ -58,7 +58,7 @@ interface Error {
     message: string;
   };
 }
-export const checkIfComponentConflict = (modules: IModule[]) => {
+export const checkIfComponentConflict = (modules: ModuleProps[]) => {
   const matchedList: number[] = [];
   const error: Error = {};
   const NOT_FOUND = -1;
@@ -86,8 +86,46 @@ export const checkIfComponentConflict = (modules: IModule[]) => {
   return error;
 };
 
-export const validationResolver = ({ modules }: { modules: IModule[] }) => {
+export const validationResolver = ({ modules, metadata }: ModuleForm) => {
   const error = checkIfComponentConflict(modules);
+  const metadataRegex = /^[a-zA-Z0-9]+[a-zA-Z0-9-_.]*[a-zA-Z0-9]$/gi;
+  
+  forEach(metadata?.content, (content, index) => {
+    if (isEmpty(content?.key) || isEmpty(content?.value)) {
+      error[`metadata.content[${index}]`] = {
+        type: `metadata.content[${index}].required`,
+        message: 'This field is required'
+      }
+    }
+
+    if (content?.key?.length > 63) {
+      error[`metadata.content[${index}].key`] = {
+        type: `metadata.content[${index}].key.maxLength`,
+        message: 'The maximum length of this field is 63'
+      }
+    }
+
+    if (content?.value?.length > 252) {
+      error[`metadata.content[${index}].value`] = {
+        type: `metadata.content[${index}].value.maxLength`,
+        message: 'The maximum length of this field is 252'
+      }
+    }
+
+    if (!content?.key?.match(metadataRegex)) {
+      error[`metadata.content[${index}].key`] = {
+        type: `metadata.content[${index}].key.match`,
+        message: 'The key needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
+      }
+    }
+
+    if (!content?.value?.match(metadataRegex)) {
+      error[`metadata.content[${index}].value`] = {
+        type: `metadata.content[${index}].value.match`,
+        message: 'The value needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
+      }
+    }
+  })
 
   return {
     values: {},
@@ -100,7 +138,7 @@ const getVersion = (str: string) => {
   return version;
 };
 
-export const formatDataModules = ({ modules }: { modules: IModule[] }) => {
+export const formatDataModules = ({ modules }: { modules: ModuleProps[] }) => {
   const groupedModules = groupBy(modules, 'module');
   return map(groupedModules, modules => {
     const [module] = modules;
@@ -119,7 +157,7 @@ export const formatDataModules = ({ modules }: { modules: IModule[] }) => {
 
 export const validFields = (fields: object) => {
   let status = true;
-  forEach(fields, (value: string | IModule[]) => {
+  forEach(fields, (value: string | ModuleProps[]) => {
     if (isEmpty(value)) {
       status = false;
     }
