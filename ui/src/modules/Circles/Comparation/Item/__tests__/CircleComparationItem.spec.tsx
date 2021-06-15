@@ -256,6 +256,34 @@ test('should disable delete button and show tooltip when is an Inactive Default 
   expect(screen.getByText('Default circle cannot be deleted.')).toBeInTheDocument();
 });
 
+test('should show a tooltip when permission READER tries to delete an active circle', async () => {
+  (fetch as FetchMock)
+    .mockResponseOnce(JSON.stringify(circle))
+    .mockResponseOnce(JSON.stringify(circle));
+
+  const handleChange = jest.fn();
+  const updateCircle = jest.fn();
+
+  saveWorkspace({id: '1', name: 'workspace 1', permissions: ['circles_read']});
+  setUserAbilities();
+
+  render(
+    <AllTheProviders>
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
+    </AllTheProviders>
+  );
+
+  const dropdownIcon = await screen.findByTestId('icon-vertical-dots');
+  expect(dropdownIcon).toBeInTheDocument();
+  act(() => userEvent.click(dropdownIcon));
+
+  const deleteButton = await screen.findByTestId('dropdown-item-delete-Delete');
+  expect(deleteButton).toBeInTheDocument();
+
+  userEvent.hover(deleteButton);
+  expect(screen.getByText(/Not allowed/)).toBeInTheDocument();
+});
+
 test('should disable delete button and show tooltip when is an Active Circle', async () => {
   jest.spyOn(StateHooks, 'useGlobalState').mockImplementation(() => ({
     item: {
