@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { AllTheProviders } from "unit-test/testUtils";
@@ -24,7 +24,9 @@ import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { Actions, Subjects } from 'core/utils/abilities';
 import CirclesComparationItem from '..';
 import * as DatasourceHooks from 'modules/Settings/Credentials/Sections/MetricProvider/hooks';
-import { COLOR_SANTAS_GREY } from 'core/assets/colors';
+import { COLOR_SANTAS_GREY, COLOR_COMET } from 'core/assets/colors';
+import { saveProfile } from 'core/utils/profile';
+import { setUserAbilities } from 'core/utils/abilities';
 
 (global as any).MutationObserver = MutationObserver
 
@@ -156,26 +158,19 @@ test('should render CircleComparationItem with an Inactive Default Circle', asyn
   expect(iconBack).toBeInTheDocument();
 });
 
-test.only('should not disable delete button and show tooltip when is an Inactive Circle (i.e., not a Default Circle)', async () => {
+test('should not disable delete button', async () => {
   (fetch as FetchMock)
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment))
     .mockResponseOnce(JSON.stringify(circleWithoutDeployment));
   const handleChange = jest.fn();
   const updateCircle = jest.fn();
-  const temp = {
-    content: [{
-      name: 'circle 2 inactive',
-      id: '12,'
-    }],
-    page: 0,
-    size: 1,
-    totalPages: 1,
-    last: true,
-  }
+
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
+  setUserAbilities();
 
   render(
     <AllTheProviders>
-      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={temp} />
+      <CirclesComparationItem id={props.id} onChange={handleChange} updateCircle={updateCircle} circlesListResponse={null} />
     </AllTheProviders>
   );
 
