@@ -54,10 +54,13 @@ const Item = styled.button<Partial<Props>>`
 `;
 
 const ReactTooltipStyled = styled(ReactTooltip)`
-  text-align: left !important;
   padding: 8px 21px !important;
   font-size: 10px !important;
   color: ${darkTheme.color} !important;
+
+  > span {
+    text-align: left !important;
+  }
 `;
 
 export default {
