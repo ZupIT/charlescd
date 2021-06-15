@@ -34,7 +34,7 @@ export const pathCircleById = (id: string) => {
 
 export const isDefaultCircle = (name: string) => name === DEFAULT_CIRCLE;
 
-export const isDeploying = (status: DEPLOYMENT_STATUS) =>
+export const isDeploying = (status: DEPLOYMENT_STATUS) => 
   DEPLOYMENT_STATUS.deploying === status;
 
 export const isUndeploying = (status: DEPLOYMENT_STATUS) =>
@@ -73,6 +73,6 @@ export const getTooltipMessage = (circle: Circle): string => {
   return tooltipMessage;
 };
 
-export const circleCannotBeDeleted = (circle: Circle): boolean => {
-  return isUndeployable(circle) || isDefaultCircle(circle?.name) || !hasPermission('circles_write');
+export const cannotCircleBeDeleted = (circle: Circle): boolean => {
+  return isUndeployable(circle) || isDefaultCircle(circle?.name) || !hasPermission('circles_write'); 
 };

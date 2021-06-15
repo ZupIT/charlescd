@@ -54,9 +54,7 @@ import {
   isUndeployable,
   isBusy,
   getTooltipMessage,
-  circleCannotBeDeleted,
-  isDeploying,
-  isUndeploying
+  cannotCircleBeDeleted,
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -233,10 +231,7 @@ const CirclesComparationItem = ({
   };
 
   const isInactive = () =>
-    isDeploying(circle?.deployment?.status) ||
-    isUndeploying(circle?.deployment?.status) ||
-    circleCannotBeDeleted(circle);
-
+    cannotCircleBeDeleted(circle);
   const renderDropdown = () => (
     <Dropdown>
       {!circle?.default && (
