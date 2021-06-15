@@ -207,6 +207,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           )}
           {selectedAction === 'circledeployment' && !loading && (
             <Styled.SelectAsync
+              rules={{ required: true }}
               control={control}
               name="circleId"
               label="Select a circle to deploy"
@@ -221,6 +222,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           )}
           {selectedAction === 'circleundeployment' && !loading && (
             <Styled.SelectAsync
+              rules={{ required: true }}
               control={control}
               name="circleId"
               label="Select a circle to undeploy"
