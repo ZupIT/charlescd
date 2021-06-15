@@ -20,7 +20,7 @@ import CardConfig from 'core/components/Card/Config';
 import Text from 'core/components/Text';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import { FORM_CIRCLE_MATCHER } from './constants';
 import { useDeleteCircleMatcher } from './hooks';
 import FormCircleMatcher from './Form';
@@ -55,7 +55,7 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
   };
 
   const renderConfirmation = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Remove Circle Matcher"
       dismissLabel="Cancel"
       continueLabel="Yes, remove"
@@ -67,7 +67,7 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
         This operation will remove all data from this workspace to the Circle
         Matcher.
       </Text>
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const renderSection = () => (

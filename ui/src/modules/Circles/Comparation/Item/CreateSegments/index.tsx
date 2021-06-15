@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import Modal from 'core/components/Modal';
+import { useState, useEffect } from 'react';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { Circle } from 'modules/Circles/interfaces/Circle';
@@ -128,15 +128,17 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Attention!"
       dismissLabel="Cancel"
       continueLabel="Continue"
       onContinue={onContinue}
       onDismiss={onDismissWarningMessage}
     >
-      <Text tag="H4" color="light">{getWarningText(warningMessage)}</Text>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        {getWarningText(warningMessage)}
+      </Text>
+    </ModalTrigger>
   );
   return (
     <>

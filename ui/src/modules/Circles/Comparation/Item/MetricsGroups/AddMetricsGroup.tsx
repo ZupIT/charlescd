@@ -16,7 +16,7 @@
 
 import React from 'react';
 import useForm from 'core/hooks/useForm';
-import Modal from 'core/components/Modal';
+import ModalDefault from 'core/components/Modal/ModalDefault';
 import { useCreateMetricsGroup } from './hooks';
 import Styled from './styled';
 import { MetricsGroup } from './types';
@@ -37,18 +37,18 @@ const AddMetricsGroup = ({
   id,
   onCloseModal,
   onSaveGroup,
-  metricGroup
+  metricGroup,
 }: Props) => {
   const { createMetricsGroup, status } = useCreateMetricsGroup(metricGroup?.id);
 
   const {
     register,
     handleSubmit,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm<FormData>({ mode: 'onChange', defaultValues: metricGroup ?? {} });
 
   const onSubmit = ({ name }: FormData) => {
-    createMetricsGroup(name, id).then(response => {
+    createMetricsGroup(name, id).then((response) => {
       if (response) {
         onSaveGroup();
       }
@@ -56,7 +56,7 @@ const AddMetricsGroup = ({
   };
 
   return (
-    <Modal.Default onClose={() => onCloseModal()}>
+    <ModalDefault onClose={() => onCloseModal()}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Modal.Title color="light" tag="H2">
           {metricGroup?.id ? 'Edit metrics group' : 'Add metrics group'}
@@ -66,7 +66,7 @@ const AddMetricsGroup = ({
           label="Type a name for the metrics group"
           ref={register({
             required: true,
-            validate: isNotBlank
+            validate: isNotBlank,
           })}
           maxLength={100}
         />
@@ -79,7 +79,7 @@ const AddMetricsGroup = ({
           Save group
         </Styled.Modal.Button>
       </form>
-    </Modal.Default>
+    </ModalDefault>
   );
 };
 

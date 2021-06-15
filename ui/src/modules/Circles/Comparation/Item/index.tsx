@@ -22,7 +22,7 @@ import {
   useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy
+  useCircleUndeploy,
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -32,7 +32,7 @@ import TabPanel from 'core/components/TabPanel';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Dropdown from 'core/components/Dropdown';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
 import CreateRelease from 'modules/Circles/Release';
@@ -56,7 +56,7 @@ import {
   getTooltipMessage,
   circleCannotBeDeleted,
   isDeploying,
-  isUndeploying
+  isUndeploying,
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -74,7 +74,7 @@ const CirclesComparationItem = ({
   id,
   onChange,
   updateCircle,
-  circlesListResponse
+  circlesListResponse,
 }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -87,7 +87,7 @@ const CirclesComparationItem = ({
   const {
     undeployRelease,
     status: undeployStatus,
-    resetStatus: resetUndeployStatus
+    resetStatus: resetUndeployStatus,
   } = useCircleUndeploy();
   const [updateManualResponse, updateCircleManually] = useSaveCircleManually(
     id
@@ -108,18 +108,18 @@ const CirclesComparationItem = ({
   useEffect(() => {
     if (
       response &&
-      !response?.deployment && 
-      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying ) {
-        updateCircle();
-        setCircle(response);
+      !response?.deployment &&
+      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying
+    ) {
+      updateCircle();
+      setCircle(response);
     }
-  }, [response, circle, updateCircle])
+  }, [response, circle, updateCircle]);
 
   useEffect(() => {
     if (response) {
       setCircle(response);
     }
-
   }, [response]);
 
   useEffect(() => {
@@ -153,8 +153,8 @@ const CirclesComparationItem = ({
         ...circle,
         deployment: {
           ...circle.deployment,
-          status: DEPLOYMENT_STATUS.undeploying
-        }
+          status: DEPLOYMENT_STATUS.undeploying,
+        },
       });
     }
   }, [undeployStatus, setCircle, circle, resetUndeployStatus, updateCircle]);
@@ -285,7 +285,7 @@ const CirclesComparationItem = ({
   );
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Do you want to delete this circle?"
       dismissLabel="Cancel, keep circle"
       continueLabel="Yes, delete circle"
@@ -296,7 +296,7 @@ const CirclesComparationItem = ({
         When deleting this circle, users will be sent to Default and all metrics
         in this circle will be lost. Do you wish to continue?
       </Text>
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const renderActions = () => (
@@ -308,7 +308,9 @@ const CirclesComparationItem = ({
             marginContent="5px"
             onClick={() => setActiveSection(SECTIONS.RELEASE)}
           >
-            <Text tag="H5" color="dark">Override release</Text>
+            <Text tag="H5" color="dark">
+              Override release
+            </Text>
           </LabeledIcon>
         </Can>
       )}
@@ -316,8 +318,10 @@ const CirclesComparationItem = ({
         icon="clock"
         marginContent="5px"
         onClick={() => setActiveSection(SECTIONS.HISTORY)}
-        >
-          <Text tag="H5" color="dark">History</Text>
+      >
+        <Text tag="H5" color="dark">
+          History
+        </Text>
       </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
@@ -331,7 +335,11 @@ const CirclesComparationItem = ({
   const renderPanelContent = () => (
     <>
       {action === 'Delete' && renderWarning()}
-      <LayerName name={circle?.name} onSave={saveCircleName} isDefault={circle?.default} />
+      <LayerName
+        name={circle?.name}
+        onSave={saveCircleName}
+        isDefault={circle?.default}
+      />
       <LayerSegments
         circle={circle}
         isEditing={isEditing}

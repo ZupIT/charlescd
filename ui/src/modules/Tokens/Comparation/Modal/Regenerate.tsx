@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
 
 const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
   return (
-    <Modal.Trigger
+    <ModalTrigger
       title="Are you sure you want to regenerate this token?"
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, regenerate token"
@@ -34,11 +34,12 @@ const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
       isLoading={isLoading}
     >
       <Text tag="H4" color="dark">
-        Any application or script using this token will no longer be able to access Charles C.D. APIs.
-        You cannot undo this action. Do you want to continue?
+        Any application or script using this token will no longer be able to
+        access Charles C.D. APIs. You cannot undo this action. Do you want to
+        continue?
       </Text>
-    </Modal.Trigger>
-  )
-}
+    </ModalTrigger>
+  );
+};
 
-export default ModalRegenerate
+export default ModalRegenerate;

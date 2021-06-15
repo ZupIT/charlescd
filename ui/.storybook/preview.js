@@ -14,7 +14,9 @@ export const parameters = {
 export const decorators = [
   (Story) => (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
-      <ThemeProvider theme={THEME.dark}><Story /></ThemeProvider>
+      <div>
+        <ThemeProvider theme={THEME.dark}><Story /></ThemeProvider>
+      </div>
     </div>
   )
 ]
