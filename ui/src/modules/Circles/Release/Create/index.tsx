@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import isEmpty from 'lodash/isEmpty';
+import forEach from 'lodash/forEach';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import Text from 'core/components/Text';
@@ -69,7 +70,12 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   useEffect(() => {
     if (watchFields) {
-      const isValid = validFields(watchFields);
+      let isValid = validFields(watchFields);
+      forEach(watchFields?.metadata?.content, (meta) => {
+        if (isEmpty(meta.key) || isEmpty(meta.value)) {
+          isValid = false;
+        }
+      });
       setIsEmptyFields(!isValid);
     }
   }, [watchFields]);
