@@ -118,8 +118,8 @@ func newBasicAction() repository.Action {
 	}
 }
 
-func actionInsert(actionType string) (string, repository.Response) {
-	entity := repository.Response{
+func actionInsert(actionType string) (string, repository.ActionResponse) {
+	entity := repository.ActionResponse{
 		BaseModel: util.BaseModel{
 			ID: uuid.New(),
 		},
@@ -137,8 +137,8 @@ func actionInsert(actionType string) (string, repository.Response) {
 		entity
 }
 
-func newBasicActionRequest() repository.Request {
-	return repository.Request{
+func newBasicActionRequest() repository.ActionRequest {
+	return repository.ActionRequest{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",

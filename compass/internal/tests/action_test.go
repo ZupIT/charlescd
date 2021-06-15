@@ -202,7 +202,7 @@ func (s *ActionSuite) TestSaveAction() {
 
 func (s *ActionSuite) TestSaveActionError() {
 	s.DB.Close()
-	actionStruct := repository2.Request{}
+	actionStruct := repository2.ActionRequest{}
 	_, err := s.repository.SaveAction(actionStruct)
 
 	require.NotNil(s.T(), err)

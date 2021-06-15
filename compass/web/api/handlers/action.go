@@ -19,27 +19,34 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	actionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/action"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func Create(actionMain repository.ActionRepository) echo.HandlerFunc {
+func Create(createAction actionInteractor.CreateAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
-		request, err := actionMain.ParseAction(echoCtx.Request().Body)
+		ctx := echoCtx.Request().Context()
+		var action representation.ActionRequest
+
+		bindErr := echoCtx.Bind(&action)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
+
+		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		request.WorkspaceId = uuid.MustParse(workspaceID)
-
-		if err := actionMain.ValidateAction(request); len(err.GetErrors()) > 0 {
+			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		createdAction, err := actionMain.SaveAction(request)
+		createdAction, err := createAction.Execute(action.RequestToDomain(workspaceId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
@@ -48,15 +55,16 @@ func Create(actionMain repository.ActionRepository) echo.HandlerFunc {
 	}
 }
 
-func List(actionMain repository.ActionRepository) echo.HandlerFunc {
+func List(listAction actionInteractor.ListAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
-		if parseErr != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		ctx := echoCtx.Request().Context()
+		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		actions, err := actionMain.FindAllActionsByWorkspace(workspaceUUID)
+		actions, err := listAction.Execute(workspaceId)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}

@@ -19,61 +19,22 @@
 package repository
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/repository/queries"
-	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"io"
-	"strings"
-	"time"
 )
 
-type Action struct {
-	util.BaseModel
-	WorkspaceId   uuid.UUID  `json:"workspaceId"`
-	Nickname      string     `json:"nickname"`
-	Type          string     `json:"type"`
-	Description   string     `json:"description"`
-	UseDefault    bool       `json:"useDefaultConfiguration" gorm:"-"`
-	Configuration []byte     `json:"configuration"`
-	DeletedAt     *time.Time `json:"-"`
-}
-
-type Request struct {
-	util.BaseModel
-	WorkspaceId   uuid.UUID       `json:"workspaceId"`
-	Nickname      string          `json:"nickname"`
-	Type          string          `json:"type"`
-	Description   string          `json:"description"`
-	UseDefault    bool            `json:"useDefaultConfiguration" gorm:"-"`
-	Configuration json.RawMessage `json:"configuration"`
-	DeletedAt     *time.Time      `json:"-"`
-}
-
-type Response struct {
-	util.BaseModel
-	WorkspaceId   uuid.UUID       `json:"workspaceId"`
-	Nickname      string          `json:"nickname"`
-	Type          string          `json:"type"`
-	Description   string          `json:"description"`
-	UseDefault    bool            `json:"useDefaultConfiguration" gorm:"-"`
-	Configuration json.RawMessage `json:"configuration"`
-	DeletedAt     *time.Time      `json:"-"`
-}
-
 type ActionRepository interface {
-	ValidateAction(action Request) errors.ErrorList
-	ParseAction(action io.ReadCloser) (Request, errors.Error)
-	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
-	FindActionById(id string) (Response, errors.Error)
-	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
-	SaveAction(action Request) (Response, errors.Error)
-	DeleteAction(id string) errors.Error
+	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (domain.Action, error)
+	FindActionById(id uuid.UUID) (domain.Action, error)
+	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]domain.Action, error)
+	SaveAction(action domain.Action) (domain.Action, error)
+	DeleteAction(id uuid.UUID) error
 }
 
 type actionRepository struct {
@@ -85,195 +46,73 @@ func NewActionRepository(db *gorm.DB, pluginRepo PluginRepository) ActionReposit
 	return actionRepository{db, pluginRepo}
 }
 
-func (main actionRepository) ParseAction(action io.ReadCloser) (Request, errors.Error) {
-	var nAction *Request
-
-	err := json.NewDecoder(action).Decode(&nAction)
-	if err != nil {
-		logger.Error(util.GeneralParseError, "ParseAction", err, action)
-		return Request{}, errors.NewError("Connot decode data", err.Error()).
-			WithOperations("ParseAction.Decode")
-	}
-
-	nAction.Nickname = strings.TrimSpace(nAction.Nickname)
-	nAction.Type = strings.TrimSpace(nAction.Type)
-	nAction.Description = strings.TrimSpace(nAction.Description)
-
-	if nAction.UseDefault {
-		nAction.Configuration = json.RawMessage(fmt.Sprintf(`{"mooveUrl": "%s"}`, configuration.Get("MOOVE_PATH")))
-	}
-
-	return *nAction, nil
-}
-
-func (main actionRepository) ValidateAction(action Request) errors.ErrorList {
-	ers := errors.NewErrorList()
-	needConfigValidation := true
-
-	if strings.TrimSpace(action.Nickname) == "" {
-		err := errors.NewError("Invalid data", "action nickname is required").
-			WithMeta("field", "nickname").
-			WithOperations("ValidateAction.NameTrimSpace")
-		ers.Append(err)
-	} else if len(action.Nickname) > 64 {
-		err := errors.NewError("Invalid data", "action nickname is limited to 64 characters maximum").
-			WithMeta("field", "nickname").
-			WithOperations("ValidateAction.NicknameLen")
-		ers.Append(err)
-	}
-
-	if strings.TrimSpace(action.Description) == "" {
-		err := errors.NewError("Invalid data", "description is required").
-			WithMeta("field", "description").
-			WithOperations("ValidateAction.DescriptionTrimSpace")
-		ers.Append(err)
-	} else if len(action.Description) > 64 {
-		err := errors.NewError("Invalid data", "description is limited to 64 characters maximum").
-			WithMeta("field", "description").
-			WithOperations("ValidateAction.DescriptionLen")
-		ers.Append(err)
-	}
-
-	if action.Configuration == nil || len(action.Configuration) == 0 {
-		err := errors.NewError("Invalid data", "action configuration is required").
-			WithMeta("field", "configuration").
-			WithOperations("ValidateAction.ConfigurationNil")
-		ers.Append(err)
-		needConfigValidation = false
-	}
-
-	if action.WorkspaceId == uuid.Nil {
-		err := errors.NewError("Invalid data", "workspaceId is required").
-			WithMeta("field", "workspaceId").
-			WithOperations("ValidateAction.WorkspaceIdIsNil")
-		ers.Append(err)
-	}
-
-	if strings.TrimSpace(action.Type) == "" {
-		needConfigValidation = false
-		err := errors.NewError("Invalid data", "action type is required").
-			WithMeta("field", "type").
-			WithOperations("ValidateAction.ActionTypeTrimSpace")
-		ers.Append(err)
-	} else if len(action.Type) > 100 {
-		needConfigValidation = false
-		err := errors.NewError("Invalid data", "action type is limited to 100 characters maximum").
-			WithMeta("field", "type").
-			WithOperations("ValidateAction.ActionTypeLen")
-		ers.Append(err)
-	}
-
-	if needConfigValidation {
-		ers.Append(main.validateActionConfig(action.Type, action.Configuration).GetErrors()...)
-	}
-
-	return ers
-}
-
-func (main actionRepository) validateActionConfig(actionType string, actionConfiguration json.RawMessage) errors.ErrorList {
-	ers := errors.NewErrorList()
-
-	plugin, err := main.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", actionType, actionType))
-	if err != nil {
-		err := errors.NewError("Invalid data", "error finding plugin").
-			WithMeta("field", "type").
-			WithOperations("validateActionConfig.GetPluginBySrc")
-		ers.Append(err)
-		return ers
-	}
-
-	pluginErrs, lookupErr := plugin.Lookup("ValidateActionConfiguration")
-	if lookupErr != nil {
-		err := errors.NewError("Invalid data", lookupErr.Error()).
-			WithMeta("field", "type").
-			WithOperations("validateActionConfig.Lookup")
-		ers.Append(err)
-		return ers
-	}
-
-	configErs := pluginErrs.(func(actionConfig []byte) []error)(actionConfiguration)
-	if len(configErs) > 0 {
-		for _, err := range configErs {
-			newErr := errors.NewError("Invalid data", err.Error()).
-				WithMeta("field", "type").
-				WithOperations("validateActionConfig.pluginErrs")
-			ers.Append(newErr)
-		}
-	}
-
-	return ers
-}
-
-func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error) {
+func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (domain.Action, error) {
 	entity := Action{}
 	row := main.db.Set("gorm:auto_preload", true).Raw(action.decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
-		return Response{}, errors.NewError("Find all error", dbError.Error()).
+		return ActionResponse{}, errors.NewError("Find all error", dbError.Error()).
 			WithOperations("FindActionByIdAndWorkspace.Raw")
 	}
 
 	return entity.toResponse(), nil
 }
 
-func (main actionRepository) FindActionById(id string) (Response, errors.Error) {
+func (main actionRepository) FindActionById(id uuid.UUID) (domain.Action, error) {
 	entity := Action{}
 	row := main.db.Set("gorm:auto_preload", true).Raw(action.idActionQuery, id).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
-		return Response{}, errors.NewError("Find by id error", dbError.Error()).
+		return ActionResponse{}, errors.NewError("Find by id error", dbError.Error()).
 			WithOperations("FindActionById.Raw")
 	}
 
 	return entity.toResponse(), nil
 }
 
-func (main actionRepository) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error) {
-	var actions []Response
+func (main actionRepository) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]domain.Action, error) {
+	var actions []models.Action
 
-	rows, err := main.db.Set("gorm:auto_preload", true).Raw(action.workspaceActionQuery, workspaceID).Rows()
+	rows, err := main.db.Set("gorm:auto_preload", true).Raw(queries.WorkspaceActionQuery, workspaceID).Rows()
 	if err != nil {
-		return []Response{}, errors.NewError("Find all error", err.Error()).
-			WithOperations("FindAllActionsByWorkspace.Raw")
+		return []domain.Action{}, logging.NewError("Find all error", err, nil, "ActionRepository.FindAllActionsByWorkspace.Set")
 	}
 
 	for rows.Next() {
-		var action Action
+		var action models.Action
 
 		err = main.db.ScanRows(rows, &action)
 		if err != nil {
-			return []Response{}, errors.NewError("Find all error", err.Error()).
-				WithOperations("FindAllActionsByWorkspace.ScanRows")
+			return []domain.Action{}, logging.NewError("Find all error", err, nil, "ActionRepository.FindAllActionsByWorkspace.ScanRows")
+
 		}
-		actions = append(actions, action.toResponse())
+		actions = append(actions, action)
 	}
 
-	return actions, nil
+	return mapper.ActionModelToDomains(actions), nil
 }
 
-func (main actionRepository) SaveAction(action Request) (Response, errors.Error) {
+func (main actionRepository) SaveAction(action domain.Action) (domain.Action, error) {
 	id := uuid.New().String()
-	entity := Action{}
+	entity := models.Action{}
 
 	row := main.db.Exec(queries.InsertAction(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
-		Raw(action.actionQuery, id).
+		Raw(queries.ActionQuery, id).
 		Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
-		&entity.Description, &entity.CreatedAt, &entity.DeletedAt)
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type, &entity.Description, &entity.CreatedAt, &entity.DeletedAt)
 	if dbError != nil {
-		return Response{}, errors.NewError("Save error", dbError.Error()).
-			WithOperations("SaveAction.Scan")
+		return domain.Action{}, logging.NewError("Save error", dbError, nil, "ActionRepository.SaveAction.Scan")
 	}
 
-	return entity.toResponse(), nil
+	return mapper.ActionModelToDomain(entity), nil
 }
 
-func (main actionRepository) DeleteAction(id string) errors.Error {
+func (main actionRepository) DeleteAction(id uuid.UUID) error {
 	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
 	if db.Error != nil {
 		return errors.NewError("Delete error", db.Error.Error()).
@@ -281,17 +120,4 @@ func (main actionRepository) DeleteAction(id string) errors.Error {
 	}
 
 	return nil
-}
-
-func (entity Action) toResponse() Response {
-	return Response{
-		BaseModel:     entity.BaseModel,
-		WorkspaceId:   entity.WorkspaceId,
-		Nickname:      entity.Nickname,
-		Type:          entity.Type,
-		Description:   entity.Description,
-		UseDefault:    entity.UseDefault,
-		Configuration: entity.Configuration,
-		DeletedAt:     entity.DeletedAt,
-	}
 }

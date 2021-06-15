@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const actionQuery = `SELECT id,
+const ActionQuery = `SELECT id,
        					workspace_id,
        					nickname,
        					type,
@@ -17,7 +17,7 @@ const actionQuery = `SELECT id,
 					WHERE id = ?
 					AND deleted_at IS NULL`
 
-const workspaceActionQuery = `SELECT id,
+const WorkspaceActionQuery = `SELECT id,
        					workspace_id,
        					nickname,
        					type,

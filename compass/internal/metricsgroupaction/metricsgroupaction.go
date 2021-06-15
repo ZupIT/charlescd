@@ -113,7 +113,7 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		ers.Append(err)
 	}
 
-	var act repository.Response
+	var act repository.ActionResponse
 	if metricsGroupAction.ActionID == uuid.Nil {
 		needConfigValidation = false
 		err := errors.NewError("Validate error", "action id is required").

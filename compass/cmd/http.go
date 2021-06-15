@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
+	actionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/action"
 	datasourceInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
 	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
 	pluginInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
-	middlewares2 "github.com/ZupIT/charlescd/compass/web/api/middlewares"
+	"github.com/ZupIT/charlescd/compass/web/api/middlewares"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -43,9 +44,9 @@ func newServer(pm persistenceManager) (server, error) {
 func createHttpServerInstance() *echo.Echo {
 	httpServer := echo.New()
 	httpServer.Use(echoMiddleware.RequestID())
-	httpServer.Use(middlewares2.ContextLogger)
-	httpServer.Use(middlewares2.Logger)
-	httpServer.Use(middlewares2.RequestLimiter)
+	httpServer.Use(middlewares.ContextLogger)
+	httpServer.Use(middlewares.Logger)
+	httpServer.Use(middlewares.RequestLimiter)
 	httpServer.Validator = buildCustomValidator()
 	httpServer.Binder = echo.Binder(customBinder{})
 
@@ -112,8 +113,8 @@ func (s server) registerRoutes() {
 		{
 			actionHandler := v1.Group("/actions")
 			{
-				actionHandler.GET("", handlers.List(s.pm.actionRepository))
-				actionHandler.POST("", handlers.Create(s.pm.actionRepository))
+				actionHandler.GET("", handlers.List(actionInteractor.NewListAction(s.pm.actionRepository)))
+				actionHandler.POST("", handlers.Create(actionInteractor.NewCreateAction(s.pm.actionRepository, s.pm.pluginRepository)))
 				actionHandler.DELETE("/:actionId", handlers.Delete(s.pm.actionRepository))
 			}
 			datasourceHandler := v1.Group("/datasources")
