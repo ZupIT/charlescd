@@ -64,7 +64,7 @@ const Dropdown = ({
   };
 
   return (
-    <div data-testid="dropdown">
+    <Styled.Wrapper data-testid="dropdown">
       <Icon
         ref={buttonRef}
         name={icon}
@@ -83,7 +83,7 @@ const Dropdown = ({
           {renderItems()}
         </Styled.PopperContainer>
       ) : null}
-    </div>
+    </Styled.Wrapper>
   );
 };
 
