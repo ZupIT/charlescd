@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import map from 'lodash/map';
 import Icon from 'core/components/Icon';
 import useOutsideClick from 'core/hooks/useClickOutside';
