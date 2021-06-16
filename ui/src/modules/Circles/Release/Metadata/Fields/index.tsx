@@ -58,7 +58,6 @@ const Fields = ({ remove, field, index }: Props) => {
         error={errors?.metadata?.content[index]?.value?.message}
         label="Value"
         ref={register({
-          required: isRequired(),
           maxLength: maxLength(252),
           pattern: metadataPattern()
         })}
