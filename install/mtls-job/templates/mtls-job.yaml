@@ -12,17 +12,12 @@ spec:
             restartPolicy: OnFailure
             serviceAccountName: mtls-job
             containers:
-                -   name: {{ .Values.appname }}-{{ .name }}
-                    image: "thallesf/cert-tls-gen:0.2.2"
+                -   name: {{ .Values.appname }}-{{ .Values.mtls.job.name }}
+                    image: "thallesf/cert-tls-gen:0.2.5"
                     imagePullPolicy: Always
                     env:
                         - name: NAMESPACE
                           value: {{ .Release.Namespace }}
                         - name: DOMAIN
-                          value: {{ .domain }}
-                        - name: KEY_PASSWORD
-                          valueFrom:
-                              secretKeyRef:
-                                  name: application-aes256-key
-                                  key: encryption-key
+                          value: {{ .Values.mtls.domain }}
 {{- end -}}

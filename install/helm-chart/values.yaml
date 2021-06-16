@@ -76,7 +76,7 @@ CharlesApplications:
           port: 8080
     replicaCount: 1
     mtls:
-      enabled: true
+      enabled: false
       volumeMounts:
         - name: moove-certs
           mountPath: /certs/moove

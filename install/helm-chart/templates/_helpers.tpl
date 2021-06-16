@@ -183,6 +183,14 @@ env:
 - name: MTLS_ENABLED
   value: {{ .RangeContext.mtls.enabled | quote }}
 {{ end }}
+{{ if .RangeContext.mtls }}
+- name: KEY_STORE_PASSWORD
+  valueFrom:
+      secretKeyRef:
+        name: "moove-tls-cert"
+        key: "store_password"
+{{ end }}
+
 {{- end -}}
 
 {{- define "test.circle-matcher-envs" -}}
