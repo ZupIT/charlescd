@@ -115,14 +115,14 @@ export const validationResolver = ({ modules, metadata }: ModuleForm) => {
     if (!content?.key?.match(metadataRegex)) {
       error[`metadata.content[${index}].key`] = {
         type: `metadata.content[${index}].key.match`,
-        message: 'The key needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
+        message: 'It needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
       }
     }
 
     if (!content?.value?.match(metadataRegex)) {
       error[`metadata.content[${index}].value`] = {
         type: `metadata.content[${index}].value.match`,
-        message: 'The value needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
+        message: 'It needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
       }
     }
   })
