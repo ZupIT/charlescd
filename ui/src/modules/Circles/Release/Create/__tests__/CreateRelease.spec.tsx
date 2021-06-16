@@ -119,8 +119,12 @@ test('should validate form when max lenght is greater than the limit', async () 
   const versionNameLabel = screen.getByTestId('label-text-modules[0].version');
   expect(versionNameLabel).toHaveStyle(`color: ${inputTheme.error.color};`);
 
+  const buttonSubmit = await screen.findByTestId('button-default-submit');
+
+  screen.debug();
+
   await waitFor(() =>
-    expect(screen.getByTestId('button-default-submit')).toBeDisabled(),
+    expect(buttonSubmit).toBeDisabled(),
     { timeout: 700 }
   );
 });

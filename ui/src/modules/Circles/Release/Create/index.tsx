@@ -31,6 +31,7 @@ import { useComposeBuild, useCreateDeployment } from '../hooks';
 import { Scope } from '../Metadata/interfaces';
 import { toKeyValue } from '../Search/helpers';
 import Styled from '../styled';
+import { isEmpty } from 'lodash';
 
 const defaultValues = {
   modules: [MODULE],
@@ -157,7 +158,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           type="submit"
           size="SMALL"
           isLoading={savingBuild}
-          isDisabled={!formState.isValid || isDeploying || isEmptyFields}
+          isDisabled={!formState.isValid || isDeploying || isEmptyFields || !isEmpty(error)}
         >
           Deploy
         </Styled.Submit>
