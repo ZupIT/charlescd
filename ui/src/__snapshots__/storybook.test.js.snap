@@ -36,16 +36,18 @@ exports[`Storyshots Components/Avatar Avatar 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    data-testid="avatar"
-  >
+  <div>
     <div
-      class="c1"
-      data-testid="avatar-initials"
-      size="40"
+      class="c0"
+      data-testid="avatar"
     >
-      C
+      <div
+        class="c1"
+        data-testid="avatar-initials"
+        size="40"
+      >
+        C
+      </div>
     </div>
   </div>
 </div>
@@ -93,19 +95,21 @@ exports[`Storyshots Components/Badge Badge 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-  >
-    <span
-      class="c1"
-      color="light"
-      data-testid="badge-text"
-      font-size="10px"
-      font-style="normal"
-      role=""
+  <div>
+    <div
+      class="c0"
     >
-      text
-    </span>
+      <span
+        class="c1"
+        color="light"
+        data-testid="badge-text"
+        font-size="10px"
+        font-style="normal"
+        role=""
+      >
+        text
+      </span>
+    </div>
   </div>
 </div>
 `;
@@ -139,13 +143,15 @@ exports[`Storyshots Components/Button/Default Default 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <button
-    class="c0"
-    data-testid="button-default-undefined"
-    type="button"
-  >
-    text
-  </button>
+  <div>
+    <button
+      class="c0"
+      data-testid="button-default-undefined"
+      type="button"
+    >
+      text
+    </button>
+  </div>
 </div>
 `;
 
@@ -201,21 +207,23 @@ exports[`Storyshots Components/Button/Rounded Rounded 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <button
-    class="c0"
-    data-testid="button-iconRounded-undefined"
-    type="button"
-  >
-    <span
-      class="c1"
-      color="dark"
-      font-size="12px"
-      font-style="normal"
-      role=""
+  <div>
+    <button
+      class="c0"
+      data-testid="button-iconRounded-undefined"
+      type="button"
     >
-      text
-    </span>
-  </button>
+      <span
+        class="c1"
+        color="dark"
+        font-size="12px"
+        font-style="normal"
+        role=""
+      >
+        text
+      </span>
+    </button>
+  </div>
 </div>
 `;
 
@@ -241,11 +249,13 @@ exports[`Storyshots Components/Cards/Base Base 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    color="gray"
-  >
-    ...
+  <div>
+    <div
+      class="c0"
+      color="gray"
+    >
+      ...
+    </div>
   </div>
 </div>
 `;
@@ -278,14 +288,16 @@ exports[`Storyshots Components/Cards/Body Body 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    color="gray"
-  >
+  <div>
     <div
-      class="c1"
+      class="c0"
+      color="gray"
     >
-      body
+      <div
+        class="c1"
+      >
+        body
+      </div>
     </div>
   </div>
 </div>
@@ -383,41 +395,43 @@ exports[`Storyshots Components/Cards/Config Config 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0 c1"
-  >
+  <div>
     <div
-      class="c2"
+      class="c0 c1"
     >
       <div
-        class="c3"
+        class="c2"
       >
-        <i
-          class="c4"
-          color="light"
-          data-testid="icon-workspace"
+        <div
+          class="c3"
         >
-          <div>
+          <i
+            class="c4"
+            color="light"
+            data-testid="icon-workspace"
+          >
             <div>
-              <svg
-                src="workspace"
-              />
+              <div>
+                <svg
+                  src="workspace"
+                />
+              </div>
             </div>
-          </div>
-        </i>
+          </i>
+        </div>
       </div>
-    </div>
-    <div
-      class="c5 c6"
-    >
-      <span
-        class="c7"
-        color="light"
-        font-size="14px"
-        font-style="normal"
-        role=""
-      />
-      ...
+      <div
+        class="c5 c6"
+      >
+        <span
+          class="c7"
+          color="light"
+          font-size="14px"
+          font-style="normal"
+          role=""
+        />
+        ...
+      </div>
     </div>
   </div>
 </div>
@@ -522,36 +536,38 @@ exports[`Storyshots Components/Cards/Expand Expand 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0 c1"
-  >
+  <div>
     <div
-      class="c2"
+      class="c0 c1"
     >
       <div
-        class="c3"
+        class="c2"
       >
-        <i
-          class="c4"
-          color="light"
-          data-testid="icon-undefined"
-        />
+        <div
+          class="c3"
+        >
+          <i
+            class="c4"
+            color="light"
+            data-testid="icon-undefined"
+          />
+        </div>
       </div>
-    </div>
-    <div
-      class="c5 c6"
-    >
-      <span
-        class="c7"
-        color="light"
-        font-size="14px"
-        font-style="normal"
-        role=""
-      />
       <div
-        class="c8"
+        class="c5 c6"
       >
-        click here
+        <span
+          class="c7"
+          color="light"
+          font-size="14px"
+          font-style="normal"
+          role=""
+        />
+        <div
+          class="c8"
+        >
+          click here
+        </div>
       </div>
     </div>
   </div>
@@ -596,14 +612,16 @@ exports[`Storyshots Components/Cards/Header Header 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    color="gray"
-  >
+  <div>
     <div
-      class="c1"
+      class="c0"
+      color="gray"
     >
-      header
+      <div
+        class="c1"
+      >
+        header
+      </div>
     </div>
   </div>
 </div>
@@ -675,25 +693,27 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0 c1"
-    color="dark"
-    data-testid="card-main"
-  >
+  <div>
     <div
-      class="c2"
+      class="c0 c1"
+      color="dark"
+      data-testid="card-main"
     >
-      <span
-        class="c3 c4 c5"
-        color="light"
-        font-size="12px"
-        font-style="normal"
-        role=""
-      />
       <div
-        class="c6"
+        class="c2"
       >
-        ...
+        <span
+          class="c3 c4 c5"
+          color="light"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        />
+        <div
+          class="c6"
+        >
+          ...
+        </div>
       </div>
     </div>
   </div>
@@ -847,57 +867,59 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0 c1"
-  >
+  <div>
     <div
-      class="c2"
+      class="c0 c1"
     >
       <div
-        class="c3"
+        class="c2"
       >
-        <i
-          class="c4"
-          color="light"
-          data-testid="icon-info"
+        <div
+          class="c3"
         >
-          <div>
+          <i
+            class="c4"
+            color="light"
+            data-testid="icon-info"
+          >
             <div>
-              <svg
-                src="info"
-              />
+              <div>
+                <svg
+                  src="info"
+                />
+              </div>
             </div>
-          </div>
-        </i>
+          </i>
+        </div>
+        <div
+          class="c5"
+        >
+          <span
+            class="c6"
+            color="light"
+            data-testid="badge-Deployed"
+            font-size="10px"
+            font-style="normal"
+            role=""
+          >
+            Deployed
+          </span>
+        </div>
       </div>
       <div
-        class="c5"
+        class="c7 c8"
       >
         <span
-          class="c6"
+          class="c9 "
           color="light"
-          data-testid="badge-Deployed"
-          font-size="10px"
+          data-testid="release-card-description"
+          font-size="14px"
           font-style="normal"
           role=""
         >
-          Deployed
+          ...
         </span>
       </div>
-    </div>
-    <div
-      class="c7 c8"
-    >
-      <span
-        class="c9 "
-        color="light"
-        data-testid="release-card-description"
-        font-size="14px"
-        font-style="normal"
-        role=""
-      >
-        ...
-      </span>
     </div>
   </div>
 </div>
@@ -928,102 +950,319 @@ exports[`Storyshots Components/Chart Chart 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    data-testid="apexcharts-mock"
-    height="200"
-    options="[object Object]"
-    series="[object Object]"
-    type="area"
-    width="500"
-  >
-    <div>
-      <svg>
-        <g
-          class="apexcharts-yaxis"
-        >
-          <g>
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
-            <text
-              class="apexcharts-yaxis-label"
-            />
+  <div>
+    <div
+      class="c0"
+      data-testid="apexcharts-mock"
+      height="200"
+      options="[object Object]"
+      series="[object Object]"
+      type="area"
+      width="500"
+    >
+      <div>
+        <svg>
+          <g
+            class="apexcharts-yaxis"
+          >
+            <g>
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+              <text
+                class="apexcharts-yaxis-label"
+              />
+            </g>
           </g>
-        </g>
-        <g
-          class="apexcharts-xaxis"
-        >
-          <g>
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
-            <text
-              class="apexcharts-xaxis-label"
-            />
+          <g
+            class="apexcharts-xaxis"
+          >
+            <g>
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+              <text
+                class="apexcharts-xaxis-label"
+              />
+            </g>
           </g>
-        </g>
-      </svg>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/CheckPassword CheckPassword 1`] = `
+.c2 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: #98989E;
+  text-align: left;
+  line-height: 12px;
+}
+
+.c1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+  width: 14px;
+  height: 14px;
+}
+
+.c1 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c1 svg {
+  width: 14px;
+  height: 14px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.c0 > :first-child {
+  margin-right: 5px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      data-testid="check-password"
+    >
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Uppercase
+        </span>
+      </div>
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Lowercase
+        </span>
+      </div>
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Numbers
+        </span>
+      </div>
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Special Character
+        </span>
+      </div>
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Minimum 10 and max of 100 characters
+        </span>
+      </div>
+      <div
+        class="c0"
+      >
+        <i
+          class="c1"
+          color="dark"
+          data-testid="icon-close"
+        >
+          <div>
+            <div>
+              <svg
+                src="close"
+              />
+            </div>
+          </div>
+        </i>
+        <span
+          class="c2"
+          color="dark"
+          font-size="12px"
+          font-style="normal"
+          role=""
+        >
+          Confirm password
+        </span>
+      </div>
     </div>
   </div>
 </div>
@@ -1107,42 +1346,1450 @@ exports[`Storyshots Components/Editor Editor 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    data-testid="editor"
-    height="200px"
-    width="400px"
-  >
-    <pre
-      class="c1 prism-code language-json"
+  <div>
+    <div
+      class="c0"
+      data-testid="editor"
+      height="200px"
+      width="400px"
     >
-      <div
-        class="c2 token-line"
-        data-testid="line-0"
-        style="color: rgb(154, 134, 253);"
+      <pre
+        class="c1 prism-code language-json"
       >
-        <span
-          class="c3"
-        >
-          1
-        </span>
-        <span
-          data-testid="line-text-0"
+        <div
+          class="c2 token-line"
+          data-testid="line-0"
+          style="color: rgb(154, 134, 253);"
         >
           <span
-            class="token plain"
+            class="c3"
           >
-            
-
+            1
           </span>
-        </span>
+          <span
+            data-testid="line-text-0"
+          >
+            <span
+              class="token plain"
+            >
+              
+
+            </span>
+          </span>
+        </div>
+      </pre>
+      <textarea
+        class="c4"
+        data-testid="input-text-undefined"
+        spellcheck="false"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Form/Input Input Link 1`] = `
+.c5 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+  width: 15px;
+  height: 15px;
+}
+
+.c5 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c1 {
+  position: relative;
+  height: 42px;
+}
+
+.c3 {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #FFF;
+  border-radius: 0;
+  bottom: 0px;
+  box-sizing: border-box;
+  color: #F2F2F9;
+  font-size: 14px;
+  padding-bottom: 5px;
+  position: absolute;
+  width: 100%;
+}
+
+.c3:focus {
+  border-bottom-color: #4E5FFF;
+}
+
+.c3:focus + .sc-ciSkZP {
+  top: 0px;
+}
+
+.c3:disabled {
+  color: #98989E;
+  border-bottom-color: #98989E;
+}
+
+.c3:-webkit-autofill + .sc-ciSkZP {
+  top: 0px;
+}
+
+.c0 {
+  width: 200px;
+  position: relative;
+}
+
+.c2 > input {
+  background-color: rgb(44,44,46);
+  height: 34px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 0 35px 0 15px;
+}
+
+.c6 {
+  background-color: rgb(44,44,46);
+  padding-left: 10px;
+}
+
+.c4 {
+  position: absolute;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  bottom: 8px;
+  right: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="input-link-link"
+    >
+      <div
+        class="c1 c2"
+        data-testid="input-wrapper-link"
+        type="text"
+      >
+        <input
+          autocomplete="off"
+          class="c3"
+          data-testid="input-text-link"
+          disabled=""
+          id="input-text-link"
+          name="link"
+          type="text"
+          value="https://charlescd.io"
+        />
       </div>
-    </pre>
-    <textarea
-      class="c4"
-      data-testid="input-text-undefined"
-      spellcheck="false"
-    />
+      <a
+        class="c4"
+        href="https://charlescd.io"
+        target="_blank"
+      >
+        <i
+          class="c5 c6"
+          color="dark"
+          data-testid="icon-external-link"
+        >
+          <div>
+            <div>
+              <svg
+                src="external-link"
+              />
+            </div>
+          </div>
+        </i>
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/LabeledIcon LabeledIcon 1`] = `
+.c1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+  width: 15px;
+  height: 15px;
+}
+
+.c1 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c1 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c0 {
+  cursor: pointer;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c2 {
+  margin-left: 8px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="labeledIcon-account"
+    >
+      <i
+        class="c1"
+        color="dark"
+        data-testid="icon-account"
+      >
+        <div>
+          <div>
+            <svg
+              src="account"
+            />
+          </div>
+        </div>
+      </i>
+      <div
+        class="c2"
+      >
+        Change password
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Link Link 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  color: #9D40FF;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <a
+      class="c0"
+      href="https://charlescd.io"
+      target="_blank"
+    >
+      Link
+    </a>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Menu Menu 1`] = `
+.c0 {
+  display: inline-block;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      style="padding: 10px; margin-bottom: 15px;"
+    >
+      <div
+        class="c0"
+      >
+        <div
+          class=""
+        >
+          Filter (click to see menu)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Modal/Default Default 1`] = `
+.c5 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+  width: 22px;
+  height: 22px;
+}
+
+.c5 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 svg {
+  width: 22px;
+  height: 22px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  z-index: 3;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.c1 {
+  background: #1C1C1E;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.c2 {
+  position: relative;
+  width: auto;
+  max-width: 500px;
+  margin: 1.75rem auto;
+  min-height: calc(100% - (1.75rem * 2));
+}
+
+.c3 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: rgb(44,44,46);
+  z-index: 4;
+  color: #F2F2F9;
+  padding: 35px 41px 28px 40px;
+  top: 15%;
+  -webkit-transform: translate(-50%,0);
+  -ms-transform: translate(-50%,0);
+  transform: translate(-50%,0);
+  text-align: left;
+  opacity: 1.2;
+  border-radius: 4px;
+}
+
+.c6 {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.c4 {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="modal-default"
+    >
+      <div
+        class="c1 modal-background"
+      />
+      <div
+        class="c2 modal-dialog"
+      >
+        <div
+          class="c3 modal-container"
+        >
+          <div
+            class="c4"
+          >
+            <i
+              class="c5"
+              color="dark"
+              data-testid="icon-cancel"
+            >
+              <div>
+                <div>
+                  <svg
+                    src="cancel"
+                  />
+                </div>
+              </div>
+            </i>
+          </div>
+          <div
+            class="c6 modal-content"
+          >
+            content
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Modal/FullScreen FullScreen 1`] = `
+.c3 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 18px;
+  height: 18px;
+}
+
+.c3 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c3 svg {
+  width: 18px;
+  height: 18px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  z-index: 4;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.c2 {
+  background: #48484A;
+  height: 40px;
+  width: 100%;
+}
+
+.c2 i {
+  margin-top: 10px;
+  margin-left: 15px;
+  margin-right: 10px;
+}
+
+.c1 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: rgb(44,44,46);
+  color: #F2F2F9;
+  text-align: left;
+  opacity: 1.2;
+  border-radius: 4px;
+  height: 100%;
+  width: 100%;
+}
+
+.c4 {
+  overflow-y: auto;
+  max-height: 100vh;
+  height: 100%;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="modal-default"
+    >
+      <div
+        class="c1 modal-container"
+      >
+        <div
+          class="c2"
+        >
+          <i
+            class="c3"
+            color="light"
+            data-testid="icon-collapse"
+          >
+            <div>
+              <div>
+                <svg
+                  src="collapse"
+                />
+              </div>
+            </div>
+          </i>
+          <i
+            class="c3"
+            color="light"
+            data-testid="icon-copy"
+          >
+            <div>
+              <div>
+                <svg
+                  src="copy"
+                />
+              </div>
+            </div>
+          </i>
+        </div>
+        <div
+          class="c4 modal-content"
+        >
+          content
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
+.c4 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: bold;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 18px;
+}
+
+.c10 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: #98989E;
+  text-align: left;
+  line-height: 12px;
+}
+
+.c3 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: rgb(244,244,250);
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  padding: 0;
+}
+
+.c3 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c3 svg {
+  width: 22px;
+  height: 22px;
+}
+
+.c8 {
+  position: relative;
+  background-color: #5C37CC;
+  border: none;
+  border-radius: 4px;
+  color: #FFF;
+  font-size: 10px;
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+  padding: 0 33px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.c8:hover {
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.c7 {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c0 {
+  background: #1C1C1E;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.c1 {
+  position: fixed;
+  display: flex-inline;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  z-index: 4;
+  top: 25%;
+  left: calc(50% - 204px);
+  padding: 11px 41px 28px 40px;
+  text-align: left;
+  background: rgb(44,44,46);
+  width: 408px;
+  min-height: 210px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  opacity: 1.2;
+}
+
+.c5 {
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.c6 {
+  margin: 20px 0 20px 0;
+}
+
+.c9 {
+  cursor: pointer;
+  padding: 5px;
+  margin-top: 0;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  height: 40px;
+  width: 160px;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  border: 0.1rem solid #FFF;
+  background-color: transparent;
+}
+
+.c9 span {
+  color: #FFF;
+}
+
+.c2 {
+  margin-left: 324px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class=""
+      data-testid="modal-trigger"
+    >
+      <div
+        class="c0 modal-background"
+      />
+      <div
+        class="c1 modal-content"
+      >
+        <div
+          class="c2"
+        >
+          <i
+            class="c3"
+            color="light"
+            data-testid="icon-cancel-modal"
+          >
+            <div>
+              <div>
+                <svg
+                  src="cancel"
+                />
+              </div>
+            </div>
+          </i>
+        </div>
+        <span
+          class="c4 c5"
+          color="light"
+          font-size="18px"
+          font-style="normal"
+          role=""
+        >
+          Confirm?
+        </span>
+        <div
+          class="c6"
+        />
+        <div
+          class="c7 modal-buttons"
+        >
+          <button
+            class="c8 c9 modal-button-dismiss"
+            data-testid="button-default-dismiss"
+            type="button"
+          >
+            <span
+              class="c10"
+              color="dark"
+              font-size="12px"
+              font-style="normal"
+              role=""
+            >
+              cancel
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Modal/Wizard Wizard 1`] = `
+.c5 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 16px;
+}
+
+.c8 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: #0A84FF;
+  text-align: left;
+  line-height: 14px;
+}
+
+.c14 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 12px;
+}
+
+.c21 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c24 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  width: 190px;
+  height: 190px;
+}
+
+.c24 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c24 svg {
+  width: 190px;
+  height: 190px;
+}
+
+.c12 {
+  border: none;
+  background: #5C37CC;
+  height: 50px;
+  border-radius: 15px;
+  height: 30px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 9px 18px;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.c12:hover {
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.c12 > * + * {
+  margin-left: 10px;
+}
+
+.c20 {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 15px;
+  background-color: #C7C7D4;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
+}
+
+.c20::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 11px;
+  background-color: rgb(44,44,46);
+  border-radius: 11px;
+  -webkit-transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  -ms-transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  transform: translate3d(2px,2px,0) scale3d(1,1,1);
+  -webkit-transition: all 0.25s linear;
+  transition: all 0.25s linear;
+}
+
+.c20::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 9px;
+  height: 9px;
+  background-color: #C7C7D4;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.c18 {
+  display: none;
+}
+
+.c18:checked + .c19 {
+  background-color: #5C37CC;
+}
+
+.c18:checked + .c19::before {
+  -webkit-transform: translate3d(10px,2px,0) scale3d(0,0,0);
+  -ms-transform: translate3d(10px,2px,0) scale3d(0,0,0);
+  transform: translate3d(10px,2px,0) scale3d(0,0,0);
+}
+
+.c18:checked + .c19::after {
+  -webkit-transform: translate3d(12px,2px,0);
+  -ms-transform: translate3d(12px,2px,0);
+  transform: translate3d(12px,2px,0);
+}
+
+.c15 {
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c15 > :last-child {
+  margin-left: 5px;
+}
+
+.c15:active .c17:checked + .c19::after {
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+}
+
+.c15:active .c19::after {
+  width: 10px;
+  -webkit-transform: translate3d(2px,2px,0);
+  -ms-transform: translate3d(2px,2px,0);
+  transform: translate3d(2px,2px,0);
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  z-index: 3;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.c13 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 30px;
+}
+
+.c1 {
+  background: #1C1C1E;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.c2 {
+  position: relative;
+  width: auto;
+  margin: 1.75rem auto;
+  min-height: calc(100% - (1.75rem * 2));
+}
+
+.c3 {
+  position: fixed;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  box-sizing: border-box;
+  z-index: 4;
+  padding: 26px 21px 26px 30px;
+  top: 15%;
+  -webkit-transform: translate(-50%,0);
+  -ms-transform: translate(-50%,0);
+  transform: translate(-50%,0);
+  text-align: left;
+  width: 784px;
+}
+
+.c4 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background: rgb(44,44,46);
+  z-index: 4;
+  padding: 26px 21px 26px 30px;
+  text-align: left;
+  width: 30%;
+}
+
+.c22 {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  z-index: 4;
+  width: 70%;
+}
+
+.c25 {
+  height: 32%;
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  background: #3A3A3C;
+  color: #F2F2F9;
+  padding: 28px 52px 0 21px;
+  text-align: left;
+}
+
+.c26 {
+  margin-top: 15px;
+}
+
+.c23 {
+  height: 68%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background: #64D2FF;
+}
+
+.c9 {
+  color: #F2F2F9;
+  margin-left: 9px;
+}
+
+.c11 {
+  color: #98989E;
+  margin-left: 0;
+}
+
+.c6 {
+  margin-top: 30px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c7 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 1px;
+  height: 15px;
+  box-sizing: border-box;
+  border-radius: 1.5px;
+  background: #F2F2F9;
+}
+
+.c10 {
+  display: none;
+  width: 1px;
+  height: 15px;
+  box-sizing: border-box;
+  border-radius: 1.5px;
+  background: #F2F2F9;
+}
+
+.c16 {
+  margin-top: 26px;
+  -webkit-box-pack: normal;
+  -webkit-justify-content: normal;
+  -ms-flex-pack: normal;
+  justify-content: normal;
+}
+
+.c16 > :last-child {
+  margin-left: 10px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="modal-wizard"
+    >
+      <div
+        class="c1 modal-background"
+      />
+      <div
+        class="c2 modal-dialog"
+      >
+        <div
+          class="c3 modal-content"
+        >
+          <div
+            class="c4 modal-sidemenu"
+          >
+            <span
+              class="c5"
+              color="light"
+              font-size="16px"
+              font-style="normal"
+              role=""
+            >
+              Configure the workspace
+            </span>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-welcome"
+            >
+              <div
+                class="c7"
+              />
+              <span
+                class="c8 c9"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Welcome
+              </span>
+            </div>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-user-group"
+            >
+              <div
+                class="c10"
+              />
+              <span
+                class="c8 c11"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                User group
+              </span>
+            </div>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-registry"
+            >
+              <div
+                class="c10"
+              />
+              <span
+                class="c8 c11"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Registry
+              </span>
+            </div>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-cdConfig"
+            >
+              <div
+                class="c10"
+              />
+              <span
+                class="c8 c11"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Deployment configuration
+              </span>
+            </div>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-circle-matcher"
+            >
+              <div
+                class="c10"
+              />
+              <span
+                class="c8 c11"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Circle matcher
+              </span>
+            </div>
+            <div
+              class="c6"
+              data-testid="modal-wizard-menu-item-metrics-provider"
+            >
+              <div
+                class="c10"
+              />
+              <span
+                class="c8 c11"
+                color="primary"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Metrics provider
+              </span>
+            </div>
+            <button
+              class="c12 c13"
+              data-testid="button-iconRounded-next"
+              type="button"
+            >
+              <span
+                class="c14"
+                color="light"
+                font-size="12px"
+                font-style="normal"
+                role=""
+              >
+                Next
+              </span>
+            </button>
+            <label
+              class="c15 c16"
+            >
+              <input
+                class="c17 c18"
+                data-testid="switch-undefined"
+                type="checkbox"
+              />
+              <i
+                class="c19 c20"
+              />
+              <span
+                class="c21"
+                color="light"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                Don't show me again.
+              </span>
+            </label>
+          </div>
+          <div
+            class="c22 modal-info"
+            data-testid="modal-wizard-info-welcome"
+          >
+            <div
+              class="c23"
+            >
+              <i
+                class="c24 "
+                data-testid="icon-empty-workspaces"
+              >
+                <div>
+                  <div>
+                    <svg
+                      src="empty-workspaces"
+                    />
+                  </div>
+                </div>
+              </i>
+            </div>
+            <div
+              class="c25"
+            >
+              <span
+                class="c5 "
+                color="light"
+                font-size="16px"
+                font-style="normal"
+                role=""
+              >
+                Welcome!
+              </span>
+              <span
+                class="c21 c26"
+                color="light"
+                font-size="14px"
+                font-style="normal"
+                role=""
+              >
+                To start using the workspace it is necessary to make some configurations. Click next and see the credentials we need to get started.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `;
@@ -1265,27 +2912,29 @@ exports[`Storyshots Components/Switch Switch 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <label
-    class="c0"
-  >
-    <input
-      class="c1 c2"
-      data-testid="switch-undefined"
-      type="checkbox"
-    />
-    <i
-      class="c3 c4"
-    />
-    <span
-      class="c5"
-      color="light"
-      font-size="14px"
-      font-style="normal"
-      role=""
+  <div>
+    <label
+      class="c0"
     >
-      Global
-    </span>
-  </label>
+      <input
+        class="c1 c2"
+        data-testid="switch-undefined"
+        type="checkbox"
+      />
+      <i
+        class="c3 c4"
+      />
+      <span
+        class="c5"
+        color="light"
+        font-size="14px"
+        font-style="normal"
+        role=""
+      >
+        Global
+      </span>
+    </label>
+  </div>
 </div>
 `;
 
@@ -1408,40 +3057,42 @@ exports[`Storyshots Components/Tab Panel Tab Panel 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <div
-    class="c0"
-    data-testid="tabpanel-Untitled"
-  >
+  <div>
     <div
-      class="c1"
+      class="c0"
+      data-testid="tabpanel-Untitled"
     >
       <div
-        class="c2"
+        class="c1"
       >
         <div
-          class="c3"
+          class="c2"
         >
-          <i
-            class="c4"
-            color="light"
-            data-testid="icon-undefined"
-          />
-          <span
-            class="c5 c6"
-            color="light"
-            font-size="12px"
-            font-style="normal"
-            role=""
+          <div
+            class="c3"
           >
-            Untitled
-          </span>
+            <i
+              class="c4"
+              color="light"
+              data-testid="icon-undefined"
+            />
+            <span
+              class="c5 c6"
+              color="light"
+              font-size="12px"
+              font-style="normal"
+              role=""
+            >
+              Untitled
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      class="c7 tabpanel-content"
-    >
-      Tab
+      <div
+        class="c7 tabpanel-content"
+      >
+        Tab
+      </div>
     </div>
   </div>
 </div>
@@ -1461,13 +3112,15 @@ exports[`Storyshots Components/Text Text 1`] = `
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
-  <span
-    class="c0"
-    color="primary"
-    font-style="normal"
-    role=""
-  >
-    Text
-  </span>
+  <div>
+    <span
+      class="c0"
+      color="primary"
+      font-style="normal"
+      role=""
+    >
+      Text
+    </span>
+  </div>
 </div>
 `;

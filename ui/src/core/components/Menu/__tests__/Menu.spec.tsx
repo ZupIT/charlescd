@@ -67,7 +67,7 @@ test('trigger Menu actions', async() => {
   expect(screen.queryByText(/Action/)).not.toBeInTheDocument();
 });
 
-test.only('trigger Menu select action', async () => {
+test('trigger Menu select action', async () => {
   const onSelect = jest.fn();
 
   render(
