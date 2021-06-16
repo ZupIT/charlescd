@@ -45,10 +45,10 @@ const Actions = styled.div`
 
 const Groups = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
-  > :not(:first-child) {
-    margin-left: 5px;
+  > div {
+    margin-top: 10px;
   }
 `;
 

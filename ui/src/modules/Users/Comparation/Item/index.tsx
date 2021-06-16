@@ -40,6 +40,7 @@ import Loader from './Loaders';
 import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 import useForm from 'core/hooks/useForm';
+import Card from 'core/components/Card';
 
 interface Props {
   email: string;
@@ -139,7 +140,12 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   const Groups = () =>
     <Styled.Groups>
       {map(currentUser.userGroups, (userGroup) => (
-        <AvatarName name={userGroup?.name} />
+        <Card.Config
+          id={`user-group-${userGroup.id}`}
+          key={userGroup.name}
+          icon="users"
+          description={userGroup.name}
+        />
       ))}
     </Styled.Groups>
 
