@@ -31,11 +31,9 @@ import (
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"io"
 )
 
 type MetricRepository interface {
-	ParseMetric(metric io.ReadCloser) (domain.Metric, error)
 	CountMetrics(metrics []domain.Metric) (int, int, int)
 	FindMetricById(id uuid.UUID) (domain.Metric, error)
 	SaveMetric(metric domain.Metric) (domain.Metric, error)
@@ -45,7 +43,6 @@ type MetricRepository interface {
 	ResultQuery(metric domain.Metric) (float64, error)
 	UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error)
 	FindAllMetricExecutions() ([]domain.MetricExecution, error)
-	Validate(metric domain.Metric) error
 	ValidateIfExecutionReached(metric domain.MetricExecution) bool
 	FindAllByGroup(metricGroupID uuid.UUID) ([]domain.Metric, error)
 }
@@ -60,111 +57,6 @@ func NewMetricRepository(
 	db *gorm.DB, datasourceMain DatasourceRepository, pluginMain PluginRepository,
 ) MetricRepository {
 	return metricRepository{db, datasourceMain, pluginMain}
-}
-
-func (main metricRepository) Validate(metric domain.Metric) error {
-	ers := errors.NewErrorList()
-
-	if metric.Nickname == "" {
-		err := errors.NewError("Invalid data", "metric nickname is required").
-			WithMeta("field", "name").
-			WithOperations("Validate.NicknameIsNil")
-		ers.Append(err)
-	}
-
-	if metric.Query == "" && metric.Metric == "" {
-		err := errors.NewError("Invalid data", "metric name/query is required").
-			WithMeta("field", "query/metric").
-			WithOperations("Validate.QueryOrMetricIsNil")
-		ers.Append(err)
-	}
-
-	if len(metric.Filters) > 0 {
-		for _, filter := range metric.Filters {
-			ers.Append(validateMetricFilter(filter).GetErrors()...)
-		}
-	}
-
-	if len(metric.GroupBy) > 0 {
-		for _, groupBy := range metric.GroupBy {
-			ers.Append(validateMetricGroupBy(groupBy).GetErrors()...)
-		}
-	}
-
-	_, err := main.ResultQuery(metric)
-	if err != nil {
-		err := err.WithMeta("field", getFieldValidateByMetric(metric)).
-			WithOperations("Validate.ResultQuery")
-		ers.Append(err)
-	}
-
-	if metric.Nickname != "" && len(metric.Nickname) > 64 {
-		err := errors.NewError("Invalid data", "64 Maximum length in Nickname").
-			WithMeta("field", "nickname").
-			WithOperations("Validate.NicknameLen")
-		ers.Append(err)
-	}
-
-	if metric.Metric != "" && len(metric.Metric) > 64 {
-		err := errors.NewError("Invalid data", "64 Maximum length in Metric").
-			WithMeta("field", "metric").
-			WithOperations("Validate.MetricLen")
-		ers.Append(err)
-	}
-
-	return ers
-}
-
-func validateMetricFilter(metricFilter datasourcePKG.MetricFilter) error {
-	ers := errors.NewErrorList()
-
-	if len(metricFilter.Field) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Filter Field").
-			WithMeta("field", "filter-field").
-			WithOperations("validateMetricFilter.MetricFilterLen")
-		ers.Append(err)
-	}
-
-	if len(metricFilter.Value) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in Filter Value").
-			WithMeta("field", "filter-value").
-			WithOperations("validateMetricFilter.MetricFilterValueLen")
-		ers.Append(err)
-	}
-
-	return ers
-}
-
-func validateMetricGroupBy(metricGroupBy domain.MetricGroupBy) error {
-	ers := errors.NewErrorList()
-
-	if len(metricGroupBy.Field) > 100 {
-		err := errors.NewError("Invalid data", "100 Maximum length in GroupBy Field").
-			WithMeta("field", "groupBy-field").
-			WithOperations("validateMetricFilter.MetricGroupByFieldLen")
-		ers.Append(err)
-	}
-
-	return ers
-}
-
-func getFieldValidateByMetric(metric domain.Metric) string {
-	field := "metric"
-	if metric.Query != "" {
-		field = "query"
-	}
-
-	return field
-}
-
-func (main metricRepository) ParseMetric(metric io.ReadCloser) (domain.Metric, error) {
-	var newMetric *domain.Metric
-	err := json.NewDecoder(metric).Decode(&newMetric)
-	if err != nil {
-		return domain.Metric{}, errors.NewError("Parse error", err.Error()).
-			WithOperations("ParseMetric.Decode")
-	}
-	return *newMetric, nil
 }
 
 func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, int) {

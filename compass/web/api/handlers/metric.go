@@ -21,17 +21,18 @@ package handlers
 import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	metricInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metric"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func CreateMetric(metricMain repository.MetricRepository, metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func CreateMetric(createMetric metricInteractor.CreateMetric) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-		var metric representation.Metric
+		var metric representation.MetricRequest
 
 		bindErr := echoCtx.Bind(&metric)
 		if bindErr != nil {
@@ -44,19 +45,7 @@ func CreateMetric(metricMain repository.MetricRepository, metricsgroupMain repos
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
-		metricGroup, err := metricsgroupMain.FindById(metricgroupId)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		newMetric.MetricsGroupID = uuid.MustParse(metricgroupId)
-		newMetric.CircleID = metricGroup.CircleID
-
-		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		list, err := metricMain.SaveMetric(newMetric)
+		list, err := createMetric.Execute(metric.MetricRequestToDomain(metricgroupId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}

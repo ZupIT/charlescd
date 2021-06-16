@@ -5,6 +5,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	actionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/action"
 	datasourceInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
+	metricInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metric"
 	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
 	pluginInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
@@ -138,7 +139,7 @@ func (s server) registerRoutes() {
 				v1.GET("/resume/metrics-groups", handlers.Resume(metricsGroupInteractor.NewResumeByCircleMetricsGroup(s.pm.metricsGroupRepository)))
 			}
 			{
-				metricsGroupHandler.POST("/:metricGroupID/metrics", handlers.CreateMetric(s.pm.metricRepository, s.pm.metricsGroupRepository))
+				metricsGroupHandler.POST("/:metricGroupID/metrics", handlers.CreateMetric(metricInteractor.NewCreateMetricsGroup(s.pm.metricRepository, s.pm.metricsGroupRepository)))
 				metricsGroupHandler.PUT("/:metricGroupID/metrics/:metricID", handlers.UpdateMetric(s.pm.metricRepository))
 				metricsGroupHandler.DELETE("/:metricGroupID/metrics/:metricID", handlers.DeleteMetric(s.pm.metricRepository))
 			}

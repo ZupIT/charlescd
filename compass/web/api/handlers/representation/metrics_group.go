@@ -3,7 +3,6 @@ package representation
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
 	"strings"
@@ -12,21 +11,21 @@ import (
 type MetricsGroupResponse struct {
 	util.BaseModel
 	Name     string                                  `json:"name"`
-	Metrics  []repository.Metric                     `json:"metrics"`
+	Metrics  []Metric                                `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupRequest struct {
 	Name     string                                  `json:"name" validate:"notblank, max=64"`
-	Metrics  []repository.Metric                     `json:"metrics"`
+	Metrics  []Metric                                `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId" validate:"notblank, uuid"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupUpdateRequest struct {
 	Name     string                                  `json:"name"`
-	Metrics  []repository.Metric                     `json:"metrics"`
+	Metrics  []Metric                                `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
