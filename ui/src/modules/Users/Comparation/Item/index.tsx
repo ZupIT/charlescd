@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import map from 'lodash/map';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
 import Avatar from 'core/components/Avatar';
+import AvatarName from 'core/components/AvatarName';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -134,6 +136,13 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     </Styled.Actions>
   );
 
+  const Groups = () =>
+    <Styled.Groups>
+      {map(currentUser.userGroups, (userGroup) => (
+        <AvatarName name={userGroup?.name} />
+      ))}
+    </Styled.Groups>
+
   const renderPanel = () => (
     <TabPanel
       title={currentUser.name}
@@ -185,6 +194,9 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       <Styled.Layer>
         <ContentIcon icon="users">
           <Text.h2 color="light">User groups</Text.h2>
+          <Styled.Groups>
+            <Groups />
+          </Styled.Groups>
         </ContentIcon>
       </Styled.Layer>
     </TabPanel>

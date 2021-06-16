@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { UserGroup } from "modules/Groups/interfaces/UserGroups";
+
 export interface Workspace {
   id: string;
   name?: string;
@@ -35,6 +37,7 @@ export interface User extends Base {
   createdAt?: string;
   root?: boolean;
   photoUrl?: string;
+  userGroups?: UserGroup[];
 }
 
 export interface NewUser extends Base {
