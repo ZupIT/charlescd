@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
@@ -54,6 +54,7 @@ const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
             </LabeledIcon>
           </Styled.A>
         </Can>
+        {console.log('status:',status)}
         <Menu actions={menuFilterItems} active={status} onSelect={onSelect}>
           <LabeledIcon icon="filter" marginContent="5px">
             <Text tag="H5" color="dark">{circleStatus}</Text>
