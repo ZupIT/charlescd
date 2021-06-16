@@ -26,7 +26,7 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { useDeleteUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { useHistory } from 'react-router';
@@ -79,7 +79,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   };
 
   const renderWarningModal = () => (
-    <Modal.Trigger
+    <ModalTrigger
       ref={modalRef}
       title="Do you want to remove this user group?"
       dismissLabel="Cancel, keep user group"
@@ -91,7 +91,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
         When you remove a user group, all the users associated to the group will
         no longer access the workspace. Do you want to continue?
       </Text>
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const renderSection = () => (

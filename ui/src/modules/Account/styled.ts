@@ -22,7 +22,7 @@ import Text from 'core/components/Text';
 import FormComponent from 'core/components/Form';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
 import CheckPass from 'core/components/CheckPassword';
-import ComponentModal from 'core/components/Modal';
+import ModalDefault from 'core/components/Modal/ModalDefault';
 
 const Wrapper = styled.div`
   animation: 0.2s ${slideInLeft} linear;
@@ -67,7 +67,7 @@ const Actions = styled.div`
   }
 `;
 
-const Modal = styled(ComponentModal.Default)`
+const Modal = styled(ModalDefault)`
   .modal-container {
     max-height: 550px;
     padding-right: 25px;

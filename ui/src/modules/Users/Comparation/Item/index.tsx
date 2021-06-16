@@ -26,7 +26,7 @@ import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
@@ -93,7 +93,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   };
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Do you want to delete this user?"
       dismissLabel="Cancel, keep user"
       continueLabel="Yes, delete user"
@@ -101,10 +101,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       onDismiss={() => setAction('Cancel')}
     >
       <Text tag="H4" color="light">
-        By deleting this user, all related information will also be deleted. Do you wish to
-        continue?
+        By deleting this user, all related information will also be deleted. Do
+        you wish to continue?
       </Text>
-    </Modal.Trigger>
+    </ModalTrigger>
   );
 
   const renderDropdown = () => (
@@ -115,15 +115,25 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
       {!isIDMEnabled() && (
-        <Dropdown.Item icon="delete" name="Delete" onClick={() => setAction('Delete')} />
+        <Dropdown.Item
+          icon="delete"
+          name="Delete"
+          onClick={() => setAction('Delete')}
+        />
       )}
     </Dropdown>
   );
 
   const renderResetPassword = () =>
     isAbleToReset && (
-      <LabeledIcon icon="shield" marginContent="5px" onClick={() => toggleModalPassword(true)}>
-        <Text tag="H5" color="dark">Reset password</Text>
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text tag="H5" color="dark">
+          Reset password
+        </Text>
       </LabeledIcon>
     );
 
@@ -167,24 +177,34 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
-                  <Text tag="H6" color="error">{errors.name.message}</Text>
+                  <Text tag="H6" color="error">
+                    {errors.name.message}
+                  </Text>
                 </Styled.FieldErrorWrapper>
               )}
             </>
           ) : (
-            <Text tag="H2" color="light">{currentUser.name}</Text>
+            <Text tag="H2" color="light">
+              {currentUser.name}
+            </Text>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
-          <Text tag="H2" color="light">Email</Text>
-          <Text tag="H4" color="dark">{currentUser.email}</Text>
+          <Text tag="H2" color="light">
+            Email
+          </Text>
+          <Text tag="H4" color="dark">
+            {currentUser.email}
+          </Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text tag="H2" color="light">User groups</Text>
+          <Text tag="H2" color="light">
+            User groups
+          </Text>
         </ContentIcon>
       </Styled.Layer>
     </TabPanel>

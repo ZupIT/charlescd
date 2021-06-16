@@ -15,9 +15,9 @@
  */
 
 import styled from 'styled-components';
-import ComponentModal from 'core/components/Modal';
+import ModalDefault from 'core/components/Modal/ModalDefault';
 
-const Modal = styled(ComponentModal.Default)`
+const Modal = styled(ModalDefault)`
   .modal-container {
     min-height: 150px;
     width: 543px;

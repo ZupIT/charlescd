@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
 import Text from 'core/components/Text';
-import ComponentModal from 'core/components/Modal';
+import ModalFullScreen from 'core/components/Modal/FullScreen';
 import ComponentEditor from 'core/components/Editor';
 import ComponentPlaceholder from 'core/components/Placeholder';
 import LayerComponent from 'core/components/Layer';
@@ -124,7 +124,7 @@ const TableDeployStatusName = styled(Text)`
   width: 110px;
 `;
 
-const ModalFull = styled(ComponentModal.FullScreen)``;
+const ModalFull = styled(ModalFullScreen)``;
 
 const Editor = styled(ComponentEditor)`
   padding: 10px 0;
