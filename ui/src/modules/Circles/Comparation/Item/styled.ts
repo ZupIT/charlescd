@@ -35,12 +35,16 @@ const Actions = styled.div`
   flex-direction: row;
   align-items: center;
 
-  > :first-child, a {
-    margin-right: 36px;
+  > :first-child {
+    margin-left: 0px;
   }
 
   > :last-child {
-    margin-left: 36px;
+    margin-left: 24px;
+  }
+
+  > :nth-last-child(2) {
+    margin-left: 24px;
   }
 `;
 
@@ -205,5 +209,5 @@ export default {
   MetricsGroupsCountContent,
   MetricsGroupsThresholdsContent,
   WarningPercentageContainer,
-  FieldErrorWrapper
+  FieldErrorWrapper,
 };
