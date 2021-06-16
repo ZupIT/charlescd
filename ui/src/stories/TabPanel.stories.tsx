@@ -1,4 +1,3 @@
-// TODO add copyrights
 import { Story } from '@storybook/react';
 import TabPanel, { Props } from 'core/components/TabPanel';
 

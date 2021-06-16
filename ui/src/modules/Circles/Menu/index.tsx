@@ -54,7 +54,6 @@ const CirclesFilter = ({ status, onSearch, onSelect, children }: Props) => {
             </LabeledIcon>
           </Styled.A>
         </Can>
-        {console.log('status:',status)}
         <Menu actions={menuFilterItems} active={status} onSelect={onSelect}>
           <LabeledIcon icon="filter" marginContent="5px">
             <Text tag="H5" color="dark">{circleStatus}</Text>
