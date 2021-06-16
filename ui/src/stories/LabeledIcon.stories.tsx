@@ -15,15 +15,18 @@
  */
 
 import { Story } from '@storybook/react';
-import TabPanel, { Props } from 'core/components/TabPanel';
+import LabeledIcon, { Props } from 'core/components/LabeledIcon';
 
 export default {
-  title: 'Components/Tab Panel',
-  component: TabPanel,
+  title: 'Components/LabeledIcon',
+  component: LabeledIcon,
 };
 
-const Template: Story<Props> = (props: Props) => <TabPanel {...props} />;
-export const tabPanel = Template.bind({});
-tabPanel.args = {
-  children: 'Tab',
+const Template: Story<Props> = (props: Props) => <LabeledIcon {...props} />;
+export const labeledIcon = Template.bind({});
+labeledIcon.args = {
+  children: 'Change password',
+  icon: 'account',
 };
+
+labeledIcon.storyName = 'LabeledIcon';
