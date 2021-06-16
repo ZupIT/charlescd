@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen, waitFor, act, waitForElementToBeRemoved } from 'unit-test/testUtils';
+import { render, screen, waitFor, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { Action as MenuAction } from '..';
 import Menu from '..';
@@ -68,7 +67,7 @@ test('trigger Menu actions', async() => {
   expect(screen.queryByText(/Action/)).not.toBeInTheDocument();
 });
 
-test('trigger Menu select action', async () => {
+test.only('trigger Menu select action', async () => {
   const onSelect = jest.fn();
 
   render(
