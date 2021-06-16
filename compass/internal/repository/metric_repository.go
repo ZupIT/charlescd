@@ -23,7 +23,9 @@ import (
 	goErrors "errors"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
@@ -156,10 +158,10 @@ func getFieldValidateByMetric(metric domain.Metric) string {
 }
 
 func (main metricRepository) ParseMetric(metric io.ReadCloser) (domain.Metric, error) {
-	var newMetric *Metric
+	var newMetric *domain.Metric
 	err := json.NewDecoder(metric).Decode(&newMetric)
 	if err != nil {
-		return Metric{}, errors.NewError("Parse error", err.Error()).
+		return domain.Metric{}, errors.NewError("Parse error", err.Error()).
 			WithOperations("ParseMetric.Decode")
 	}
 	return *newMetric, nil
@@ -174,7 +176,7 @@ func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, in
 			configuredMetrics++
 		}
 
-		if metric.MetricExecution.Status == metric.MetricReached {
+		if metric.MetricExecution.Status == MetricReached {
 			reachedMetrics++
 		}
 
@@ -185,37 +187,33 @@ func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, in
 }
 
 func (main metricRepository) FindMetricById(id uuid.UUID) (domain.Metric, error) {
-	metric := Metric{}
+	metric := models.Metric{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
 		logger.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
-		return Metric{}, errors.NewError("Find error", db.Error.Error()).
+		return domain.Metric{}, errors.NewError("Find error", db.Error.Error()).
 			WithOperations("FindMetricById.First")
 	}
-	return metric, nil
+	return mapper.MetricModelToDomain(metric), nil
 }
 
 func (main metricRepository) SaveMetric(metric domain.Metric) (domain.Metric, error) {
+
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := tx.Create(&metric)
 		if db.Error != nil {
-			logger.Error(util.SaveMetricError, "SaveMetric", db.Error, metric)
-			return db.Error
+			return logging.NewError(util.SaveMetricError, db.Error, nil, "MetricRepository.SaveMetric.Create")
 		}
 
-		_, err := main.saveMetricExecution(tx, metric.MetricExecution{
-			MetricID: metric.ID,
-			Status:   metric.MetricActive,
-		})
+		_, err := main.saveMetricExecution(tx, domain.MetricExecution{MetricID: metric.ID, Status: MetricActive})
 		if err != nil {
-			return goErrors.New(err.Error().Detail)
+			return err
 		}
 
 		return nil
 	})
 	if err != nil {
-		return Metric{}, errors.NewError("Save error", err.Error()).
-			WithOperations("SaveMetric.Transaction")
+		return domain.Metric{}, logging.NewError("Save error", err, nil, "MetricRepository.SaveMetric.Transaction")
 	}
 
 	return metric, nil
@@ -229,7 +227,7 @@ func (main metricRepository) UpdateMetric(metric domain.Metric) (domain.Metric, 
 			return dbErr
 		}
 
-		metric.MetricExecution.Status = metric.MetricUpdated
+		metric.MetricExecution.Status = MetricUpdated
 		err := main.updateExecutionStatus(tx, metric.ID)
 		if err != nil {
 			return goErrors.New(err.Error().Detail)
@@ -277,7 +275,7 @@ func (main metricRepository) getQueryByMetric(metric domain.Metric) string {
 }
 
 func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
 	if err != nil {
 		return 0, err.WithOperations("ResultQuery.FindById")
 	}
@@ -319,7 +317,7 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 }
 
 func (main metricRepository) Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
 	if err != nil {
 		return nil, err.WithOperations("ResultQuery.FindById")
 	}

@@ -21,6 +21,7 @@ package repository
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
+	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func (main metricRepository) FindAllMetricExecutions() ([]domain.MetricExecution
 		return []domain.MetricExecution{}, errors.NewError("Find error", db.Error.Error()).
 			WithOperations("FindAllMetricExecutions.Find")
 	}
-	return metricExecutions, nil
+	return mapper.MetricExecutionModelToDomains(metricExecutions), nil
 }
 
 func (main metricRepository) UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error) {
@@ -70,7 +71,7 @@ func (main metricRepository) saveMetricExecution(tx *gorm.DB, execution domain.M
 	return execution, nil
 }
 
-func (main metricRepository) removeMetricExecution(tx *gorm.DB, id string) error {
+func (main metricRepository) removeMetricExecution(tx *gorm.DB, id uuid.UUID) error {
 	db := tx.Where("id = ?", id).Delete(models.MetricExecution{})
 	if db.Error != nil {
 		return errors.NewError("Remove error", db.Error.Error()).

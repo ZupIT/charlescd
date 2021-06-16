@@ -29,14 +29,6 @@ func MetricGroupByDomainToModel(metricGroupBy domain.MetricGroupBy) models.Metri
 	}
 }
 
-func MetricExecutionDomainToModel(metricExecution domain.MetricExecution) models.MetricExecution {
-	return models.MetricExecution{
-		BaseModel: metricExecution.BaseModel,
-		MetricID:  metricExecution.MetricID,
-		LastValue: metricExecution.LastValue,
-		Status:    metricExecution.Status,
-	}
-}
 func MetricModelToDomain(metric models.Metric) domain.Metric {
 	return domain.Metric{
 		BaseModel:       metric.BaseModel,
@@ -59,15 +51,6 @@ func MetricGroupByModelToDomain(metricGroupBy models.MetricGroupBy) domain.Metri
 		BaseModel: metricGroupBy.BaseModel,
 		MetricID:  metricGroupBy.MetricID,
 		Field:     metricGroupBy.Field,
-	}
-}
-
-func MetricExecutionModelToDomain(metricExecution models.MetricExecution) domain.MetricExecution {
-	return domain.MetricExecution{
-		BaseModel: metricExecution.BaseModel,
-		MetricID:  metricExecution.MetricID,
-		LastValue: metricExecution.LastValue,
-		Status:    metricExecution.Status,
 	}
 }
 

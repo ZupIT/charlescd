@@ -19,20 +19,29 @@
 package handlers
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 func CreateMetric(metricMain repository.MetricRepository, metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		metricgroupId := echoCtx.Param("metricGroupID")
 
-		newMetric, err := metricMain.ParseMetric(echoCtx.Request().Body)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+		ctx := echoCtx.Request().Context()
+		var metric representation.Metric
+
+		bindErr := echoCtx.Bind(&metric)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Can't parse body", bindErr, nil))
+		}
+
+		metricgroupId, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		metricGroup, err := metricsgroupMain.FindById(metricgroupId)
