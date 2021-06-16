@@ -28,7 +28,7 @@ const WorkspaceActionQuery = `SELECT id,
 					WHERE workspace_id = ?
 					AND deleted_at IS NULL`
 
-var decryptedWorkspaceAndIdActionQuery = fmt.Sprintf(`SELECT id,
+var DecryptedWorkspaceAndIdActionQuery = fmt.Sprintf(`SELECT id,
        					workspace_id,
        					nickname,
        					type,
@@ -41,7 +41,7 @@ var decryptedWorkspaceAndIdActionQuery = fmt.Sprintf(`SELECT id,
 					AND workspace_id = ?
 					AND deleted_at IS NULL`, configuration.Get("ENCRYPTION_KEY"))
 
-var idActionQuery = fmt.Sprintf(`SELECT id,
+var IdActionQuery = fmt.Sprintf(`SELECT id,
        					workspace_id,
        					nickname,
        					type,

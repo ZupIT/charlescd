@@ -23,11 +23,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/google/uuid"
 )
 
-func CreateMetric(metricMain metric.UseCases, metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
+func CreateMetric(metricMain repository.MetricRepository, metricsgroupMain repository.MetricsGroupRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		metricgroupId := echoCtx.Param("metricGroupID")
 
@@ -57,7 +56,7 @@ func CreateMetric(metricMain metric.UseCases, metricsgroupMain repository.Metric
 	}
 }
 
-func UpdateMetric(metricMain metric.UseCases) echo.HandlerFunc {
+func UpdateMetric(metricMain repository.MetricRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		metricId := echoCtx.Param("metricID")
 		metricGroupId := echoCtx.Param("metricGroupID")
@@ -83,7 +82,7 @@ func UpdateMetric(metricMain metric.UseCases) echo.HandlerFunc {
 	}
 }
 
-func DeleteMetric(metricMain metric.UseCases) echo.HandlerFunc {
+func DeleteMetric(metricMain repository.MetricRepository) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 		metricId := echoCtx.Param("metricID")
 

@@ -23,7 +23,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
@@ -40,7 +39,7 @@ type SuiteActionDispatcher struct {
 	DB *gorm.DB
 
 	repository             dispatcher.UseCases
-	metricMain             metric.UseCases
+	metricMain             repository.MetricRepository
 	metricsGroupActionMain metricsgroupaction.UseCases
 }
 
@@ -62,7 +61,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
-	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
+	s.metricMain = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	actionMain := repository.NewActionRepository(s.DB, pluginMain)
 	s.metricsGroupActionMain = metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
 	metricsgroupMain := repository.NewMetricsGroupRepository(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
@@ -95,13 +94,13 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: workspaceID,
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasourceStruct.ID,
 		Metric:         "MetricName1",
@@ -113,7 +112,7 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	}
 	s.DB.Create(&metric1)
 
-	metricExec := metric.MetricExecution{
+	metricExec := repository.MetricExecution{
 		MetricID:  metric1.ID,
 		LastValue: 1,
 		Status:    "REACHED",
@@ -167,13 +166,13 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: workspaceID,
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasourceStruct.ID,
 		Metric:         "MetricName1",
@@ -185,7 +184,7 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	}
 	s.DB.Create(&metric1)
 
-	metricExec := metric.MetricExecution{
+	metricExec := repository.MetricExecution{
 		MetricID:  metric1.ID,
 		LastValue: 1,
 		Status:    "REACHED",

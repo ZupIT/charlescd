@@ -29,7 +29,6 @@ import (
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -40,7 +39,7 @@ type SuiteDispatcher struct {
 	DB *gorm.DB
 
 	repository dispatcher.UseCases
-	metricMain metric.UseCases
+	metricMain repository.MetricRepository
 }
 
 func (s *SuiteDispatcher) SetupSuite() {
@@ -61,7 +60,7 @@ func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
-	s.metricMain = metric.NewMain(s.DB, datasourceMain, pluginMain)
+	s.metricMain = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	s.repository = dispatcher.NewDispatcher(s.metricMain)
 
 	clearDatabase(s.DB)
@@ -88,13 +87,13 @@ func (s *SuiteDispatcher) TestStartMetricProviderError() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",

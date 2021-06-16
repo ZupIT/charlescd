@@ -30,7 +30,6 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
@@ -60,7 +59,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
-	metricMain := metric.NewMain(s.DB, datasourceMain, pluginMain)
+	metricMain := repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	actionMain := repository.NewActionRepository(s.DB, pluginMain)
 	groupActionMain := metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
 	s.repository = repository.NewMetricsGroupRepository(s.DB, metricMain, datasourceMain, pluginMain, groupActionMain)
@@ -342,7 +341,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 	circleID := uuid.New()
 	metricgroup1 := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 		Actions:     []metricsgroupaction.MetricsGroupAction{},
@@ -350,7 +349,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 
 	metricgroup2 := repository.MetricsGroup{
 		Name:        "group 2",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 		Actions:     []metricsgroupaction.MetricsGroupAction{},
@@ -358,7 +357,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 
 	metricgroup3 := repository.MetricsGroup{
 		Name:        "group 3",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
 		Actions:     []metricsgroupaction.MetricsGroupAction{},
@@ -398,13 +397,13 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -415,7 +414,7 @@ func (s *SuiteMetricGroup) TestResumeByCircle() {
 		CircleID:       circleID,
 	}
 
-	metric2 := metric.Metric{
+	metric2 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName2",
@@ -467,13 +466,13 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -484,7 +483,7 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDErrorNotFoundPlugin() {
 		CircleID:       circleID,
 	}
 
-	metric2 := metric.Metric{
+	metric2 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName2",
@@ -515,7 +514,7 @@ func (s *SuiteMetricGroup) TestQueryByGroupIDDatabaseError() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
@@ -539,13 +538,13 @@ func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -556,7 +555,7 @@ func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
 		CircleID:       circleID,
 	}
 
-	metric2 := metric.Metric{
+	metric2 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName2",
@@ -570,7 +569,7 @@ func (s *SuiteMetricGroup) TestResultByGroupErrorNotFoundPlugin() {
 	s.DB.Create(&metric1)
 	s.DB.Create(&metric2)
 
-	metricgroup.Metrics = []metric.Metric{
+	metricgroup.Metrics = []repository.Metric{
 		metric1,
 		metric2,
 	}

@@ -24,7 +24,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/repository/queries"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -47,31 +46,29 @@ func NewActionRepository(db *gorm.DB, pluginRepo PluginRepository) ActionReposit
 }
 
 func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (domain.Action, error) {
-	entity := Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(action.decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
-		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
+	entity := models.Action{}
+	row := main.db.Set("gorm:auto_preload", true).Raw(queries.DecryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
+
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type, &entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
-		return ActionResponse{}, errors.NewError("Find all error", dbError.Error()).
-			WithOperations("FindActionByIdAndWorkspace.Raw")
+		return domain.Action{}, logging.NewError("Find by id and workspace error", dbError, nil, "ActionRepository.FindActionByIdAndWorkspace.Scan")
 	}
 
-	return entity.toResponse(), nil
+	return mapper.ActionModelToDomain(entity), nil
 }
 
 func (main actionRepository) FindActionById(id uuid.UUID) (domain.Action, error) {
-	entity := Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(action.idActionQuery, id).Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
-		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
+	entity := models.Action{}
+	row := main.db.Set("gorm:auto_preload", true).Raw(queries.IdActionQuery, id).Row()
+
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type, &entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
-		return ActionResponse{}, errors.NewError("Find by id error", dbError.Error()).
-			WithOperations("FindActionById.Raw")
+		return domain.Action{}, logging.NewError("Find by id error", dbError, nil, "ActionRepository.FindActionById.Scan")
 	}
 
-	return entity.toResponse(), nil
+	return mapper.ActionModelToDomain(entity), nil
 }
 
 func (main actionRepository) FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]domain.Action, error) {
@@ -113,10 +110,9 @@ func (main actionRepository) SaveAction(action domain.Action) (domain.Action, er
 }
 
 func (main actionRepository) DeleteAction(id uuid.UUID) error {
-	db := main.db.Model(&Action{}).Where("id = ?", id).Delete(&Action{})
+	db := main.db.Model(&models.Action{}).Where("id = ?", id).Delete(&models.Action{})
 	if db.Error != nil {
-		return errors.NewError("Delete error", db.Error.Error()).
-			WithOperations("DeleteAction.Delete")
+		return logging.NewError("Delete error", db.Error, nil, "ActionRepository.DeleteAction.Delete")
 	}
 
 	return nil

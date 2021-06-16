@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	metricRepo "github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
@@ -38,8 +37,8 @@ type SuiteMetric struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository metricRepo.UseCases
-	metric     *metricRepo.Metric
+	repository repository.MetricRepository
+	metric     *repository.Metric
 }
 
 func (s *SuiteMetric) SetupSuite() {
@@ -56,7 +55,7 @@ func (s *SuiteMetric) BeforeTest(_, _ string) {
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
-	s.repository = metricRepo.NewMain(s.DB, datasourceMain, pluginMain)
+	s.repository = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	clearDatabase(s.DB)
 }
 
@@ -72,10 +71,10 @@ func (s *SuiteMetric) TestValidateMetric() {
 	filters := make([]datasourcePKG.MetricFilter, 0)
 	filters = append(filters, datasourcePKG.MetricFilter{Field: bigString, Value: bigString, Operator: "="})
 
-	groupBy := make([]metricRepo.MetricGroupBy, 0)
-	groupBy = append(groupBy, metricRepo.MetricGroupBy{Field: bigString})
+	groupBy := make([]repository.MetricGroupBy, 0)
+	groupBy = append(groupBy, repository.MetricGroupBy{Field: bigString})
 
-	metric := metricRepo.Metric{
+	metric := repository.Metric{
 		Nickname: bigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
@@ -127,7 +126,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
 	}
@@ -143,7 +142,7 @@ func (s *SuiteMetric) TestSaveMetric() {
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricgroup)
 
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   dataSource.ID,
 		Query:          "group_metric_example_2",
@@ -168,7 +167,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -183,7 +182,7 @@ func (s *SuiteMetric) TestUpdateMetric() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricgroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
@@ -230,7 +229,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 
 	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -245,12 +244,12 @@ func (s *SuiteMetric) TestFindMetricById() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -269,7 +268,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 func (s *SuiteMetric) TestSaveMetricError() {
 	circleId := uuid.New()
 
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		Query:     "group_metric_example_2",
 		Metric:    "MetricName",
 		Filters:   nil,
@@ -287,7 +286,7 @@ func (s *SuiteMetric) TestSaveMetricError() {
 func (s *SuiteMetric) TestUpdateMetricError() {
 	circleId := uuid.New()
 
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		Metric:    "MetricName",
 		Filters:   nil,
 		GroupBy:   nil,
@@ -317,7 +316,7 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -332,12 +331,12 @@ func (s *SuiteMetric) TestResultQueryGetPluginError() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -353,7 +352,7 @@ func (s *SuiteMetric) TestResultQuery() {
 
 	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -362,12 +361,12 @@ func (s *SuiteMetric) TestResultQuery() {
 
 	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -384,7 +383,7 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 
 	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -399,12 +398,12 @@ func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
 
 	s.DB.Create(&dataSource)
 	s.DB.Create(&metricGroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSource.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -420,7 +419,7 @@ func (s *SuiteMetric) TestQuery() {
 
 	metricGroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metricRepo.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
@@ -428,12 +427,12 @@ func (s *SuiteMetric) TestQuery() {
 
 	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: metricGroup.ID,
 		DataSourceID:   dataSourceStruct.ID,
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       circleId,
@@ -446,12 +445,12 @@ func (s *SuiteMetric) TestQuery() {
 }
 
 func (s *SuiteMetric) TestQueryDatasourceError() {
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      1,
 		CircleID:       uuid.New(),
@@ -462,19 +461,19 @@ func (s *SuiteMetric) TestQueryDatasourceError() {
 }
 
 func (s *SuiteMetric) TestCountMetrics() {
-	metrics := make([]metricRepo.Metric, 0)
+	metrics := make([]repository.Metric, 0)
 
-	metricStruct := metricRepo.Metric{
+	metricStruct := repository.Metric{
 		MetricsGroupID: uuid.New(),
 		DataSourceID:   uuid.New(),
 		Metric:         "MetricName",
 		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []metricRepo.MetricGroupBy{},
+		GroupBy:        []repository.MetricGroupBy{},
 		Condition:      "=",
 		Threshold:      5,
 		CircleID:       uuid.New(),
 	}
-	execution := metricRepo.MetricExecution{
+	execution := repository.MetricExecution{
 		MetricID:  metricStruct.ID,
 		LastValue: 5,
 		Status:    "REACHED",

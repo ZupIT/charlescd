@@ -10,7 +10,7 @@ func MetricsGroupDomainToModel(metricsGroup domain.MetricsGroup) models.MetricsG
 	return models.MetricsGroup{
 		BaseModel:   metricsGroup.BaseModel,
 		Name:        metricsGroup.Name,
-		Metrics:     metricsGroup.Metrics,
+		Metrics:     MetricDomainToModels(metricsGroup.Metrics),
 		WorkspaceID: metricsGroup.WorkspaceID,
 		CircleID:    metricsGroup.CircleID,
 		Actions:     metricsGroup.Actions,
@@ -22,7 +22,7 @@ func MetricsGroupModelToDomain(metricsGroup models.MetricsGroup) domain.MetricsG
 	return domain.MetricsGroup{
 		BaseModel:   metricsGroup.BaseModel,
 		Name:        metricsGroup.Name,
-		Metrics:     metricsGroup.Metrics,
+		Metrics:     MetricModelToDomains(metricsGroup.Metrics),
 		WorkspaceID: metricsGroup.WorkspaceID,
 		CircleID:    metricsGroup.CircleID,
 		Actions:     metricsGroup.Actions,

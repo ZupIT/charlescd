@@ -22,8 +22,6 @@ import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
-	metric2 "github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
@@ -39,7 +37,7 @@ type SuiteMetricExecution struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository   metric.UseCases
+	repository   repository.MetricRepository
 	metricsgroup *repository.MetricsGroup
 }
 
@@ -58,7 +56,7 @@ func (s *SuiteMetricExecution) BeforeTest(_, _ string) {
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
-	s.repository = metric.NewMain(s.DB, datasourceMain, pluginMain)
+	s.repository = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	clearDatabase(s.DB)
 }
 
@@ -83,13 +81,13 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -100,7 +98,7 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 		CircleID:       circleID,
 	}
 
-	metric2 := metric.Metric{
+	metric2 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName2",
@@ -117,7 +115,7 @@ func (s *SuiteMetricExecution) TestFindAllMetricExecutions() {
 	metric2Created, err := s.repository.SaveMetric(metric2)
 	require.Nil(s.T(), err)
 
-	expectedExecutions := []metric.MetricExecution{
+	expectedExecutions := []repository.MetricExecution{
 		{
 			MetricID:  metric1Created.ID,
 			LastValue: 0,
@@ -152,13 +150,13 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -175,14 +173,14 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	executions, err := s.repository.FindAllMetricExecutions()
 	require.Nil(s.T(), err)
 
-	require.Equal(s.T(), metric.MetricExecution{
+	require.Equal(s.T(), repository.MetricExecution{
 		BaseModel: executions[0].BaseModel,
 		MetricID:  metricCreated.ID,
 		LastValue: 0,
 		Status:    "ACTIVE",
 	}, executions[0])
 
-	updateExecution := metric.MetricExecution{
+	updateExecution := repository.MetricExecution{
 		BaseModel: executions[0].BaseModel,
 		MetricID:  metricCreated.ID,
 		LastValue: 0,
@@ -195,7 +193,7 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecution() {
 	newExecutions, err := s.repository.FindAllMetricExecutions()
 	require.Nil(s.T(), err)
 
-	require.Equal(s.T(), metric.MetricExecution{
+	require.Equal(s.T(), repository.MetricExecution{
 		BaseModel: newExecutions[0].BaseModel,
 		MetricID:  metricCreated.ID,
 		LastValue: 0,
@@ -216,13 +214,13 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 
 	metricgroup := repository.MetricsGroup{
 		Name:        "group 1",
-		Metrics:     []metric2.Metric{},
+		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
 	}
 	s.DB.Create(&metricgroup)
 
-	metric1 := metric.Metric{
+	metric1 := repository.Metric{
 		MetricsGroupID: metricgroup.ID,
 		DataSourceID:   datasource.ID,
 		Metric:         "MetricName1",
@@ -239,14 +237,14 @@ func (s *SuiteMetricExecution) TestUpdateMetricExecutionError() {
 	executions, err := s.repository.FindAllMetricExecutions()
 	require.Nil(s.T(), err)
 
-	require.Equal(s.T(), metric.MetricExecution{
+	require.Equal(s.T(), repository.MetricExecution{
 		BaseModel: executions[0].BaseModel,
 		MetricID:  metricCreated.ID,
 		LastValue: 0,
 		Status:    "ACTIVE",
 	}, executions[0])
 
-	updateExecution := metric.MetricExecution{
+	updateExecution := repository.MetricExecution{
 		BaseModel: executions[0].BaseModel,
 		MetricID:  metricCreated.ID,
 		LastValue: 0,
@@ -268,7 +266,7 @@ func (s SuiteMetricExecution) TestValidateIfMetricsReached() {
 	id := uuid.New()
 	metricId := uuid.New()
 
-	metricExecutionStruct := metric.MetricExecution{
+	metricExecutionStruct := repository.MetricExecution{
 		BaseModel: util.BaseModel{
 			ID:        id,
 			CreatedAt: time.Time{},

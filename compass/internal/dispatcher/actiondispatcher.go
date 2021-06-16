@@ -20,6 +20,7 @@ package dispatcher
 
 import (
 	"fmt"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"sync"
 	"time"
@@ -28,7 +29,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 )
@@ -37,13 +37,13 @@ type ActionDispatcher struct {
 	metricGroupRepo repository.MetricsGroupRepository
 	actionRepo      repository.ActionRepository
 	pluginRepo      repository.PluginRepository
-	metricRepo      metric.UseCases
+	metricRepo      repository.MetricRepository
 	groupActionRepo metricsgroupaction.UseCases
 	mux             sync.Mutex
 }
 
 func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
-	metricRepo metric.UseCases, groupActionRepo metricsgroupaction.UseCases) UseCases {
+	metricRepo repository.MetricRepository, groupActionRepo metricsgroupaction.UseCases) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
 		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}}
@@ -149,7 +149,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 	}
 }
 
-func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []metric.Metric) bool {
+func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []domain.Metric) bool {
 	for _, m := range metrics {
 		if !dispatcher.metricRepo.ValidateIfExecutionReached(m.MetricExecution) {
 			return false

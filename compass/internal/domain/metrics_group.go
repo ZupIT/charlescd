@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
@@ -11,7 +10,7 @@ import (
 type MetricsGroup struct {
 	util.BaseModel
 	Name        string                                  `json:"name"`
-	Metrics     []metric.Metric                         `json:"metrics"`
+	Metrics     []Metric                                `json:"metrics"`
 	WorkspaceID uuid.UUID                               `json:"-"`
 	CircleID    uuid.UUID                               `json:"circleId"`
 	Actions     []metricsgroupaction.MetricsGroupAction `json:"actions"`

@@ -31,7 +31,7 @@ type UseCases interface {
 	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, errors.Error)
 	FindGroupActionById(id string) (MetricsGroupAction, errors.Error)
 	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
-	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error)
+	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error)
 	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
 	DeleteGroupAction(id string) errors.Error
 	SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error)

@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -36,7 +35,7 @@ type UseCases interface {
 }
 
 type Dispatcher struct {
-	metric metric.UseCases
+	metric repository.MetricRepository
 	mux    sync.Mutex
 }
 
@@ -47,7 +46,7 @@ var (
 	})
 )
 
-func NewDispatcher(metric metric.UseCases) UseCases {
+func NewDispatcher(metric repository.MetricRepository) UseCases {
 	return &Dispatcher{metric, sync.Mutex{}}
 }
 
@@ -79,15 +78,15 @@ func compareResultWithMetricThreshold(result float64, threshold float64, conditi
 	}
 }
 
-func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric metric.Metric) string {
+func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric repository.Metric) string {
 	if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
-		return metric.MetricReached
+		return repository.MetricReached
 	}
 
-	return metric.MetricActive
+	return repository.MetricActive
 }
 
-func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) {
+func (dispatcher *Dispatcher) getMetricResult(execution repository.MetricExecution) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -102,13 +101,13 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 			"err": err.WithOperations("getMetricResult.ResultQuery"),
 		}).Errorln()
 
-		execution.Status = metric.MetricError
+		execution.Status = repository.MetricError
 		dispatcher.metric.UpdateMetricExecution(execution)
 		return
 	}
 
-	if metricResult != execution.LastValue || execution.Status == metric.MetricUpdated {
-		dispatcher.metric.UpdateMetricExecution(metric.MetricExecution{
+	if metricResult != execution.LastValue || execution.Status == repository.MetricUpdated {
+		dispatcher.metric.UpdateMetricExecution(repository.MetricExecution{
 			BaseModel: execution.BaseModel,
 			MetricID:  execution.MetricID,
 			LastValue: metricResult,

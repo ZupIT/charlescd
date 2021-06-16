@@ -16,43 +16,51 @@
  *
  */
 
-package metric
+package repository
 
 import (
 	"encoding/json"
 	goErrors "errors"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	"github.com/ZupIT/charlescd/compass/pkg/datasource"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"io"
-
-	"github.com/google/uuid"
 )
 
-type Metric struct {
-	util.BaseModel
-	MetricsGroupID  uuid.UUID                 `json:"metricGroupId"`
-	DataSourceID    uuid.UUID                 `json:"dataSourceId"`
-	Nickname        string                    `json:"nickname"`
-	Query           string                    `json:"query"`
-	Metric          string                    `json:"metric"`
-	Filters         []datasource.MetricFilter `json:"filters"`
-	GroupBy         []MetricGroupBy           `json:"groupBy"`
-	Condition       string                    `json:"condition"`
-	Threshold       float64                   `json:"threshold"`
-	CircleID        uuid.UUID                 `json:"circleId"`
-	MetricExecution MetricExecution           `json:"execution"`
+type MetricRepository interface {
+	ParseMetric(metric io.ReadCloser) (domain.Metric, error)
+	CountMetrics(metrics []domain.Metric) (int, int, int)
+	FindMetricById(id uuid.UUID) (domain.Metric, error)
+	SaveMetric(metric domain.Metric) (domain.Metric, error)
+	UpdateMetric(metric domain.Metric) (domain.Metric, error)
+	RemoveMetric(id uuid.UUID) error
+	Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error)
+	ResultQuery(metric domain.Metric) (float64, error)
+	UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error)
+	FindAllMetricExecutions() ([]domain.MetricExecution, error)
+	Validate(metric domain.Metric) error
+	ValidateIfExecutionReached(metric domain.MetricExecution) bool
+	FindAllByGroup(metricGroupID uuid.UUID) ([]domain.Metric, error)
 }
 
-type MetricGroupBy struct {
-	util.BaseModel
-	MetricID uuid.UUID `json:"-"`
-	Field    string    `json:"field"`
+type metricRepository struct {
+	db             *gorm.DB
+	datasourceMain DatasourceRepository
+	pluginMain     PluginRepository
 }
 
-func (main Main) Validate(metric Metric) errors.ErrorList {
+func NewMetricRepository(
+	db *gorm.DB, datasourceMain DatasourceRepository, pluginMain PluginRepository,
+) MetricRepository {
+	return metricRepository{db, datasourceMain, pluginMain}
+}
+
+func (main metricRepository) Validate(metric domain.Metric) error {
 	ers := errors.NewErrorList()
 
 	if metric.Nickname == "" {
@@ -105,7 +113,7 @@ func (main Main) Validate(metric Metric) errors.ErrorList {
 	return ers
 }
 
-func validateMetricFilter(metricFilter datasource.MetricFilter) errors.ErrorList {
+func validateMetricFilter(metricFilter datasourcePKG.MetricFilter) error {
 	ers := errors.NewErrorList()
 
 	if len(metricFilter.Field) > 100 {
@@ -125,7 +133,7 @@ func validateMetricFilter(metricFilter datasource.MetricFilter) errors.ErrorList
 	return ers
 }
 
-func validateMetricGroupBy(metricGroupBy MetricGroupBy) errors.ErrorList {
+func validateMetricGroupBy(metricGroupBy domain.MetricGroupBy) error {
 	ers := errors.NewErrorList()
 
 	if len(metricGroupBy.Field) > 100 {
@@ -138,7 +146,7 @@ func validateMetricGroupBy(metricGroupBy MetricGroupBy) errors.ErrorList {
 	return ers
 }
 
-func getFieldValidateByMetric(metric Metric) string {
+func getFieldValidateByMetric(metric domain.Metric) string {
 	field := "metric"
 	if metric.Query != "" {
 		field = "query"
@@ -147,7 +155,7 @@ func getFieldValidateByMetric(metric Metric) string {
 	return field
 }
 
-func (main Main) ParseMetric(metric io.ReadCloser) (Metric, errors.Error) {
+func (main metricRepository) ParseMetric(metric io.ReadCloser) (domain.Metric, error) {
 	var newMetric *Metric
 	err := json.NewDecoder(metric).Decode(&newMetric)
 	if err != nil {
@@ -157,7 +165,7 @@ func (main Main) ParseMetric(metric io.ReadCloser) (Metric, errors.Error) {
 	return *newMetric, nil
 }
 
-func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
+func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, int) {
 	configuredMetrics := 0
 	reachedMetrics := 0
 	allMetrics := 0
@@ -166,7 +174,7 @@ func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
 			configuredMetrics++
 		}
 
-		if metric.MetricExecution.Status == MetricReached {
+		if metric.MetricExecution.Status == metric.MetricReached {
 			reachedMetrics++
 		}
 
@@ -176,7 +184,7 @@ func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
 	return configuredMetrics, reachedMetrics, allMetrics
 }
 
-func (main Main) FindMetricById(id string) (Metric, errors.Error) {
+func (main metricRepository) FindMetricById(id uuid.UUID) (domain.Metric, error) {
 	metric := Metric{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
@@ -187,7 +195,7 @@ func (main Main) FindMetricById(id string) (Metric, errors.Error) {
 	return metric, nil
 }
 
-func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
+func (main metricRepository) SaveMetric(metric domain.Metric) (domain.Metric, error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := tx.Create(&metric)
 		if db.Error != nil {
@@ -195,9 +203,9 @@ func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
 			return db.Error
 		}
 
-		_, err := main.saveMetricExecution(tx, MetricExecution{
+		_, err := main.saveMetricExecution(tx, metric.MetricExecution{
 			MetricID: metric.ID,
-			Status:   MetricActive,
+			Status:   metric.MetricActive,
 		})
 		if err != nil {
 			return goErrors.New(err.Error().Detail)
@@ -213,7 +221,7 @@ func (main Main) SaveMetric(metric Metric) (Metric, errors.Error) {
 	return metric, nil
 }
 
-func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
+func (main metricRepository) UpdateMetric(metric domain.Metric) (domain.Metric, error) {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		dbErr := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
 		if dbErr != nil {
@@ -221,7 +229,7 @@ func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
 			return dbErr
 		}
 
-		metric.MetricExecution.Status = MetricUpdated
+		metric.MetricExecution.Status = metric.MetricUpdated
 		err := main.updateExecutionStatus(tx, metric.ID)
 		if err != nil {
 			return goErrors.New(err.Error().Detail)
@@ -231,16 +239,16 @@ func (main Main) UpdateMetric(metric Metric) (Metric, errors.Error) {
 	})
 
 	if err != nil {
-		return Metric{}, errors.NewError("Update error", err.Error()).
+		return domain.Metric{}, errors.NewError("Update error", err.Error()).
 			WithOperations("UpdateMetric.Transaction")
 	}
 
 	return metric, nil
 }
 
-func (main Main) RemoveMetric(id string) errors.Error {
+func (main metricRepository) RemoveMetric(id uuid.UUID) error {
 	err := main.db.Transaction(func(tx *gorm.DB) error {
-		db := main.db.Where("id = ?", id).Delete(Metric{})
+		db := main.db.Where("id = ?", id).Delete(domain.Metric{})
 		if db.Error != nil {
 			logger.Error(util.RemoveMetricError, "RemoveMetric", db.Error, id)
 			return db.Error
@@ -260,7 +268,7 @@ func (main Main) RemoveMetric(id string) errors.Error {
 	return nil
 }
 
-func (main Main) getQueryByMetric(metric Metric) string {
+func (main metricRepository) getQueryByMetric(metric domain.Metric) string {
 	if metric.Query != "" {
 		return metric.Query
 	}
@@ -268,7 +276,7 @@ func (main Main) getQueryByMetric(metric Metric) string {
 	return metric.Metric
 }
 
-func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
+func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		return 0, err.WithOperations("ResultQuery.FindById")
@@ -289,14 +297,14 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 	query := main.getQueryByMetric(metric)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, datasource.MetricFilter{
+		metric.Filters = append(metric.Filters, datasourcePKG.MetricFilter{
 			Field:    "circle_source",
 			Operator: "=",
 			Value:    metric.CircleID.String(),
 		})
 	}
 
-	result, castError := getQuery.(func(request datasource.ResultRequest) (float64, error))(datasource.ResultRequest{
+	result, castError := getQuery.(func(request datasourcePKG.ResultRequest) (float64, error))(datasourcePKG.ResultRequest{
 		DatasourceConfiguration: dataSourceConfigurationData,
 		Query:                   query,
 		Filters:                 metric.Filters,
@@ -310,7 +318,7 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 	return result, nil
 }
 
-func (main Main) Query(metric Metric, period, interval datasource.Period) (interface{}, errors.Error) {
+func (main metricRepository) Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
 	if err != nil {
 		return nil, err.WithOperations("ResultQuery.FindById")
@@ -331,15 +339,15 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 
 	if metric.Query == "" {
-		metric.Filters = append(metric.Filters, datasource.MetricFilter{
+		metric.Filters = append(metric.Filters, datasourcePKG.MetricFilter{
 			Field:    "circle_source",
 			Operator: "=",
 			Value:    metric.CircleID.String(),
 		})
 	}
 
-	queryResult, castErr := getQuery.(func(request datasource.QueryRequest) ([]datasource.Value, error))(datasource.QueryRequest{
-		ResultRequest: datasource.ResultRequest{
+	queryResult, castErr := getQuery.(func(request datasourcePKG.QueryRequest) ([]datasourcePKG.Value, error))(datasourcePKG.QueryRequest{
+		ResultRequest: datasourcePKG.ResultRequest{
 			DatasourceConfiguration: dataSourceConfigurationData,
 			Query:                   query,
 			Filters:                 metric.Filters,
@@ -349,19 +357,19 @@ func (main Main) Query(metric Metric, period, interval datasource.Period) (inter
 	})
 
 	if castErr != nil {
-		return nil, errors.NewError("Query error", castErr.Error()).
-			WithOperations("ResultQuery.getQuery")
+		return nil,
+			errors.NewError("Query error", castErr.Error()).
+				WithOperations("ResultQuery.getQuery")
 	}
 
 	return queryResult, nil
 }
 
-func (main Main) FindAllByGroup(metricGroupID string) ([]Metric, errors.Error) {
-	var metrics []Metric
+func (main metricRepository) FindAllByGroup(metricGroupID uuid.UUID) ([]domain.Metric, error) {
+	var metrics []domain.Metric
 	result := main.db.Set("gorm:auto_preload", true).Where("metrics_group_id = ?", metricGroupID).Find(&metrics)
 	if result.Error != nil {
-		return nil, errors.NewError("Query error", result.Error.Error()).
-			WithOperations("FindAllByGroup.Find")
+		return nil, logging.NewError("Find Metrics By GroupId error", result.Error, nil, "MetricRepository.FindAllByGroup.Find")
 	}
 
 	return metrics, nil

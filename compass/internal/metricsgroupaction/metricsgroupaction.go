@@ -242,7 +242,7 @@ func (main Main) DeleteGroupAction(id string) errors.Error {
 	return nil
 }
 
-func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error) {
+func (main Main) ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, error) {
 	var executions []GroupActionExecutionStatusResume
 	result := main.db.Raw(groupActionQuery, groupID).Find(&executions)
 	if result.Error != nil {

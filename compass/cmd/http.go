@@ -115,7 +115,7 @@ func (s server) registerRoutes() {
 			{
 				actionHandler.GET("", handlers.List(actionInteractor.NewListAction(s.pm.actionRepository)))
 				actionHandler.POST("", handlers.Create(actionInteractor.NewCreateAction(s.pm.actionRepository, s.pm.pluginRepository)))
-				actionHandler.DELETE("/:actionId", handlers.Delete(s.pm.actionRepository))
+				actionHandler.DELETE("/:actionId", handlers.Delete(actionInteractor.NewDeleteAction(s.pm.actionRepository)))
 			}
 			datasourceHandler := v1.Group("/datasources")
 			{

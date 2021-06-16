@@ -20,7 +20,6 @@ package handlers
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
 	actionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/action"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
@@ -73,11 +72,15 @@ func List(listAction actionInteractor.ListAction) echo.HandlerFunc {
 	}
 }
 
-func Delete(actionMain repository.ActionRepository) echo.HandlerFunc {
+func Delete(deleteAction actionInteractor.DeleteAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("actionId")
 
-		err := actionMain.DeleteAction(id)
+		id, parseErr := uuid.Parse(echoCtx.Param("actionId"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		err := deleteAction.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}

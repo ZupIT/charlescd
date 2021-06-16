@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
@@ -93,17 +92,17 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 		entity.ID, entity.Name, entity.Data, configuration.Get("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
 }
 
-func newBasicMetric() metric.Metric {
-	return metric.Metric{
+func newBasicMetric() repository.Metric {
+	return repository.Metric{
 		Nickname:        "Nickname",
 		Query:           "some query",
 		Metric:          "some metric name",
 		Filters:         []datasourcePKG.MetricFilter{},
-		GroupBy:         []metric.MetricGroupBy{},
+		GroupBy:         []repository.MetricGroupBy{},
 		Condition:       "=",
 		Threshold:       5,
 		CircleID:        uuid.New(),
-		MetricExecution: metric.MetricExecution{},
+		MetricExecution: repository.MetricExecution{},
 	}
 }
 

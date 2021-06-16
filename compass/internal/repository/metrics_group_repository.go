@@ -21,12 +21,10 @@ package repository
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/internal/metric"
 	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"regexp"
@@ -36,7 +34,7 @@ import (
 
 type MetricsGroupRepository interface {
 	PeriodValidate(currentPeriod string) (datasourcePKG.Period, error)
-	FindAll() ([]domain.MetricsGroup, errors.Error)
+	FindAll() ([]domain.MetricsGroup, error)
 	FindAllByWorkspaceId(workspaceId uuid.UUID) ([]domain.MetricsGroup, error)
 	ResumeByCircle(circleId uuid.UUID) ([]domain.MetricGroupResume, error)
 	Save(metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error)
@@ -47,12 +45,12 @@ type MetricsGroupRepository interface {
 	QueryByGroupID(id uuid.UUID, period, interval datasourcePKG.Period) ([]domain.MetricValues, error)
 	ResultByGroup(group domain.MetricsGroup) ([]domain.MetricResult, error)
 	ResultByID(id uuid.UUID) ([]domain.MetricResult, error)
-	ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, errors.Error)
+	ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, error)
 }
 
 type metricsGroupRepository struct {
 	db               *gorm.DB
-	metricMain       metric.UseCases
+	metricMain       MetricRepository
 	datasourceMain   DatasourceRepository
 	pluginMain       PluginRepository
 	groupActionsMain metricsgroupaction.UseCases
@@ -60,7 +58,7 @@ type metricsGroupRepository struct {
 
 func NewMetricsGroupRepository(
 	db *gorm.DB,
-	metricMain metric.UseCases,
+	metricMain MetricRepository,
 	datasourceMain DatasourceRepository,
 	pluginMain PluginRepository,
 	groupActionsMain metricsgroupaction.UseCases,
@@ -125,12 +123,11 @@ func (main metricsGroupRepository) PeriodValidate(currentPeriod string) (datasou
 	}, nil
 }
 
-func (main metricsGroupRepository) FindAll() ([]domain.MetricsGroup, errors.Error) {
+func (main metricsGroupRepository) FindAll() ([]domain.MetricsGroup, error) {
 	var metricsGroups []models.MetricsGroup
 	db := main.db.Set("gorm:auto_preload", true).Find(&metricsGroups)
 	if db.Error != nil {
-		return []domain.MetricsGroup{}, errors.NewError("FindAll error", db.Error.Error()).
-			WithOperations("FindAll.DBFind")
+		return []domain.MetricsGroup{}, logging.NewError("Find All error", db.Error, nil, "MetricsGroupRepository.FindAll.Find")
 	}
 	return mapper.MetricsGroupModelToDomains(metricsGroups), nil
 }
@@ -144,9 +141,9 @@ func (main metricsGroupRepository) FindAllByWorkspaceId(workspaceId uuid.UUID) (
 	return mapper.MetricsGroupModelToDomains(metricsGroups), nil
 }
 
-func (main metricsGroupRepository) isMetricError(metrics []metric.Metric) bool {
+func (main metricsGroupRepository) isMetricError(metrics []models.Metric) bool {
 	for _, currentMetric := range metrics {
-		if currentMetric.MetricExecution.Status == metric.MetricError {
+		if currentMetric.MetricExecution.Status == MetricError {
 			return true
 		}
 	}
@@ -154,16 +151,16 @@ func (main metricsGroupRepository) isMetricError(metrics []metric.Metric) bool {
 	return false
 }
 
-func (main metricsGroupRepository) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, metrics []metric.Metric) string {
+func (main metricsGroupRepository) getResumeStatusByGroup(reachedMetrics, configuredMetrics int, metrics []models.Metric) string {
 	if main.isMetricError(metrics) {
-		return metric.MetricError
+		return MetricError
 	}
 
 	if reachedMetrics == configuredMetrics && reachedMetrics > 0 {
-		return metric.MetricReached
+		return MetricReached
 	}
 
-	return metric.MetricActive
+	return MetricActive
 }
 
 func (main metricsGroupRepository) ResumeByCircle(circleId uuid.UUID) ([]domain.MetricGroupResume, error) {
@@ -182,7 +179,7 @@ func (main metricsGroupRepository) ResumeByCircle(circleId uuid.UUID) ([]domain.
 	}
 
 	for _, group := range metricsGroups {
-		configuredMetrics, reachedMetrics, allMetrics := main.metricMain.CountMetrics(group.Metrics)
+		configuredMetrics, reachedMetrics, allMetrics := main.metricMain.CountMetrics(mapper.MetricModelToDomains(group.Metrics))
 		metricsGroupsResume = append(metricsGroupsResume, models.MetricGroupResume{
 			BaseModel:         group.BaseModel,
 			Name:              group.Name,
@@ -253,25 +250,24 @@ func (main metricsGroupRepository) FindById(id uuid.UUID) (domain.MetricsGroup, 
 	return mapper.MetricsGroupModelToDomain(metricsGroup), nil
 }
 
-func (main metricsGroupRepository) ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, errors.Error) {
+func (main metricsGroupRepository) ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, error) {
 	var metricsGroups []models.MetricsGroupRepresentation
 	db := main.db.Table("metrics_groups").Select([]string{"name", "id"}).Where("circle_id = ? and deleted_at is null", circleId).Find(&metricsGroups)
 	if db.Error != nil {
-		return []models.MetricsGroupRepresentation{}, errors.NewError("Find error", db.Error.Error()).
-			WithOperations("ListAllByCircle.Find")
+		return []models.MetricsGroupRepresentation{}, logging.NewError("List all metrics error", db.Error, nil, "MetricsGroupRepository.ListAllByCircle.First")
 	}
 
 	for idx := range metricsGroups {
 		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
 		if err != nil {
-			return []models.MetricsGroupRepresentation{}, err.WithOperations("ListAllByCircle.ListGroupActionExecutionResumeByGroup")
+			return []models.MetricsGroupRepresentation{}, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.ListGroupActionExecutionResumeByGroup")
 		}
-		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID.String())
+		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID)
 		if err != nil {
-			return nil, err.WithOperations("ListAllByCircle.FindAllByGroup")
+			return nil, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.FindAllByGroup")
 		}
 		metricsGroups[idx].Actions = actionResume
-		metricsGroups[idx].Metrics = metrics
+		metricsGroups[idx].Metrics = mapper.MetricDomainToModels(metrics)
 	}
 
 	return metricsGroups, nil
