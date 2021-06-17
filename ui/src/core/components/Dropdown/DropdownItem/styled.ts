@@ -66,6 +66,7 @@ const ReactTooltipStyled = styled(ReactTooltip)`
     text-align: left !important;
     padding: 0px !important;
     font-size: 12px;
+    width: 120px;
     background-color: ${({ theme }) => theme.dropdown.background};
     color: ${({ theme }) => theme.dropdown.color};
   }
@@ -75,5 +76,5 @@ export default {
   Item,
   Icon,
   Text,
-  ReactTooltipStyled
+  ReactTooltipStyled,
 };

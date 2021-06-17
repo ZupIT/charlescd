@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { MouseEvent, Fragment } from 'react';
+import { MouseEvent, Fragment } from 'react';
 import Styled from './styled';
 
 export interface Props {
@@ -59,7 +59,9 @@ const DropdownItem = ({
         {...rest}
       >
         {icon && <Styled.Icon name={icon} size="15px" />}
-        <Styled.Text tag="H5" color="dark">{name}</Styled.Text>
+        <Styled.Text tag="H5" color="dark">
+          {name}
+        </Styled.Text>
       </Styled.Item>
       {isInactive && (
         <Styled.ReactTooltipStyled

@@ -15,15 +15,15 @@
  */
 
 import { Story } from '@storybook/react';
-import TabPanel, { Props } from 'core/components/TabPanel';
+import Dropdown, { Props } from 'core/components/Dropdown';
 
 export default {
-  title: 'Components/Tab Panel',
-  component: TabPanel,
+  title: 'Components/Dropdown/Dropdown',
+  component: Dropdown,
 };
 
-const Template: Story<Props> = (props: Props) => <TabPanel {...props} />;
-export const tabPanel = Template.bind({});
-tabPanel.args = {
-  children: 'Tab',
+const Template: Story<Props> = (props: Props) => <Dropdown {...props} />;
+export const dropdown = Template.bind({});
+dropdown.args = {
+  children: <Dropdown.Item name="action" />,
 };
