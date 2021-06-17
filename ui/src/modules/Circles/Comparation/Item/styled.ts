@@ -185,7 +185,14 @@ const FieldErrorWrapper = styled.div`
   }
 `;
 
+const A = styled.a`
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+`;
+
 export default {
+  A,
   Link,
   Actions,
   Action,
