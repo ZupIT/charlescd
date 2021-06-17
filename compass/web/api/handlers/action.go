@@ -50,7 +50,7 @@ func Create(createAction actionInteractor.CreateAction) echo.HandlerFunc {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusCreated, createdAction)
+		return echoCtx.JSON(http.StatusCreated, representation.ActionDomainToResponse(createdAction))
 	}
 }
 
@@ -68,7 +68,7 @@ func List(listAction actionInteractor.ListAction) echo.HandlerFunc {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, actions)
+		return echoCtx.JSON(http.StatusOK, representation.ActionDomainToResponses(actions))
 	}
 }
 

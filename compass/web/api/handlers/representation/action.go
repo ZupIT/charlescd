@@ -36,5 +36,24 @@ func (request ActionRequest) RequestToDomain(workspaceId uuid.UUID) domain.Actio
 		UseDefault:    request.UseDefault,
 		Configuration: request.Configuration,
 	}
+}
 
+func ActionDomainToResponse(actionDomain domain.Action) ActionResponse {
+	return ActionResponse{
+		BaseModel:     actionDomain.BaseModel,
+		WorkspaceId:   actionDomain.WorkspaceId,
+		Nickname:      actionDomain.Nickname,
+		Type:          actionDomain.Type,
+		Description:   actionDomain.Description,
+		UseDefault:    actionDomain.UseDefault,
+		Configuration: actionDomain.Configuration,
+	}
+}
+
+func ActionDomainToResponses(actionDomain []domain.Action) []ActionResponse {
+	var actionResponse []ActionResponse
+	for _, action := range actionDomain {
+		actionResponse = append(actionResponse, ActionDomainToResponse(action))
+	}
+	return actionResponse
 }
