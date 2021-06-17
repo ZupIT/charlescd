@@ -22,7 +22,7 @@ import Placeholder from './Placeholder';
 
 type Child = Pick<TabProps, 'title'>;
 
-type Props = {
+export type Props = {
   children: React.ReactElement<Child>[];
 };
 
@@ -38,7 +38,11 @@ const NavTabs = ({ children }: Props) => {
           onClick={() => setActiveTab(index)}
           data-testid={`tab-${index}`}
         >
-          <Text tag="H4" weight="bold" color={index === activeTab ? 'light' : 'dark'}>
+          <Text
+            tag="H4"
+            weight="bold"
+            color={index === activeTab ? 'light' : 'dark'}
+          >
             {child.props.title}
           </Text>
         </Styled.TabItem>

@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-import Text from 'core/components/Text';
-import Styled from './styled';
+import { Story } from '@storybook/react';
+import Icon, { Props } from 'core/components/Icon';
 
-export type Props = {
-  title: string;
-  subTitle: string;
+export default {
+  title: 'Components/Icon',
+  component: Icon,
 };
 
-const NavTabsPlaceholder = ({ title, subTitle }: Props) => {
-  return (
-    <Styled.Placeholder>
-      <Styled.PlaceholderTitle tag="H2" color="light">
-        {title}
-      </Styled.PlaceholderTitle>
-      <Text tag="H5" color="dark">
-        {subTitle}
-      </Text>
-    </Styled.Placeholder>
-  );
+const Template: Story<Props> = (props: Props) => <Icon {...props} />;
+export const icon = Template.bind({});
+icon.args = {
+  name: 'charles',
 };
-
-export default NavTabsPlaceholder;
