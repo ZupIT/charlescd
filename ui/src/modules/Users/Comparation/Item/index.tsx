@@ -23,7 +23,6 @@ import { delParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import TabPanel from 'core/components/TabPanel';
 import Avatar from 'core/components/Avatar';
-import AvatarName from 'core/components/AvatarName';
 import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
