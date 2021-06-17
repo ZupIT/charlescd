@@ -15,7 +15,6 @@
  */
 
 import React, { useState } from 'react';
-import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
 import { newDateTimeFormatter } from 'core/utils/date';
 import isEmpty from 'lodash/isEmpty';
@@ -34,7 +33,7 @@ const ActionCard = ({
   action,
   metricGroup,
   handleDeleteAction,
-  handleEditAction
+  handleEditAction,
 }: Props) => {
   const [deleteView, setDeleteView] = useState(false);
 
@@ -43,7 +42,9 @@ const ActionCard = ({
       <Styled.ActionNicknameDeleteCard tag="H5" color="light">
         {action.nickname}
       </Styled.ActionNicknameDeleteCard>
-      <Styled.ActionType tag="H5" color="light">Are you sure?</Styled.ActionType>
+      <Styled.ActionType tag="H5" color="light">
+        Are you sure?
+      </Styled.ActionType>
       <Styled.ActionDeleteCardText
         tag="H5"
         color="light"
@@ -99,7 +100,7 @@ const ActionCard = ({
           : newDateTimeFormatter(action.triggeredAt)}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
-        <NewDropDown icon="vertical-dots" size="16px">
+        <Dropdown icon="vertical-dots" size="16px">
           <Dropdown.Item
             icon="edit"
             name="Edit action"
@@ -110,7 +111,7 @@ const ActionCard = ({
             name="Delete action"
             onClick={() => setDeleteView(true)}
           />
-        </NewDropDown>
+        </Dropdown>
       </Styled.MetricDropdown>
     </Styled.ActionCardBody>
   );

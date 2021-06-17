@@ -18,7 +18,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import NewDropDown from 'core/components/Dropdown/NewDropDown';
+import DropDown from 'core/components/Dropdown';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { Metric, MetricsGroup } from '../types';
@@ -35,7 +35,7 @@ const MetricCard = ({
   metric,
   metricGroup,
   handleDeleteMetric,
-  handleEditMetric
+  handleEditMetric,
 }: Props) => {
   const thresholdStatus = getThresholdStatus(metric.execution.status);
 
@@ -43,7 +43,7 @@ const MetricCard = ({
     const textByCondition = {
       EQUAL: 'Equal:',
       GREATER_THAN: 'Greater than:',
-      LOWER_THAN: 'Lower than:'
+      LOWER_THAN: 'Lower than:',
     } as Record<string, string>;
 
     return textByCondition[condition] ?? 'Not configured';
@@ -63,7 +63,8 @@ const MetricCard = ({
         {metric.nickname}
       </Styled.MetricNickname>
       <Styled.MetricConditionThreshold>
-        <Text tag="H5"
+        <Text
+          tag="H5"
           color="dark"
           data-testid={`${metric.nickname}-threshold-condition`}
         >
@@ -97,18 +98,18 @@ const MetricCard = ({
         )}
       </Styled.MetricLastValue>
       <Styled.MetricDropdown>
-        <NewDropDown icon="vertical-dots" size="16px">
-          <NewDropDown.Item
+        <DropDown icon="vertical-dots" size="16px">
+          <DropDown.Item
             icon="edit"
             name="Edit metric"
             onClick={() => handleEditMetric(metric, metricGroup)}
           />
-          <NewDropDown.Item
+          <DropDown.Item
             icon="delete"
             name="Delete"
             onClick={() => handleDeleteMetric(metricGroup.id, metric.id)}
           />
-        </NewDropDown>
+        </DropDown>
       </Styled.MetricDropdown>
     </Styled.MetricCardBody>
   );
