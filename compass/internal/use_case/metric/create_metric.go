@@ -15,7 +15,7 @@ type createMetrics struct {
 	metricsGroupRepository repository.MetricsGroupRepository
 }
 
-func NewCreateMetricsGroup(m repository.MetricRepository, mg repository.MetricsGroupRepository) CreateMetric {
+func NewCreateMetric(m repository.MetricRepository, mg repository.MetricsGroupRepository) CreateMetric {
 	return createMetrics{
 		metricRepository:       m,
 		metricsGroupRepository: mg,
@@ -23,7 +23,6 @@ func NewCreateMetricsGroup(m repository.MetricRepository, mg repository.MetricsG
 }
 
 func (s createMetrics) Execute(metric domain.Metric) (domain.Metric, error) {
-
 	metricGroup, err := s.metricsGroupRepository.FindById(metric.MetricsGroupID)
 	if err != nil {
 		return domain.Metric{}, logging.WithOperation(err, "createMetric.Execute")

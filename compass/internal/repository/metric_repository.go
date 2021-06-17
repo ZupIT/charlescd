@@ -20,15 +20,12 @@ package repository
 
 import (
 	"encoding/json"
-	goErrors "errors"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -80,12 +77,12 @@ func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, in
 
 func (main metricRepository) FindMetricById(id uuid.UUID) (domain.Metric, error) {
 	metric := models.Metric{}
+
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
-		logger.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
-		return domain.Metric{}, errors.NewError("Find error", db.Error.Error()).
-			WithOperations("FindMetricById.First")
+		return domain.Metric{}, logging.NewError(util.FindMetricById, db.Error, nil, "MetricRepository.FindMetricById.First")
 	}
+
 	return mapper.MetricModelToDomain(metric), nil
 }
 
@@ -99,7 +96,7 @@ func (main metricRepository) SaveMetric(metric domain.Metric) (domain.Metric, er
 
 		_, err := main.saveMetricExecution(tx, domain.MetricExecution{MetricID: metric.ID, Status: MetricActive})
 		if err != nil {
-			return err
+			return logging.NewError(util.SaveMetricError, err, nil, "MetricRepository.SaveMetric.saveMetricExecution")
 		}
 
 		return nil
@@ -112,49 +109,48 @@ func (main metricRepository) SaveMetric(metric domain.Metric) (domain.Metric, er
 }
 
 func (main metricRepository) UpdateMetric(metric domain.Metric) (domain.Metric, error) {
+
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		dbErr := main.db.Save(&metric).Association("Filters").Replace(metric.Filters)
 		if dbErr != nil {
-			logger.Error(util.UpdateMetricError, "UpdateMetric", dbErr, metric)
-			return dbErr
+			return logging.NewError(util.UpdateMetricError, dbErr, nil, "MetricRepository.UpdateMetric.Save")
 		}
 
 		metric.MetricExecution.Status = MetricUpdated
 		err := main.updateExecutionStatus(tx, metric.ID)
 		if err != nil {
-			return goErrors.New(err.Error().Detail)
+			return logging.NewError(util.UpdateMetricError, err, nil, "MetricRepository.UpdateMetric.updateExecutionStatus")
 		}
 
 		return nil
 	})
-
 	if err != nil {
-		return domain.Metric{}, errors.NewError("Update error", err.Error()).
-			WithOperations("UpdateMetric.Transaction")
+		return domain.Metric{}, logging.NewError(util.UpdateMetricError, err, nil, "MetricRepository.UpdateMetric.Transaction")
 	}
 
 	return metric, nil
 }
 
 func (main metricRepository) RemoveMetric(id uuid.UUID) error {
+
 	err := main.db.Transaction(func(tx *gorm.DB) error {
 		db := main.db.Where("id = ?", id).Delete(domain.Metric{})
 		if db.Error != nil {
-			logger.Error(util.RemoveMetricError, "RemoveMetric", db.Error, id)
-			return db.Error
+			return logging.NewError(util.RemoveMetricError, db.Error, nil, "MetricRepository.RemoveMetric.Delete")
+
 		}
 
 		err := main.removeMetricExecution(tx, id)
 		if err != nil {
-			return goErrors.New(err.Error().Detail)
+			return logging.NewError(util.RemoveMetricError, err, nil, "MetricRepository.RemoveMetric.removeMetricExecution")
 		}
 
 		return nil
 	})
 	if err != nil {
-		return errors.NewError("Remove error", err.Error()).
-			WithOperations("RemoveMetric.Transaction")
+		return logging.NewError(util.RemoveMetricError, err, nil, "MetricRepository.RemoveMetric.Transaction")
 	}
+
 	return nil
 }
 
@@ -169,18 +165,17 @@ func (main metricRepository) getQueryByMetric(metric domain.Metric) string {
 func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
 	if err != nil {
-		return 0, err.WithOperations("ResultQuery.FindById")
+		return 0, logging.WithOperation(err, "MetricRepository.ResultQuery.FindById")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		return 0, err.WithOperations("ResultQuery.GetPluginBySrc")
+		return 0, logging.WithOperation(err, "MetricRepository.ResultQuery.GetPluginBySrc")
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Result")
 	if lookupErr != nil {
-		return 0, errors.NewError("Result error", lookupErr.Error()).
-			WithOperations("ResultQuery.Lookup")
+		return 0, logging.WithOperation(lookupErr, "MetricRepository.ResultQuery.Lookup")
 	}
 
 	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
@@ -201,8 +196,7 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 	})
 
 	if castError != nil {
-		return 0, errors.NewError("Result error", castError.Error()).
-			WithOperations("ResultQuery.getQuery")
+		return 0, logging.NewError(util.ResultQueryError, err, nil, "MetricRepository.ResultQuery.getQuery")
 	}
 
 	return result, nil
@@ -211,18 +205,17 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 func (main metricRepository) Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error) {
 	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
 	if err != nil {
-		return nil, err.WithOperations("ResultQuery.FindById")
+		return nil, logging.WithOperation(err, "MetricRepository.Query.FindById")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
-		return nil, err.WithOperations("ResultQuery.GetPluginBySrc")
+		return nil, logging.WithOperation(err, "MetricRepository.Query.GetPluginBySrc")
 	}
 
 	getQuery, lookupErr := plugin.Lookup("Query")
 	if lookupErr != nil {
-		return nil, errors.NewError("Query error", lookupErr.Error()).
-			WithOperations("ResultQuery.Lookup")
+		return nil, logging.WithOperation(lookupErr, "MetricRepository.Query.Lookup")
 	}
 
 	query := main.getQueryByMetric(metric)
@@ -247,9 +240,7 @@ func (main metricRepository) Query(metric domain.Metric, period, interval dataso
 	})
 
 	if castErr != nil {
-		return nil,
-			errors.NewError("Query error", castErr.Error()).
-				WithOperations("ResultQuery.getQuery")
+		return nil, logging.NewError("Query error", err, nil, "MetricRepository.Query.getQuery")
 	}
 
 	return queryResult, nil

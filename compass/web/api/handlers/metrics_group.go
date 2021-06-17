@@ -46,6 +46,7 @@ func GetAll(findAllMetricsGroup metricsGroupInteractor.FindAllMetricsGroup) echo
 
 func Resume(resumeByCircle metricsGroupInteractor.ResumeByCircleMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		circleId, err := uuid.Parse(echoCtx.QueryParam("circleId"))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
@@ -95,6 +96,7 @@ func CreateMetricsGroup(createMetricsGroup metricsGroupInteractor.CreateMetricsG
 
 func Show(getMetricsGroup metricsGroupInteractor.GetMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
@@ -111,6 +113,7 @@ func Show(getMetricsGroup metricsGroupInteractor.GetMetricsGroup) echo.HandlerFu
 
 func Query(queryMetricsGroup metricsGroupInteractor.QueryMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
@@ -124,12 +127,13 @@ func Query(queryMetricsGroup metricsGroupInteractor.QueryMetricsGroup) echo.Hand
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, queryResult)
+		return echoCtx.JSON(http.StatusOK, representation.MetricValuesDomainToResponses(queryResult))
 	}
 }
 
 func Result(resultMetrics metricsGroupInteractor.ResultMetrics) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
@@ -140,12 +144,13 @@ func Result(resultMetrics metricsGroupInteractor.ResultMetrics) echo.HandlerFunc
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, queryResult)
+		return echoCtx.JSON(http.StatusOK, representation.MetricResultToResponses(queryResult))
 	}
 }
 
 func UpdateMetricsGroup(updateMetricsGroup metricsGroupInteractor.UpdateMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
@@ -165,12 +170,13 @@ func UpdateMetricsGroup(updateMetricsGroup metricsGroupInteractor.UpdateMetricsG
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, updatedMetricsGroup)
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupToResponse(updatedMetricsGroup))
 	}
 }
 
 func UpdateName(updateNameMetricsGroup metricsGroupInteractor.UpdateNameMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
@@ -201,12 +207,14 @@ func UpdateName(updateNameMetricsGroup metricsGroupInteractor.UpdateNameMetricsG
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
-		return echoCtx.JSON(http.StatusOK, updatedWorkspace)
+
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupToResponse(updatedWorkspace))
 	}
 }
 
 func DeleteMetricsGroup(deleteMetricsGroup metricsGroupInteractor.DeleteMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
+
 		id, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)

@@ -20,7 +20,9 @@ package repository
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
+	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
@@ -56,26 +58,25 @@ func (main metricRepository) UpdateMetricExecution(metricExecution domain.Metric
 func (main metricRepository) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
 	db := tx.Model(&models.MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
 	if db.Error != nil {
-		return errors.NewError("Update error", db.Error.Error()).
-			WithOperations("updateExecutionStatus.Update")
+		return logging.NewError(util.UpdateMetricExecutionError, db.Error, nil, "MetricExecutionRepository.updateExecutionStatus.Update")
 	}
+
 	return nil
 }
 
 func (main metricRepository) saveMetricExecution(tx *gorm.DB, execution domain.MetricExecution) (domain.MetricExecution, error) {
 	db := tx.Save(&execution)
 	if db.Error != nil {
-		return domain.MetricExecution{}, errors.NewError("Save error", db.Error.Error()).
-			WithOperations("saveMetricExecution.Save")
+		return domain.MetricExecution{}, logging.NewError(util.SaveMetricExecutionError, db.Error, nil, "MetricExecutionRepository.saveMetricExecution.Save")
 	}
+
 	return execution, nil
 }
 
 func (main metricRepository) removeMetricExecution(tx *gorm.DB, id uuid.UUID) error {
 	db := tx.Where("id = ?", id).Delete(models.MetricExecution{})
 	if db.Error != nil {
-		return errors.NewError("Remove error", db.Error.Error()).
-			WithOperations("removeMetricExecution.Delete")
+		return logging.NewError(util.SaveMetricExecutionError, db.Error, nil, "MetricExecutionRepository.saveMetricExecution.Save")
 	}
 	return nil
 }

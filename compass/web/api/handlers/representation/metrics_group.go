@@ -11,21 +11,21 @@ import (
 type MetricsGroupResponse struct {
 	util.BaseModel
 	Name     string                                  `json:"name"`
-	Metrics  []Metric                                `json:"metrics"`
+	Metrics  []MetricResponse                        `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupRequest struct {
 	Name     string                                  `json:"name" validate:"notblank, max=64"`
-	Metrics  []Metric                                `json:"metrics"`
+	Metrics  []domain.Metric                         `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId" validate:"notblank, uuid"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupUpdateRequest struct {
 	Name     string                                  `json:"name"`
-	Metrics  []Metric                                `json:"metrics"`
+	Metrics  []domain.Metric                         `json:"metrics"`
 	CircleID uuid.UUID                               `json:"circleId"`
 	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
 }
@@ -37,6 +37,18 @@ type MetricGroupResumeResponse struct {
 	ThresholdsReached int    `json:"thresholdsReached"`
 	Metrics           int    `json:"metricsCount"`
 	Status            string `json:"status"`
+}
+
+type MetricValuesResponse struct {
+	ID       uuid.UUID   `json:"id"`
+	Nickname string      `json:"metric"`
+	Values   interface{} `json:"result"`
+}
+
+type MetricResultResponse struct {
+	ID       uuid.UUID `json:"id"`
+	Nickname string    `json:"metric"`
+	Result   float64   `json:"result"`
 }
 
 func (metricsGroupRequest MetricsGroupRequest) RequestToDomain(workspaceId uuid.UUID) domain.MetricsGroup {
@@ -62,7 +74,7 @@ func MetricsGroupToResponse(metricsGroup domain.MetricsGroup) MetricsGroupRespon
 	return MetricsGroupResponse{
 		BaseModel: metricsGroup.BaseModel,
 		Name:      metricsGroup.Name,
-		Metrics:   metricsGroup.Metrics,
+		Metrics:   MetricDomainToResponses(metricsGroup.Metrics),
 		CircleID:  metricsGroup.CircleID,
 		Actions:   metricsGroup.Actions,
 	}
@@ -79,18 +91,49 @@ func MetricGroupResumeToResponse(metricGroupResume domain.MetricGroupResume) Met
 	}
 }
 
+func MetricValuesDomainToResponse(metricValues domain.MetricValues) MetricValuesResponse {
+	return MetricValuesResponse{
+		ID:       metricValues.ID,
+		Nickname: metricValues.Nickname,
+		Values:   metricValues.Values,
+	}
+}
+func MetricResultDomainToResponse(metricResult domain.MetricResult) MetricResultResponse {
+	return MetricResultResponse{
+		ID:       metricResult.ID,
+		Nickname: metricResult.Nickname,
+		Result:   metricResult.Result,
+	}
+}
+
 func MetricsGroupToResponses(metricsGroups []domain.MetricsGroup) []MetricsGroupResponse {
 	var metricsGroupResponse []MetricsGroupResponse
-	for _, datasource := range metricsGroups {
-		metricsGroupResponse = append(metricsGroupResponse, MetricsGroupToResponse(datasource))
+	for _, mg := range metricsGroups {
+		metricsGroupResponse = append(metricsGroupResponse, MetricsGroupToResponse(mg))
 	}
 	return metricsGroupResponse
 }
 
 func MetricGroupResumeToResponses(metricsGroupResumes []domain.MetricGroupResume) []MetricGroupResumeResponse {
 	var metricsGroupResponse []MetricGroupResumeResponse
-	for _, datasource := range metricsGroupResumes {
-		metricsGroupResponse = append(metricsGroupResponse, MetricGroupResumeToResponse(datasource))
+	for _, resume := range metricsGroupResumes {
+		metricsGroupResponse = append(metricsGroupResponse, MetricGroupResumeToResponse(resume))
 	}
 	return metricsGroupResponse
+}
+
+func MetricValuesDomainToResponses(metricValues []domain.MetricValues) []MetricValuesResponse {
+	var metricValuesList []MetricValuesResponse
+	for _, mv := range metricValues {
+		metricValuesList = append(metricValuesList, MetricValuesDomainToResponse(mv))
+	}
+	return metricValuesList
+}
+
+func MetricResultToResponses(metricResultToResponses []domain.MetricResult) []MetricResultResponse {
+	var metricResultList []MetricResultResponse
+	for _, result := range metricResultToResponses {
+		metricResultList = append(metricResultList, MetricResultDomainToResponse(result))
+	}
+	return metricResultList
 }

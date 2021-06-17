@@ -20,7 +20,6 @@ package handlers
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
 	metricInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metric"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
@@ -45,46 +44,55 @@ func CreateMetric(createMetric metricInteractor.CreateMetric) echo.HandlerFunc {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
-		list, err := createMetric.Execute(metric.MetricRequestToDomain(metricgroupId))
+		metricResult, err := createMetric.Execute(metric.MetricRequestToDomain(metricgroupId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusCreated, list)
+		return echoCtx.JSON(http.StatusCreated, representation.MetricDomainToResponse(metricResult))
 	}
 }
 
-func UpdateMetric(metricMain repository.MetricRepository) echo.HandlerFunc {
+func UpdateMetric(updateMetric metricInteractor.UpdateMetric) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		metricId := echoCtx.Param("metricID")
-		metricGroupId := echoCtx.Param("metricGroupID")
 
-		newMetric, err := metricMain.ParseMetric(echoCtx.Request().Body)
+		ctx := echoCtx.Request().Context()
+		var metric representation.MetricRequest
+
+		metricId, parseErr := uuid.Parse(echoCtx.Param("metricID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		metricgroupId, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		bindErr := echoCtx.Bind(&metric)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Can't parse body", bindErr, nil))
+		}
+
+		updatedMetric, err := updateMetric.Execute(metric.MetricUpdateRequestToDomain(metricId, metricgroupId))
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		newMetric.ID = uuid.MustParse(metricId)
-		newMetric.MetricsGroupID = uuid.MustParse(metricGroupId)
-
-		updateMetric, err := metricMain.UpdateMetric(newMetric)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		return echoCtx.JSON(http.StatusOK, updateMetric)
+		return echoCtx.JSON(http.StatusOK, representation.MetricDomainToResponse(updatedMetric))
 	}
 }
 
-func DeleteMetric(metricMain repository.MetricRepository) echo.HandlerFunc {
+func DeleteMetric(deleteMetric metricInteractor.DeleteMetric) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		metricId := echoCtx.Param("metricID")
 
-		err := metricMain.RemoveMetric(metricId)
+		metricId, parseErr := uuid.Parse(echoCtx.Param("metricID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		err := deleteMetric.Execute(metricId)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
