@@ -23,7 +23,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -40,7 +39,7 @@ type SuiteActionDispatcher struct {
 
 	repository             dispatcher.UseCases
 	metricMain             repository.MetricRepository
-	metricsGroupActionMain metricsgroupaction.UseCases
+	metricsGroupActionMain repository.MetricsGroupActionRepository
 }
 
 func (s *SuiteActionDispatcher) SetupSuite() {
@@ -63,7 +62,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	actionMain := repository.NewActionRepository(s.DB, pluginMain)
-	s.metricsGroupActionMain = metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
+	s.metricsGroupActionMain = repository.NewMetricsGroupActionRepository(s.DB, pluginMain, actionMain)
 	metricsgroupMain := repository.NewMetricsGroupRepository(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
 	s.repository = dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, s.metricMain, s.metricsGroupActionMain)
 
@@ -128,12 +127,12 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	}
 	s.DB.Create(&action)
 
-	actiongroup := metricsgroupaction.MetricsGroupAction{
+	actiongroup := repository.MetricsGroupAction{
 		MetricsGroupID:      metricgroup.ID,
 		ActionID:            action.ID,
 		Nickname:            "Metric group action 1",
 		ExecutionParameters: json.RawMessage(`{"destinationCircleId": "a407fdb4-e20f-40e8-bb61-1670d4abf56e", "workspaceId": "6a14448c-8346-4f56-ae2a-a63cf5fca1fd", "originCircleId": "b3edfa7b-c088-48c6-a185-15c46ab61681"}`),
-		ActionsConfiguration: metricsgroupaction.ActionsConfiguration{
+		ActionsConfiguration: repository.ActionsConfiguration{
 			Repeatable:     false,
 			NumberOfCycles: 1,
 		},
@@ -200,12 +199,12 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	}
 	s.DB.Create(&action)
 
-	actiongroup := metricsgroupaction.MetricsGroupAction{
+	actiongroup := repository.MetricsGroupAction{
 		MetricsGroupID:      metricgroup.ID,
 		ActionID:            action.ID,
 		Nickname:            "Metric group action 1",
 		ExecutionParameters: json.RawMessage(`{"destinationCircleId": "a407fdb4-e20f-40e8-bb61-1670d4abf56e", "workspaceId": "6a14448c-8346-4f56-ae2a-a63cf5fca1fd", "originCircleId": "b3edfa7b-c088-48c6-a185-15c46ab61681"}`),
-		ActionsConfiguration: metricsgroupaction.ActionsConfiguration{
+		ActionsConfiguration: repository.ActionsConfiguration{
 			Repeatable:     false,
 			NumberOfCycles: 1,
 		},

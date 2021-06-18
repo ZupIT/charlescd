@@ -24,7 +24,6 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -40,8 +39,7 @@ func (main metricRepository) FindAllMetricExecutions() ([]domain.MetricExecution
 	var metricExecutions []models.MetricExecution
 	db := main.db.Find(&metricExecutions)
 	if db.Error != nil {
-		return []domain.MetricExecution{}, errors.NewError("Find error", db.Error.Error()).
-			WithOperations("FindAllMetricExecutions.Find")
+		return []domain.MetricExecution{}, logging.NewError(util.FindAllMetricExecutionsError, db.Error, nil, "MetricExecutionRepository.FindAllMetricExecutions.Find")
 	}
 	return mapper.MetricExecutionModelToDomains(metricExecutions), nil
 }
@@ -49,8 +47,7 @@ func (main metricRepository) FindAllMetricExecutions() ([]domain.MetricExecution
 func (main metricRepository) UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error) {
 	db := main.db.Save(&metricExecution)
 	if db.Error != nil {
-		return domain.MetricExecution{}, errors.NewError("Update error", db.Error.Error()).
-			WithOperations("UpdateMetricExecution.Save")
+		return domain.MetricExecution{}, logging.NewError(util.UpdateMetricExecutionError, db.Error, nil, "MetricExecutionRepository.UpdateMetricExecution.Save")
 	}
 	return metricExecution, nil
 }
@@ -58,7 +55,7 @@ func (main metricRepository) UpdateMetricExecution(metricExecution domain.Metric
 func (main metricRepository) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
 	db := tx.Model(&models.MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
 	if db.Error != nil {
-		return logging.NewError(util.UpdateMetricExecutionError, db.Error, nil, "MetricExecutionRepository.updateExecutionStatus.Update")
+		return logging.NewError("Update execution error", db.Error, nil, "MetricExecutionRepository.updateExecutionStatus.Update")
 	}
 
 	return nil

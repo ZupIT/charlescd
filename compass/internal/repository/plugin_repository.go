@@ -75,7 +75,7 @@ func (main pluginRepository) GetPluginBySrc(src string) (*plugin.Plugin, error) 
 
 	p, err := plugin.Open(filepath.Join(fmt.Sprintf("%s/%s.so", pluginsDir, src)))
 	if err != nil {
-		return nil, err
+		return nil, logging.NewError("error finding plugin", err, map[string]string{pluginsDir: src}, "PluginRepository.GetPluginBySrc.Open")
 	}
 
 	return p, nil

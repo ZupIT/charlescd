@@ -30,7 +30,6 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	datasource2 "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -61,7 +60,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	metricMain := repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	actionMain := repository.NewActionRepository(s.DB, pluginMain)
-	groupActionMain := metricsgroupaction.NewMain(s.DB, pluginMain, actionMain)
+	groupActionMain := repository.NewMetricsGroupActionRepository(s.DB, pluginMain, actionMain)
 	s.repository = repository.NewMetricsGroupRepository(s.DB, metricMain, datasourceMain, pluginMain, groupActionMain)
 
 	clearDatabase(s.DB)
@@ -344,7 +343,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupAction{},
+		Actions:     []repository.MetricsGroupAction{},
 	}
 
 	metricgroup2 := repository.MetricsGroup{
@@ -352,7 +351,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []repository.Metric{},
 		CircleID:    circleID,
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupAction{},
+		Actions:     []repository.MetricsGroupAction{},
 	}
 
 	metricgroup3 := repository.MetricsGroup{
@@ -360,7 +359,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroups() {
 		Metrics:     []repository.Metric{},
 		CircleID:    uuid.New(),
 		WorkspaceID: uuid.New(),
-		Actions:     []metricsgroupaction.MetricsGroupAction{},
+		Actions:     []repository.MetricsGroupAction{},
 	}
 
 	s.DB.Create(&metricgroup1)

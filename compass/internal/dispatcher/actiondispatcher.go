@@ -29,7 +29,6 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 )
 
@@ -38,12 +37,12 @@ type ActionDispatcher struct {
 	actionRepo      repository.ActionRepository
 	pluginRepo      repository.PluginRepository
 	metricRepo      repository.MetricRepository
-	groupActionRepo metricsgroupaction.UseCases
+	groupActionRepo repository.MetricsGroupActionRepository
 	mux             sync.Mutex
 }
 
 func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
-	metricRepo repository.MetricRepository, groupActionRepo metricsgroupaction.UseCases) UseCases {
+	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
 		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}}
@@ -74,7 +73,7 @@ func (dispatcher *ActionDispatcher) doAction(group repository.MetricsGroup) {
 	}
 }
 
-func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction.MetricsGroupAction) {
+func (dispatcher *ActionDispatcher) executeAction(groupAction repository.MetricsGroupAction) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 

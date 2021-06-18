@@ -2,7 +2,6 @@ package representation
 
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	"github.com/google/uuid"
 	"strings"
@@ -10,24 +9,24 @@ import (
 
 type MetricsGroupResponse struct {
 	util.BaseModel
-	Name     string                                  `json:"name"`
-	Metrics  []MetricResponse                        `json:"metrics"`
-	CircleID uuid.UUID                               `json:"circleId"`
-	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
+	Name     string                       `json:"name"`
+	Metrics  []MetricResponse             `json:"metrics"`
+	CircleID uuid.UUID                    `json:"circleId"`
+	Actions  []MetricsGroupActionResponse `json:"actions"`
 }
 
 type MetricsGroupRequest struct {
-	Name     string                                  `json:"name" validate:"notblank, max=64"`
-	Metrics  []domain.Metric                         `json:"metrics"`
-	CircleID uuid.UUID                               `json:"circleId" validate:"notblank, uuid"`
-	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
+	Name     string                      `json:"name" validate:"notblank, max=64"`
+	Metrics  []domain.Metric             `json:"metrics"`
+	CircleID uuid.UUID                   `json:"circleId" validate:"notblank, uuid"`
+	Actions  []domain.MetricsGroupAction `json:"actions"`
 }
 
 type MetricsGroupUpdateRequest struct {
-	Name     string                                  `json:"name"`
-	Metrics  []domain.Metric                         `json:"metrics"`
-	CircleID uuid.UUID                               `json:"circleId"`
-	Actions  []metricsgroupaction.MetricsGroupAction `json:"actions"`
+	Name     string                      `json:"name"`
+	Metrics  []domain.Metric             `json:"metrics"`
+	CircleID uuid.UUID                   `json:"circleId"`
+	Actions  []domain.MetricsGroupAction `json:"actions"`
 }
 
 type MetricGroupResumeResponse struct {
@@ -49,6 +48,13 @@ type MetricResultResponse struct {
 	ID       uuid.UUID `json:"id"`
 	Nickname string    `json:"metric"`
 	Result   float64   `json:"result"`
+}
+
+type MetricsGroupRepresentationResponse struct {
+	ID      uuid.UUID                                 `json:"id"`
+	Name    string                                    `json:"name"`
+	Metrics []domain.Metric                           `json:"metrics"`
+	Actions []domain.GroupActionExecutionStatusResume `json:"actions"`
 }
 
 func (metricsGroupRequest MetricsGroupRequest) RequestToDomain(workspaceId uuid.UUID) domain.MetricsGroup {
@@ -76,7 +82,7 @@ func MetricsGroupToResponse(metricsGroup domain.MetricsGroup) MetricsGroupRespon
 		Name:      metricsGroup.Name,
 		Metrics:   MetricDomainToResponses(metricsGroup.Metrics),
 		CircleID:  metricsGroup.CircleID,
-		Actions:   metricsGroup.Actions,
+		Actions:   MetricsGroupActionDomainToResponses(metricsGroup.Actions),
 	}
 }
 
@@ -106,6 +112,15 @@ func MetricResultDomainToResponse(metricResult domain.MetricResult) MetricResult
 	}
 }
 
+func MetricsGroupRepresentationDomainToResponse(metricsGroupRepresentation domain.MetricsGroupRepresentation) MetricsGroupRepresentationResponse {
+	return MetricsGroupRepresentationResponse{
+		ID:      metricsGroupRepresentation.ID,
+		Name:    metricsGroupRepresentation.Name,
+		Metrics: metricsGroupRepresentation.Metrics,
+		Actions: metricsGroupRepresentation.Actions,
+	}
+}
+
 func MetricsGroupToResponses(metricsGroups []domain.MetricsGroup) []MetricsGroupResponse {
 	var metricsGroupResponse []MetricsGroupResponse
 	for _, mg := range metricsGroups {
@@ -130,10 +145,18 @@ func MetricValuesDomainToResponses(metricValues []domain.MetricValues) []MetricV
 	return metricValuesList
 }
 
-func MetricResultToResponses(metricResultToResponses []domain.MetricResult) []MetricResultResponse {
+func MetricResultToResponses(metricResults []domain.MetricResult) []MetricResultResponse {
 	var metricResultList []MetricResultResponse
-	for _, result := range metricResultToResponses {
+	for _, result := range metricResults {
 		metricResultList = append(metricResultList, MetricResultDomainToResponse(result))
 	}
 	return metricResultList
+}
+
+func MetricsGroupRepresentationDomainToResponses(metricGroupsRepresentations []domain.MetricsGroupRepresentation) []MetricsGroupRepresentationResponse {
+	var list []MetricsGroupRepresentationResponse
+	for _, result := range metricGroupsRepresentations {
+		list = append(list, MetricsGroupRepresentationDomainToResponse(result))
+	}
+	return list
 }

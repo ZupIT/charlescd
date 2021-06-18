@@ -19,94 +19,97 @@
 package handlers
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	metricsGroupActionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group_action"
+	"github.com/ZupIT/charlescd/compass/web/api/handlers/representation"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
-func CreateMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+func CreateMetricsGroupAction(createMetricGroupAction metricsGroupActionInteractor.CreateMetricGroupAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(echoCtx.Request().Body)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+
+		ctx := echoCtx.Request().Context()
+		var action representation.MetricsGroupActionRequest
+
+		bindErr := echoCtx.Bind(&action)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
 		}
 
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
+		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
-		newActionGroup.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
-			Repeatable:     false,
-			NumberOfCycles: 1,
-		}
-
-		if err := metricsgroupactionMain.ValidateGroupAction(newActionGroup, workspaceUUID); len(err.GetErrors()) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		created, err := metricsgroupactionMain.SaveGroupAction(newActionGroup)
+		created, err := createMetricGroupAction.Execute(action.MetricsGroupActionRequestToDomain(), workspaceId)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusCreated, created)
+		return echoCtx.JSON(http.StatusCreated, representation.MetricsGroupActionDomainToResponse(created))
 	}
 }
 
-func Update(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+func Update(updateMetricGroupAction metricsGroupActionInteractor.UpdateMetricGroupAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricgroupactionID")
 
-		newActionGroup, err := metricsgroupactionMain.ParseGroupAction(echoCtx.Request().Body)
-		if err != nil {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
-		}
-
-		newActionGroup.ActionsConfiguration = metricsgroupaction.ActionsConfiguration{
-			Repeatable:     false,
-			NumberOfCycles: 1,
-		}
-
-		workspaceID := echoCtx.Request().Header.Get("x-workspace-id")
-		workspaceUUID, parseErr := uuid.Parse(workspaceID)
+		id, parseErr := uuid.Parse(echoCtx.Param("metricgroupactionID"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
-		if err := metricsgroupactionMain.ValidateGroupAction(newActionGroup, workspaceUUID); len(err.GetErrors()) > 0 {
-			return echoCtx.JSON(http.StatusInternalServerError, err)
+		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
-		updated, err := metricsgroupactionMain.UpdateGroupAction(id, newActionGroup)
+		ctx := echoCtx.Request().Context()
+		var action representation.MetricsGroupActionRequest
+
+		bindErr := echoCtx.Bind(&action)
+		if bindErr != nil {
+			logging.LogErrorFromCtx(ctx, bindErr)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		}
+
+		updated, err := updateMetricGroupAction.Execute(action.MetricsGroupActionRequestToDomain(), id, workspaceId)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, updated)
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupActionDomainToResponse(updated))
 	}
 }
 
-func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+func FindByID(findMetricsGroupActionById metricsGroupActionInteractor.FindMetricsGroupActionById) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricgroupactionID")
 
-		act, err := metricsgroupactionMain.FindGroupActionById(id)
+		id, parseErr := uuid.Parse(echoCtx.Param("metricgroupactionID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		act, err := findMetricsGroupActionById.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
-		return echoCtx.JSON(http.StatusOK, act)
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupActionDomainToResponse(act))
 	}
 }
 
-func DeleteMetricsGroupAction(metricsgroupactionMain metricsgroupaction.UseCases) echo.HandlerFunc {
+func DeleteMetricsGroupAction(deleteMetricsGroupAction metricsGroupActionInteractor.DeleteMetricsGroupAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
-		id := echoCtx.Param("metricgroupactionID")
 
-		err := metricsgroupactionMain.DeleteGroupAction(id)
+		id, parseErr := uuid.Parse(echoCtx.Param("metricgroupactionID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		err := deleteMetricsGroupAction.Execute(id)
 		if err != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}

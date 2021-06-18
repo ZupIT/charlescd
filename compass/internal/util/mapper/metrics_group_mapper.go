@@ -13,7 +13,7 @@ func MetricsGroupDomainToModel(metricsGroup domain.MetricsGroup) models.MetricsG
 		Metrics:     MetricDomainToModels(metricsGroup.Metrics),
 		WorkspaceID: metricsGroup.WorkspaceID,
 		CircleID:    metricsGroup.CircleID,
-		Actions:     metricsGroup.Actions,
+		Actions:     MetricsGroupActionDomainToModels(metricsGroup.Actions),
 		DeletedAt:   metricsGroup.DeletedAt,
 	}
 }
@@ -25,7 +25,7 @@ func MetricsGroupModelToDomain(metricsGroup models.MetricsGroup) domain.MetricsG
 		Metrics:     MetricModelToDomains(metricsGroup.Metrics),
 		WorkspaceID: metricsGroup.WorkspaceID,
 		CircleID:    metricsGroup.CircleID,
-		Actions:     metricsGroup.Actions,
+		Actions:     MetricsGroupActionModelToDomains(metricsGroup.Actions),
 		DeletedAt:   metricsGroup.DeletedAt,
 	}
 }
@@ -54,6 +54,15 @@ func MetricResultToDomain(metricResult datasource.MetricResult) domain.MetricRes
 		ID:       metricResult.ID,
 		Nickname: metricResult.Nickname,
 		Result:   metricResult.Result,
+	}
+}
+
+func MetricsGroupRepresentationModelToDomain(groupRepresentationModel models.MetricsGroupRepresentation) domain.MetricsGroupRepresentation {
+	return domain.MetricsGroupRepresentation{
+		ID:      groupRepresentationModel.ID,
+		Name:    groupRepresentationModel.Name,
+		Metrics: MetricModelToDomains(groupRepresentationModel.Metrics),
+		Actions: GroupActionExecutionStatusResumeModelToDomains(groupRepresentationModel.Actions),
 	}
 }
 
@@ -87,4 +96,12 @@ func MetricResultsToDomains(metricResults []datasource.MetricResult) []domain.Me
 		metricsResults = append(metricsResults, MetricResultToDomain(mv))
 	}
 	return metricsResults
+}
+
+func MetricsGroupRepresentationModelToDomains(groupRepresentationModel []models.MetricsGroupRepresentation) []domain.MetricsGroupRepresentation {
+	groupRepresentationList := make([]domain.MetricsGroupRepresentation, 0)
+	for _, mv := range groupRepresentationModel {
+		groupRepresentationList = append(groupRepresentationList, MetricsGroupRepresentationModelToDomain(mv))
+	}
+	return groupRepresentationList
 }

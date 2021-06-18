@@ -21,7 +21,6 @@ package tests
 import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -37,10 +36,10 @@ type MetricsGroupActionSuite struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository metricsgroupaction.UseCases
+	repository repository2.MetricsGroupActionRepository
 	pluginRepo repository2.PluginRepository
 	actionRepo repository2.ActionRepository
-	mga        metricsgroupaction.MetricsGroupAction
+	mga        repository2.MetricsGroupAction
 }
 
 func (s *MetricsGroupActionSuite) SetupSuite() {
@@ -58,7 +57,7 @@ func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 	s.pluginRepo = repository2.NewPluginRepository()
 	s.actionRepo = repository2.NewActionRepository(s.DB, s.pluginRepo)
 
-	s.repository = metricsgroupaction.NewMain(s.DB, s.pluginRepo, s.actionRepo)
+	s.repository = repository2.NewMetricsGroupActionRepository(s.DB, s.pluginRepo, s.actionRepo)
 	clearDatabase(s.DB)
 }
 
@@ -175,10 +174,10 @@ func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupAction() {
 	err := s.repository.DeleteGroupAction(groupAction.ID.String())
 	require.Nil(s.T(), err)
 
-	var verify metricsgroupaction.MetricsGroupAction
+	var verify repository2.MetricsGroupAction
 	s.DB.Where("id = ?", groupAction.ID).Find(&verify)
 
-	require.Equal(s.T(), metricsgroupaction.MetricsGroupAction{}, verify)
+	require.Equal(s.T(), repository2.MetricsGroupAction{}, verify)
 }
 
 func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupActionError() {
@@ -281,13 +280,13 @@ func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionIdParseError() {
-	_, err := s.repository.UpdateGroupAction("12345", metricsgroupaction.MetricsGroupAction{})
+	_, err := s.repository.UpdateGroupAction("12345", repository2.MetricsGroupAction{})
 	require.NotNil(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionIdError() {
 	s.DB.Close()
-	_, err := s.repository.UpdateGroupAction(uuid.New().String(), metricsgroupaction.MetricsGroupAction{})
+	_, err := s.repository.UpdateGroupAction(uuid.New().String(), repository2.MetricsGroupAction{})
 	require.NotNil(s.T(), err)
 }
 
@@ -306,7 +305,7 @@ func (s *MetricsGroupActionSuite) TestCreateNewExecution() {
 	res, err := s.repository.CreateNewExecution(groupAction.ID.String())
 	require.Nil(s.T(), err)
 
-	var executions []metricsgroupaction.ActionsExecutions
+	var executions []repository2.ActionsExecutions
 	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
 
 	require.Len(s.T(), executions, 1)
@@ -344,7 +343,7 @@ func (s *MetricsGroupActionSuite) TestSetExecutionFailed() {
 	res, err := s.repository.SetExecutionFailed(execution.ID.String(), "Just Exploded")
 	require.Nil(s.T(), err)
 
-	var executions []metricsgroupaction.ActionsExecutions
+	var executions []repository2.ActionsExecutions
 	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
 
 	require.Len(s.T(), executions, 1)
@@ -403,7 +402,7 @@ func (s *MetricsGroupActionSuite) TestSetExecutionSuccess() {
 	res, err := s.repository.SetExecutionSuccess(execution.ID.String(), "Im fine")
 	require.Nil(s.T(), err)
 
-	var executions []metricsgroupaction.ActionsExecutions
+	var executions []repository2.ActionsExecutions
 	s.DB.Where("group_action_id = ?", groupAction.ID).Find(&executions)
 
 	require.Len(s.T(), executions, 1)

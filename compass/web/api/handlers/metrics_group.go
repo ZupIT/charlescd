@@ -212,6 +212,23 @@ func UpdateName(updateNameMetricsGroup metricsGroupInteractor.UpdateNameMetricsG
 	}
 }
 
+func ListMetricGroupInCircle(listMetricGroupByCircle metricsGroupInteractor.ListMetricGroupByCircle) echo.HandlerFunc {
+	return func(echoCtx echo.Context) error {
+
+		id, parseErr := uuid.Parse(echoCtx.Param("circleID"))
+		if parseErr != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
+		}
+
+		list, err := listMetricGroupByCircle.Execute(id)
+		if err != nil {
+			return echoCtx.JSON(http.StatusInternalServerError, err)
+		}
+
+		return echoCtx.JSON(http.StatusOK, representation.MetricsGroupRepresentationDomainToResponses(list))
+	}
+}
+
 func DeleteMetricsGroup(deleteMetricsGroup metricsGroupInteractor.DeleteMetricsGroup) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 

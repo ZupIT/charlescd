@@ -7,6 +7,7 @@ import (
 	datasourceInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
 	metricInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metric"
 	metricsGroupInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group"
+	metricsGroupActionInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/metrics_group_action"
 	pluginInteractor "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
 	"github.com/ZupIT/charlescd/compass/web/api/handlers"
 	"github.com/ZupIT/charlescd/compass/web/api/middlewares"
@@ -145,14 +146,14 @@ func (s server) registerRoutes() {
 			}
 			groupActionHandler := v1.Group("/group-actions")
 			{
-				groupActionHandler.POST("", handlers.CreateMetricsGroupAction(s.pm.metricsGroupAction))
-				groupActionHandler.GET("/:metricgroupactionID", handlers.FindByID(s.pm.metricsGroupAction))
-				groupActionHandler.PUT("/:metricgroupactionID", handlers.Update(s.pm.metricsGroupAction))
-				groupActionHandler.DELETE("/:metricgroupactionID", handlers.DeleteMetricsGroupAction(s.pm.metricsGroupAction))
+				groupActionHandler.POST("", handlers.CreateMetricsGroupAction(metricsGroupActionInteractor.NewCreateMetricsGroupAction(s.pm.metricsGroupAction, s.pm.actionRepository, s.pm.pluginRepository)))
+				groupActionHandler.GET("/:metricgroupactionID", handlers.FindByID(metricsGroupActionInteractor.NewFindMetricsGroupActionById(s.pm.metricsGroupAction)))
+				groupActionHandler.PUT("/:metricgroupactionID", handlers.Update(metricsGroupActionInteractor.NewUpdateMetricsGroupAction(s.pm.metricsGroupAction, s.pm.actionRepository, s.pm.pluginRepository)))
+				groupActionHandler.DELETE("/:metricgroupactionID", handlers.DeleteMetricsGroupAction(metricsGroupActionInteractor.NewDeleteMetricsGroupAction(s.pm.metricsGroupAction)))
 			}
 			circleHandler := v1.Group("/circles")
 			{
-				circleHandler.GET("/:circleID/metrics-groups", handlers.ListMetricGroupInCircle(s.pm.metricsGroupRepository))
+				circleHandler.GET("/:circleID/metrics-groups", handlers.ListMetricGroupInCircle(metricsGroupInteractor.NewListMetricGroupByCircle(s.pm.metricsGroupRepository)))
 			}
 			pluginHandler := v1.Group("/plugins")
 			{

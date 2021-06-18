@@ -21,7 +21,6 @@ package repository
 import (
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
@@ -45,7 +44,7 @@ type MetricsGroupRepository interface {
 	QueryByGroupID(id uuid.UUID, period, interval datasourcePKG.Period) ([]domain.MetricValues, error)
 	ResultByGroup(group domain.MetricsGroup) ([]domain.MetricResult, error)
 	ResultByID(id uuid.UUID) ([]domain.MetricResult, error)
-	ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, error)
+	ListAllByCircle(circleId uuid.UUID) ([]domain.MetricsGroupRepresentation, error)
 }
 
 type metricsGroupRepository struct {
@@ -53,7 +52,7 @@ type metricsGroupRepository struct {
 	metricMain       MetricRepository
 	datasourceMain   DatasourceRepository
 	pluginMain       PluginRepository
-	groupActionsMain metricsgroupaction.UseCases
+	groupActionsMain MetricsGroupActionRepository
 }
 
 func NewMetricsGroupRepository(
@@ -61,7 +60,7 @@ func NewMetricsGroupRepository(
 	metricMain MetricRepository,
 	datasourceMain DatasourceRepository,
 	pluginMain PluginRepository,
-	groupActionsMain metricsgroupaction.UseCases,
+	groupActionsMain MetricsGroupActionRepository,
 ) MetricsGroupRepository {
 	return metricsGroupRepository{
 		db:               db,
@@ -250,27 +249,30 @@ func (main metricsGroupRepository) FindById(id uuid.UUID) (domain.MetricsGroup, 
 	return mapper.MetricsGroupModelToDomain(metricsGroup), nil
 }
 
-func (main metricsGroupRepository) ListAllByCircle(circleId string) ([]models.MetricsGroupRepresentation, error) {
+func (main metricsGroupRepository) ListAllByCircle(circleId uuid.UUID) ([]domain.MetricsGroupRepresentation, error) {
 	var metricsGroups []models.MetricsGroupRepresentation
 	db := main.db.Table("metrics_groups").Select([]string{"name", "id"}).Where("circle_id = ? and deleted_at is null", circleId).Find(&metricsGroups)
 	if db.Error != nil {
-		return []models.MetricsGroupRepresentation{}, logging.NewError("List all metrics error", db.Error, nil, "MetricsGroupRepository.ListAllByCircle.First")
+		return []domain.MetricsGroupRepresentation{}, logging.NewError("List all metrics error", db.Error, nil, "MetricsGroupRepository.ListAllByCircle.First")
 	}
 
 	for idx := range metricsGroups {
-		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID.String())
+
+		actionResume, err := main.groupActionsMain.ListGroupActionExecutionResumeByGroup(metricsGroups[idx].ID)
 		if err != nil {
-			return []models.MetricsGroupRepresentation{}, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.ListGroupActionExecutionResumeByGroup")
+			return []domain.MetricsGroupRepresentation{}, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.ListGroupActionExecutionResumeByGroup")
 		}
+
 		metrics, err := main.metricMain.FindAllByGroup(metricsGroups[idx].ID)
 		if err != nil {
-			return nil, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.FindAllByGroup")
+			return []domain.MetricsGroupRepresentation{}, logging.WithOperation(err, "MetricsGroupRepository.ListAllByCircle.FindAllByGroup")
 		}
-		metricsGroups[idx].Actions = actionResume
+
+		metricsGroups[idx].Actions = mapper.GroupActionExecutionStatusResumeDomainToModels(actionResume)
 		metricsGroups[idx].Metrics = mapper.MetricDomainToModels(metrics)
 	}
 
-	return metricsGroups, nil
+	return mapper.MetricsGroupRepresentationModelToDomains(metricsGroups), nil
 }
 
 func (main metricsGroupRepository) Update(id uuid.UUID, metricsGroup domain.MetricsGroup) (domain.MetricsGroup, error) {

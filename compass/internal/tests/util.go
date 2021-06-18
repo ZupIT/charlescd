@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
@@ -152,18 +151,18 @@ func newBasicConfig() json.RawMessage {
 	return config
 }
 
-func newBasicGroupAction() metricsgroupaction.MetricsGroupAction {
-	return metricsgroupaction.MetricsGroupAction{
+func newBasicGroupAction() repository.MetricsGroupAction {
+	return repository.MetricsGroupAction{
 		Nickname:             "Nickname",
 		ExecutionParameters:  json.RawMessage(`{"someProperty": "someValue"}`),
-		ActionsConfiguration: metricsgroupaction.ActionsConfiguration{},
+		ActionsConfiguration: repository.ActionsConfiguration{},
 		DeletedAt:            nil,
 	}
 }
 
-func newBasicActionExecution() metricsgroupaction.ActionsExecutions {
+func newBasicActionExecution() repository.ActionsExecutions {
 	now := time.Now()
-	return metricsgroupaction.ActionsExecutions{
+	return repository.ActionsExecutions{
 		Status:    "IN_EXECUTION",
 		StartedAt: &now,
 	}

@@ -33,7 +33,7 @@ func (s createAction) Execute(action domain.Action) (domain.Action, error) {
 
 	plugin, err := s.pluginRepository.GetPluginBySrc(fmt.Sprintf("action/%s/%s", action.Type, action.Type))
 	if err != nil {
-		return domain.Action{}, logging.NewError("error finding plugin", err, map[string]string{"field": "type"}, "createAction.Execute.GetPluginBySrc")
+		return domain.Action{}, logging.WithOperation(err, "createAction.Execute")
 	}
 
 	pluginErrs, err := plugin.Lookup("ValidateActionConfiguration")
