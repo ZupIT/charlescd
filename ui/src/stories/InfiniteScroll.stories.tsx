@@ -16,16 +16,45 @@
 
 import { Story } from '@storybook/react';
 import InfiniteScroll, { Props } from 'core/components/InfiniteScroll';
+import { useState } from 'react';
 
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
 };
 
-const Template: Story<Props> = (props: Props) => <InfiniteScroll {...props} />;
+
+const Template: Story<Props> = (props: Props) => {
+  const [loading, setLoading] = useState(false);
+  const [list, setList] = useState({
+    content: ['item 1', 'item 2'],
+    last: false,
+  });
+  
+  const loadMore = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setList({last: true, content: [...list.content, 'item 3', 'item 4']});
+      setLoading(false);
+    }, 2000);
+  };
+
+  return (
+    <InfiniteScroll isLoading={loading} loadMore={loadMore} hasMore={!list.last} loader='..loading'>
+      {list.content.map(item => (
+        <div key={item}>{item}</div>
+      ))}
+    </InfiniteScroll>
+  )
+};
 export const infiniteScroll = Template.bind({});
-infiniteScroll.args = {
-  children: 'seila',
+
+infiniteScroll.parameters = {
+  docs: {
+    source: {
+      type: 'code',
+    }
+  }
 };
 
 infiniteScroll.storyName = 'InfiniteScroll';
