@@ -22,6 +22,7 @@ import Styled from './Styled';
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
+  parameters: { controls: { sort: 'requiredFirst' } },
   argTypes: {
     loadMore: {
       description: 'This function returns new items to be shown in the list.',
