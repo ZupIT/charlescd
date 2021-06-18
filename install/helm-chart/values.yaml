@@ -339,7 +339,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
-    enabled: false
+    enabled: true
     name: charlescd-gate
     sidecarIstio:
       enabled: true
@@ -512,7 +512,7 @@ envoy:
   hermes:
     enabled: true
   gate:
-    enabled: false
+    enabled: true
   cors:
     enabled: true
     hosts: []
