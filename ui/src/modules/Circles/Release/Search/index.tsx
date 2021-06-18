@@ -34,11 +34,7 @@ export interface Props {
 const defaultValues = {
   buildId: '',
   circleId: '',
-  metadata: {
-    content: [{
-      key: '', value: ''
-    }]
-  }
+  metadata: {}
 };
 
 const SearchRelease = ({ circleId, onDeployed }: Props) => {

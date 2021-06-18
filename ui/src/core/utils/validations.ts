@@ -63,7 +63,7 @@ export const isRequired = () => ({
 });
 
 export const metadataPattern = () => ({
-  value: /^[a-zA-Z0-9]+[a-zA-Z0-9-_.]*[a-zA-Z0-9]$/gi,
+  value: /^[a-zA-Z0-9]+([a-zA-Z0-9-_.]*[a-zA-Z0-9])?$/gi,
   message: 'It needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
 });
 
