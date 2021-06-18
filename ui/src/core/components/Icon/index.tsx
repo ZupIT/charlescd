@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import React, { Ref, useRef, useImperativeHandle, MouseEvent } from 'react';
+import {
+  forwardRef,
+  Ref,
+  useRef,
+  useImperativeHandle,
+  MouseEvent,
+} from 'react';
 import { ReactSVG } from 'react-svg';
 import useDynamicImport from './useDynamicImport';
 import Styled from './styled';
@@ -29,7 +35,7 @@ export interface Props {
   onClick?: (event: MouseEvent) => void;
 }
 
-const Icon = React.forwardRef(
+const Icon = forwardRef(
   (
     { name, color, size, className, onClick, isActive, title, ...rest }: Props,
     ref: Ref<HTMLDivElement>
