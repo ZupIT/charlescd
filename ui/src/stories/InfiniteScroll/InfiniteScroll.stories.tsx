@@ -17,6 +17,7 @@
 import { Story } from '@storybook/react';
 import InfiniteScroll, { Props } from 'core/components/InfiniteScroll';
 import { useState } from 'react';
+import Styled from './Styled';
 
 export default {
   title: 'Components/InfiniteScroll',
@@ -39,10 +40,17 @@ const Template: Story<Props> = (props: Props) => {
     }, 2000);
   };
 
+  const loader = () => (<Styled.Loading>loading...</Styled.Loading>);
+
   return (
-    <InfiniteScroll isLoading={loading} loadMore={loadMore} hasMore={!list.last} loader='..loading'>
+    <InfiniteScroll
+      hasMore={!list.last} 
+      loadMore={loadMore}
+      isLoading={loading}  
+      loader={loader()}
+    >
       {list.content.map(item => (
-        <div key={item}>{item}</div>
+        <Styled.Item key={item}>{item}</Styled.Item>
       ))}
     </InfiniteScroll>
   )
