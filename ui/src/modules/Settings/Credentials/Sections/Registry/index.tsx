@@ -24,7 +24,7 @@ import { useDeleteRegistry, useRegistryValidateConnection } from './hooks';
 import { FORM_REGISTRY } from './constants';
 import FormRegistry from './Form';
 import { FetchStatuses } from 'core/providers/base/hooks';
-import Notification from 'core/components/Notification';
+import NotificationLog from 'core/components/Notification/Log';
 interface Props {
   form: string;
   setForm: Function;
@@ -77,7 +77,7 @@ const SectionRegistry = ({ form, setForm, onChange, data }: Props) => {
   }, [validateConnectionRegistry, data]);
 
   const renderError = () => (
-    <Notification.Log type="error" content={error.message} />
+    <NotificationLog type="error" content={error.message} />
   );
 
   const renderSection = () => (
