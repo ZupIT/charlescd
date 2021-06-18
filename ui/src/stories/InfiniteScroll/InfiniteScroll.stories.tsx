@@ -22,6 +22,11 @@ import Styled from './Styled';
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
+  argTypes: {
+    loadMore: {
+      description: 'This function returns new items to be shown in the list.',
+    }
+  }
 };
 
 
@@ -57,12 +62,12 @@ const Template: Story<Props> = (props: Props) => {
 };
 export const infiniteScroll = Template.bind({});
 
-infiniteScroll.parameters = {
-  docs: {
-    source: {
-      type: 'code',
-    }
-  }
-};
+// infiniteScroll.parameters = {
+//   docs: {
+//     source: {
+//       type: 'code',
+//     }
+//   }
+// };
 
 infiniteScroll.storyName = 'InfiniteScroll';
