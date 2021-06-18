@@ -296,13 +296,14 @@ const CirclesComparationItem = ({
     <Styled.Actions>
       {circle?.deployment && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
-          <LabeledIcon
-            icon="override"
-            marginContent="5px"
-            onClick={() => setActiveSection(SECTIONS.RELEASE)}
-          >
-            <Text.h5 color="dark">Override release</Text.h5>
-          </LabeledIcon>
+          <Styled.A onClick={() => setActiveSection(SECTIONS.RELEASE)}>
+            <LabeledIcon
+              icon="override"
+              marginContent="5px"
+            >
+              <Text.h5 color="dark">Override release</Text.h5>
+            </LabeledIcon>
+          </Styled.A>
         </Can>
       )}
       <LabeledIcon

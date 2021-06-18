@@ -38,7 +38,7 @@ export interface User extends Base {
 }
 
 export interface NewUser extends Base {
-  password: string;
+  pwd: string;
   root?: boolean;
 }
 
