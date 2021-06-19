@@ -19,8 +19,11 @@
 package repository
 
 import (
+	"errors"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	"github.com/ZupIT/charlescd/compass/internal/repository/models"
+	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/google/uuid"
 	"time"
 )
@@ -32,59 +35,53 @@ const (
 	executionFailed  = "FAILED"
 )
 
-func (main metricsGroupActionRepository) findExecutionById(actionExecutionID string) (domain.ActionsExecutions, errors.Error) {
-	var execution ActionsExecutions
-	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
+func (main metricsGroupActionRepository) findExecutionById(actionExecutionID uuid.UUID) (domain.ActionsExecutions, error) {
+	var execution models.ActionsExecutions
 
+	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
 	if result.Error != nil {
-		return domain.ActionsExecutions{}, errors.NewError("Find error", result.Error.Error()).
-			WithOperations("findExecutionById.Find")
+		return domain.ActionsExecutions{}, logging.NewError("Find error", result.Error, nil, "ActionExecutionRepository.FindExecutionById.Find")
 	}
 
-	return execution, nil
+	return mapper.ActionExecutionModelToDomain(execution), nil
 }
 
 func (main metricsGroupActionRepository) CreateNewExecution(groupActionID uuid.UUID) (domain.ActionsExecutions, error) {
 	timeNow := time.Now()
-	parsedID, err := uuid.Parse(groupActionID)
-	if err != nil {
-		return ActionsExecutions{}, errors.NewError("Create error", err.Error()).
-			WithOperations("CreateNewExecution.Parse")
-	}
 
-	execution := ActionsExecutions{
+	execution := models.ActionsExecutions{
 		Status:        inExecution,
 		StartedAt:     &timeNow,
-		GroupActionId: parsedID,
+		GroupActionId: groupActionID,
 	}
 
 	db := main.db.Create(&execution)
 	if db.Error != nil {
-		return domain.ActionsExecutions{}, errors.NewError("Create error", db.Error.Error()).
-			WithOperations("CreateNewExecution.Create")
+		return domain.ActionsExecutions{}, logging.NewError("Create error", db.Error, nil, "ActionExecutionRepository.CreateNewExecution.Create")
 	}
-	return execution, nil
+
+	return mapper.ActionExecutionModelToDomain(execution), nil
 }
 
 func (main metricsGroupActionRepository) SetExecutionFailed(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
-		return domain.ActionsExecutions{}, err.WithOperations("SetExecutionFailed.findExecutionById")
+		return domain.ActionsExecutions{}, logging.WithOperation(err, "ActionExecutionRepository.SetExecutionFailed")
 	}
 
 	if !validateActionCanFinish(execution) {
-		return domain.ActionsExecutions{}, errors.NewError("Set error", "cannot change status of a not in_execution action").
-			WithOperations("SetExecutionFailed.validateActionCanFinish")
+		return domain.ActionsExecutions{}, logging.NewError("Set Execution error", errors.New("cannot change status of a not in_execution action"), nil, "ActionExecutionRepository.SetExecutionFailed.validateActionCanFinish")
+
 	}
 
 	timeNow := time.Now()
 	execution.Status = executionFailed
 	execution.FinishedAt = &timeNow
 	execution.ExecutionLog = executionLog
+
 	result := main.db.Save(&execution)
 	if result.Error != nil {
-		return domain.ActionsExecutions{}, errors.NewError("Set error", result.Error.Error()).
-			WithOperations("SetExecutionFailed.Save")
+		return domain.ActionsExecutions{}, logging.NewError("Set execution error", result.Error, nil, "ActionExecutionRepository.SetExecutionFailed.Save")
 	}
 
 	return execution, nil
@@ -93,22 +90,21 @@ func (main metricsGroupActionRepository) SetExecutionFailed(actionExecutionID uu
 func (main metricsGroupActionRepository) SetExecutionSuccess(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
-		return domain.ActionsExecutions{}, err.WithOperations("SetExecutionSuccess.findExecutionById")
+		return domain.ActionsExecutions{}, logging.WithOperation(err, "ActionExecutionRepository.SetExecutionSuccess")
 	}
 
 	if !validateActionCanFinish(execution) {
-		return domain.ActionsExecutions{}, errors.NewError("Set error", "cannot change status of a not in_execution action").
-			WithOperations("SetExecutionSuccess.validateActionCanFinish")
+		return domain.ActionsExecutions{}, logging.NewError("Set Execution error", errors.New("cannot change status of a not in_execution action"), nil, "ActionExecutionRepository.SetExecutionSuccess.validateActionCanFinish")
 	}
 
 	execution.Status = executionSuccess
 	timeNow := time.Now()
 	execution.FinishedAt = &timeNow
 	execution.ExecutionLog = executionLog
+
 	result := main.db.Save(&execution)
 	if result.Error != nil {
-		return domain.ActionsExecutions{}, errors.NewError("Set error", result.Error.Error()).
-			WithOperations("SetExecutionSuccess.save")
+		return domain.ActionsExecutions{}, logging.NewError("Set execution error", result.Error, nil, "ActionExecutionRepository.SetExecutionSuccess.Save")
 	}
 
 	return execution, nil
@@ -120,10 +116,10 @@ func validateActionCanFinish(execution domain.ActionsExecutions) bool {
 
 func (main metricsGroupActionRepository) getNumberOfActionExecutions(groupActionID uuid.UUID) (int64, error) {
 	var count int64
+
 	result := main.db.Table("actions_executions").Where("group_action_id = ?", groupActionID).Count(&count)
 	if result.Error != nil {
-		return 0, errors.NewError("Get error", result.Error.Error()).
-			WithOperations("getNumberOfActionExecutions.Count")
+		return 0, logging.NewError("Get number error", result.Error, nil, "ActionExecutionRepository.getNumberOfActionExecutions.Count")
 	}
 
 	return count, nil
