@@ -21,6 +21,7 @@ package dispatcher
 import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"sync"
 	"time"
@@ -62,7 +63,7 @@ func (dispatcher *ActionDispatcher) dispatch() {
 	}
 }
 
-func (dispatcher *ActionDispatcher) doAction(group repository.MetricsGroup) {
+func (dispatcher *ActionDispatcher) doAction(group domain.MetricsGroup) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -73,22 +74,22 @@ func (dispatcher *ActionDispatcher) doAction(group repository.MetricsGroup) {
 	}
 }
 
-func (dispatcher *ActionDispatcher) executeAction(groupAction repository.MetricsGroupAction) {
+func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGroupAction) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
-	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID.String())
+	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err.WithOperations("executeAction.CreateNewExecution"),
+			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 		}).Errorln()
 		return
 	}
 
-	act, err := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
+	act, err := dispatcher.actionRepo.FindActionById(groupAction.ActionID)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err.WithOperations("executeAction.FindActionByID"),
+			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 		}).Errorln()
 		return
 	}
@@ -96,13 +97,13 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction repository.Metrics
 	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", act.Type, act.Type))
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err.WithOperations("executeAction.GetPluginBySrc"),
+			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 		}).Errorln()
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), err.Error().Detail)
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, err.Error())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err.WithOperations("executeAction.GetPluginBySrc.SetExecutionFailed"),
+				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 			}).Errorln()
 		}
 		return
@@ -115,10 +116,10 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction repository.Metrics
 				WithOperations("executeAction.getInterval"),
 		}).Errorln()
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), lookupErr.Error())
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, lookupErr.Error())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err.WithOperations("executeAction.Lookup.SetExecutionFailed"),
+				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 			}).Errorln()
 		}
 		return
@@ -127,23 +128,22 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction repository.Metrics
 	result := exec.(func(actionConfig []byte, executionConfig []byte) error)(act.Configuration, groupAction.ExecutionParameters)
 	if result != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Execute dispatch error", result.Error()).
-				WithOperations("executeAction.exec"),
+			"err": logging.NewError("Execute dispatch error", result, nil, "ActionDispatcher.executeAction.exec"),
 		}).Errorln()
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID.String(), result.Error())
+		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, result.Error())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
-				"err": err.WithOperations("executeAction.exec.SetExecutionFailed"),
+				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 			}).Errorln()
 		}
 		return
 	}
 
-	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID.String(), "action executed with success")
+	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID, "action executed with success")
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err.WithOperations("executeAction.SetExecutionSuccess"),
+			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
 		}).Errorln()
 	}
 }

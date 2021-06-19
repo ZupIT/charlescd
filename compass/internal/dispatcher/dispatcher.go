@@ -19,6 +19,8 @@
 package dispatcher
 
 import (
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"sync"
 	"time"
@@ -55,8 +57,7 @@ func (dispatcher *Dispatcher) dispatch() {
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start dispatch", "Cannot find active metric executions").
-				WithOperations("dispatch.FindAllMetricExecutions"),
+			"err": logging.NewError("Cannot start dispatch", err, nil, "Dispatcher.getMetricResult.FindAllMetricExecutions"),
 		}).Errorln()
 	}
 
@@ -78,7 +79,7 @@ func compareResultWithMetricThreshold(result float64, threshold float64, conditi
 	}
 }
 
-func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric repository.Metric) string {
+func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric domain.Metric) string {
 	if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 		return repository.MetricReached
 	}
@@ -86,11 +87,11 @@ func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, cur
 	return repository.MetricActive
 }
 
-func (dispatcher *Dispatcher) getMetricResult(execution repository.MetricExecution) {
+func (dispatcher *Dispatcher) getMetricResult(execution domain.MetricExecution) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
-	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID.String())
+	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID)
 	if err != nil {
 		return
 	}
@@ -98,7 +99,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution repository.MetricExecuti
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": err.WithOperations("getMetricResult.ResultQuery"),
+			"err": logging.WithOperation(err, "Dispatcher.getMetricResult"),
 		}).Errorln()
 
 		execution.Status = repository.MetricError
@@ -107,7 +108,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution repository.MetricExecuti
 	}
 
 	if metricResult != execution.LastValue || execution.Status == repository.MetricUpdated {
-		dispatcher.metric.UpdateMetricExecution(repository.MetricExecution{
+		dispatcher.metric.UpdateMetricExecution(domain.MetricExecution{
 			BaseModel: execution.BaseModel,
 			MetricID:  execution.MetricID,
 			LastValue: metricResult,
