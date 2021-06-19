@@ -10,7 +10,7 @@ type jobManager struct {
 }
 
 func prepareJobs(pm persistenceManager) jobManager {
-	metricDispatcher := dispatcher.NewDispatcher(pm.metricRepository)
+	metricDispatcher := dispatcher.NewMetricDispatcher(pm.metricRepository)
 
 	actionDispatcher := dispatcher.NewActionDispatcher(pm.metricsGroupRepository, pm.actionRepository, pm.pluginRepository, pm.metricRepository, pm.metricsGroupAction)
 

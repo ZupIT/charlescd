@@ -61,7 +61,7 @@ func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
-	s.repository = dispatcher.NewDispatcher(s.metricMain)
+	s.repository = dispatcher.NewMetricDispatcher(s.metricMain)
 
 	clearDatabase(s.DB)
 }

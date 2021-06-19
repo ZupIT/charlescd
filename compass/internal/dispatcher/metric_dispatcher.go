@@ -36,7 +36,7 @@ type UseCases interface {
 	Start(stopChan chan bool) error
 }
 
-type Dispatcher struct {
+type MetricDispatcher struct {
 	metric repository.MetricRepository
 	mux    sync.Mutex
 }
@@ -48,16 +48,16 @@ var (
 	})
 )
 
-func NewDispatcher(metric repository.MetricRepository) UseCases {
-	return &Dispatcher{metric, sync.Mutex{}}
+func NewMetricDispatcher(metric repository.MetricRepository) UseCases {
+	return &MetricDispatcher{metric, sync.Mutex{}}
 }
 
-func (dispatcher *Dispatcher) dispatch() {
+func (dispatcher *MetricDispatcher) dispatch() {
 
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": logging.NewError("Cannot start dispatch", err, nil, "Dispatcher.getMetricResult.FindAllMetricExecutions"),
+			"err": logging.NewError("Cannot start dispatch", err, nil, "MetricDispatcher.getMetricResult.FindAllMetricExecutions"),
 		}).Errorln()
 	}
 
@@ -79,7 +79,7 @@ func compareResultWithMetricThreshold(result float64, threshold float64, conditi
 	}
 }
 
-func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, currentMetric domain.Metric) string {
+func (dispatcher *MetricDispatcher) getNewStatusForExecution(metricResult float64, currentMetric domain.Metric) string {
 	if compareResultWithMetricThreshold(metricResult, currentMetric.Threshold, currentMetric.Condition) {
 		return repository.MetricReached
 	}
@@ -87,7 +87,7 @@ func (dispatcher *Dispatcher) getNewStatusForExecution(metricResult float64, cur
 	return repository.MetricActive
 }
 
-func (dispatcher *Dispatcher) getMetricResult(execution domain.MetricExecution) {
+func (dispatcher *MetricDispatcher) getMetricResult(execution domain.MetricExecution) {
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
@@ -99,7 +99,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution domain.MetricExecution) 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "Dispatcher.getMetricResult"),
+			"err": logging.WithOperation(err, "MetricDispatcher.getMetricResult"),
 		}).Errorln()
 
 		execution.Status = repository.MetricError
@@ -119,11 +119,11 @@ func (dispatcher *Dispatcher) getMetricResult(execution domain.MetricExecution) 
 	}
 }
 
-func (dispatcher *Dispatcher) getInterval() (time.Duration, error) {
+func (dispatcher *MetricDispatcher) getInterval() (time.Duration, error) {
 	return time.ParseDuration(configuration.Get("DISPATCHER_INTERVAL"))
 }
 
-func (dispatcher *Dispatcher) Start(stopChan chan bool) error {
+func (dispatcher *MetricDispatcher) Start(stopChan chan bool) error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
