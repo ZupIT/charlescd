@@ -23,6 +23,6 @@ func prepareJobs(pm persistenceManager) jobManager {
 func (jm jobManager) startJobs() {
 	stop := make(chan bool, 0)
 
-	jm.metricDispatcher.Start(stop)
-	jm.actionDispatcher.Start(stop)
+	go jm.metricDispatcher.Start(stop)
+	go jm.actionDispatcher.Start(stop)
 }

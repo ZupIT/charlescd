@@ -8,8 +8,8 @@ import (
 )
 
 type DatasourceRequest struct {
-	Name      string          `json:"name" validate:"notblank, max=100"`
-	PluginSrc string          `json:"pluginSrc" validate:"notblank, max=100"`
+	Name      string          `json:"name" validate:"required,max=100"`
+	PluginSrc string          `json:"pluginSrc" validate:"required,max=100"`
 	Data      json.RawMessage `json:"data" validate:"required"`
 }
 

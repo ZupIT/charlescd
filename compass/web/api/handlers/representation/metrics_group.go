@@ -16,9 +16,9 @@ type MetricsGroupResponse struct {
 }
 
 type MetricsGroupRequest struct {
-	Name     string                      `json:"name" validate:"notblank, max=64"`
+	Name     string                      `json:"name" validate:"notblank,max=64"`
 	Metrics  []domain.Metric             `json:"metrics"`
-	CircleID uuid.UUID                   `json:"circleId" validate:"notblank, uuid"`
+	CircleID uuid.UUID                   `json:"circleId" validate:"notblank"`
 	Actions  []domain.MetricsGroupAction `json:"actions"`
 }
 

@@ -9,11 +9,11 @@ import (
 )
 
 type ActionRequest struct {
-	Nickname      string          `json:"nickname" validate:"notblank, max=64"`
-	Type          string          `json:"type" validate:"notblank, max=100"`
-	Description   string          `json:"description" validate:"notblank, max=64"`
-	UseDefault    bool            `json:"useDefaultConfiguration" gorm:"-"`
-	Configuration json.RawMessage `json:"configuration" validate:"required, json"`
+	Nickname      string          `json:"nickname" validate:"notblank,max=64"`
+	Type          string          `json:"type" validate:"notblank,max=100"`
+	Description   string          `json:"description" validate:"notblank,max=64"`
+	UseDefault    bool            `json:"useDefaultConfiguration"`
+	Configuration json.RawMessage `json:"configuration" validate:"required,json"`
 }
 
 type ActionResponse struct {

@@ -53,13 +53,13 @@ func CreateDatasource(saveDatasource datasource.SaveDatasource) echo.HandlerFunc
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-		var dataSource representation.DatasourceRequest
 
-		bindErr := echoCtx.Bind(&dataSource)
-		if bindErr != nil {
-			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		request, err := Parse(echoCtx.Request().Body, new(representation.DatasourceRequest))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", err, nil))
 		}
+		dataSource := request.(*representation.DatasourceRequest)
 
 		validationErr := echoCtx.Validate(dataSource)
 		if validationErr != nil {
