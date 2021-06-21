@@ -22,7 +22,11 @@ export default {
   component: Notification,
 };
 
-const Template: Story<Props> = (props: Props) => <Notification {...props} />;
+const Template: Story<Props> = (props: Props) => (
+  <div style={{ width: '400px', height: '40px' }}>
+    <Notification {...props} />
+  </div>
+);
 export const notification = Template.bind({});
 notification.args = {
   notification: {
