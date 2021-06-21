@@ -63,12 +63,12 @@ const Template: Story<Props> = (props: Props) => {
 };
 export const infiniteScroll = Template.bind({});
 
-// infiniteScroll.parameters = {
-//   docs: {
-//     source: {
-//       type: 'code',
-//     }
-//   }
-// };
+infiniteScroll.parameters = {
+  docs: {
+    source: {
+      type: 'code',
+    }
+  }
+};
 
 infiniteScroll.storyName = 'InfiniteScroll';
