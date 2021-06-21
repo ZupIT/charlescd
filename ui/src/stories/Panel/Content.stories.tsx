@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import PanelContent, { Props as ContentProps } from './Content';
-import PanelSection, { Props as SectionProps } from './Section';
+import { Story } from '@storybook/react';
+import Content, { Props } from 'core/components/Panel/Content';
 
-const Panel = {
-  Content: (props: ContentProps) => <PanelContent {...props} />,
-  Section: (props: SectionProps) => <PanelSection {...props} />
+export default {
+  title: 'Components/Panel/Content',
+  component: Content,
 };
 
-export default Panel;
+const Template: Story<Props> = (props: Props) => <Content {...props} />;
+export const content = Template.bind({});
+content.args = {
+  children: 'panel content...',
+};

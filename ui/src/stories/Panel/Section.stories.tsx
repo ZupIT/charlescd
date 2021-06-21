@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-import { ReactNode } from 'react';
-import Styled from './styled';
+import { Story } from '@storybook/react';
+import Section, { Props } from 'core/components/Panel/Section';
 
-export interface Props {
-  children: ReactNode;
-  size?: string;
-  className?: string;
-}
+export default {
+  title: 'Components/Panel/Section',
+  component: Section,
+};
 
-const Content = ({ size = '316px', children, className }: Props) => (
-  <Styled.Content className={className} size={size}>
-    {children}
-  </Styled.Content>
-);
-
-export default Content;
+const Template: Story<Props> = (props: Props) => <Section {...props} />;
+export const section = Template.bind({});
+section.args = {
+  children: 'panel section...',
+};
