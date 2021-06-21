@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useHistory } from 'react-router';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
