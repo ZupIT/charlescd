@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-import { ReactNode } from 'react';
-import Item from './Item';
-import Styled from './styled';
+import { Story } from '@storybook/react';
+import Summary, { Props } from 'core/components/Summary';
 
-export type Props = {
-  children: ReactNode;
-  className?: string;
+export default {
+  title: 'Components/Summary',
+  component: Summary,
 };
 
-const Summary = ({ children, className }: Props) => (
-  <Styled.Summary data-testid="summary" className={className}>
-    {children}
-  </Styled.Summary>
+const Template: Story<Props> = (props: Props) => (
+  <Summary>
+    <Summary.Item name="Executed" color="green" />
+    <Summary.Item name="Executing" color="darkBlue" />
+    <Summary.Item name="Not executed" color="lightBlue" />
+    <Summary.Item name="Failed" color="red" />
+  </Summary>
 );
-
-Summary.Item = Item;
-
-export default Summary;
+export const summary = Template.bind({});
+summary.args = {};
+summary.parameters = {
+  docs: {
+    source: {
+      type: 'code',
+    },
+  },
+};
