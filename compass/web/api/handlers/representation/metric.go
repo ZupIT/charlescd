@@ -10,9 +10,9 @@ import (
 type MetricRequest struct {
 	MetricsGroupID  uuid.UUID              `json:"metricGroupId"`
 	DataSourceID    uuid.UUID              `json:"dataSourceId"`
-	Nickname        string                 `json:"nickname" validate:"notblank, max=64"`
+	Nickname        string                 `json:"nickname" validate:"notblank,max=64"`
 	Query           string                 `json:"query" validate:"required_without=Metric"`
-	Metric          string                 `json:"metric" validate:"required_without=Query, max=64"`
+	Metric          string                 `json:"metric" validate:"required_without=Query,max=64"`
 	Filters         []MetricFilterRequest  `json:"filters"`
 	GroupBy         []MetricGroupByRequest `json:"groupBy"`
 	Condition       string                 `json:"condition"`
@@ -48,8 +48,8 @@ type MetricResponse struct {
 }
 
 type MetricFilterResponse struct {
-	Field    string `json:"field" validate:"max=100"`
-	Value    string `json:"value" validate:"max=100"`
+	Field    string `json:"field"`
+	Value    string `json:"value"`
 	Operator string `json:"operator"`
 }
 

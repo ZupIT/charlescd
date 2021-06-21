@@ -8,9 +8,9 @@ import (
 )
 
 type MetricsGroupActionRequest struct {
-	MetricsGroupID      uuid.UUID       `json:"metricsGroupId" validate:"required, uuid"`
-	ActionID            uuid.UUID       `json:"actionId" validate:"required, uuid"`
-	Nickname            string          `json:"nickname" validate:"notblank, max=100"`
+	MetricsGroupID      uuid.UUID       `json:"metricsGroupId" validate:"required"`
+	ActionID            uuid.UUID       `json:"actionId" validate:"required"`
+	Nickname            string          `json:"nickname" validate:"notblank,max=100"`
 	ExecutionParameters json.RawMessage `json:"executionParameters" validate:"required"`
 }
 

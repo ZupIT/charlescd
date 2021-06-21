@@ -31,13 +31,13 @@ func CreateMetricsGroupAction(createMetricGroupAction metricsGroupActionInteract
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-		var action representation.MetricsGroupActionRequest
 
-		bindErr := echoCtx.Bind(&action)
-		if bindErr != nil {
-			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		request, err := Parse(echoCtx.Request().Body, new(representation.MetricsGroupActionRequest))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", err, nil))
 		}
+		action := request.(*representation.MetricsGroupActionRequest)
 
 		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if parseErr != nil {
@@ -67,13 +67,13 @@ func Update(updateMetricGroupAction metricsGroupActionInteractor.UpdateMetricGro
 		}
 
 		ctx := echoCtx.Request().Context()
-		var action representation.MetricsGroupActionRequest
 
-		bindErr := echoCtx.Bind(&action)
-		if bindErr != nil {
-			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		request, err := Parse(echoCtx.Request().Body, new(representation.MetricsGroupActionRequest))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", err, nil))
 		}
+		action := request.(*representation.MetricsGroupActionRequest)
 
 		updated, err := updateMetricGroupAction.Execute(action.MetricsGroupActionRequestToDomain(), id, workspaceId)
 		if err != nil {

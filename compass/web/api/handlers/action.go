@@ -31,13 +31,14 @@ func Create(createAction actionInteractor.CreateAction) echo.HandlerFunc {
 	return func(echoCtx echo.Context) error {
 
 		ctx := echoCtx.Request().Context()
-		var action representation.ActionRequest
 
-		bindErr := echoCtx.Bind(&action)
-		if bindErr != nil {
-			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, nil))
+		request, err := Parse(echoCtx.Request().Body, new(representation.ActionRequest))
+		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
+			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", err, nil))
 		}
+
+		action := request.(*representation.ActionRequest)
 
 		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {
