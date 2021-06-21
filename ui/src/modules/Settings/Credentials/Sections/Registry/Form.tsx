@@ -25,7 +25,7 @@ import { Registry } from './interfaces';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import Switch from 'core/components/Switch';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import Message from 'core/components/Message';
 import CustomOption from 'core/components/Form/Select/CustomOption';
 import { Option } from 'core/components/Form/Select/interfaces';
 import isEqual from 'lodash/isEqual';
@@ -263,7 +263,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
           </>
         )}
         {handleFields()}
-        <ConnectionStatus
+        <Message
           successMessage={`Successful connection with ${registryName}.`}
           errorMessage={testConnectionResponse?.message}
           status={testConnectionResponse?.status}
@@ -308,9 +308,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
         Adding your Docker Registry allows Charles to watch for new images being
         generated and list all the images saved in your registry in order to
         deploy them. See our{' '}
-        <Link href={`${CHARLES_DOC}/reference/registry`}>
-          documentation
-        </Link>{' '}
+        <Link href={`${CHARLES_DOC}/reference/registry`}>documentation</Link>{' '}
         for further details.
       </Text>
       <Styled.Select

@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import Message from 'core/components/Message';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Radio from 'core/components/Radio';
 import Form from 'core/components/Form';
@@ -39,23 +39,23 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
     save: testConnection,
-    reset: resetTestConnection
+    reset: resetTestConnection,
   } = useTestConnection(testGitConnection);
   const {
     register,
     handleSubmit,
     getValues,
     formState: { isValid },
-    watch
+    watch,
   } = useForm<GitFormData>({
     mode: 'onChange',
     defaultValues: {
       credentials: {
         address: '.',
         accessToken: '',
-        serviceProvider: ''
-      }
-    }
+        serviceProvider: '',
+      },
+    },
   });
 
   const form = watch();
@@ -78,8 +78,8 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
     save({
       ...git,
       credentials: {
-        ...buildConnectionPayload(git, gitType).credentials
-      }
+        ...buildConnectionPayload(git, gitType).credentials,
+      },
     });
   };
 
@@ -114,7 +114,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
-        <ConnectionStatus
+        <Message
           successMessage="Successful connection with git."
           errorMessage={testConnectionResponse?.message}
           status={testConnectionResponse?.status}
@@ -141,7 +141,9 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
 
   return (
     <Styled.Content>
-      <Styled.Title tag="H2" color="light">Add Git</Styled.Title>
+      <Styled.Title tag="H2" color="light">
+        Add Git
+      </Styled.Title>
       <Styled.Info tag="H5" color="dark" data-testid="git-help-text">
         Adding a Git allows Charles to create, delete and merge branches, as
         well as view repositories and generate releases. See our{' '}

@@ -14,21 +14,30 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
-export interface Props {
-  type: 'success' | 'error';
-  message: string;
-}
+export type Props = {
+  status: 'error' | 'success' | 'idle';
+  successMessage?: string;
+  errorMessage?: string;
+};
 
-const ConnectionStatus = ({ type, message }: Props) => (
-  <Styled.Message data-testid={`connection-${type}`} status={type}>
-    <Icon name={type} />
-    <Text tag="H5">{message}</Text>
-  </Styled.Message>
-);
+const Message = ({ successMessage, errorMessage, status }: Props) => {
+  return (
+    status !== 'idle' && (
+      <Styled.StatusMessageWrapper
+        data-testid={`connection-${status}`}
+        status={status}
+      >
+        <Icon name={status} />
+        <Text tag="H5">
+          {status === 'success' ? successMessage : errorMessage}
+        </Text>
+      </Styled.StatusMessageWrapper>
+    )
+  );
+};
 
-export default ConnectionStatus;
+export default Message;
