@@ -25,7 +25,7 @@ export default {
   parameters: { controls: { sort: 'requiredFirst' } },
   argTypes: {
     loadMore: {
-      description: 'This function returns new items to be shown in the list.',
+      description: 'This function will be called as long as the property `hasMore` is true and scroll is at the end.',
     }
   }
 };
