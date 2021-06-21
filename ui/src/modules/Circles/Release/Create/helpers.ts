@@ -88,7 +88,7 @@ export const checkIfComponentConflict = (modules: ModuleProps[]) => {
 
 export const validationResolver = ({ modules, metadata }: ModuleForm) => {
   const error = checkIfComponentConflict(modules);
-  const metadataRegex = /^[a-zA-Z0-9]+[a-zA-Z0-9-_.]*[a-zA-Z0-9]$/gi;
+  const metadataRegex = /^[a-zA-Z0-9]+([a-zA-Z0-9-_.]*[a-zA-Z0-9])?$/gi;
   
   forEach(metadata?.content, (content, index) => {
     if (isEmpty(content?.key) || isEmpty(content?.value)) {
