@@ -25,8 +25,8 @@ services:
 
   app:
     build:
-      dockerfile: ./test/Dockerfile.test
-      context: ../
+      dockerfile: Dockerfile.tests
+      context: ../..
     image: compass
     ports:
       - 8080:8080

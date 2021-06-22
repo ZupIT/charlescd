@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -43,7 +44,7 @@ type MetricsGroupActionSuite struct {
 }
 
 func (s *MetricsGroupActionSuite) SetupSuite() {
-	setupEnv()
+	integration.setupEnv()
 }
 
 func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
@@ -52,13 +53,13 @@ func (s *MetricsGroupActionSuite) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.Nil(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	s.pluginRepo = repository2.NewPluginRepository()
 	s.actionRepo = repository2.NewActionRepository(s.DB, s.pluginRepo)
 
 	s.repository = repository2.NewMetricsGroupActionRepository(s.DB, s.pluginRepo, s.actionRepo)
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func (s *MetricsGroupActionSuite) AfterTest(_, _ string) {
@@ -110,13 +111,13 @@ func (s *MetricsGroupActionSuite) TestParseGroupActionError() {
 }
 
 func (s *MetricsGroupActionSuite) TestSaveMetricsGroupAction() {
-	act := newBasicAction()
-	group := newBasicMetricGroup()
+	act := integration.newBasicAction()
+	group := integration.newBasicMetricGroup()
 
 	s.DB.Create(&group)
 	s.DB.Create(&act)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 
@@ -129,19 +130,19 @@ func (s *MetricsGroupActionSuite) TestSaveMetricsGroupAction() {
 
 func (s *MetricsGroupActionSuite) TestSaveMetricsGroupActionError() {
 	s.DB.Close()
-	_, err := s.repository.SaveGroupAction(newBasicGroupAction())
+	_, err := s.repository.SaveGroupAction(integration.newBasicGroupAction())
 
 	require.NotNil(s.T(), err)
 }
 
 func (s *MetricsGroupActionSuite) TestFindByIdMetricsGroupAction() {
-	act := newBasicAction()
-	group := newBasicMetricGroup()
+	act := integration.newBasicAction()
+	group := integration.newBasicMetricGroup()
 
 	s.DB.Create(&group)
 	s.DB.Create(&act)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 
@@ -159,13 +160,13 @@ func (s *MetricsGroupActionSuite) TestFindByIdMetricsGroupActionError() {
 }
 
 func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupAction() {
-	act := newBasicAction()
-	group := newBasicMetricGroup()
+	act := integration.newBasicAction()
+	group := integration.newBasicMetricGroup()
 
 	s.DB.Create(&group)
 	s.DB.Create(&act)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 
@@ -187,30 +188,30 @@ func (s *MetricsGroupActionSuite) TestDeleteMetricsGroupActionError() {
 }
 
 func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionResume() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group1 := newBasicMetricGroup()
+	group1 := integration.newBasicMetricGroup()
 	s.DB.Create(&group1)
 
-	group2 := newBasicMetricGroup()
+	group2 := integration.newBasicMetricGroup()
 	s.DB.Create(&group2)
 
-	groupAction1 := newBasicGroupAction()
+	groupAction1 := integration.newBasicGroupAction()
 	groupAction1.ActionID = act.ID
 	groupAction1.MetricsGroupID = group1.ID
-	groupAction2 := newBasicGroupAction()
+	groupAction2 := integration.newBasicGroupAction()
 	groupAction2.ActionID = act.ID
 	groupAction2.MetricsGroupID = group1.ID
-	groupAction3 := newBasicGroupAction()
+	groupAction3 := integration.newBasicGroupAction()
 	groupAction3.ActionID = act.ID
 	groupAction3.MetricsGroupID = group2.ID
-	groupAction4 := newBasicGroupAction()
+	groupAction4 := integration.newBasicGroupAction()
 	groupAction4.ActionID = act.ID
 	groupAction4.MetricsGroupID = group1.ID
 	now := time.Now()
 	groupAction4.DeletedAt = &now
-	groupAction5 := newBasicGroupAction()
+	groupAction5 := integration.newBasicGroupAction()
 	groupAction5.ActionID = act.ID
 	groupAction5.MetricsGroupID = group1.ID
 	s.DB.Create(&groupAction1)
@@ -219,11 +220,11 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionResume() {
 	s.DB.Create(&groupAction4)
 	s.DB.Create(&groupAction5)
 
-	ga1Execution := newBasicActionExecution()
+	ga1Execution := integration.newBasicActionExecution()
 	ga1Execution.GroupActionId = groupAction1.ID
 	ge1Start := time.Now()
 	ga1Execution.StartedAt = &ge1Start
-	ga5Execution := newBasicActionExecution()
+	ga5Execution := integration.newBasicActionExecution()
 	ga5Execution.GroupActionId = groupAction5.ID
 	ge5Start := time.Now().Add(5000)
 	ga5Execution.StartedAt = &ge5Start
@@ -261,13 +262,13 @@ func (s *MetricsGroupActionSuite) TestFindAllMetricsGroupActionResumeError() {
 }
 
 func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupAction() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
@@ -291,13 +292,13 @@ func (s *MetricsGroupActionSuite) TestUpdateMetricsGroupActionIdError() {
 }
 
 func (s *MetricsGroupActionSuite) TestCreateNewExecution() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
@@ -325,18 +326,18 @@ func (s *MetricsGroupActionSuite) TestCreateNewExecutionError() {
 }
 
 func (s *MetricsGroupActionSuite) TestSetExecutionFailed() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	s.DB.Create(&execution)
 
@@ -357,18 +358,18 @@ func (s *MetricsGroupActionSuite) TestSetExecutionFailedNotFoundExecution() {
 }
 
 func (s *MetricsGroupActionSuite) TestSetExecutionFailedNotInExecution() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	execution.Status = "SUCCESS"
 	s.DB.Create(&execution)
@@ -384,18 +385,18 @@ func (s *MetricsGroupActionSuite) TestSetExecutionFailedError() {
 }
 
 func (s *MetricsGroupActionSuite) TestSetExecutionSuccess() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	s.DB.Create(&execution)
 
@@ -416,18 +417,18 @@ func (s *MetricsGroupActionSuite) TestSetExecutionSuccessNotFoundExecution() {
 }
 
 func (s *MetricsGroupActionSuite) TestSetExecutionSuccessNotInExecution() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	execution.Status = "FAILED"
 	s.DB.Create(&execution)
@@ -443,13 +444,13 @@ func (s *MetricsGroupActionSuite) TestSetExecutionSuccessError() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithNoExecutionsCanBeExecuted() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -461,20 +462,20 @@ func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithNoExecutionsCa
 }
 
 func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithExecutionsCanBeExecuted() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 	groupAction.ActionsConfiguration.NumberOfCycles = 0
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	execution.Status = "SUCCESS"
 	s.DB.Create(&execution)
@@ -484,13 +485,13 @@ func (s *MetricsGroupActionSuite) TestValidateRepeatableActionWithExecutionsCanB
 }
 
 func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithNoExecutionsCanBeExecuted() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	groupAction.ActionsConfiguration.Repeatable = false
@@ -502,20 +503,20 @@ func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithNoExecution
 }
 
 func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithExecutionsCanBeExecuted() {
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	s.DB.Create(&act)
 
-	group := newBasicMetricGroup()
+	group := integration.newBasicMetricGroup()
 	s.DB.Create(&group)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = act.ID
 	groupAction.MetricsGroupID = group.ID
 	groupAction.ActionsConfiguration.Repeatable = false
 	groupAction.ActionsConfiguration.NumberOfCycles = 1
 	s.DB.Create(&groupAction)
 
-	execution := newBasicActionExecution()
+	execution := integration.newBasicActionExecution()
 	execution.GroupActionId = groupAction.ID
 	execution.Status = "SUCCESS"
 	s.DB.Create(&execution)
@@ -526,15 +527,15 @@ func (s *MetricsGroupActionSuite) TestValidateNotRepeatableActionWithExecutionsC
 
 func (s *MetricsGroupActionSuite) TestValidateActionCanBeExecutedError() {
 	s.DB.Close()
-	res := s.repository.ValidateActionCanBeExecuted(newBasicGroupAction())
+	res := s.repository.ValidateActionCanBeExecuted(integration.newBasicGroupAction())
 	require.False(s.T(), res)
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyNickname() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.Nickname = ""
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
@@ -547,10 +548,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyNickname() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionBlankNickname() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.Nickname = "   "
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
@@ -563,11 +564,11 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionBlankNickname() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNicknameTooLong() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
-	groupAction.Nickname = bigString
+	groupAction := integration.newBasicGroupAction()
+	groupAction.Nickname = integration.bigString
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -579,10 +580,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNicknameTooLong() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNilMetricGroupID() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.Repeatable = true
 
@@ -593,10 +594,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilMetricGroupID() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNilExecutionParameters() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ExecutionParameters = nil
@@ -609,10 +610,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilExecutionParameters(
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyExecutionParameters() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ExecutionParameters = json.RawMessage("")
@@ -625,7 +626,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionEmptyExecutionParameter
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNilActionID() {
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
 
@@ -636,7 +637,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNilActionID() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionActionNotFound() {
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = uuid.New()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -649,7 +650,7 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionNotFound() {
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionActionSearchError() {
 	s.DB.Close()
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.ActionID = uuid.New()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -661,10 +662,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionActionSearchError() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNegativeCycles() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.NumberOfCycles = -5
@@ -676,10 +677,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNegativeCycles() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionNotRepeatableZeroCycles() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.NumberOfCycles = 0
@@ -693,12 +694,12 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionNotRepeatableZeroCycles
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionPluginNotFound() {
 	workspaceID := uuid.New()
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	act.WorkspaceId = workspaceID
 	act.Type = "no_plugin_found"
 	s.DB.Create(&act)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -711,12 +712,12 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionPluginNotFound() {
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionLookupError() {
 	workspaceID := uuid.New()
-	act := newBasicAction()
+	act := integration.newBasicAction()
 	act.WorkspaceId = workspaceID
 	act.Type = "nofuncaction"
 	s.DB.Create(&act)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = act.ID
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -728,10 +729,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionLookupError() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionInvalid() {
-	insertAction, actionToFind := actionInsert("invalidaction")
+	insertAction, actionToFind := integration.actionInsert("invalidaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.Repeatable = true
@@ -743,10 +744,10 @@ func (s *MetricsGroupActionSuite) TestValidateGroupActionInvalid() {
 }
 
 func (s *MetricsGroupActionSuite) TestValidateGroupActionOk() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 	s.DB.Exec(insertAction)
 
-	groupAction := newBasicGroupAction()
+	groupAction := integration.newBasicGroupAction()
 	groupAction.MetricsGroupID = uuid.New()
 	groupAction.ActionID = actionToFind.ID
 	groupAction.ActionsConfiguration.Repeatable = true

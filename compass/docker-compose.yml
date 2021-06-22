@@ -10,7 +10,7 @@ services:
         command:
             - --config.file=/etc/prometheus/prometheus.yml
         volumes:
-            - ./test/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+            - ./tests/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
 
     postgres:
         image: postgres:11.8-alpine

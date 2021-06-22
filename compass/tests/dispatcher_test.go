@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"gorm.io/gorm"
 	"os"
 	"testing"
@@ -56,14 +57,14 @@ func (s *SuiteDispatcher) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 	s.metricMain = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
 	s.repository = dispatcher.NewMetricDispatcher(s.metricMain)
 
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func TestInitDispatcher(t *testing.T) {

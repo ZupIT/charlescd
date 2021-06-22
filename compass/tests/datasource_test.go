@@ -26,15 +26,14 @@ import (
 	"os"
 	"strings"
 	"testing"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	datasource2 "github.com/ZupIT/charlescd/compass/internal/datasource"
+	datasource2 "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
-type Suite struct {
+type DatasourceSuite struct {
 	suite.Suite
 	DB *gorm.DB
 
@@ -43,7 +42,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupSuite() {
-	setupEnv()
+	tests.setupEnv()
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {
@@ -52,11 +51,11 @@ func (s *Suite) BeforeTest(suiteName, testName string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.Nil(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(tests.dbLog)
 
 	var pluginMain = repository.NewPluginRepository()
 	s.repository = datasource2.NewMain(s.DB, pluginMain)
-	clearDatabase(s.DB)
+	tests.clearDatabase(s.DB)
 }
 
 func (s *Suite) AfterTest(suiteName, testName string) {
@@ -95,8 +94,8 @@ func (s *Suite) TestValidate() {
 
 func (s *Suite) TestValidateNameLength() {
 	datasource := datasource2.Request{
-		Name:      bigString,
-		PluginSrc: bigString,
+		Name:      tests.bigString,
+		PluginSrc: tests.bigString,
 	}
 	var errList = s.repository.Validate(datasource)
 
@@ -104,7 +103,7 @@ func (s *Suite) TestValidateNameLength() {
 }
 
 func (s *Suite) TestFindDataSourceById() {
-	dataSourceInsert, dataSourceStruct := datasourceInsert("src.so")
+	dataSourceInsert, dataSourceStruct := tests.datasourceInsert("src.so")
 
 	s.DB.Exec(dataSourceInsert)
 	res, err := s.repository.FindById(dataSourceStruct.ID.String())

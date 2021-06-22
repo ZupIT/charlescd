@@ -21,9 +21,10 @@ package tests
 import (
 	"encoding/json"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -56,7 +57,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
@@ -66,7 +67,7 @@ func (s *SuiteActionDispatcher) BeforeTest(_, _ string) {
 	metricsgroupMain := repository.NewMetricsGroupRepository(s.DB, s.metricMain, datasourceMain, pluginMain, s.metricsGroupActionMain)
 	s.repository = dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, s.metricMain, s.metricsGroupActionMain)
 
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func TestInitActionsDispatcher(t *testing.T) {

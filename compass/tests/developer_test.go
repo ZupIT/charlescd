@@ -42,6 +42,6 @@ func TestInitSuiteDeveloper(t *testing.T) {
 	suite.Run(t, new(SuiteDeveloper))
 }
 
-func (s *Suite) TestIsDeveloperRunning() {
+func (s *unit.Suite) TestIsDeveloperRunning() {
 	require.Equal(s.T(), false, utils.IsDeveloperRunning())
 }

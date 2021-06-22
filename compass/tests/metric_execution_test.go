@@ -24,6 +24,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	"github.com/ZupIT/charlescd/compass/internal/util"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -51,13 +52,13 @@ func (s *SuiteMetricExecution) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.Nil(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func (s *SuiteMetricExecution) AfterTest(_, _ string) {

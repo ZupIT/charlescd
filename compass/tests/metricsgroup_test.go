@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
@@ -45,7 +46,7 @@ type SuiteMetricGroup struct {
 }
 
 func (s *SuiteMetricGroup) SetupSuite() {
-	setupEnv()
+	integration.setupEnv()
 }
 
 func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
@@ -54,7 +55,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.NoError(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
@@ -63,7 +64,7 @@ func (s *SuiteMetricGroup) BeforeTest(_, _ string) {
 	groupActionMain := repository.NewMetricsGroupActionRepository(s.DB, pluginMain, actionMain)
 	s.repository = repository.NewMetricsGroupRepository(s.DB, metricMain, datasourceMain, pluginMain, groupActionMain)
 
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func (s *SuiteMetricGroup) AfterTest(_, _ string) {
@@ -75,7 +76,7 @@ func TestInitMetricGroup(t *testing.T) {
 }
 
 func (s *SuiteMetricGroup) TestValidate() {
-	newMetricGroup := newBasicMetricGroup()
+	newMetricGroup := integration.newBasicMetricGroup()
 
 	errList := s.repository.Validate(newMetricGroup)
 	fmt.Println(errList)
@@ -83,7 +84,7 @@ func (s *SuiteMetricGroup) TestValidate() {
 }
 
 func (s *SuiteMetricGroup) TestValidateEmptyName() {
-	newMetricGroup := newBasicMetricGroup()
+	newMetricGroup := integration.newBasicMetricGroup()
 	newMetricGroup.Name = ""
 
 	ers := s.repository.Validate(newMetricGroup)
@@ -93,7 +94,7 @@ func (s *SuiteMetricGroup) TestValidateEmptyName() {
 }
 
 func (s *SuiteMetricGroup) TestValidateBlankName() {
-	newMetricGroup := newBasicMetricGroup()
+	newMetricGroup := integration.newBasicMetricGroup()
 	newMetricGroup.Name = "    "
 
 	ers := s.repository.Validate(newMetricGroup)
@@ -103,8 +104,8 @@ func (s *SuiteMetricGroup) TestValidateBlankName() {
 }
 
 func (s *SuiteMetricGroup) TestValidateNameLength() {
-	newMetricGroup := newBasicMetricGroup()
-	newMetricGroup.Name = bigString
+	newMetricGroup := integration.newBasicMetricGroup()
+	newMetricGroup.Name = integration.bigString
 
 	ers := s.repository.Validate(newMetricGroup)
 
@@ -113,7 +114,7 @@ func (s *SuiteMetricGroup) TestValidateNameLength() {
 }
 
 func (s *SuiteMetricGroup) TestValidateNilCircle() {
-	newMetricGroup := newBasicMetricGroup()
+	newMetricGroup := integration.newBasicMetricGroup()
 	newMetricGroup.CircleID = uuid.Nil
 
 	ers := s.repository.Validate(newMetricGroup)
@@ -123,7 +124,7 @@ func (s *SuiteMetricGroup) TestValidateNilCircle() {
 }
 
 func (s *SuiteMetricGroup) TestValidateNilWorkspaceID() {
-	newMetricGroup := newBasicMetricGroup()
+	newMetricGroup := integration.newBasicMetricGroup()
 	newMetricGroup.WorkspaceID = uuid.Nil
 
 	ers := s.repository.Validate(newMetricGroup)
@@ -171,10 +172,10 @@ func (s *SuiteMetricGroup) TestPeriodValidateNotFoundUnit() {
 }
 
 func (s *SuiteMetricGroup) TestFindAll() {
-	group1 := newBasicMetricGroup()
+	group1 := integration.newBasicMetricGroup()
 	group1.Name = "group 1"
 
-	group2 := newBasicMetricGroup()
+	group2 := integration.newBasicMetricGroup()
 	group2.Name = "group 2"
 
 	expectMetricGroups := []repository.MetricsGroup{group1, group2}
@@ -201,10 +202,10 @@ func (s *SuiteMetricGroup) TestFindAllError() {
 }
 
 func (s *SuiteMetricGroup) TestFindAllByWorkspaceId() {
-	group1 := newBasicMetricGroup()
+	group1 := integration.newBasicMetricGroup()
 	group1.Name = "group 1"
 
-	group2 := newBasicMetricGroup()
+	group2 := integration.newBasicMetricGroup()
 	group2.Name = "group 2"
 	group2.WorkspaceID = group1.WorkspaceID
 
@@ -232,7 +233,7 @@ func (s *SuiteMetricGroup) TestFindAllByWorkspaceIdError() {
 }
 
 func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 
@@ -244,7 +245,7 @@ func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 }
 
 func (s *SuiteMetricGroup) TestSave() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	createMetricGroup, err := s.repository.Save(metricGroup)
 	require.Nil(s.T(), err)
@@ -254,7 +255,7 @@ func (s *SuiteMetricGroup) TestSave() {
 }
 
 func (s *SuiteMetricGroup) TestSaveError() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Close()
 	_, err := s.repository.Save(metricGroup)
@@ -262,7 +263,7 @@ func (s *SuiteMetricGroup) TestSaveError() {
 }
 
 func (s *SuiteMetricGroup) TestUpdate() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 
@@ -276,7 +277,7 @@ func (s *SuiteMetricGroup) TestUpdate() {
 }
 
 func (s *SuiteMetricGroup) TestUpdateError() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 	metricGroup.Name = "group 2"
@@ -288,7 +289,7 @@ func (s *SuiteMetricGroup) TestUpdateError() {
 }
 
 func (s *SuiteMetricGroup) TestUpdateName() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 
@@ -301,7 +302,7 @@ func (s *SuiteMetricGroup) TestUpdateName() {
 }
 
 func (s *SuiteMetricGroup) TestUpdateNameError() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 
@@ -314,7 +315,7 @@ func (s *SuiteMetricGroup) TestUpdateNameError() {
 }
 
 func (s *SuiteMetricGroup) TestDelete() {
-	metricGroup := newBasicMetricGroup()
+	metricGroup := integration.newBasicMetricGroup()
 
 	s.DB.Create(&metricGroup)
 

@@ -24,6 +24,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -42,7 +43,7 @@ type SuiteMetric struct {
 }
 
 func (s *SuiteMetric) SetupSuite() {
-	setupEnv()
+	integration.setupEnv()
 }
 
 func (s *SuiteMetric) BeforeTest(_, _ string) {
@@ -50,13 +51,13 @@ func (s *SuiteMetric) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.Nil(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	pluginMain := repository.NewPluginRepository()
 	datasourceMain := datasource.NewMain(s.DB, pluginMain)
 
 	s.repository = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func (s *SuiteMetric) AfterTest(_, _ string) {
@@ -69,13 +70,13 @@ func TestInitMetric(t *testing.T) {
 
 func (s *SuiteMetric) TestValidateMetric() {
 	filters := make([]datasourcePKG.MetricFilter, 0)
-	filters = append(filters, datasourcePKG.MetricFilter{Field: bigString, Value: bigString, Operator: "="})
+	filters = append(filters, datasourcePKG.MetricFilter{Field: integration.bigString, Value: integration.bigString, Operator: "="})
 
 	groupBy := make([]repository.MetricGroupBy, 0)
-	groupBy = append(groupBy, repository.MetricGroupBy{Field: bigString})
+	groupBy = append(groupBy, repository.MetricGroupBy{Field: integration.bigString})
 
 	metric := repository.Metric{
-		Nickname: bigString,
+		Nickname: integration.bigString,
 		Filters:  filters,
 		GroupBy:  groupBy,
 	}
@@ -357,7 +358,7 @@ func (s *SuiteMetric) TestResultQuery() {
 		WorkspaceID: uuid.New(),
 	}
 
-	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
+	dataSourceInsert, dataSourceStruct := integration.datasourceInsert("datasource/prometheus/prometheus")
 
 	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
@@ -423,7 +424,7 @@ func (s *SuiteMetric) TestQuery() {
 		CircleID:    circleId,
 		WorkspaceID: uuid.New(),
 	}
-	dataSourceInsert, dataSourceStruct := datasourceInsert("datasource/prometheus/prometheus")
+	dataSourceInsert, dataSourceStruct := integration.datasourceInsert("datasource/prometheus/prometheus")
 
 	s.DB.Exec(dataSourceInsert)
 	s.DB.Create(&metricGroup)
@@ -489,23 +490,23 @@ func (s *SuiteMetric) TestCountMetrics() {
 }
 
 func (s *SuiteMetric) TestFindAllByGroup() {
-	ds := newBasicDatasource()
+	ds := integration.newBasicDatasource()
 	s.DB.Create(&ds)
 
-	group1 := newBasicMetricGroup()
-	group2 := newBasicMetricGroup()
+	group1 := integration.newBasicMetricGroup()
+	group2 := integration.newBasicMetricGroup()
 	s.DB.Create(&group1)
 	s.DB.Create(&group2)
 
-	metric1 := newBasicMetric()
+	metric1 := integration.newBasicMetric()
 	metric1.DataSourceID = ds.ID
 	metric1.MetricsGroupID = group1.ID
 
-	metric2 := newBasicMetric()
+	metric2 := integration.newBasicMetric()
 	metric2.DataSourceID = ds.ID
 	metric2.MetricsGroupID = group1.ID
 
-	metric3 := newBasicMetric()
+	metric3 := integration.newBasicMetric()
 	metric3.DataSourceID = ds.ID
 	metric3.MetricsGroupID = group2.ID
 

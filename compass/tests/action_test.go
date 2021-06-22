@@ -21,6 +21,7 @@ package tests
 import (
 	"encoding/json"
 	repository2 "github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/tests/integration"
 	"gorm.io/gorm"
 	"io/ioutil"
 	"strings"
@@ -42,7 +43,7 @@ type ActionSuite struct {
 }
 
 func (s *ActionSuite) SetupSuite() {
-	setupEnv()
+	integration.setupEnv()
 }
 
 func (s *ActionSuite) BeforeTest(_, _ string) {
@@ -51,11 +52,11 @@ func (s *ActionSuite) BeforeTest(_, _ string) {
 	s.DB, err = configuration.GetDBConnection("../../migrations")
 	require.Nil(s.T(), err)
 
-	s.DB.LogMode(dbLog)
+	s.DB.LogMode(integration.dbLog)
 
 	s.plugins = repository2.NewPluginRepository()
 	s.repository = repository2.NewActionRepository(s.DB, s.plugins)
-	clearDatabase(s.DB)
+	integration.clearDatabase(s.DB)
 }
 
 func (s *ActionSuite) AfterTest(_, _ string) {
@@ -130,7 +131,7 @@ func (s *ActionSuite) TestParseActionError() {
 }
 
 func (s *ActionSuite) TestFindActionById() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 
 	s.DB.Exec(insertAction)
 	res, err := s.repository.FindActionById(actionToFind.ID.String())
@@ -147,7 +148,7 @@ func (s *ActionSuite) TestFindActionByIdError() {
 }
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
-	insertAction, actionToFind := actionInsert("validaction")
+	insertAction, actionToFind := integration.actionInsert("validaction")
 
 	s.DB.Exec(insertAction)
 	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, actionToFind.WorkspaceId)
@@ -165,10 +166,10 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
 
 func (s *ActionSuite) TestFindAllActionByWorkspace() {
 	wspID := uuid.New()
-	actionStruct1 := newBasicAction()
+	actionStruct1 := integration.newBasicAction()
 	actionStruct1.WorkspaceId = wspID
 
-	actionStruct2 := newBasicAction()
+	actionStruct2 := integration.newBasicAction()
 	actionStruct2.WorkspaceId = wspID
 
 	s.DB.Create(&actionStruct1)
@@ -189,7 +190,7 @@ func (s *ActionSuite) TestFindByAllActionError() {
 }
 
 func (s *ActionSuite) TestSaveAction() {
-	actionStruct := newBasicActionRequest()
+	actionStruct := integration.newBasicActionRequest()
 
 	res, err := s.repository.SaveAction(actionStruct)
 	require.Nil(s.T(), err)
@@ -209,7 +210,7 @@ func (s *ActionSuite) TestSaveActionError() {
 }
 
 func (s *ActionSuite) TestDeleteAction() {
-	actionStruct := newBasicAction()
+	actionStruct := integration.newBasicAction()
 
 	s.DB.Create(&actionStruct)
 	err := s.repository.DeleteAction(actionStruct.ID.String())
@@ -223,7 +224,7 @@ func (s *ActionSuite) TestDeleteActionError() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyNickname() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Nickname = ""
 
 	res := s.repository.ValidateAction(act)
@@ -234,7 +235,7 @@ func (s *ActionSuite) TestValidateActionEmptyNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankNickname() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Nickname = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -245,8 +246,8 @@ func (s *ActionSuite) TestValidateActionBlankNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionTooLongNickname() {
-	act := newBasicActionRequest()
-	act.Nickname = bigString
+	act := integration.newBasicActionRequest()
+	act.Nickname = integration.bigString
 
 	res := s.repository.ValidateAction(act)
 
@@ -256,7 +257,7 @@ func (s *ActionSuite) TestValidateActionTooLongNickname() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyDescription() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Description = ""
 
 	res := s.repository.ValidateAction(act)
@@ -267,7 +268,7 @@ func (s *ActionSuite) TestValidateActionEmptyDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankDescription() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Description = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -278,8 +279,8 @@ func (s *ActionSuite) TestValidateActionBlankDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionTooLongDescription() {
-	act := newBasicActionRequest()
-	act.Description = bigString
+	act := integration.newBasicActionRequest()
+	act.Description = integration.bigString
 
 	res := s.repository.ValidateAction(act)
 
@@ -289,7 +290,7 @@ func (s *ActionSuite) TestValidateActionTooLongDescription() {
 }
 
 func (s *ActionSuite) TestValidateActionNilConfiguration() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Configuration = nil
 
 	res := s.repository.ValidateAction(act)
@@ -300,7 +301,7 @@ func (s *ActionSuite) TestValidateActionNilConfiguration() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Configuration = json.RawMessage("")
 
 	res := s.repository.ValidateAction(act)
@@ -311,7 +312,7 @@ func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
 }
 
 func (s *ActionSuite) TestValidateActionNilWorkspace() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.WorkspaceId = uuid.Nil
 
 	res := s.repository.ValidateAction(act)
@@ -322,7 +323,7 @@ func (s *ActionSuite) TestValidateActionNilWorkspace() {
 }
 
 func (s *ActionSuite) TestValidateActionEmptyType() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Type = ""
 
 	res := s.repository.ValidateAction(act)
@@ -333,7 +334,7 @@ func (s *ActionSuite) TestValidateActionEmptyType() {
 }
 
 func (s *ActionSuite) TestValidateActionBlankType() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Type = "  "
 
 	res := s.repository.ValidateAction(act)
@@ -344,8 +345,8 @@ func (s *ActionSuite) TestValidateActionBlankType() {
 }
 
 func (s *ActionSuite) TestValidateActionTypeToo() {
-	act := newBasicActionRequest()
-	act.Type = bigString
+	act := integration.newBasicActionRequest()
+	act.Type = integration.bigString
 
 	res := s.repository.ValidateAction(act)
 
@@ -355,7 +356,7 @@ func (s *ActionSuite) TestValidateActionTypeToo() {
 }
 
 func (s *ActionSuite) TestValidateActionPluginNotFound() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Type = "no_plugin_found"
 
 	res := s.repository.ValidateAction(act)
@@ -369,7 +370,7 @@ func (s *ActionSuite) TestValidateActionPluginNotFound() {
 }
 
 func (s *ActionSuite) TestValidateActionPluginLookupError() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Type = "nofuncaction"
 
 	res := s.repository.ValidateAction(act)
@@ -383,7 +384,7 @@ func (s *ActionSuite) TestValidateActionPluginLookupError() {
 }
 
 func (s *ActionSuite) TestValidateActionInvalidConfig() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 	act.Type = "invalidaction"
 
 	res := s.repository.ValidateAction(act)
@@ -397,7 +398,7 @@ func (s *ActionSuite) TestValidateActionInvalidConfig() {
 }
 
 func (s *ActionSuite) TestValidateActionOk() {
-	act := newBasicActionRequest()
+	act := integration.newBasicActionRequest()
 
 	res := s.repository.ValidateAction(act)
 

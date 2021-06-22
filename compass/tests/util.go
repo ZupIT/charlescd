@@ -22,23 +22,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	//"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
+	//repository "github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
+	//datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
+	tc "github.com/testcontainers/testcontainers-go"
 	"gorm.io/gorm"
-	"os"
-	"time"
+	"strings"
+	//"time"
+
 )
 
 const dbLog = false
 
 const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method. Now, we have fields that can be filled with more than 300 characters. So, we need more characters here...                                                                                                                                                                          . `
 
-func setupEnv() {
-	os.Setenv("ENV", "TEST")
-	os.Setenv("PLUGINS_DIR", "../../dist")
+func setupEnv() error {
+	composeFilePaths := []string {"resources/docker-compose.test.yaml"}
+	identifier := strings.ToLower(uuid.New().String())
+
+	compose := tc.NewLocalDockerCompose(composeFilePaths, identifier)
+	execError := compose.
+		WithCommand([]string{"up", "-d"}).
+		WithEnv(map[string]string {
+			"ENV": "TEST",
+			"PLUGINS_DIR": "../../dist",
+		}).
+		Invoke()
+	err := execError.Error
+	if err != nil {
+		return fmt.Errorf("Could not run compose file: %v - %v", composeFilePaths, err)
+	}
+	return nil
 }
 
 func clearDatabase(db *gorm.DB) {
@@ -54,7 +71,7 @@ func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM data_sources")
 }
 
-func newBasicMetricGroup() repository.MetricsGroup {
+/*func newBasicMetricGroup() repository.MetricsGroup {
 	return repository.MetricsGroup{
 		Name:        "Name",
 		Metrics:     nil,
@@ -62,9 +79,9 @@ func newBasicMetricGroup() repository.MetricsGroup {
 		CircleID:    uuid.New(),
 		Actions:     nil,
 	}
-}
+}*/
 
-func newBasicDatasource() datasource.DataSource {
+func newBasicDatasource() domain.DataSource {
 	return datasource.DataSource{
 		Name:        "Name",
 		PluginSrc:   "src.so",
@@ -90,7 +107,7 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
 		entity.ID, entity.Name, entity.Data, configuration.Get("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
 }
-
+/*
 func newBasicMetric() repository.Metric {
 	return repository.Metric{
 		Nickname:        "Nickname",
@@ -167,3 +184,6 @@ func newBasicActionExecution() repository.ActionsExecutions {
 		StartedAt: &now,
 	}
 }
+*/
+
+
