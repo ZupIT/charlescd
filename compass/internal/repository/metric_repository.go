@@ -175,10 +175,9 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 
 	getQuery, lookupErr := plugin.Lookup("Result")
 	if lookupErr != nil {
-		return 0, logging.WithOperation(lookupErr, "MetricRepository.ResultQuery.Lookup")
+		return 0, logging.NewError("Result Query error", lookupErr, nil, "MetricRepository.ResultQuery.Lookup")
 	}
 
-	dataSourceConfigurationData, _ := json.Marshal(dataSourceResult.Data)
 	query := main.getQueryByMetric(metric)
 
 	if metric.Query == "" {
@@ -190,11 +189,10 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 	}
 
 	result, castError := getQuery.(func(request datasourcePKG.ResultRequest) (float64, error))(datasourcePKG.ResultRequest{
-		DatasourceConfiguration: dataSourceConfigurationData,
+		DatasourceConfiguration: dataSourceResult.Data,
 		Query:                   query,
 		Filters:                 metric.Filters,
 	})
-
 	if castError != nil {
 		return 0, logging.NewError(util.ResultQueryError, err, nil, "MetricRepository.ResultQuery.getQuery")
 	}

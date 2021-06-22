@@ -3,7 +3,6 @@ module github.com/ZupIT/charlescd/compass
 go 1.15
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -19,8 +18,8 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect s
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
-	github.com/prometheus/client_golang v1.10.0
-	github.com/prometheus/common v0.25.0
+	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/common v0.13.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/zap v1.13.0

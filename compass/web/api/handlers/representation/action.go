@@ -13,7 +13,7 @@ type ActionRequest struct {
 	Type          string          `json:"type" validate:"notblank,max=100"`
 	Description   string          `json:"description" validate:"notblank,max=64"`
 	UseDefault    bool            `json:"useDefaultConfiguration"`
-	Configuration json.RawMessage `json:"configuration" validate:"required,json"`
+	Configuration json.RawMessage `json:"configuration" validate:"required"`
 }
 
 type ActionResponse struct {

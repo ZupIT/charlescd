@@ -16,17 +16,6 @@ const DatasourceSaveQuery = `SELECT id,
 						WHERE id = ?
 						AND deleted_at IS NULL`
 
-var DatasourceDecryptedQuery = fmt.Sprintf(`SELECT id,
-	  							name,
-	  							created_at,
-	  							PGP_SYM_DECRYPT(data, '%s'),
-	  							workspace_id,
-	  							deleted_at,
-	  							plugin_src
-						FROM data_sources
-						WHERE id = ?
-						AND deleted_at IS NULL`, configuration.Get("ENCRYPTION_KEY"))
-
 const WorkspaceDatasourceQuery = `SELECT id,
 	  							name,
 	  							created_at,
@@ -38,4 +27,17 @@ func Insert(id, name, pluginSrc string, data []byte, workspaceId uuid.UUID) stri
 	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, deleted_at, plugin_src)
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
 		id, name, data, configuration.Get("ENCRYPTION_KEY"), workspaceId, pluginSrc)
+}
+
+func DatasourceDecryptedQuery() string {
+	return fmt.Sprintf(`SELECT id,
+	  							name,
+	  							created_at,
+	  							PGP_SYM_DECRYPT(data, '%s'),
+	  							workspace_id,
+	  							deleted_at,
+	  							plugin_src
+						FROM data_sources
+						WHERE id = ?
+						AND deleted_at IS NULL`, configuration.Get("ENCRYPTION_KEY"))
 }

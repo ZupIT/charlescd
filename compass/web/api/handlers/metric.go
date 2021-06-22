@@ -39,13 +39,22 @@ func CreateMetric(createMetric metricInteractor.CreateMetric) echo.HandlerFunc {
 			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Can't parse body", bindErr, nil))
 		}
 
+		validationErr := echoCtx.Validate(metric)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createMetric.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+		}
+
 		metricgroupId, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
+			logging.LogErrorFromCtx(ctx, parseErr)
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		metricResult, err := createMetric.Execute(metric.MetricRequestToDomain(metricgroupId))
 		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 
@@ -61,11 +70,13 @@ func UpdateMetric(updateMetric metricInteractor.UpdateMetric) echo.HandlerFunc {
 
 		metricId, parseErr := uuid.Parse(echoCtx.Param("metricID"))
 		if parseErr != nil {
+			logging.LogErrorFromCtx(ctx, parseErr)
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
 		metricgroupId, parseErr := uuid.Parse(echoCtx.Param("metricGroupID"))
 		if parseErr != nil {
+			logging.LogErrorFromCtx(ctx, parseErr)
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)
 		}
 
@@ -77,6 +88,7 @@ func UpdateMetric(updateMetric metricInteractor.UpdateMetric) echo.HandlerFunc {
 
 		updatedMetric, err := updateMetric.Execute(metric.MetricUpdateRequestToDomain(metricId, metricgroupId))
 		if err != nil {
+			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, err)
 		}
 

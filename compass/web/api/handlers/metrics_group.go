@@ -75,7 +75,7 @@ func CreateMetricsGroup(createMetricsGroup metricsGroupInteractor.CreateMetricsG
 
 		validationErr := echoCtx.Validate(metricsGroup)
 		if validationErr != nil {
-			validationErr = logging.WithOperation(validationErr, "createDatasource.InputValidation")
+			validationErr = logging.WithOperation(validationErr, "createMetricsGroup.InputValidation")
 			logging.LogErrorFromCtx(ctx, validationErr)
 			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
 		}

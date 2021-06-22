@@ -58,7 +58,8 @@ func (main datasourceRepository) FindAllByWorkspace(workspaceID uuid.UUID) ([]do
 
 func (main datasourceRepository) FindById(id uuid.UUID) (domain.Datasource, error) {
 	dataSource := models.DataSource{}
-	row := main.db.Raw(queries.DatasourceDecryptedQuery, id).Row()
+
+	row := main.db.Raw(queries.DatasourceDecryptedQuery(), id).Row()
 
 	dbError := row.Scan(&dataSource.ID, &dataSource.Name, &dataSource.CreatedAt, &dataSource.Data,
 		&dataSource.WorkspaceID, &dataSource.DeletedAt, &dataSource.PluginSrc)

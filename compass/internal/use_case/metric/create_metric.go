@@ -32,7 +32,7 @@ func (s createMetrics) Execute(metric domain.Metric) (domain.Metric, error) {
 
 	_, err = s.metricRepository.ResultQuery(metric)
 	if err != nil {
-		return domain.Metric{}, logging.NewError("Result Query error", err, getFieldValidateByMetric(metric), "createMetric.Execute")
+		return domain.Metric{}, logging.WithOperation(err, "createMetric.Execute")
 	}
 
 	mg, err := s.metricRepository.SaveMetric(metric)
