@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import useOutsideClick from 'core/hooks/useClickOutside';
@@ -29,7 +29,7 @@ type PopoverProps = {
   link?: string;
   linkLabel?: string;
   className?: string;
-}
+};
 
 interface WithIcon extends PopoverProps {
   icon: string;
@@ -48,7 +48,7 @@ const Popover = (props: Props) => {
     link = CHARLES_DOC,
     linkLabel = 'View documentation',
     description,
-    className
+    className,
   } = props;
   const { icon } = props as WithIcon;
   const { children } = props as WithChildren;
@@ -81,12 +81,18 @@ const Popover = (props: Props) => {
           data-testid={`popover-${title}`}
           className="popover-container"
         >
-          <Text tag="H4" color="light">{title}</Text>
+          <Text tag="H4" color="light">
+            {title}
+          </Text>
           <Styled.Content>
-            <Text tag="H5" color="dark">{description}</Text>
+            <Text tag="H5" color="dark">
+              {description}
+            </Text>
           </Styled.Content>
           <Styled.Link href={link} target="_blank">
-            <Text tag="H6" color="light">{linkLabel}</Text>
+            <Text tag="H6" color="light">
+              {linkLabel}
+            </Text>
           </Styled.Link>
         </Styled.Popover>
       )}
