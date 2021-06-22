@@ -15,10 +15,10 @@
  */
 
 import { Story } from '@storybook/react';
-import RadioButtons, { Props } from 'core/components/Radio/RadioButtons';
+import RadioButtons, { Props } from 'core/components/RadioButtons';
 
 export default {
-  title: 'Components/Radio/RadioButtons',
+  title: 'Components/RadioButtons',
   component: RadioButtons,
 };
 
@@ -35,5 +35,3 @@ radioButtons.args = {
   items: radios,
   onChange: () => {},
 };
-
-radioButtons.storyName = 'RadioButtons';
