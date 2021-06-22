@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import map from 'lodash/map';
 import ContentIcon from 'core/components/ContentIcon';
-import Panel from 'core/components/Panel';
+import PanelContent from 'core/components/Panel/Content';
+import PanelSection from 'core/components/Panel/Section';
 import Text from 'core/components/Text';
 import { Component } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
@@ -30,27 +30,29 @@ const LayerComponents = ({ components }: Props) => {
   const renderComponent = ({
     module,
     name,
-    version
+    version,
   }: Pick<Component, 'module' | 'name' | 'version'>) => (
-    <Panel.Section
+    <PanelSection
       key={`${module}-${name}-${version}`}
       data-testid={`deployed-module-${module}-${name}-${version}`}
     >
       <Text tag="H5" color="light">{`${module}/${name}:${version}`}</Text>
-    </Panel.Section>
+    </PanelSection>
   );
 
   const renderComponents = () =>
     components && (
-      <Panel.Content>
-        {map(components, component => renderComponent(component))}
-      </Panel.Content>
+      <PanelContent>
+        {map(components, (component) => renderComponent(component))}
+      </PanelContent>
     );
 
   return (
     <Styled.Layer>
       <ContentIcon icon="modules">
-        <Text tag="H2" color="light">Deployed modules</Text>
+        <Text tag="H2" color="light">
+          Deployed modules
+        </Text>
       </ContentIcon>
       <Styled.Content>{renderComponents()}</Styled.Content>
     </Styled.Layer>
