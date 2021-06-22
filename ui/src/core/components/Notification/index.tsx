@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { Notification as NotificationProps } from './interfaces/Notification';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
-import Log from './Log';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   notification: NotificationProps;
   onDismiss: Function;
 }
@@ -37,7 +35,5 @@ const Notification = ({ notification, onDismiss }: Props) => (
     <Styled.Icon name="cancel" color="light" onClick={() => onDismiss()} />
   </Styled.Notification>
 );
-
-Notification.Log = Log;
 
 export default Notification;
