@@ -19,6 +19,7 @@ import { Props } from './';
 import ComponentIcon from 'core/components/Icon';
 import ComponentText from 'core/components/Text';
 import ReactTooltip from 'react-tooltip';
+import { dark as darkTheme } from 'core/assets/themes/dropdown';
 
 const Icon = styled(ComponentIcon)``;
 
@@ -47,27 +48,18 @@ const Item = styled.button<Partial<Props>>`
     css`
       ${Icon}, ${Text} {
         color: ${({ theme }) => theme.dropdown.disabled.color};
+        opacity: 0.7;
       }
     `};
 `;
 
 const ReactTooltipStyled = styled(ReactTooltip)`
-  text-align: left !important;
-  padding: 8px !important;
-  font-size: 12px !important;
-  background-color: ${({ theme }) => theme.dropdown.background} !important;
-  color: ${({ theme }) => theme.dropdown.color} !important;
+  padding: 8px 21px !important;
+  font-size: 10px !important;
+  color: ${darkTheme.color} !important;
 
-  ::after {
-    border-right-color: ${({ theme }) => theme.dropdown.background} !important;
-  }
-
-  span {
+  > span {
     text-align: left !important;
-    padding: 0px !important;
-    font-size: 12px;
-    background-color: ${({ theme }) => theme.dropdown.background};
-    color: ${({ theme }) => theme.dropdown.color};
   }
 `;
 
