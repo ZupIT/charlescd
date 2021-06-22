@@ -16,6 +16,7 @@
 
 import { Story } from '@storybook/react';
 import Page, { Props } from 'core/components/Page';
+import Text from 'core/components/Text';
 
 export default {
   title: 'Components/Page',
@@ -26,8 +27,12 @@ const Template: Story<Props> = (props: Props) => {
   return (
     <Page {...props}>
       <Page.Menu>
-        <div>Item 1</div>
-        <div>Item 2</div>
+        <Text tag="H4" color="light">
+          Item 1
+        </Text>
+        <Text tag="H4" color="light">
+          Item 2
+        </Text>
       </Page.Menu>
       <Page.Content>
         <Page.Placeholder
