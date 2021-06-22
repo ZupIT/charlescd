@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RadioButtonProps } from 'core/components/Radio/Buttons';
+import { RadioButtonProps } from 'core/components/Radio/RadioButtons';
 
 export const FORM_GIT = 'git';
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
-import Radio from 'core/components/Radio';
+import RadioButtons from 'core/components/Radio/RadioButtons';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { useGit } from './hooks';
@@ -156,7 +156,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
       <Styled.Subtitle tag="H5" color="dark">
         Choose which one you want to add:
       </Styled.Subtitle>
-      <Radio.Buttons
+      <RadioButtons
         name="git"
         items={radios}
         onChange={({ currentTarget }) => setGitType(currentTarget.value)}

@@ -33,7 +33,7 @@ export interface Props {
   className?: string;
 }
 
-const RadioButton = ({ name, items, onChange, className }: Props) => (
+const RadioButtons = ({ name, items, onChange, className }: Props) => (
   <Styled.RadioButtons
     data-testid={`radio-group-${name}`}
     className={className}
@@ -63,4 +63,4 @@ const RadioButton = ({ name, items, onChange, className }: Props) => (
   </Styled.RadioButtons>
 );
 
-export default RadioButton;
+export default RadioButtons;
