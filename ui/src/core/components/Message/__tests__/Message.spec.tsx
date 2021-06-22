@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import ConnectionStatus from '../';
+import Message from '../';
 
 test('render Connection status default component', async () => {
   render(
-    <ConnectionStatus errorMessage="" status='success' successMessage="Successful connection" />
+    <Message
+      errorMessage=""
+      status="success"
+      successMessage="Successful connection"
+    />
   );
 
   expect(screen.getByTestId('connection-success')).toBeInTheDocument();
@@ -28,9 +31,7 @@ test('render Connection status default component', async () => {
 });
 
 test('render Connection fail status component with default error message', async () => {
-  render(
-    <ConnectionStatus errorMessage="Error" status='error' successMessage="" />
-  );
+  render(<Message errorMessage="Error" status="error" successMessage="" />);
 
   expect(screen.getByTestId('connection-error')).toBeInTheDocument();
   expect(screen.getByText('Error')).toBeInTheDocument();
@@ -40,10 +41,9 @@ test('render Connection fail status component with dynamic error message', async
   const errorMessage = '401 not authorized';
 
   render(
-    <ConnectionStatus errorMessage={errorMessage} successMessage="" status="error" />
+    <Message errorMessage={errorMessage} successMessage="" status="error" />
   );
 
   expect(screen.getByTestId('connection-error')).toBeInTheDocument();
   expect(screen.getByText(errorMessage)).toBeInTheDocument();
 });
-
