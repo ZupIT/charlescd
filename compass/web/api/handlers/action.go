@@ -37,8 +37,14 @@ func Create(createAction actionInteractor.CreateAction) echo.HandlerFunc {
 			logging.LogErrorFromCtx(ctx, err)
 			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", err, nil))
 		}
-
 		action := request.(*representation.ActionRequest)
+
+		validationErr := echoCtx.Validate(action)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createAction.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+		}
 
 		workspaceId, err := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if err != nil {

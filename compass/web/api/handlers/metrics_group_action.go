@@ -39,6 +39,13 @@ func CreateMetricsGroupAction(createMetricGroupAction metricsGroupActionInteract
 		}
 		action := request.(*representation.MetricsGroupActionRequest)
 
+		validationErr := echoCtx.Validate(action)
+		if validationErr != nil {
+			validationErr = logging.WithOperation(validationErr, "createMetricGroupAction.InputValidation")
+			logging.LogErrorFromCtx(ctx, validationErr)
+			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+		}
+
 		workspaceId, parseErr := uuid.Parse(echoCtx.Request().Header.Get("x-workspace-id"))
 		if parseErr != nil {
 			return echoCtx.JSON(http.StatusInternalServerError, parseErr)

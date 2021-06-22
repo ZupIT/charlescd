@@ -48,7 +48,7 @@ func NewActionRepository(db *gorm.DB, pluginRepo PluginRepository) ActionReposit
 func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (domain.Action, error) {
 
 	entity := models.Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(queries.DecryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
+	row := main.db.Set("gorm:auto_preload", true).Raw(queries.DecryptedWorkspaceAndIdActionQuery(), id, workspaceID).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type, &entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
@@ -61,7 +61,7 @@ func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUI
 func (main actionRepository) FindActionById(id uuid.UUID) (domain.Action, error) {
 
 	entity := models.Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(queries.IdActionQuery, id).Row()
+	row := main.db.Set("gorm:auto_preload", true).Raw(queries.IdActionQuery(), id).Row()
 
 	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type, &entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
