@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { getProfileByKey } from 'core/utils/profile';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
