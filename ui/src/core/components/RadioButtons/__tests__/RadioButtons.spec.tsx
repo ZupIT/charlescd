@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
 import RadioButtons from '..';
 import userEvent from '@testing-library/user-event';

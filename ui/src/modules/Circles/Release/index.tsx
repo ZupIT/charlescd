@@ -16,7 +16,7 @@
 
 import { useState } from 'react';
 import Text from 'core/components/Text';
-import RadioButtons from 'core/components/Radio/RadioButtons';
+import RadioButtons from 'core/components/RadioButtons';
 import CreateRelease from './Create';
 import SearchRelease from './Search';
 import { radios } from './constants';

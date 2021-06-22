@@ -20,7 +20,7 @@ import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
 import ConnectionStatus from 'core/components/ConnectionStatus';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
-import RadioButtons from 'core/components/Radio/RadioButtons';
+import RadioButtons from 'core/components/RadioButtons';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { useGit } from './hooks';

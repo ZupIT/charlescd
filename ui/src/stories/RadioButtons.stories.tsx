@@ -35,3 +35,5 @@ radioButtons.args = {
   items: radios,
   onChange: () => {},
 };
+
+radioButtons.storyName = 'RadioButtons';
