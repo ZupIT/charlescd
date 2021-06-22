@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Text from 'core/components/Text';
-import Radio from 'core/components/Radio';
+import RadioButtons from 'core/components/RadioButtons';
 import CreateRelease from './Create';
 import SearchRelease from './Search';
 import { radios } from './constants';
@@ -47,7 +47,7 @@ const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
           You can create a release manually or search for existing releases.
         </Styled.Subtitle>
 
-        <Radio.Buttons
+        <RadioButtons
           name="type"
           items={radios}
           onChange={({ currentTarget }) => setType(currentTarget.value)}

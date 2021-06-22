@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import RadioButtons, { Props as RadioButtonsProps } from './Buttons';
-import RadioCards, { Props as RadioCardsProps } from './Cards';
+import { Story } from '@storybook/react';
+import RadioButtons, { Props } from 'core/components/RadioButtons';
 
-const Radio = {
-  Buttons: (props: RadioButtonsProps) => <RadioButtons {...props} />,
-  Cards: (props: RadioCardsProps) => <RadioCards {...props} />
+export default {
+  title: 'Components/RadioButtons',
+  component: RadioButtons,
 };
 
-export default Radio;
+const Template: Story<Props> = (props: Props) => <RadioButtons {...props} />;
+export const radioButtons = Template.bind({});
+
+const radios = [
+  { icon: 'edit', name: 'Create Release', value: 'create' },
+  { icon: 'search', name: 'Search for existing releases', value: 'search' }
+];
+
+radioButtons.args = {
+  name: 'type',
+  items: radios,
+  onChange: () => {},
+};
+
+radioButtons.storyName = 'RadioButtons';

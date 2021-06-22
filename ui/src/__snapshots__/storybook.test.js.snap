@@ -1268,6 +1268,129 @@ exports[`Storyshots Components/CheckPassword CheckPassword 1`] = `
 </div>
 `;
 
+exports[`Storyshots Components/Dropdown/Dropdown Dropdown 1`] = `
+.c1 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+  width: 15px;
+  height: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  padding: 0;
+}
+
+.c1 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c1 svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c0 {
+  position: relative;
+  width: auto;
+  height: auto;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="dropdown"
+    >
+      <i
+        class="c1 dropdown-icon"
+        color="dark"
+        data-testid="icon-vertical-dots"
+      >
+        <div>
+          <div>
+            <svg
+              src="vertical-dots"
+            />
+          </div>
+        </div>
+      </i>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/Dropdown/DropdownItem DropdownItem 1`] = `
+.c1 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: normal;
+  color: #98989E;
+  text-align: left;
+  line-height: 12px;
+}
+
+.c0 {
+  color: #98989E;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  height: 34px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c0:hover {
+  background: #3A3A3C;
+}
+
+.c0 > * + * {
+  margin-left: 5px;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <button
+      class="c0"
+      data-testid="dropdown-item-undefined-action"
+    >
+      <span
+        class="c1 "
+        color="dark"
+        font-size="12px"
+        font-style="normal"
+        role=""
+      >
+        action
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Components/Editor Editor 1`] = `
 .c0 {
   position: relative;
@@ -1434,7 +1557,7 @@ exports[`Storyshots Components/Form/Input Input Link 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c3:focus + .sc-ciSkZP {
+.c3:focus + .sc-jNnpgg {
   top: 0px;
 }
 
@@ -1443,7 +1566,7 @@ exports[`Storyshots Components/Form/Input Input Link 1`] = `
   border-bottom-color: #98989E;
 }
 
-.c3:-webkit-autofill + .sc-ciSkZP {
+.c3:-webkit-autofill + .sc-jNnpgg {
   top: 0px;
 }
 
@@ -1524,43 +1647,50 @@ exports[`Storyshots Components/Form/Input Input Link 1`] = `
 </div>
 `;
 
-exports[`Storyshots Components/LabeledIcon LabeledIcon 1`] = `
-.c1 {
+exports[`Storyshots Components/Icon Icon 1`] = `
+.c0 {
   display: -webkit-inline-box;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  color: #98989E;
-  width: 15px;
-  height: 15px;
 }
 
-.c1 > div > div {
+.c0 > div > div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
 }
 
-.c1 svg {
-  width: 15px;
-  height: 15px;
-}
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <i
+      class="c0"
+      data-testid="icon-charles"
+    >
+      <div>
+        <div>
+          <svg
+            src="charles"
+          />
+        </div>
+      </div>
+    </i>
+  </div>
+</div>
+`;
 
+exports[`Storyshots Components/Layer Layer 1`] = `
 .c0 {
-  cursor: pointer;
-  display: -webkit-inline-box;
-  display: -webkit-inline-flex;
-  display: -ms-inline-flexbox;
-  display: inline-flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  -webkit-animation: 0.5s iHfShZ linear;
+  animation: 0.5s iHfShZ linear;
+  margin-top: 40px;
 }
 
-.c2 {
-  margin-left: 8px;
+.c0:last-child {
+  padding-bottom: 50px;
 }
 
 <div
@@ -1568,26 +1698,12 @@ exports[`Storyshots Components/LabeledIcon LabeledIcon 1`] = `
 >
   <div>
     <div
-      class="c0"
-      data-testid="labeledIcon-account"
+      style="background-color: rgb(28, 28, 30); color: rgb(152, 152, 158); width: 200px; height: 100px; padding: 10px;"
     >
-      <i
-        class="c1"
-        color="dark"
-        data-testid="icon-account"
-      >
-        <div>
-          <div>
-            <svg
-              src="account"
-            />
-          </div>
-        </div>
-      </i>
       <div
-        class="c2"
+        class="c0"
       >
-        Change password
+        my content inside Layer
       </div>
     </div>
   </div>
@@ -2788,6 +2904,205 @@ exports[`Storyshots Components/Modal/Wizard Wizard 1`] = `
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Components/RadioButtons Radio Buttons 1`] = `
+.c5 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: normal;
+  color: #98989E;
+  text-align: left;
+  line-height: 10px;
+}
+
+.c4 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  color: #98989E;
+}
+
+.c4 > div > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.c0 > * + * {
+  margin-left: 10px;
+}
+
+.c3 {
+  padding: 12px 30px 12px 30px;
+  border-radius: 30px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.c3 > * + * {
+  margin-left: 5px;
+}
+
+.c1 {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.c1:checked + .c2 {
+  background-color: #5C37CC;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.c1:checked + .c2:hover {
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.c1:checked + .c2 .,
+.c1:checked + .c2 .sc-jXcxbT {
+  color: #FFF;
+}
+
+.c1:not(:checked) + .c2 {
+  background-color: rgb(44,44,46);
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+}
+
+.c1:not(:checked) + .c2:hover {
+  -webkit-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.c1:not(:checked) + .c2 .,
+.c1:not(:checked) + .c2 .sc-jXcxbT {
+  color: #98989E;
+}
+
+<div
+  style="display: flex; align-items: center; justify-content: center;"
+>
+  <div>
+    <div
+      class="c0"
+      data-testid="radio-group-type"
+    >
+      <div
+        class=""
+      >
+        <input
+          class="c1"
+          data-testid="radio-group-type-item-create"
+          id="radio-group-type-item-create"
+          name="type"
+          type="radio"
+          value="create"
+        />
+        <label
+          class="c2 c3"
+          for="radio-group-type-item-create"
+          value="create"
+        >
+          <i
+            class="c4 "
+            color="dark"
+            data-testid="icon-edit"
+          >
+            <div>
+              <div>
+                <svg
+                  src="edit"
+                />
+              </div>
+            </div>
+          </i>
+          <span
+            class="c5"
+            color="dark"
+            font-size="10px"
+            font-style="normal"
+            role=""
+          >
+            Create Release
+          </span>
+        </label>
+      </div>
+      <div
+        class=""
+      >
+        <input
+          class="c1"
+          data-testid="radio-group-type-item-search"
+          id="radio-group-type-item-search"
+          name="type"
+          type="radio"
+          value="search"
+        />
+        <label
+          class="c2 c3"
+          for="radio-group-type-item-search"
+          value="search"
+        >
+          <i
+            class="c4 "
+            color="dark"
+            data-testid="icon-search"
+          >
+            <div>
+              <div>
+                <svg
+                  src="search"
+                />
+              </div>
+            </div>
+          </i>
+          <span
+            class="c5"
+            color="dark"
+            font-size="10px"
+            font-style="normal"
+            role=""
+          >
+            Search for existing releases
+          </span>
+        </label>
       </div>
     </div>
   </div>
