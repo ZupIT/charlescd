@@ -23,7 +23,7 @@ import React, {
 } from 'react';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   name?: string;
   value: string;
   label?: string;
