@@ -89,6 +89,7 @@ const FormToken = ({ mode, data }: Props) => {
   const ModalNewToken = () => (
     <ModalCopy
       title="Your token has been created!"
+      tokenName={response?.name}
       description="You have succesfully added a new personal acces token. Copy the token now!"
       token={response?.token}
       onClose={onCloseModalCopy}

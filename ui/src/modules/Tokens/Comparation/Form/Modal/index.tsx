@@ -20,15 +20,17 @@ import InputAction from 'core/components/Form/InputAction';
 import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
 import Icon from 'core/components/Icon';
+import LabeledIcon from 'core/components/LabeledIcon';
 
 interface Props {
   title: string;
+  tokenName?: string;
   description: string;
   token: string;
   onClose?: () => void;
 }
 
-const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
+const ModalCopyToken = ({ title, tokenName = 'placeholder', description, token, onClose }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
   const TIMEOUT_COPIED = 1500;
 
@@ -53,6 +55,9 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
       <Text.h2 weight="bold" color="light">
         {title}
       </Text.h2>
+      <LabeledIcon icon='token'>
+        {tokenName}
+      </LabeledIcon>
       <Text.h5 color="dark">
         {description}
       </Text.h5>
