@@ -15,7 +15,7 @@ require (
 	github.com/labstack/echo-contrib v0.9.0
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/leebenson/conform v1.2.2
-	github.com/leodido/go-urn v1.2.1 // indirect s
+	github.com/leodido/go-urn v1.2.1 // indirect; indirect s
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/prometheus/client_golang v1.7.1
