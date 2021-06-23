@@ -19,6 +19,7 @@
 package dispatcher
 
 import (
+	"context"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
@@ -26,11 +27,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
-	"github.com/sirupsen/logrus"
-
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/pkg/logger"
 )
 
 type ActionDispatcher struct {
@@ -40,20 +37,21 @@ type ActionDispatcher struct {
 	metricRepo      repository.MetricRepository
 	groupActionRepo repository.MetricsGroupActionRepository
 	mux             sync.Mutex
+	ctx             context.Context
 }
 
 func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
-	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository) UseCases {
+	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository, context context.Context) UseCases {
 
 	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
-		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}}
+		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}, ctx: context}
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
 
 	metricGroups, err := dispatcher.metricGroupRepo.FindAll()
 	if err != nil {
-		logger.Error("Error consulting metrics groups", "Dispatch", nil, nil)
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.dispatch"))
 	}
 
 	for _, group := range metricGroups {
@@ -80,71 +78,52 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 
 	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		return
 	}
 
 	act, err := dispatcher.actionRepo.FindActionById(groupAction.ActionID)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		return
 	}
 
 	actionPlugin, err := dispatcher.pluginRepo.GetPluginBySrc(fmt.Sprintf("action/%s/%s", act.Type, act.Type))
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, err.Error())
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-			}).Errorln()
+			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
 		return
 	}
 
 	exec, lookupErr := actionPlugin.Lookup("Do")
 	if lookupErr != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Execute dispatch error", lookupErr.Error()).
-				WithOperations("executeAction.getInterval"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Execute Action error", lookupErr, nil, "ActionDispatcher.executeAction.Lookup"))
 
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, lookupErr.Error())
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-			}).Errorln()
+			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
 		return
 	}
 
 	result := exec.(func(actionConfig []byte, executionConfig []byte) error)(act.Configuration, groupAction.ExecutionParameters)
 	if result != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.NewError("Execute dispatch error", result, nil, "ActionDispatcher.executeAction.exec"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Execute Action error", result, nil, "ActionDispatcher.executeAction.exec"))
 
 		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, result.Error())
 		if err != nil {
-			logrus.WithFields(logrus.Fields{
-				"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-			}).Errorln()
+			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
 		return
 	}
 
 	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID, "action executed with success")
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "ActionDispatcher.executeAction"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 	}
 }
 
@@ -165,10 +144,7 @@ func (dispatcher *ActionDispatcher) getInterval() (time.Duration, error) {
 func (dispatcher *ActionDispatcher) Start(stopChan chan bool) error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start action dispatch", err.Error()).
-				WithOperations("Start.getInterval"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Start action dispatcher error", err, nil, "ActionDispatcher.Start.getInterval"))
 		return err
 	}
 

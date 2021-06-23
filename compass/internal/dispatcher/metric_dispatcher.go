@@ -19,17 +19,15 @@
 package dispatcher
 
 import (
+	"context"
+	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
 	"github.com/ZupIT/charlescd/compass/internal/logging"
 	"github.com/ZupIT/charlescd/compass/internal/repository"
-	"sync"
-	"time"
-
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/sirupsen/logrus"
+	"sync"
+	"time"
 )
 
 type UseCases interface {
@@ -39,6 +37,7 @@ type UseCases interface {
 type MetricDispatcher struct {
 	metric repository.MetricRepository
 	mux    sync.Mutex
+	ctx    context.Context
 }
 
 var (
@@ -48,17 +47,15 @@ var (
 	})
 )
 
-func NewMetricDispatcher(metric repository.MetricRepository) UseCases {
-	return &MetricDispatcher{metric, sync.Mutex{}}
+func NewMetricDispatcher(metric repository.MetricRepository, context context.Context) UseCases {
+	return &MetricDispatcher{metric, sync.Mutex{}, context}
 }
 
 func (dispatcher *MetricDispatcher) dispatch() {
 
 	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.NewError("Cannot start dispatch", err, nil, "MetricDispatcher.getMetricResult.FindAllMetricExecutions"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "MetricDispatcher.dispatch"))
 	}
 
 	for _, execution := range metricExecutions {
@@ -98,10 +95,7 @@ func (dispatcher *MetricDispatcher) getMetricResult(execution domain.MetricExecu
 
 	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": logging.WithOperation(err, "MetricDispatcher.getMetricResult"),
-		}).Errorln()
-
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "MetricDispatcher.getMetricResult"))
 		execution.Status = repository.MetricError
 		dispatcher.metric.UpdateMetricExecution(execution)
 		return
@@ -126,10 +120,7 @@ func (dispatcher *MetricDispatcher) getInterval() (time.Duration, error) {
 func (dispatcher *MetricDispatcher) Start(stopChan chan bool) error {
 	interval, err := dispatcher.getInterval()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": errors.NewError("Cannot start dispatch", "Get sync interval failed").
-				WithOperations("Start.getInterval"),
-		}).Errorln()
+		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Start metric dispatcher error", err, nil, "MetricDispatcher.Start.getInterval"))
 		return err
 	}
 
