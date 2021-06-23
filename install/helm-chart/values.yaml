@@ -573,9 +573,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
-    # -- Enable Gate Installation
     enabled: true
-    # -- Name of Deployment
     name: charlescd-gate
     sidecarIstio:
       # -- Enable istio in installation
@@ -814,7 +812,6 @@ envoy:
     # -- Enable Hermes Installation
     enabled: true
   gate:
-    # -- Enable Gate Installation
     enabled: true
   cors:
     # -- Enable CORS
