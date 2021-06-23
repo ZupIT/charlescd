@@ -15,13 +15,17 @@
  */
 
 import { Story } from '@storybook/react';
-import InputFile, { Props } from 'core/components/Form/InputFile';
+import Radio, { Props } from 'core/components/Form/Radio';
 
 export default {
-  title: 'Components/Form/Input File',
-  component: InputFile,
+  title: 'Components/Form/Radio',
+  component: Radio,
 };
 
-const Template: Story<Props> = (props: Props) => <InputFile {...props} />;
-export const inputFile = Template.bind({});
-inputFile.args = {};
+const Template: Story<Props> = (props: Props) => <Radio {...props} />;
+export const radio = Template.bind({});
+radio.args = {
+  name: 'charles',
+  value: 'charles',
+  label: 'charles'
+};

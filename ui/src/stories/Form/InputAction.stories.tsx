@@ -15,7 +15,7 @@
  */
 
 import { Story } from '@storybook/react';
-import InputAction, { Props } from 'core/components/Form/InputAction'
+import InputAction, { Props } from 'core/components/Form/InputAction';
 
 export default {
   title: 'Components/Form/Input Action',
