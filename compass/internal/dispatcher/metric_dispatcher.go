@@ -35,9 +35,10 @@ type UseCases interface {
 }
 
 type MetricDispatcher struct {
-	metric repository.MetricRepository
-	mux    sync.Mutex
-	ctx    context.Context
+	metricRepo          repository.MetricRepository
+	metricExecutionRepo repository.MetricExecutionRepository
+	mux                 sync.Mutex
+	ctx                 context.Context
 }
 
 var (
@@ -47,13 +48,13 @@ var (
 	})
 )
 
-func NewMetricDispatcher(metric repository.MetricRepository, context context.Context) UseCases {
-	return &MetricDispatcher{metric, sync.Mutex{}, context}
+func NewMetricDispatcher(metricRepo repository.MetricRepository, metricExecutionRepo repository.MetricExecutionRepository, context context.Context) UseCases {
+	return &MetricDispatcher{metricRepo, metricExecutionRepo, sync.Mutex{}, context}
 }
 
 func (dispatcher *MetricDispatcher) dispatch() {
 
-	metricExecutions, err := dispatcher.metric.FindAllMetricExecutions()
+	metricExecutions, err := dispatcher.metricExecutionRepo.FindAllMetricExecutions()
 	if err != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "MetricDispatcher.dispatch"))
 	}
@@ -88,21 +89,21 @@ func (dispatcher *MetricDispatcher) getMetricResult(execution domain.MetricExecu
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
-	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID)
+	currentMetric, err := dispatcher.metricRepo.FindMetricById(execution.MetricID)
 	if err != nil {
 		return
 	}
 
-	metricResult, err := dispatcher.metric.ResultQuery(currentMetric)
+	metricResult, err := dispatcher.metricRepo.ResultQuery(currentMetric)
 	if err != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "MetricDispatcher.getMetricResult"))
 		execution.Status = repository.MetricError
-		dispatcher.metric.UpdateMetricExecution(execution)
+		dispatcher.metricExecutionRepo.UpdateMetricExecution(execution)
 		return
 	}
 
 	if metricResult != execution.LastValue || execution.Status == repository.MetricUpdated {
-		dispatcher.metric.UpdateMetricExecution(domain.MetricExecution{
+		dispatcher.metricExecutionRepo.UpdateMetricExecution(domain.MetricExecution{
 			BaseModel: execution.BaseModel,
 			MetricID:  execution.MetricID,
 			LastValue: metricResult,

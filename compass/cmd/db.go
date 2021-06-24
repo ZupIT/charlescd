@@ -18,6 +18,7 @@ type persistenceManager struct {
 	actionExecutionRepository repository.ActionExecutionRepository
 	datasourceRepository      repository.DatasourceRepository
 	metricRepository          repository.MetricRepository
+	metricExecutionRepository repository.MetricExecutionRepository
 	metricsGroupRepository    repository.MetricsGroupRepository
 	metricsGroupAction        repository.MetricsGroupActionRepository
 	pluginRepository          repository.PluginRepository
@@ -87,7 +88,9 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	datasourceRepo := repository.NewDatasourceRepository(db, pluginRepo)
 
-	metricRepo := repository.NewMetricRepository(db, datasourceRepo, pluginRepo)
+	metricExecutionRepo := repository.NewMetricExecutionRepository(db)
+
+	metricRepo := repository.NewMetricRepository(db, datasourceRepo, pluginRepo, metricExecutionRepo)
 
 	metricsGroupActionRepo := repository.NewMetricsGroupActionRepository(db, actionExecutionRepository)
 
@@ -97,6 +100,7 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 		actionRepository:          actionRepo,
 		datasourceRepository:      datasourceRepo,
 		metricRepository:          metricRepo,
+		metricExecutionRepository: metricExecutionRepo,
 		metricsGroupRepository:    metricsGroupRepo,
 		metricsGroupAction:        metricsGroupActionRepo,
 		pluginRepository:          pluginRepo,

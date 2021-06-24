@@ -35,7 +35,26 @@ const (
 	MetricUpdated = "UPDATED"
 )
 
-func (main metricRepository) FindAllMetricExecutions() ([]domain.MetricExecution, error) {
+type MetricExecutionRepository interface {
+	FindAllMetricExecutions() ([]domain.MetricExecution, error)
+	UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error)
+	UpdateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error
+	SaveMetricExecution(tx *gorm.DB, execution domain.MetricExecution) (domain.MetricExecution, error)
+	RemoveMetricExecution(tx *gorm.DB, id uuid.UUID) error
+	ValidateIfExecutionReached(metricExecution domain.MetricExecution) bool
+}
+
+type metricExecutionRepository struct {
+	db *gorm.DB
+}
+
+func NewMetricExecutionRepository(db *gorm.DB) MetricExecutionRepository {
+	return metricExecutionRepository{
+		db: db,
+	}
+}
+
+func (main metricExecutionRepository) FindAllMetricExecutions() ([]domain.MetricExecution, error) {
 	var metricExecutions []models.MetricExecution
 	db := main.db.Find(&metricExecutions)
 	if db.Error != nil {
@@ -44,7 +63,7 @@ func (main metricRepository) FindAllMetricExecutions() ([]domain.MetricExecution
 	return mapper.MetricExecutionModelToDomains(metricExecutions), nil
 }
 
-func (main metricRepository) UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error) {
+func (main metricExecutionRepository) UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error) {
 	db := main.db.Save(&metricExecution)
 	if db.Error != nil {
 		return domain.MetricExecution{}, logging.NewError(util.UpdateMetricExecutionError, db.Error, nil, "MetricExecutionRepository.UpdateMetricExecution.Save")
@@ -52,7 +71,7 @@ func (main metricRepository) UpdateMetricExecution(metricExecution domain.Metric
 	return metricExecution, nil
 }
 
-func (main metricRepository) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
+func (main metricExecutionRepository) UpdateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) error {
 	db := tx.Model(&models.MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
 	if db.Error != nil {
 		return logging.NewError("Update execution error", db.Error, nil, "MetricExecutionRepository.updateExecutionStatus.Update")
@@ -61,7 +80,7 @@ func (main metricRepository) updateExecutionStatus(tx *gorm.DB, metricId uuid.UU
 	return nil
 }
 
-func (main metricRepository) saveMetricExecution(tx *gorm.DB, execution domain.MetricExecution) (domain.MetricExecution, error) {
+func (main metricExecutionRepository) SaveMetricExecution(tx *gorm.DB, execution domain.MetricExecution) (domain.MetricExecution, error) {
 	db := tx.Save(&execution)
 	if db.Error != nil {
 		return domain.MetricExecution{}, logging.NewError(util.SaveMetricExecutionError, db.Error, nil, "MetricExecutionRepository.saveMetricExecution.Save")
@@ -70,7 +89,7 @@ func (main metricRepository) saveMetricExecution(tx *gorm.DB, execution domain.M
 	return execution, nil
 }
 
-func (main metricRepository) removeMetricExecution(tx *gorm.DB, id uuid.UUID) error {
+func (main metricExecutionRepository) RemoveMetricExecution(tx *gorm.DB, id uuid.UUID) error {
 	db := tx.Where("id = ?", id).Delete(models.MetricExecution{})
 	if db.Error != nil {
 		return logging.NewError(util.SaveMetricExecutionError, db.Error, nil, "MetricExecutionRepository.saveMetricExecution.Save")
@@ -78,6 +97,6 @@ func (main metricRepository) removeMetricExecution(tx *gorm.DB, id uuid.UUID) er
 	return nil
 }
 
-func (main metricRepository) ValidateIfExecutionReached(metricExecution domain.MetricExecution) bool {
+func (main metricExecutionRepository) ValidateIfExecutionReached(metricExecution domain.MetricExecution) bool {
 	return metricExecution.Status == MetricReached
 }

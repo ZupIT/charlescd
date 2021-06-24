@@ -14,9 +14,9 @@ func prepareJobs(pm persistenceManager) jobManager {
 
 	ctx := context.Background()
 
-	metricDispatcher := dispatcher.NewMetricDispatcher(pm.metricRepository, ctx)
+	metricDispatcher := dispatcher.NewMetricDispatcher(pm.metricRepository, pm.metricExecutionRepository, ctx)
 
-	actionDispatcher := dispatcher.NewActionDispatcher(pm.metricsGroupRepository, pm.actionRepository, pm.pluginRepository, pm.metricRepository, pm.metricsGroupAction, pm.actionExecutionRepository, ctx)
+	actionDispatcher := dispatcher.NewActionDispatcher(pm.metricsGroupRepository, pm.actionRepository, pm.pluginRepository, pm.metricExecutionRepository, pm.metricsGroupAction, pm.actionExecutionRepository, ctx)
 
 	return jobManager{
 		metricDispatcher: metricDispatcher,
