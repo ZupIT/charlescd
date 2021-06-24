@@ -23,16 +23,14 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/domain"
-	//"github.com/ZupIT/charlescd/compass/internal/metricsgroupaction"
-	//repository "github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util"
-	//datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
+	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	tc "github.com/testcontainers/testcontainers-go"
 	"gorm.io/gorm"
+	"log"
 	"strings"
-	//"time"
-
+	"time"
 )
 
 const dbLog = false
@@ -58,6 +56,13 @@ func setupEnv() error {
 	return nil
 }
 
+func prepareTestDatabases(){
+	persistenceManager, err := cmd.prepareDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM actions_executions")
 	db.Exec("DELETE FROM actions_configurations")
@@ -71,28 +76,27 @@ func clearDatabase(db *gorm.DB) {
 	db.Exec("DELETE FROM data_sources")
 }
 
-/*func newBasicMetricGroup() repository.MetricsGroup {
-	return repository.MetricsGroup{
+func newBasicMetricGroup() domain.MetricsGroup {
+	return domain.MetricsGroup{
 		Name:        "Name",
 		Metrics:     nil,
 		WorkspaceID: uuid.New(),
 		CircleID:    uuid.New(),
 		Actions:     nil,
 	}
-}*/
+}
 
-func newBasicDatasource() domain.DataSource {
-	return datasource.DataSource{
+func newBasicDatasource() domain.Datasource {
+	return domain.Datasource{
 		Name:        "Name",
 		PluginSrc:   "src.so",
 		Data:        json.RawMessage(`{"someProperty": "someValue"}`),
 		WorkspaceID: uuid.New(),
-		DeletedAt:   nil,
 	}
 }
 
-func datasourceInsert(pluginSrc string) (string, datasource.Response) {
-	entity := datasource.Response{
+func datasourceInsert(pluginSrc string) (string, domain.Datasource) {
+	entity := domain.Datasource{
 		BaseModel: util.BaseModel{
 			ID: uuid.New(),
 		},
@@ -100,41 +104,39 @@ func datasourceInsert(pluginSrc string) (string, datasource.Response) {
 		PluginSrc:   pluginSrc,
 		Data:        json.RawMessage(`{"url": "http://localhost:9090"}`),
 		WorkspaceID: uuid.New(),
-		DeletedAt:   nil,
 	}
 
 	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id,  deleted_at, plugin_src)
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
 		entity.ID, entity.Name, entity.Data, configuration.Get("ENCRYPTION_KEY"), entity.WorkspaceID, pluginSrc), entity
 }
-/*
-func newBasicMetric() repository.Metric {
-	return repository.Metric{
+
+func newBasicMetric() domain.Metric {
+	return domain.Metric{
 		Nickname:        "Nickname",
 		Query:           "some query",
 		Metric:          "some metric name",
 		Filters:         []datasourcePKG.MetricFilter{},
-		GroupBy:         []repository.MetricGroupBy{},
+		GroupBy:         []domain.MetricGroupBy{},
 		Condition:       "=",
 		Threshold:       5,
 		CircleID:        uuid.New(),
-		MetricExecution: repository.MetricExecution{},
+		MetricExecution: domain.MetricExecution{},
 	}
 }
 
-func newBasicAction() repository.Action {
-	return repository.Action{
+func newBasicAction() domain.Action {
+	return domain.Action{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
 		Description:   "Some description",
 		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
-		DeletedAt:     nil,
 	}
 }
 
-func actionInsert(actionType string) (string, repository.ActionResponse) {
-	entity := repository.ActionResponse{
+func actionInsert(actionType string) (string, domain.Action) {
+	entity := domain.Action{
 		BaseModel: util.BaseModel{
 			ID: uuid.New(),
 		},
@@ -143,7 +145,6 @@ func actionInsert(actionType string) (string, repository.ActionResponse) {
 		Type:          "validaction",
 		Description:   "Some description",
 		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
-		DeletedAt:     nil,
 	}
 
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
@@ -152,14 +153,13 @@ func actionInsert(actionType string) (string, repository.ActionResponse) {
 		entity
 }
 
-func newBasicActionRequest() repository.ActionRequest {
-	return repository.ActionRequest{
+func newBasicActionRequest() domain.Action {
+	return domain.Action{
 		WorkspaceId:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
 		Description:   "Some description",
 		Configuration: json.RawMessage(`{"someProperty": "someValue"}`),
-		DeletedAt:     nil,
 	}
 }
 
@@ -168,22 +168,21 @@ func newBasicConfig() json.RawMessage {
 	return config
 }
 
-func newBasicGroupAction() repository.MetricsGroupAction {
-	return repository.MetricsGroupAction{
+func newBasicGroupAction() domain.MetricsGroupAction {
+	return domain.MetricsGroupAction{
 		Nickname:             "Nickname",
 		ExecutionParameters:  json.RawMessage(`{"someProperty": "someValue"}`),
-		ActionsConfiguration: repository.ActionsConfiguration{},
-		DeletedAt:            nil,
+		ActionsConfiguration: domain.ActionsConfiguration{},
 	}
 }
 
-func newBasicActionExecution() repository.ActionsExecutions {
+func newBasicActionExecution() domain.ActionsExecutions {
 	now := time.Now()
-	return repository.ActionsExecutions{
+	return domain.ActionsExecutions{
 		Status:    "IN_EXECUTION",
 		StartedAt: &now,
 	}
 }
-*/
+
 
 

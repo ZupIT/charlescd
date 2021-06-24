@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/ZupIT/charlescd/compass/internal/dispatcher"
 )
 
@@ -10,9 +11,12 @@ type jobManager struct {
 }
 
 func prepareJobs(pm persistenceManager) jobManager {
-	metricDispatcher := dispatcher.NewMetricDispatcher(pm.metricRepository)
 
-	actionDispatcher := dispatcher.NewActionDispatcher(pm.metricsGroupRepository, pm.actionRepository, pm.pluginRepository, pm.metricRepository, pm.metricsGroupAction)
+	ctx := context.Background()
+
+	metricDispatcher := dispatcher.NewMetricDispatcher(pm.metricRepository, ctx)
+
+	actionDispatcher := dispatcher.NewActionDispatcher(pm.metricsGroupRepository, pm.actionRepository, pm.pluginRepository, pm.metricRepository, pm.metricsGroupAction, pm.actionExecutionRepository, ctx)
 
 	return jobManager{
 		metricDispatcher: metricDispatcher,

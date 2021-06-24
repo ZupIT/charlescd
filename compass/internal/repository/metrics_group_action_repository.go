@@ -35,20 +35,19 @@ type MetricsGroupActionRepository interface {
 	ListGroupActionExecutionResumeByGroup(groupID uuid.UUID) ([]domain.GroupActionExecutionStatusResume, error)
 	UpdateGroupAction(id uuid.UUID, metricsGroupAction domain.MetricsGroupAction) (domain.MetricsGroupAction, error)
 	DeleteGroupAction(id uuid.UUID) error
-	SetExecutionFailed(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error)
-	SetExecutionSuccess(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error)
 	ValidateActionCanBeExecuted(metricsGroupAction domain.MetricsGroupAction) bool
-	CreateNewExecution(groupActionID uuid.UUID) (domain.ActionsExecutions, error)
 }
 
 type metricsGroupActionRepository struct {
-	db         *gorm.DB
-	pluginRepo PluginRepository
-	actionRepo ActionRepository
+	db                  *gorm.DB
+	actionExecutionRepo ActionExecutionRepository
 }
 
-func NewMetricsGroupActionRepository(db *gorm.DB, pluginRepo PluginRepository, actionRepo ActionRepository) MetricsGroupActionRepository {
-	return metricsGroupActionRepository{db, pluginRepo, actionRepo}
+func NewMetricsGroupActionRepository(db *gorm.DB, actionExecutionRepo ActionExecutionRepository) MetricsGroupActionRepository {
+	return metricsGroupActionRepository{
+		db:                  db,
+		actionExecutionRepo: actionExecutionRepo,
+	}
 }
 
 func (main metricsGroupActionRepository) SaveGroupAction(metricsGroupAction domain.MetricsGroupAction) (domain.MetricsGroupAction, error) {
@@ -112,7 +111,7 @@ func (main metricsGroupActionRepository) ListGroupActionExecutionResumeByGroup(g
 }
 
 func (main metricsGroupActionRepository) ValidateActionCanBeExecuted(metricsGroupAction domain.MetricsGroupAction) bool {
-	count, err := main.getNumberOfActionExecutions(metricsGroupAction.ID)
+	count, err := main.actionExecutionRepo.GetNumberOfActionExecutions(metricsGroupAction.ID)
 	if err != nil {
 		return false
 	}

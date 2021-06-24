@@ -25,6 +25,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/internal/repository/models"
 	"github.com/ZupIT/charlescd/compass/internal/util/mapper"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -35,18 +36,24 @@ const (
 	executionFailed  = "FAILED"
 )
 
-func (main metricsGroupActionRepository) findExecutionById(actionExecutionID uuid.UUID) (domain.ActionsExecutions, error) {
-	var execution models.ActionsExecutions
-
-	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
-	if result.Error != nil {
-		return domain.ActionsExecutions{}, logging.NewError("Find error", result.Error, nil, "ActionExecutionRepository.FindExecutionById.Find")
-	}
-
-	return mapper.ActionExecutionModelToDomain(execution), nil
+type ActionExecutionRepository interface {
+	CreateNewExecution(groupActionID uuid.UUID) (domain.ActionsExecutions, error)
+	SetExecutionFailed(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error)
+	SetExecutionSuccess(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error)
+	GetNumberOfActionExecutions(groupActionID uuid.UUID) (int64, error)
 }
 
-func (main metricsGroupActionRepository) CreateNewExecution(groupActionID uuid.UUID) (domain.ActionsExecutions, error) {
+type actionExecutionRepository struct {
+	db *gorm.DB
+}
+
+func NewActionExecutionRepository(db *gorm.DB) ActionExecutionRepository {
+	return actionExecutionRepository{
+		db: db,
+	}
+}
+
+func (main actionExecutionRepository) CreateNewExecution(groupActionID uuid.UUID) (domain.ActionsExecutions, error) {
 	timeNow := time.Now()
 
 	execution := models.ActionsExecutions{
@@ -63,7 +70,7 @@ func (main metricsGroupActionRepository) CreateNewExecution(groupActionID uuid.U
 	return mapper.ActionExecutionModelToDomain(execution), nil
 }
 
-func (main metricsGroupActionRepository) SetExecutionFailed(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
+func (main actionExecutionRepository) SetExecutionFailed(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
 		return domain.ActionsExecutions{}, logging.WithOperation(err, "ActionExecutionRepository.SetExecutionFailed")
@@ -71,7 +78,6 @@ func (main metricsGroupActionRepository) SetExecutionFailed(actionExecutionID uu
 
 	if !validateActionCanFinish(execution) {
 		return domain.ActionsExecutions{}, logging.NewError("Set Execution error", errors.New("cannot change status of a not in_execution action"), nil, "ActionExecutionRepository.SetExecutionFailed.validateActionCanFinish")
-
 	}
 
 	timeNow := time.Now()
@@ -87,7 +93,7 @@ func (main metricsGroupActionRepository) SetExecutionFailed(actionExecutionID uu
 	return execution, nil
 }
 
-func (main metricsGroupActionRepository) SetExecutionSuccess(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
+func (main actionExecutionRepository) SetExecutionSuccess(actionExecutionID uuid.UUID, executionLog string) (domain.ActionsExecutions, error) {
 	execution, err := main.findExecutionById(actionExecutionID)
 	if err != nil {
 		return domain.ActionsExecutions{}, logging.WithOperation(err, "ActionExecutionRepository.SetExecutionSuccess")
@@ -110,17 +116,28 @@ func (main metricsGroupActionRepository) SetExecutionSuccess(actionExecutionID u
 	return execution, nil
 }
 
-func validateActionCanFinish(execution domain.ActionsExecutions) bool {
-	return execution.Status == inExecution
-}
-
-func (main metricsGroupActionRepository) getNumberOfActionExecutions(groupActionID uuid.UUID) (int64, error) {
+func (main actionExecutionRepository) GetNumberOfActionExecutions(groupActionID uuid.UUID) (int64, error) {
 	var count int64
 
 	result := main.db.Table("actions_executions").Where("group_action_id = ?", groupActionID).Count(&count)
 	if result.Error != nil {
-		return 0, logging.NewError("Get number error", result.Error, nil, "ActionExecutionRepository.getNumberOfActionExecutions.Count")
+		return 0, logging.NewError("Get number error", result.Error, nil, "ActionExecutionRepository.GetNumberOfActionExecutions.Count")
 	}
 
 	return count, nil
+}
+
+func (main actionExecutionRepository) findExecutionById(actionExecutionID uuid.UUID) (domain.ActionsExecutions, error) {
+	var execution models.ActionsExecutions
+
+	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
+	if result.Error != nil {
+		return domain.ActionsExecutions{}, logging.NewError("Find error", result.Error, nil, "ActionExecutionRepository.FindExecutionById.Find")
+	}
+
+	return mapper.ActionExecutionModelToDomain(execution), nil
+}
+
+func validateActionCanFinish(execution domain.ActionsExecutions) bool {
+	return execution.Status == inExecution
 }

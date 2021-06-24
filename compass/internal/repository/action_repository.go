@@ -37,12 +37,11 @@ type ActionRepository interface {
 }
 
 type actionRepository struct {
-	db         *gorm.DB
-	pluginRepo PluginRepository
+	db *gorm.DB
 }
 
-func NewActionRepository(db *gorm.DB, pluginRepo PluginRepository) ActionRepository {
-	return actionRepository{db, pluginRepo}
+func NewActionRepository(db *gorm.DB) ActionRepository {
+	return actionRepository{db}
 }
 
 func (main actionRepository) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (domain.Action, error) {

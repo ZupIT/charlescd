@@ -14,12 +14,13 @@ import (
 )
 
 type persistenceManager struct {
-	actionRepository       repository.ActionRepository
-	datasourceRepository   repository.DatasourceRepository
-	metricRepository       repository.MetricRepository
-	metricsGroupRepository repository.MetricsGroupRepository
-	metricsGroupAction     repository.MetricsGroupActionRepository
-	pluginRepository       repository.PluginRepository
+	actionRepository          repository.ActionRepository
+	actionExecutionRepository repository.ActionExecutionRepository
+	datasourceRepository      repository.DatasourceRepository
+	metricRepository          repository.MetricRepository
+	metricsGroupRepository    repository.MetricsGroupRepository
+	metricsGroupAction        repository.MetricsGroupActionRepository
+	pluginRepository          repository.PluginRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -80,22 +81,25 @@ func runMigrations(sqlDb *sql.DB) error {
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 	pluginRepo := repository.NewPluginRepository()
 
-	actionRepo := repository.NewActionRepository(db, pluginRepo)
+	actionRepo := repository.NewActionRepository(db)
+
+	actionExecutionRepository := repository.NewActionExecutionRepository(db)
 
 	datasourceRepo := repository.NewDatasourceRepository(db, pluginRepo)
 
 	metricRepo := repository.NewMetricRepository(db, datasourceRepo, pluginRepo)
 
-	metricsGroupActionRepo := repository.NewMetricsGroupActionRepository(db, pluginRepo, actionRepo)
+	metricsGroupActionRepo := repository.NewMetricsGroupActionRepository(db, actionExecutionRepository)
 
-	metricsGroupRepo := repository.NewMetricsGroupRepository(db, metricRepo, datasourceRepo, pluginRepo, metricsGroupActionRepo)
+	metricsGroupRepo := repository.NewMetricsGroupRepository(db, metricRepo, metricsGroupActionRepo)
 
 	return persistenceManager{
-		actionRepository:       actionRepo,
-		datasourceRepository:   datasourceRepo,
-		metricRepository:       metricRepo,
-		metricsGroupRepository: metricsGroupRepo,
-		metricsGroupAction:     metricsGroupActionRepo,
-		pluginRepository:       pluginRepo,
+		actionRepository:          actionRepo,
+		datasourceRepository:      datasourceRepo,
+		metricRepository:          metricRepo,
+		metricsGroupRepository:    metricsGroupRepo,
+		metricsGroupAction:        metricsGroupActionRepo,
+		pluginRepository:          pluginRepo,
+		actionExecutionRepository: actionExecutionRepository,
 	}, nil
 }

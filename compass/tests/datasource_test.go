@@ -33,16 +33,21 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type DatasourceSuite struct {
+
+type Suite struct {
 	suite.Suite
 	DB *gorm.DB
 
-	repository datasource2.UseCases
-	datasource *datasource2.DataSource
+	deleteDatasource datasource2.DeleteDatasource
+	findAllDatasouresByWorkspaceId datasource2.FindAllDatasource
+	getMetrics datasource2.GetMetrics
+	saveDatasource datasource2.SaveDatasource
+	testConnection datasource2.TestConnection
 }
 
 func (s *Suite) SetupSuite() {
-	tests.setupEnv()
+	setupEnv()
+	s.deleteDatasource = datasource2.NewDeleteDatasource()
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {
