@@ -23,6 +23,7 @@ data class User(
     val name: String,
     val email: String,
     val photoUrl: String?,
+    val userGroups: List<SimpleUserGroup> = listOf(),
     val workspaces: List<WorkspacePermissions> = listOf(),
     val root: Boolean = false,
     val createdAt: LocalDateTime
