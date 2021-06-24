@@ -120,7 +120,9 @@ test('should regenerate token', async () => {
   await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());        
   const regenerateToken= screen.getByText('Regenerate token');
   userEvent.click(regenerateToken);
-  await waitFor(() => expect(screen.getByText('Are you sure you want to regenerate this token?')));
+  await waitFor(() => expect(screen.getByText('Are you sure you want to regenerate the following token:')));
+  expect(screen.getByTestId('token-name')).toHaveTextContent('TOKEN 2');
+
   const confirmRegenerate = screen.getByText('Yes, regenerate token');
   userEvent.click(confirmRegenerate);
   await waitFor(() => expect(screen.getByText('Your token has been regenerated!')));

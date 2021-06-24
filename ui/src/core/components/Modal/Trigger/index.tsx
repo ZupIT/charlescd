@@ -70,7 +70,7 @@ const Trigger = forwardRef(({
           </Styled.Title>
           {itemName &&
             <Styled.ItemName icon='token'>
-              <Text.h4 color="light">{itemName}</Text.h4>
+              <Text.h4 color="light" data-testid='token-name'>{itemName}</Text.h4>
             </Styled.ItemName>
           }
           <Styled.Description>
