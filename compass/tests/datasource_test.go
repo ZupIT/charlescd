@@ -19,129 +19,59 @@
 package tests
 
 import (
-	"encoding/json"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
-	"gorm.io/gorm"
-	"io/ioutil"
-	"os"
-	"strings"
-	"testing"
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
 	datasource2 "github.com/ZupIT/charlescd/compass/internal/use_case/datasource"
+	"github.com/ZupIT/charlescd/compass/internal/util"
+	mocks "github.com/ZupIT/charlescd/compass/tests/mocks/repository"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"testing"
 )
 
 
-type Suite struct {
+type DatasourceSuite struct {
 	suite.Suite
-	DB *gorm.DB
-
-	deleteDatasource datasource2.DeleteDatasource
-	findAllDatasouresByWorkspaceId datasource2.FindAllDatasource
-	getMetrics datasource2.GetMetrics
-	saveDatasource datasource2.SaveDatasource
-	testConnection datasource2.TestConnection
+	deleteDatasource   datasource2.DeleteDatasource
+	findAllDatasources datasource2.FindAllDatasource
+	getMetrics         datasource2.GetMetrics
+	saveDatasource     datasource2.SaveDatasource
+	testConnection     datasource2.TestConnection
+	dataSourceRep      *mocks.DatasourceRepository
 }
 
-func (s *Suite) SetupSuite() {
-	setupEnv()
-	s.deleteDatasource = datasource2.NewDeleteDatasource()
+func (d *DatasourceSuite) SetupSuite() {
+	d.dataSourceRep = new(mocks.DatasourceRepository)
+	d.findAllDatasources = datasource2.NewFindAllDatasource(d.dataSourceRep)
 }
 
-func (s *Suite) BeforeTest(suiteName, testName string) {
-	var err error
 
-	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.Nil(s.T(), err)
-
-	s.DB.LogMode(tests.dbLog)
-
-	var pluginMain = repository.NewPluginRepository()
-	s.repository = datasource2.NewMain(s.DB, pluginMain)
-	tests.clearDatabase(s.DB)
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(DatasourceSuite))
 }
 
-func (s *Suite) AfterTest(suiteName, testName string) {
-	s.DB.Close()
+
+func (d *DatasourceSuite) TestFindAllByWorkspace() {
+	var datasources []domain.Datasource
+	datasources[0] = domain.Datasource{BaseModel: util.BaseModel{ID: uuid.New()}}
+	datasources[1] = domain.Datasource{BaseModel: util.BaseModel{ID: uuid.New()}}
+
+	d.dataSourceRep.On("FindAllByWorkspace", mock.Anything).Return(datasources, nil)
+	a, err := d.findAllDatasources.Execute(uuid.New())
+
+	require.NotNil(d.T(), a)
+	require.Nil(d.T(), err)
+}
+/*
+func (d *DatasourceSuite) TestFindAllByWorkspaceError() {
+	d.DB.Close()
+	_, err := d.repository.FindAllByWorkspace(uuid.New())
+
+	require.NotNil(d.T(), err)
 }
 
-func TestInit(t *testing.T) {
-	suite.Run(t, new(Suite))
-}
-
-func (s *Suite) TestParse() {
-	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7", "data": { "url": "http://35.238.107.172:9090" } }`)
-	stringReadCloser := ioutil.NopCloser(stringReader)
-
-	res, err := s.repository.Parse(stringReadCloser)
-
-	require.Nil(s.T(), err)
-	require.NotNil(s.T(), res)
-}
-
-func (s *Suite) TestParseError() {
-	stringReader := strings.NewReader(`{ "name": "Prometheus do maycao", "pluginfasdf": "4*bd" `)
-	stringReadCloser := ioutil.NopCloser(stringReader)
-
-	_, err := s.repository.Parse(stringReadCloser)
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *Suite) TestValidate() {
-	datasource := datasource2.Request{}
-	var errList = s.repository.Validate(datasource)
-
-	require.NotEmpty(s.T(), errList)
-}
-
-func (s *Suite) TestValidateNameLength() {
-	datasource := datasource2.Request{
-		Name:      tests.bigString,
-		PluginSrc: tests.bigString,
-	}
-	var errList = s.repository.Validate(datasource)
-
-	require.NotEmpty(s.T(), errList)
-}
-
-func (s *Suite) TestFindDataSourceById() {
-	dataSourceInsert, dataSourceStruct := tests.datasourceInsert("src.so")
-
-	s.DB.Exec(dataSourceInsert)
-	res, err := s.repository.FindById(dataSourceStruct.ID.String())
-
-	require.Nil(s.T(), err)
-	dataSourceStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), dataSourceStruct, res)
-}
-
-func (s *Suite) TestFindAllByWorkspace() {
-	dataSourceStruct := datasource2.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.New(),
-		DeletedAt:   nil,
-	}
-	s.DB.Create(&dataSourceStruct)
-
-	res, err := s.repository.FindAllByWorkspace(dataSourceStruct.WorkspaceID)
-
-	require.Nil(s.T(), err)
-	require.NotEmpty(s.T(), res)
-}
-
-func (s *Suite) TestFindAllByWorkspaceError() {
-	s.DB.Close()
-	_, err := s.repository.FindAllByWorkspace(uuid.New())
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *Suite) TestSaveDatasource() {
+func (d *DatasourceSuite) TestSaveDatasource() {
 	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
@@ -150,17 +80,17 @@ func (s *Suite) TestSaveDatasource() {
 		DeletedAt:   nil,
 	}
 
-	res, err := s.repository.Save(dataSourceStruct)
+	res, err := d.repository.Save(dataSourceStruct)
 
-	require.Nil(s.T(), err)
+	require.Nil(d.T(), err)
 
 	dataSourceStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), dataSourceStruct.BaseModel, res.BaseModel)
-	require.Equal(s.T(), dataSourceStruct.WorkspaceID, res.WorkspaceID)
-	require.Equal(s.T(), dataSourceStruct.PluginSrc, res.PluginSrc)
+	require.Equal(d.T(), dataSourceStruct.BaseModel, res.BaseModel)
+	require.Equal(d.T(), dataSourceStruct.WorkspaceID, res.WorkspaceID)
+	require.Equal(d.T(), dataSourceStruct.PluginSrc, res.PluginSrc)
 }
 
-func (s *Suite) TestSaveDatasourceError() {
+func (d *DatasourceSuite) TestSaveDatasourceError() {
 	dataSourceStruct := datasource2.Request{
 		Name:        "DataTest",
 		PluginSrc:   "prometheus",
@@ -169,12 +99,12 @@ func (s *Suite) TestSaveDatasourceError() {
 		DeletedAt:   nil,
 	}
 
-	s.DB.Close()
-	_, err := s.repository.Save(dataSourceStruct)
-	require.NotNil(s.T(), err)
+	d.DB.Close()
+	_, err := d.repository.Save(dataSourceStruct)
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestDelete() {
+func (d *DatasourceSuite) TestDelete() {
 	workspaceId := uuid.New()
 	dataSource := datasource2.DataSource{
 		Name:        "DataTest2",
@@ -184,31 +114,31 @@ func (s *Suite) TestDelete() {
 		DeletedAt:   nil,
 	}
 
-	s.DB.Create(&dataSource)
+	d.DB.Create(&dataSource)
 
-	err := s.repository.Delete(dataSource.ID.String())
-	require.Nil(s.T(), err)
+	err := d.repository.Delete(dataSource.ID.String())
+	require.Nil(d.T(), err)
 }
 
-func (s *Suite) TestFindByIdNotFoundError() {
-	_, err := s.repository.FindById("any-id")
-	require.NotNil(s.T(), err)
+func (d *DatasourceSuite) TestFindByIdNotFoundError() {
+	_, err := d.repository.FindById("any-id")
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestDeleteError() {
-	s.DB.Close()
-	err := s.repository.Delete("any-id")
-	require.NotNil(s.T(), err)
+func (d *DatasourceSuite) TestDeleteError() {
+	d.DB.Close()
+	err := d.repository.Delete("any-id")
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestGetMetricsNotFoundError() {
+func (d *DatasourceSuite) TestGetMetricsNotFoundError() {
 	datasourceId := uuid.New().String()
-	_, err := s.repository.GetMetrics(datasourceId)
+	_, err := d.repository.GetMetrics(datasourceId)
 
-	require.NotNil(s.T(), err)
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestGetMetricsError() {
+func (d *DatasourceSuite) TestGetMetricsError() {
 	workspaceId := uuid.New()
 	dataSource := datasource2.DataSource{
 		Name:        "DataTest2",
@@ -218,32 +148,33 @@ func (s *Suite) TestGetMetricsError() {
 		DeletedAt:   nil,
 	}
 
-	s.DB.Create(&dataSource)
+	d.DB.Create(&dataSource)
 
-	_, err := s.repository.GetMetrics(dataSource.ID.String())
+	_, err := d.repository.GetMetrics(dataSource.ID.String())
 
-	require.NotNil(s.T(), err)
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestConnectionJsonError() {
+func (d *DatasourceSuite) TestConnectionJsonError() {
 	jsonData := json.RawMessage(`{"data": "prometheus"}`)
-	err := s.repository.TestConnection("datasource/errorconnection/errorconnection", jsonData)
+	err := d.repository.TestConnection("datasource/errorconnection/errorconnection", jsonData)
 
-	require.NotNil(s.T(), err)
+	require.NotNil(d.T(), err)
 }
 
-func (s *Suite) TestConnection() {
+func (d *DatasourceSuite) TestConnection() {
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
-	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
+	err := d.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
-	require.Nil(s.T(), err)
+	require.Nil(d.T(), err)
 }
 
-func (s *Suite) TestConnectionPluginDirError() {
+func (d *DatasourceSuite) TestConnectionPluginDirError() {
 	os.Setenv("PLUGINS_DIR", "/dist")
 
 	jsonData := json.RawMessage(`{"url": "http://localhost:9090"}`)
-	err := s.repository.TestConnection("datasource/validaction/validaction", jsonData)
+	err := d.repository.TestConnection("datasource/validaction/validaction", jsonData)
 
-	require.NotNil(s.T(), err)
+	require.NotNil(d.T(), err)
 }
+*/

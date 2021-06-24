@@ -22,7 +22,6 @@ require (
 	github.com/prometheus/common v0.13.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.7.0
-	github.com/testcontainers/testcontainers-go v0.11.0 // indirect
 	github.com/vektra/mockery/v2 v2.9.0 // indirect
 	go.uber.org/zap v1.13.0
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
