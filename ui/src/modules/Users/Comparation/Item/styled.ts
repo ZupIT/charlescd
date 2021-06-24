@@ -43,6 +43,15 @@ const Actions = styled.div`
   }
 `;
 
+const Groups = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    margin-top: 10px;
+  }
+`;
+
 const FieldErrorWrapper = styled.div`
   display: flex;
   margin-top: 2px;
@@ -58,5 +67,6 @@ export default {
   Wrapper,
   ContentIcon,
   Layer,
+  Groups,
   Actions
 };

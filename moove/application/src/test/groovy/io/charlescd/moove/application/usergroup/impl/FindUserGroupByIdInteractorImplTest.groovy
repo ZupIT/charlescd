@@ -54,7 +54,7 @@ class FindUserGroupByIdInteractorImplTest extends Specification {
     def "should find user group by id and return user group response"() {
         given:
         def authorId = "0a859e6c-3cdf-4b34-84d0-f9038576ac58"
-        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
         def userGroupId = "user-group-id"
         def userGroup = new UserGroup(userGroupId, "group-name", author, LocalDateTime.now(), [])
 
