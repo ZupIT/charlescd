@@ -38,22 +38,23 @@ type MetricRepository interface {
 	RemoveMetric(id uuid.UUID) error
 	Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error)
 	ResultQuery(metric domain.Metric) (float64, error)
-	UpdateMetricExecution(metricExecution domain.MetricExecution) (domain.MetricExecution, error)
-	FindAllMetricExecutions() ([]domain.MetricExecution, error)
-	ValidateIfExecutionReached(metric domain.MetricExecution) bool
 	FindAllByGroup(metricGroupID uuid.UUID) ([]domain.Metric, error)
 }
 
 type metricRepository struct {
-	db             *gorm.DB
-	datasourceMain DatasourceRepository
-	pluginMain     PluginRepository
+	db                  *gorm.DB
+	datasourceRepo      DatasourceRepository
+	pluginRepo          PluginRepository
+	metricExecutionRepo MetricExecutionRepository
 }
 
-func NewMetricRepository(
-	db *gorm.DB, datasourceMain DatasourceRepository, pluginMain PluginRepository,
-) MetricRepository {
-	return metricRepository{db, datasourceMain, pluginMain}
+func NewMetricRepository(db *gorm.DB, datasourceMain DatasourceRepository, pluginMain PluginRepository, metricExecutionRepo MetricExecutionRepository) MetricRepository {
+	return metricRepository{
+		db:                  db,
+		datasourceRepo:      datasourceMain,
+		pluginRepo:          pluginMain,
+		metricExecutionRepo: metricExecutionRepo,
+	}
 }
 
 func (main metricRepository) CountMetrics(metrics []domain.Metric) (int, int, int) {
@@ -94,7 +95,7 @@ func (main metricRepository) SaveMetric(metric domain.Metric) (domain.Metric, er
 			return logging.NewError(util.SaveMetricError, db.Error, nil, "MetricRepository.SaveMetric.Create")
 		}
 
-		_, err := main.saveMetricExecution(tx, domain.MetricExecution{MetricID: metric.ID, Status: MetricActive})
+		_, err := main.metricExecutionRepo.SaveMetricExecution(tx, domain.MetricExecution{MetricID: metric.ID, Status: MetricActive})
 		if err != nil {
 			return logging.NewError(util.SaveMetricError, err, nil, "MetricRepository.SaveMetric.saveMetricExecution")
 		}
@@ -117,7 +118,7 @@ func (main metricRepository) UpdateMetric(metric domain.Metric) (domain.Metric, 
 		}
 
 		metric.MetricExecution.Status = MetricUpdated
-		err := main.updateExecutionStatus(tx, metric.ID)
+		err := main.metricExecutionRepo.UpdateExecutionStatus(tx, metric.ID)
 		if err != nil {
 			return logging.NewError(util.UpdateMetricError, err, nil, "MetricRepository.UpdateMetric.updateExecutionStatus")
 		}
@@ -140,7 +141,7 @@ func (main metricRepository) RemoveMetric(id uuid.UUID) error {
 
 		}
 
-		err := main.removeMetricExecution(tx, id)
+		err := main.metricExecutionRepo.RemoveMetricExecution(tx, id)
 		if err != nil {
 			return logging.NewError(util.RemoveMetricError, err, nil, "MetricRepository.RemoveMetric.removeMetricExecution")
 		}
@@ -163,12 +164,12 @@ func (main metricRepository) getQueryByMetric(metric domain.Metric) string {
 }
 
 func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
+	dataSourceResult, err := main.datasourceRepo.FindById(metric.DataSourceID)
 	if err != nil {
 		return 0, logging.WithOperation(err, "MetricRepository.ResultQuery.FindById")
 	}
 
-	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	plugin, err := main.pluginRepo.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
 		return 0, logging.WithOperation(err, "MetricRepository.ResultQuery.GetPluginBySrc")
 	}
@@ -201,12 +202,12 @@ func (main metricRepository) ResultQuery(metric domain.Metric) (float64, error) 
 }
 
 func (main metricRepository) Query(metric domain.Metric, period, interval datasourcePKG.Period) (interface{}, error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID)
+	dataSourceResult, err := main.datasourceRepo.FindById(metric.DataSourceID)
 	if err != nil {
 		return nil, logging.WithOperation(err, "MetricRepository.Query.FindById")
 	}
 
-	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
+	plugin, err := main.pluginRepo.GetPluginBySrc(dataSourceResult.PluginSrc)
 	if err != nil {
 		return nil, logging.WithOperation(err, "MetricRepository.Query.GetPluginBySrc")
 	}

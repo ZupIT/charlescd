@@ -34,7 +34,7 @@ type ActionDispatcher struct {
 	metricGroupRepo     repository.MetricsGroupRepository
 	actionRepo          repository.ActionRepository
 	pluginRepo          repository.PluginRepository
-	metricRepo          repository.MetricRepository
+	metricExecutionRepo repository.MetricExecutionRepository
 	groupActionRepo     repository.MetricsGroupActionRepository
 	actionExecutionRepo repository.ActionExecutionRepository
 	mux                 sync.Mutex
@@ -42,13 +42,13 @@ type ActionDispatcher struct {
 }
 
 func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
-	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository, actionExecutionRepo repository.ActionExecutionRepository, context context.Context) UseCases {
+	metricExecutionRepo repository.MetricExecutionRepository, groupActionRepo repository.MetricsGroupActionRepository, actionExecutionRepo repository.ActionExecutionRepository, context context.Context) UseCases {
 
 	return &ActionDispatcher{
 		metricGroupRepo:     metricGroupRepo,
 		actionRepo:          actionRepo,
 		pluginRepo:          pluginRepo,
-		metricRepo:          metricRepo,
+		metricExecutionRepo: metricExecutionRepo,
 		groupActionRepo:     groupActionRepo,
 		actionExecutionRepo: actionExecutionRepo,
 		mux:                 sync.Mutex{},
@@ -138,7 +138,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 
 func (dispatcher *ActionDispatcher) validateGroupReachedAllMetrics(metrics []domain.Metric) bool {
 	for _, m := range metrics {
-		if !dispatcher.metricRepo.ValidateIfExecutionReached(m.MetricExecution) {
+		if !dispatcher.metricExecutionRepo.ValidateIfExecutionReached(m.MetricExecution) {
 			return false
 		}
 	}
