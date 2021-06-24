@@ -90,7 +90,8 @@ test('should revoke token', async () => {
   await waitFor(() => expect(screen.getByText('Created by charlesadmin@admin')).toBeInTheDocument());        
   const revokeToken = screen.getByText('Revoke token');
   userEvent.click(revokeToken);
-  await waitFor(() => expect(screen.getByText('Are you sure you want to revoke this token?')));
+  await waitFor(() => expect(screen.getByText('Are you sure you want to revoke the following token:')));
+  expect(screen.getByTestId('token-name')).toHaveTextContent('TOKEN 2');
   expect(screen.getByText('Yes, revoke token')).toBeInTheDocument();
 });
 
