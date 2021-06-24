@@ -127,6 +127,7 @@ test('should regenerate token', async () => {
   const confirmRegenerate = screen.getByText('Yes, regenerate token');
   userEvent.click(confirmRegenerate);
   await waitFor(() => expect(screen.getByText('Your token has been regenerated!')));
+  expect(screen.getByTestId('labeledIcon-token')).toHaveTextContent('TOKEN 2');
 });
 
 test('should create a token', async () => {
