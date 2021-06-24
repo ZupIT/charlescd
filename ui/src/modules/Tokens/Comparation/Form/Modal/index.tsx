@@ -30,7 +30,7 @@ interface Props {
   onClose?: () => void;
 }
 
-const ModalCopyToken = ({ title, tokenName = 'placeholder', description, token, onClose }: Props) => {
+const ModalCopyToken = ({ title, tokenName, description, token, onClose }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
   const TIMEOUT_COPIED = 1500;
 

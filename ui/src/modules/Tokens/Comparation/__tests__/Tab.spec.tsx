@@ -148,4 +148,5 @@ test('should create a token', async () => {
   userEvent.click(generateToken);
 
   await waitFor(() => expect(screen.getByText('Your token has been created!')));
+  expect(await screen.findByText('TOKEN 2')).toBeInTheDocument();
 });
