@@ -65,7 +65,11 @@ const Title = styled(Text.h2)`
 `;
 
 const Description = styled.div`
-  margin: 20px 0 20px 0;
+  margin: 16px 0 24px 0;
+
+  span {
+    line-height: 1.3;
+  }
 `;
 
 const ContinueButton = styled(DefaultButton)`
