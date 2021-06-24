@@ -129,6 +129,7 @@ const Tab = ({ param }: Props) => {
           onClose={toggleRevoke}
           onContinue={handleRevoke}
           isLoading={revokeStatus === 'pending'}
+          tokenName={token?.name}
         />)}
       {isRegenerate && (
         <ModalRegenerate

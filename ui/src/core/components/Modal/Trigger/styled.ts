@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 import DefaultButton from 'core/components/Button/Default';
+import LabeledIcon from 'core/components/LabeledIcon';
 
 const Wrapper = styled.div``;
 
@@ -102,7 +103,12 @@ const CloseButtonContainer = styled.div`
   margin-left: 324px;
 `;
 
+const ItemName = styled(LabeledIcon)`
+  padding: 16px 0 0 0;
+`;
+
 export default {
+  ItemName,
   Buttons,
   Button: {
     Continue: ContinueButton,

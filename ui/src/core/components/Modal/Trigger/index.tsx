@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode, forwardRef, Ref } from 'react';
+import { useState, ReactNode, forwardRef, Ref } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
 export interface Props {
   title: string;
+  itemName?: string;
   className?: string;
   dismissLabel: string;
   continueLabel?: string;
@@ -38,6 +39,7 @@ const Trigger = forwardRef(({
   continueLabel,
   dismissLabel,
   title,
+  itemName,
   isDisabled,
   isLoading,
   children
@@ -66,6 +68,11 @@ const Trigger = forwardRef(({
           <Styled.Title weight="bold" color="light">
             {title}
           </Styled.Title>
+          {itemName &&
+            <Styled.ItemName icon='token'>
+              <Text.h4 color="light">{itemName}</Text.h4>
+            </Styled.ItemName>
+          }
           <Styled.Description>
             {children}
           </Styled.Description>
