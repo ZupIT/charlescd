@@ -136,6 +136,7 @@ const Tab = ({ param }: Props) => {
           onClose={() => setIsRegenerate(false)}
           onContinue={handleRegenerate}
           isLoading={status === 'pending'}
+          tokenName={token?.name}
         />
       )}
       {isNewToken && <ModalNewToken />}
