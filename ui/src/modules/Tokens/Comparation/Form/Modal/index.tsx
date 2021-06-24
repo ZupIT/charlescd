@@ -24,7 +24,7 @@ import LabeledIcon from 'core/components/LabeledIcon';
 
 interface Props {
   title: string;
-  tokenName?: string;
+  tokenName: string;
   description: string;
   token: string;
   onClose?: () => void;
