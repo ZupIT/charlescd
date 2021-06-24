@@ -22,6 +22,7 @@ import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
 import Icon from 'core/components/Icon';
+import Can from 'containers/Can';
 
 interface Props {
   onClickCreate: (
@@ -52,15 +53,17 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   };
 
   const renderButton = () => (
-    <Button.Rounded
-      icon="add"
-      name="add"
-      color="dark"
-      onClick={onClickCreate}
-      isDisabled={checkIfButtonIsDisabled()}
-    >
-      Insert release
-    </Button.Rounded>
+    <Can I="write" a="deploy" passThrough>
+        <Button.Rounded
+          icon="add"
+          name="add"
+          color="dark"
+          onClick={onClickCreate}
+          isDisabled={checkIfButtonIsDisabled()}
+        >
+          Insert release
+        </Button.Rounded>
+    </Can>
   );
 
   return (
