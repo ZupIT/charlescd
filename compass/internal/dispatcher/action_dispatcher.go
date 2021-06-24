@@ -31,20 +31,29 @@ import (
 )
 
 type ActionDispatcher struct {
-	metricGroupRepo repository.MetricsGroupRepository
-	actionRepo      repository.ActionRepository
-	pluginRepo      repository.PluginRepository
-	metricRepo      repository.MetricRepository
-	groupActionRepo repository.MetricsGroupActionRepository
-	mux             sync.Mutex
-	ctx             context.Context
+	metricGroupRepo     repository.MetricsGroupRepository
+	actionRepo          repository.ActionRepository
+	pluginRepo          repository.PluginRepository
+	metricRepo          repository.MetricRepository
+	groupActionRepo     repository.MetricsGroupActionRepository
+	actionExecutionRepo repository.ActionExecutionRepository
+	mux                 sync.Mutex
+	ctx                 context.Context
 }
 
 func NewActionDispatcher(metricGroupRepo repository.MetricsGroupRepository, actionRepo repository.ActionRepository, pluginRepo repository.PluginRepository,
-	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository, context context.Context) UseCases {
+	metricRepo repository.MetricRepository, groupActionRepo repository.MetricsGroupActionRepository, actionExecutionRepo repository.ActionExecutionRepository, context context.Context) UseCases {
 
-	return &ActionDispatcher{metricGroupRepo: metricGroupRepo, actionRepo: actionRepo, pluginRepo: pluginRepo,
-		metricRepo: metricRepo, groupActionRepo: groupActionRepo, mux: sync.Mutex{}, ctx: context}
+	return &ActionDispatcher{
+		metricGroupRepo:     metricGroupRepo,
+		actionRepo:          actionRepo,
+		pluginRepo:          pluginRepo,
+		metricRepo:          metricRepo,
+		groupActionRepo:     groupActionRepo,
+		actionExecutionRepo: actionExecutionRepo,
+		mux:                 sync.Mutex{},
+		ctx:                 context,
+	}
 }
 
 func (dispatcher *ActionDispatcher) dispatch() {
@@ -76,7 +85,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
-	execution, err := dispatcher.groupActionRepo.CreateNewExecution(groupAction.ID)
+	execution, err := dispatcher.actionExecutionRepo.CreateNewExecution(groupAction.ID)
 	if err != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		return
@@ -92,7 +101,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 	if err != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, err.Error())
+		_, err = dispatcher.actionExecutionRepo.SetExecutionFailed(execution.ID, err.Error())
 		if err != nil {
 			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
@@ -103,7 +112,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 	if lookupErr != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Execute Action error", lookupErr, nil, "ActionDispatcher.executeAction.Lookup"))
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, lookupErr.Error())
+		_, err = dispatcher.actionExecutionRepo.SetExecutionFailed(execution.ID, lookupErr.Error())
 		if err != nil {
 			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
@@ -114,14 +123,14 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction domain.MetricsGrou
 	if result != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.NewError("Execute Action error", result, nil, "ActionDispatcher.executeAction.exec"))
 
-		_, err = dispatcher.groupActionRepo.SetExecutionFailed(execution.ID, result.Error())
+		_, err = dispatcher.actionExecutionRepo.SetExecutionFailed(execution.ID, result.Error())
 		if err != nil {
 			logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 		}
 		return
 	}
 
-	_, err = dispatcher.groupActionRepo.SetExecutionSuccess(execution.ID, "action executed with success")
+	_, err = dispatcher.actionExecutionRepo.SetExecutionSuccess(execution.ID, "action executed with success")
 	if err != nil {
 		logging.LogErrorFromCtx(dispatcher.ctx, logging.WithOperation(err, "ActionDispatcher.executeAction"))
 	}

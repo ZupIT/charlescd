@@ -50,23 +50,13 @@ type MetricsGroupRepository interface {
 type metricsGroupRepository struct {
 	db               *gorm.DB
 	metricMain       MetricRepository
-	datasourceMain   DatasourceRepository
-	pluginMain       PluginRepository
 	groupActionsMain MetricsGroupActionRepository
 }
 
-func NewMetricsGroupRepository(
-	db *gorm.DB,
-	metricMain MetricRepository,
-	datasourceMain DatasourceRepository,
-	pluginMain PluginRepository,
-	groupActionsMain MetricsGroupActionRepository,
-) MetricsGroupRepository {
+func NewMetricsGroupRepository(db *gorm.DB, metricMain MetricRepository, groupActionsMain MetricsGroupActionRepository) MetricsGroupRepository {
 	return metricsGroupRepository{
 		db:               db,
 		metricMain:       metricMain,
-		datasourceMain:   datasourceMain,
-		pluginMain:       pluginMain,
 		groupActionsMain: groupActionsMain,
 	}
 }
