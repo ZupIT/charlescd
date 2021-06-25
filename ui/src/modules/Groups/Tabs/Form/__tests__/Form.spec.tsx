@@ -22,27 +22,17 @@ import { mockUserGroup1, mockUserGroup2 } from './fixtures';
 
 test('render user group Form', () => {
   const { getByTestId } = render(
-    <Form
-      userGroup={mockUserGroup1}
-      onAddUser={jest.fn()}
-      onEdit={jest.fn()}
-    />
+    <Form userGroup={mockUserGroup1} onAddUser={jest.fn()} onEdit={jest.fn()} />
   );
 
-  expect(
-    getByTestId(`${mockUserGroup1.name}`)
-  ).toBeInTheDocument();
+  expect(getByTestId(`${mockUserGroup1.name}`)).toBeInTheDocument();
 });
 
 test('render user group Form with more then 8 users', async () => {
   const onAddUser = jest.fn();
 
   render(
-    <Form
-      userGroup={mockUserGroup2}
-      onAddUser={onAddUser}
-      onEdit={jest.fn()}
-    />
+    <Form userGroup={mockUserGroup2} onAddUser={onAddUser} onEdit={jest.fn()} />
   );
 
   const userGroupForm = await screen.findByTestId(`${mockUserGroup2.name}`);
@@ -60,23 +50,19 @@ test('should render a user group Form and edit the name', async () => {
   const onEdit = jest.fn();
 
   render(
-    <Form
-      userGroup={mockUserGroup1}
-      onAddUser={jest.fn()}
-      onEdit={onEdit}
-    />
+    <Form userGroup={mockUserGroup1} onAddUser={jest.fn()} onEdit={onEdit} />
   );
 
   const userGroupForm = await screen.findByTestId(`${mockUserGroup1.name}`);
   const inputName = await screen.findByTestId('input-text-name');
-  
+
   expect(userGroupForm).toBeInTheDocument();
   expect(inputName).toBeInTheDocument();
-  
+
   userEvent.click(inputName);
   userEvent.type(inputName, 'User Group Edited');
-  
-  const buttonSave = await screen.findByTestId('button-default-submit');
+
+  const buttonSave = await screen.findByTestId('button-default-input-title');
 
   expect(buttonSave).toBeInTheDocument();
   await act(async () => userEvent.click(buttonSave));
