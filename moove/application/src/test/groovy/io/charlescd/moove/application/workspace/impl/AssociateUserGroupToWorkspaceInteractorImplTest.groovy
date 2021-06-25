@@ -158,7 +158,7 @@ class AssociateUserGroupToWorkspaceInteractorImplTest extends Specification {
     }
 
     private User getDummyUser(String userId) {
-        new User(userId, "author-name", "author-photo", "author-email", [], false, LocalDateTime.now())
+        new User(userId, "author-name", "author-photo", "author-email", [], [], false, LocalDateTime.now())
     }
 
 
