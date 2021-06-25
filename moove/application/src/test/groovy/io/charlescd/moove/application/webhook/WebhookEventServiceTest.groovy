@@ -109,7 +109,7 @@ class WebhookEventServiceTest extends Specification {
 
     private static User getAuthor(boolean root) {
         return new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "charlescd", authorEmail, "http://image.com.br/photo.png",
-                [], root, LocalDateTime.now())
+                [], [], root, LocalDateTime.now())
     }
 
     private static String getWorkspaceId() {
@@ -140,7 +140,8 @@ class WebhookEventServiceTest extends Specification {
                 'User name',
                 'user@email.com',
                 'user.photo.png',
-                new ArrayList<WorkspacePermissions>(),
+                [],
+                [],
                 false,
                 LocalDateTime.now()
         )

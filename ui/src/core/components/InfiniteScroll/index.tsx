@@ -33,7 +33,7 @@ const InfiniteScroll = ({
   isLoading,
   hasMore,
   loadMore,
-  rootMargin = '1px'
+  rootMargin = '1px',
 }: Props) => {
   const childrenLength = Children.count(children);
   const showSentinelLoader = !isLoading && childrenLength && hasMore;
