@@ -24,7 +24,7 @@ import {
 } from './constants';
 import Styled from './styled';
 
-const FormPassword = React.forwardRef(
+const InputPassword = React.forwardRef(
   (
     { className, type = 'password', ...rest }: Props,
     ref: Ref<HTMLInputElement>
@@ -52,4 +52,4 @@ const FormPassword = React.forwardRef(
   }
 );
 
-export default FormPassword;
+export default InputPassword;

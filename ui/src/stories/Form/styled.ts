@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './InputPassword';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import InputLink from './InputLink';
-import Number from './Number';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
+import styled from 'styled-components';
 
-export { Input, Password, SearchInput, Select };
+const Form = styled.div`
+  background-color: #1C1C1E;
+  width: 200px;
+  height: 100px;
+  padding: 24px 24px 0 24px;
+  border-radius: 3px;
+  box-shadow: 0px 0px 9px gray;
+`;
 
 export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  InputLink,
-  Number,
-  Checkbox,
-  Radio
+  Form,
 };
