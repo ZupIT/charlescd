@@ -15,7 +15,7 @@
  */
 
 import { Story } from '@storybook/react';
-import Checkbox, { Props } from 'core/components/Form/Checkbox'
+import Checkbox, { Props } from 'core/components/Form/Checkbox';
 
 export default {
   title: 'Components/Form/Checkbox',

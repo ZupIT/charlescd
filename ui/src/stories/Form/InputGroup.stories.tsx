@@ -15,7 +15,7 @@
  */
 
 import { Story } from '@storybook/react';
-import InputGroup, { Props } from 'core/components/Form/InputGroup'
+import InputGroup, { Props } from 'core/components/Form/InputGroup';
 
 export default {
   title: 'Components/Form/Input Group',
