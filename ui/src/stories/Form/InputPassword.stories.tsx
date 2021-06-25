@@ -94,11 +94,3 @@ const Template: Story<Props> = (props: Props) => {
 
 export const inputPassword = Template.bind({});
 
-// inputPassword.parameters = {
-//   docs: {
-//     source: {
-//       type: 'code',
-//     },
-//   },
-// };
-
