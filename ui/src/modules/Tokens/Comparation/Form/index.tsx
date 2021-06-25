@@ -43,7 +43,8 @@ const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
   const isModeCreate = mode === 'create';
   const isModeView = mode === 'view';
-  const [isModalCopy, setIsModalCopy] = useState<boolean>();
+  const [isModalCopy, setIsModalCopy] = useState<boolean>(false);
+  const [next, setNext] = useState(mode === 'view');
   const methods = useForm<TokenCreate>({
     mode: 'onChange',
     defaultValues: data,
@@ -58,7 +59,6 @@ const FormToken = ({ mode, data }: Props) => {
   } = methods;
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
   const allWorkspaces = watch('allWorkspaces') as boolean;
 
@@ -147,10 +147,11 @@ const FormToken = ({ mode, data }: Props) => {
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
               buttonText="Next"
+              onClickSave={() => setNext(true)}
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {name && !errors?.name?.message && <Workspaces mode={mode} />}
+          {next && <Workspaces mode={mode} />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />

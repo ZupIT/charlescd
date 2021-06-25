@@ -1,6 +1,7 @@
 package io.charlescd.moove.application.module
 
 import io.charlescd.moove.application.ModuleService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.domain.Component
 import io.charlescd.moove.domain.Module
 import io.charlescd.moove.domain.User
@@ -20,7 +21,7 @@ class ModuleServiceTest extends Specification {
 
     void "when save a module should be not throw"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -33,7 +34,7 @@ class ModuleServiceTest extends Specification {
 
     void "when update a module should be not throw"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -46,7 +47,7 @@ class ModuleServiceTest extends Specification {
 
     void "when delete a module should be not throw"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -59,7 +60,7 @@ class ModuleServiceTest extends Specification {
 
     void "when add componet to module should be not throw"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -84,7 +85,7 @@ class ModuleServiceTest extends Specification {
 
     void "when find a module by id should return them"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -108,7 +109,7 @@ class ModuleServiceTest extends Specification {
 
     void "when find a module by id and workspace should return them"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         when:
@@ -132,7 +133,7 @@ class ModuleServiceTest extends Specification {
 
     void "when find more one module by ids should return them"() {
         given:
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def module = new Module("1", "Module Name", "http://github.com", LocalDateTime.now(), "helm", author, [], null, [], "workspaceId")
 
         def ids = new ArrayList();
