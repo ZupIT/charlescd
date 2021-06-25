@@ -15,13 +15,13 @@
  */
 
 import { Story } from '@storybook/react';
-import InputFile, { Props } from 'core/components/Form/InputFile';
+import InputPhoto, { Props } from 'core/components/Form/InputPhoto';
 
 export default {
-  title: 'Components/Form/Input File',
-  component: InputFile,
+  title: 'Components/Form/Input Photo',
+  component: InputPhoto,
 };
 
-const Template: Story<Props> = (props: Props) => <InputFile {...props} />;
-export const inputFile = Template.bind({});
-inputFile.args = {};
+const Template: Story<Props> = (props: Props) => <InputPhoto {...props} />;
+export const inputPhoto = Template.bind({});
+inputPhoto.args = {};

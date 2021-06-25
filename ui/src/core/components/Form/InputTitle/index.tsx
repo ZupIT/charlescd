@@ -18,7 +18,7 @@ import React, { useRef, useState, useImperativeHandle } from 'react';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   name: string;
   placeholder?: string;
   className?: string;

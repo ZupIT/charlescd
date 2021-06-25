@@ -15,13 +15,13 @@
  */
 
 import { Story } from '@storybook/react';
-import InputFile, { Props } from 'core/components/Form/InputFile';
+import SearchInput, { Props } from 'core/components/Form/SearchInput';
 
 export default {
-  title: 'Components/Form/Input File',
-  component: InputFile,
+  title: 'Components/Form/Search Input',
+  component: SearchInput,
 };
 
-const Template: Story<Props> = (props: Props) => <InputFile {...props} />;
-export const inputFile = Template.bind({});
-inputFile.args = {};
+const Template: Story<Props> = (props: Props) => <SearchInput {...props} />;
+export const searchInput = Template.bind({});
+searchInput.args = {};
