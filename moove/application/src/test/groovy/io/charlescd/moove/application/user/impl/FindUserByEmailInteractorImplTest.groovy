@@ -49,13 +49,13 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         def authorization = TestUtils.authorization
 
@@ -79,13 +79,13 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], [], true, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         def authorization = TestUtils.authorization
 
@@ -109,13 +109,13 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         def authorization = TestUtils.authorization
 
@@ -124,7 +124,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
 
         then:
         1 * this.managementUserSecurityService.getUserEmail(authorization) >> "user@zup.com.br"
-        2 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
+        1 * this.userRepository.findByEmail("user@zup.com.br") >> Optional.of(user)
 
         assert response != null
         assert response.id == user.id
@@ -138,13 +138,13 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         def authorization = TestUtils.authorization
 
@@ -164,7 +164,7 @@ class FindUserByEmailInteractorImplTest extends Specification {
         def base64Email = "dXNlckB6dXAuY29tLmJy"
 
         def user = new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def authorization = TestUtils.authorization
 

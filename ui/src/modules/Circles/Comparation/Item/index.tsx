@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import {
@@ -54,9 +54,7 @@ import {
   isUndeployable,
   isBusy,
   getTooltipMessage,
-  circleCannotBeDeleted,
-  isDeploying,
-  isUndeploying
+  cannotCircleBeDeleted,
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -123,7 +121,7 @@ const CirclesComparationItem = ({
   }, [response]);
 
   useEffect(() => {
-    let timeout = 0;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isBusy(circle?.deployment?.status)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
@@ -233,10 +231,7 @@ const CirclesComparationItem = ({
   };
 
   const isInactive = () =>
-    isDeploying(circle?.deployment?.status) ||
-    isUndeploying(circle?.deployment?.status) ||
-    circleCannotBeDeleted(circle);
-
+    cannotCircleBeDeleted(circle);
   const renderDropdown = () => (
     <Dropdown>
       {!circle?.default && (
@@ -271,16 +266,14 @@ const CirclesComparationItem = ({
           onClick={() => copyToClipboard(pathCircleById(id))}
         />
       </Can>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          id="dropdown-item-delete-circle"
-          icon="delete"
-          name="Delete"
-          tooltip={getTooltipMessage(circle)}
-          isInactive={isInactive()}
-          onClick={() => setAction('Delete')}
-        />
-      </Can>
+      <Dropdown.Item
+        id="dropdown-item-delete-circle"
+        icon="delete"
+        name="Delete"
+        tooltip={getTooltipMessage(circle)}
+        isInactive={isInactive()}
+        onClick={() => setAction('Delete')}
+      />
     </Dropdown>
   );
 

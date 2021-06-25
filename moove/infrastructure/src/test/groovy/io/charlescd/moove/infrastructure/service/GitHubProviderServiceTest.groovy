@@ -35,8 +35,7 @@ class GitHubProviderServiceTest extends Specification {
     private GitHubProviderService gitHubProviderService
     private HttpURLConnection httpURLConnection = Mock(HttpURLConnection)
     private workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-    private author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-            new ArrayList<WorkspacePermissions>(), true, LocalDateTime.now())
+    private author = new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png', [], [], true, LocalDateTime.now())
     private componentSnapshotList = new ArrayList<ComponentSnapshot>()
     private moduleSnapshotList = new ArrayList<ModuleSnapshot>()
     private featureSnapshotList = new ArrayList<FeatureSnapshot>()

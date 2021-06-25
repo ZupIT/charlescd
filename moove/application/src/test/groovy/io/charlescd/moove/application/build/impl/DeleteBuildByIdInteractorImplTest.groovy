@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.build.DeleteBuildByIdInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.BusinessException
@@ -55,7 +56,7 @@ class DeleteBuildByIdInteractorImplTest extends Specification {
     def 'when build can not be deleted because deployment status is deploying, should throw exception'() {
         given:
         def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def author = TestUtils.user
 
         Build build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYING)
 
@@ -72,7 +73,7 @@ class DeleteBuildByIdInteractorImplTest extends Specification {
     def 'when build can not be deleted because deployment status is deployed, should throw exception'() {
         given:
         def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def author = TestUtils.user
 
         Build build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED)
 
@@ -89,7 +90,7 @@ class DeleteBuildByIdInteractorImplTest extends Specification {
     def 'should delete build by id successfully'() {
         given:
         def workspaceId = '1a58c78a-6acb-11ea-bc55-0242ac130003'
-        def author = getDummyUser()
+        def author = TestUtils.user
 
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED)
 
@@ -99,11 +100,6 @@ class DeleteBuildByIdInteractorImplTest extends Specification {
         then:
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
         1 * buildRepository.delete(build) >> _
-    }
-
-    private static User getDummyUser() {
-        new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
     }
 
     private static Build getDummyBuild(String workspaceId, User author, BuildStatusEnum buildStatusEnum, DeploymentStatusEnum deploymentStatusEnum) {
