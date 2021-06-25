@@ -14,32 +14,12 @@
  * limitations under the License.
  */
 
-import { Story } from '@storybook/react';
-import Content, { Props } from 'core/components/Panel/Content';
-import Styled from './Styled';
+import styled from 'styled-components';
+
+const Text = styled.div`
+  color: white;
+`;
 
 export default {
-  title: 'Components/Panel/Content',
-  component: Content,
-  argTypes:{
-    children: {
-      control: false
-    },
-    size: {
-      control: false
-    },
-  }
-};
-
-const Template: Story<Props> = (props: Props) => {
-  return(
-    <Content>
-      <Styled.Text>panel content...</Styled.Text>
-    </Content>
-  );
-};
-export const content = Template.bind({});
-
-content.args = {
-  children: ''
+  Text,
 };
