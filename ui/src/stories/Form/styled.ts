@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { Story } from '@storybook/react';
-import Password from 'core/components/Form/Password';
-import { Props } from 'core/components/Form/Input';
+import styled from 'styled-components';
+
+const Form = styled.div`
+  background-color: #1C1C1E;
+  width: 200px;
+  height: 100px;
+  padding: 24px 24px 0 24px;
+  border-radius: 3px;
+  box-shadow: 0px 0px 9px gray;
+`;
 
 export default {
-  title: 'Components/Form/Password',
-  component: Password,
+  Form,
 };
-
-const Template: Story<Props> = (props: Props) => <Password {...props} />;
-export const password = Template.bind({});
-password.args = {};

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import { useHistory } from 'react-router';
 import Icon from 'core/components/Icon';

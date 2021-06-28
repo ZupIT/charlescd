@@ -15,7 +15,7 @@
  */
 
 import Input from './Input';
-import Password from './Password';
+import Password from './InputPassword';
 import SearchInput from './SearchInput';
 import Select from './Select';
 import InputAction from './InputAction';
