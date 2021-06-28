@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
+package io.charlescd.moove.domain
 
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users?: User[];
-}
+data class SimpleAuthor(val email: String)

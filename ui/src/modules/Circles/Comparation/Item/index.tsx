@@ -121,7 +121,7 @@ const CirclesComparationItem = ({
   }, [response]);
 
   useEffect(() => {
-    let timeout = 0;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isBusy(circle?.deployment?.status)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);

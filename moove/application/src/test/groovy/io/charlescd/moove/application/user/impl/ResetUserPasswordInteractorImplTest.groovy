@@ -68,9 +68,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], [], true, LocalDateTime.now())
         when:
         def response = resetUserPasswordInteractor.execute(authorization, userId)
 
@@ -91,9 +91,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], [], true, LocalDateTime.now())
 
         when:
         def passwords = []
@@ -117,9 +117,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], [], true, LocalDateTime.now())
 
         when:
         resetUserPasswordInteractor.execute(authorization, userId)
@@ -137,9 +137,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         resetUserPasswordInteractor = new ResetUserPasswordInteractorImpl(
                 new UserPasswordGeneratorService(),
@@ -162,9 +162,9 @@ class ResetUserPasswordInteractorImplTest extends Specification {
         def userId = UUID.randomUUID()
         def authorization = "authorization"
         def user = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def root = new User(userId.toString(), "Root", "root@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         when:
         resetUserPasswordInteractor.execute(authorization, userId)

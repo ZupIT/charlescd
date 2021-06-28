@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useImperativeHandle } from 'react';
+import React, {
+  useRef,
+  useState,
+  useImperativeHandle,
+  ChangeEvent,
+} from 'react';
 import Button from 'core/components/Button';
+import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 
 interface Props {
@@ -42,15 +48,20 @@ const InputTitle = React.forwardRef(
       readOnly,
       isDisabled,
       error,
-      buttonText = "Save"
+      buttonText = 'Save',
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const wrapperRef = useRef<HTMLDivElement>();
+    const [disabled, setDisabled] = useState(true);
     const [isResumed, setIsResumed] = useState(resume);
 
     useImperativeHandle(ref, () => inputRef.current);
+
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+      setDisabled(isEmpty(event.currentTarget.value));
+    };
 
     const onButtonClick = () => {
       const input = inputRef.current;
@@ -69,16 +80,17 @@ const InputTitle = React.forwardRef(
             resume={isResumed || readOnly}
             className="input-title"
             onClick={() => setIsResumed(false)}
+            onChange={onChange}
             placeholder={placeholder}
             defaultValue={defaultValue}
           />
           {!isResumed && !readOnly && (
             <Button.Default
-              id="submit"
-              type="submit"
+              id="input-title"
+              type="button"
               size="EXTRA_SMALL"
               onClick={onButtonClick}
-              isDisabled={isDisabled}
+              isDisabled={disabled || isDisabled}
             >
               {buttonText}
             </Button.Default>

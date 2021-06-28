@@ -24,7 +24,8 @@ const Search = styled(Input)`
 
   > input {
     background-color: transparent;
-    border-bottom: 1px solid ${({ theme }) => theme.token.workspace.search.input};
+    border-bottom: 1px solid
+      ${({ theme }) => theme.token.workspace.search.input};
   }
 `;
 
@@ -35,7 +36,7 @@ const Item = styled.div`
 
 const Content = styled.div`
   margin-top: 22px;
-  max-height: 300px;
+  height: 300px;
   overflow-y: auto;
 `;
 
@@ -60,4 +61,4 @@ export default {
   Content,
   NoContent,
   Empty,
-}
+};

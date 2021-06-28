@@ -70,7 +70,7 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
     def "when there are workspaces without configuration, should list them"() {
         given:
         def pageRequest = new PageRequest()
-        def workspace = new SimpleWorkspace("workspace-id", "workspace-name", WorkspaceStatusEnum.INCOMPLETE, null)
+        def workspace = new SimpleWorkspace("workspace-id", "workspace-name", new SimpleAuthor("teste@teste.com"), WorkspaceStatusEnum.INCOMPLETE, null)
         def page = new Page([workspace], 0, 20, 1)
 
         when:
@@ -100,7 +100,7 @@ class FindAllWorkspaceInteractorImplTest extends Specification {
         def deploymentConfigurationId = TestUtils.deploymentConfigId
         def deploymentConfiguration = TestUtils.deploymentConfig
         def pageRequest = new PageRequest()
-        def workspace = new SimpleWorkspace(TestUtils.workspaceId, "workspace-name", WorkspaceStatusEnum.INCOMPLETE, deploymentConfigurationId)
+        def workspace = new SimpleWorkspace(TestUtils.workspaceId, "workspace-name", new SimpleAuthor("teste@teste.com"), WorkspaceStatusEnum.INCOMPLETE, deploymentConfigurationId)
         def page = new Page([workspace], 0, 20, 1)
 
         when:

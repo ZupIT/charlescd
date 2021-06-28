@@ -18,6 +18,7 @@
 
 package io.charlescd.moove.infrastructure.repository.mapper
 
+import io.charlescd.moove.domain.SimpleUserGroup
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.WorkspacePermissions
 import java.sql.ResultSet
@@ -30,17 +31,44 @@ class UserExtractor(private val workspaceMapper: WorkspaceMapper) : ResultSetExt
     override fun extractData(resultSet: ResultSet): Set<User> {
         val users = HashSet<User>()
         val workspacePermissions = HashMap<String, HashSet<WorkspacePermissions>>()
+        val userGroups = HashMap<String, HashSet<SimpleUserGroup>>()
 
         while (resultSet.next()) {
-            users.add(mapUser(resultSet))
-            if (resultSet.getString("workspace_id") != null) {
-                mapWorkspacesPermissions(resultSet, workspacePermissions)
-            }
+            createUsers(resultSet, users)
+            createWorkspacePermissions(resultSet, workspacePermissions)
+            createUserGroups(resultSet, userGroups)
         }
 
-        return users.map { it.copy(workspaces = workspacePermissions[it.id]?.toList() ?: emptyList()) }
+        return users
+            .map { it.copy(workspaces = workspacePermissions[it.id]?.toList() ?: emptyList(), userGroups = userGroups[it.id]?.toList() ?: emptyList()) }
             .sortedBy { it.name }
             .toSet()
+    }
+
+    private fun createUsers(resultSet: ResultSet, users: java.util.HashSet<User>) {
+        users.add(mapUser(resultSet))
+    }
+
+    private fun createWorkspacePermissions(resultSet: ResultSet, workspacePermissions: HashMap<String, HashSet<WorkspacePermissions>>) {
+        if (resultSet.getString("workspace_id") != null) {
+            mapWorkspacesPermissions(resultSet, workspacePermissions)
+        }
+    }
+
+    private fun createUserGroups(resultSet: ResultSet, userGroups: HashMap<String, HashSet<SimpleUserGroup>>) {
+        if (resultSet.getString("user_group_id") != null) {
+            mapUserGroup(resultSet, userGroups)
+        }
+    }
+
+    private fun mapUserGroup(resultSet: ResultSet, userGroups: java.util.HashMap<String, java.util.HashSet<SimpleUserGroup>>) {
+        val userId = resultSet.getString("id")
+
+        if (userGroups.containsKey(userId)) {
+            userGroups[userId]!!.add(mapSimpleUserGroup(resultSet))
+        } else {
+            userGroups[userId] = hashSetOf(mapSimpleUserGroup(resultSet))
+        }
     }
 
     private fun mapWorkspacesPermissions(
@@ -64,5 +92,10 @@ class UserExtractor(private val workspaceMapper: WorkspaceMapper) : ResultSetExt
         workspaces = emptyList(),
         root = resultSet.getBoolean("is_root"),
         createdAt = resultSet.getTimestamp("created_at").toLocalDateTime()
+    )
+
+    private fun mapSimpleUserGroup(resultSet: ResultSet) = SimpleUserGroup(
+        id = resultSet.getString("user_group_id"),
+        name = resultSet.getString("user_group_name")
     )
 }

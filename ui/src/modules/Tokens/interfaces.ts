@@ -15,23 +15,23 @@
  */
 
 export interface Token {
-  id: string,
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces?: boolean,
-  token?: string,
-  author: string,
-  revoked?: boolean,
-  created_at?: string,
-  revoked_at?: string,
-  last_used_at?: string,
-};
+  id: string;
+  name: string;
+  permissions: string[];
+  workspaces: string[];
+  allWorkspaces?: boolean;
+  token?: string;
+  author: string;
+  revoked?: boolean;
+  created_at?: string;
+  revoked_at?: string;
+  last_used_at?: string;
+}
 
 export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces: boolean,
-  subjects?: { [k: string]: boolean }
-}
+  name: string;
+  permissions: string[];
+  workspaces: string[];
+  allWorkspaces: boolean;
+  subjects?: { [k: string]: boolean };
+};

@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-import { User } from 'modules/Users/interfaces/User';
-
-export interface Author {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-}
-
-export interface UserGroup {
-  id: string;
-  name: string;
-  author?: Author;
-  createdAt?: string;
-  users?: User[];
-}
+export const getMessageError = async (error: Response) => {
+  try {
+    const err = await error.json();
+    return err.message;
+  } catch (e) {
+    return `${error.status}: ${error.statusText}`;
+  }
+};
