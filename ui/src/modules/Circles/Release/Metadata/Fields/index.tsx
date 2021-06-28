@@ -19,11 +19,10 @@ import Form from 'core/components/Form';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 import { isEmpty } from 'lodash';
-import { isRequired, maxLength, metadataPattern } from 'core/utils/validations';
 
 interface Props {
   remove: (index?: number | number[] | undefined) => void;
-  field: { key: string, value: string };
+  field: { key: string; value: string };
   index: number;
 }
 
@@ -46,25 +45,18 @@ const Fields = ({ remove, field, index }: Props) => {
         name={`metadata.content[${index}].key`}
         error={errors?.metadata?.content[index]?.key?.message}
         label="Key"
-        ref={register({
-          required: isRequired(),
-          maxLength: maxLength(63),
-          pattern: metadataPattern()
-        })}
+        ref={register()}
         defaultValue={field.key}
       />
       <Form.Input
         name={`metadata.content[${index}].value`}
         error={errors?.metadata?.content[index]?.value?.message}
         label="Value"
-        ref={register({
-          maxLength: maxLength(252),
-          pattern: metadataPattern()
-        })}
+        ref={register()}
         defaultValue={field.value}
       />
     </Styled.Field>
   );
-}
+};
 
 export default Fields;

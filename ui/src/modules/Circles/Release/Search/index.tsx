@@ -34,7 +34,7 @@ export interface Props {
 const defaultValues = {
   buildId: '',
   circleId: '',
-  metadata: {}
+  metadata: {},
 };
 
 const SearchRelease = ({ circleId, onDeployed }: Props) => {
@@ -42,7 +42,13 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
     defaultValues,
     mode: 'onChange',
   });
-  const { control, handleSubmit, getValues, setValue, formState: { isValid } } = form;
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    setValue,
+    formState: { isValid },
+  } = form;
   const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const [lastTag, setLastTag] = useState('');
   const [buildOptions, setBuildOptions] = useState([]);
@@ -81,8 +87,8 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
       buildId,
       metadata: {
         scope: Scope.APPLICATION,
-        content: toKeyValue(metadata)
-      }
+        content: toKeyValue(metadata),
+      },
     });
   };
 
@@ -92,7 +98,7 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
       const metadata = getMetadata(build);
       setMetadata(metadata);
     }
-  }
+  };
 
   const onSearchChange = (value: string) => {
     if (value !== lastTag) {
