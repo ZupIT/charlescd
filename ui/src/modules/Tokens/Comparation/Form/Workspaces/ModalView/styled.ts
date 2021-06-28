@@ -14,24 +14,39 @@
  * limitations under the License.
  */
 
-import ContentLoader from 'react-content-loader';
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
 
-// TODO move to Workspaces/Loader/index.tsx
-const ListLoader = () => (
-  <div>
-    <ContentLoader
-      speed={1}
-      width={543}
-      height={300}
-      backgroundColor="#3a393c"
-      foregroundColor="#2c2b2e"
-    >
-      <rect x="0" y="0" rx="2" ry="2" width="543" height="72" />
-      <rect x="0" y="74" rx="2" ry="2" width="543" height="72" />
-      <rect x="0" y="148" rx="2" ry="2" width="543" height="72" />
-      <rect x="0" y="222" rx="2" ry="2" width="543" height="72" />
-    </ContentLoader>
-  </div>
-);
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    width: 543px;
+    padding: 35px 0 28px 0;
+    max-height: 650px;
+    bottom: 100px;
+  }
 
-export default ListLoader;
+  .modal-content {
+    overflow-y: auto;
+    max-height: 600px;
+  }
+`;
+
+const Header = styled.div`
+  padding: 0 40px;
+
+  > :last-child {
+    margin-top: 20px;
+  }
+`;
+
+const Content = styled.div`
+  margin-top: 22px;
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
+export default {
+  Content,
+  Modal,
+  Header,
+};

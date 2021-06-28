@@ -16,19 +16,16 @@
 
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import map from 'lodash/map';
-import isEmpty from 'lodash/isEmpty';
 import take from 'lodash/take';
 import size from 'lodash/size';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import ContentIcon from 'core/components/ContentIcon';
-import Card from 'core/components/Card';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { Mode } from '../../helpers';
 import { MAX_ITEMS, MIN_ITEMS } from './Modal/Content/constants';
 import Modal from './Modal';
-import { iconByMode, labelByMode } from './helpers';
+import ModalView from './ModalView';
 import Styled from './styled';
 import { Option } from './Modal/constants';
 
@@ -39,11 +36,11 @@ interface Props {
 const Workspaces = ({ mode }: Props) => {
   const { register, setValue, getValues, watch, trigger } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
+  const [isViewOpen, setIsViewOpen] = useState<boolean>();
   const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
   const watchAllWorkspaces = watch('allWorkspaces') as boolean;
   const preview = isShowMore ? take(workspaces, MAX_ITEMS) : take(workspaces, MIN_ITEMS)
-  const isAddMode = isEmpty(preview);
 
   const validateWorkspaces = useCallback(() => {
     const { allWorkspaces, workspaces } = getValues();
@@ -58,6 +55,8 @@ const Workspaces = ({ mode }: Props) => {
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
+  const toggleIsViewOpen = () => setIsViewOpen(!isViewOpen);
+
   const toggleShowMore = () => setIsShowMore(!isShowMore);
 
   const onContinue = (draft: WorkspacePaginationItem[], option: Option) => {
@@ -71,17 +70,7 @@ const Workspaces = ({ mode }: Props) => {
     }
 
     trigger('workspaces');
-  }
-
-  const renderItems = () => (
-   map(preview, (workspace) => (
-      <Card.Config
-        key={workspace?.id}
-        icon="workspaces"
-        description={workspace?.name}
-      />
-    ))
-  )
+  };
 
   const ShowMore = () => (
     size(workspaces) > MIN_ITEMS &&
@@ -98,17 +87,25 @@ const Workspaces = ({ mode }: Props) => {
       </Styled.ShowMore>
   )
 
-  const renderModal = () => 
+  const renderModalAddWorkspaces = () => 
     isOpen &&
       <Modal
         workspaces={workspaces}
         onClose={toggleIsOpen}
         onContinue={onContinue}
       />
+
+  const renderModalViewWorkspaces = () => 
+    isViewOpen &&
+      <ModalView
+        workspaces={workspaces}
+        onClose={toggleIsViewOpen}
+      />
   
   return (
     <Fragment>
-      {renderModal()}
+      {renderModalAddWorkspaces()}
+      {renderModalViewWorkspaces()}
       <ContentIcon icon="workspaces">
         <Text.h2 color="light">Associated Workspaces</Text.h2>
         <Styled.Caption color="dark">
@@ -118,18 +115,25 @@ const Workspaces = ({ mode }: Props) => {
               : 'Your token have access only on these workspaces'
           }
         </Styled.Caption>
-        <Styled.Content>
-          {preview && !watchAllWorkspaces && renderItems()}
-        </Styled.Content>
         <ShowMore />
-        {mode === 'create' && <Styled.Button
-          name={iconByMode(isAddMode)}
-          icon={iconByMode(isAddMode)}
-          color="dark"
-          onClick={toggleIsOpen}
-        >
-          {labelByMode(isAddMode)}
-        </Styled.Button>}
+        {mode === 'create' && 
+          <Styled.Button
+            name='plus-circle'
+            icon='plus-circle'
+            color="dark"
+            onClick={toggleIsOpen}
+          >
+            Add workspaces
+          </Styled.Button>}
+        {mode === 'view' && 
+          <Styled.Button
+            name='view'
+            icon='view'
+            color="dark"
+            onClick={toggleIsViewOpen}
+          >
+            View workspaces
+          </Styled.Button>}
       </ContentIcon>
     </Fragment>
   )
