@@ -48,7 +48,7 @@ const Item = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 22px;
+  margin-top: 16px;
   max-height: 300px;
   overflow-y: auto;
 `;
