@@ -16,10 +16,4 @@
 
 package io.charlescd.moove.domain
 
-data class SimpleWorkspace(
-    val id: String,
-    val name: String,
-    val author: SimpleAuthor,
-    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE,
-    val deploymentConfigurationId: String? = null
-)
+data class SimpleAuthor(val email: String)

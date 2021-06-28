@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package io.charlescd.moove.domain
+package io.charlescd.moove.application.workspace.response
 
-data class SimpleWorkspace(
-    val id: String,
-    val name: String,
-    val author: SimpleAuthor,
-    val status: WorkspaceStatusEnum = WorkspaceStatusEnum.INCOMPLETE,
-    val deploymentConfigurationId: String? = null
-)
+data class SimpleAuthorResponse(val email: String)
