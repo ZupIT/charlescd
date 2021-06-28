@@ -16,35 +16,45 @@
 
 import { Fragment, useEffect, useState, useCallback } from 'react';
 import map from 'lodash/map';
-import some from 'lodash/some';
 import debounce from 'lodash/debounce';
 import InfiniteScroll from 'core/components/InfiniteScroll';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Item from './Item';
 import Loader from './Loader';
 import Styled from './styled';
+import { useWorkspaces } from '../../Modal/hooks';
 
 export interface Props {
   draft: WorkspacePaginationItem[];
 }
 
 const List = ({ draft }: Props) => {
+  const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState<string>('');
+
+  useEffect(() => {
+    if (status === 'idle') {
+      getWorkspaces();
+    }
+  }, [getWorkspaces, status]);
 
   const onSearch = useCallback((value: string) => {
     const page = 0;
     setName(value);
+    resetWorkspaces();
+    getWorkspaces(value, page);
     console.log('onSearch')
-  }, []);
+  }, [getWorkspaces, resetWorkspaces]);
 
   const handleChange = debounce(onSearch, 700);
 
   const loadMore = (page: number) => {
+    getWorkspaces(name, page);
     console.log('loadMore')
   };
 
   const renderItems = () => 
-    map(draft, (workspace, index) => (
+    map(workspaces, (workspace, index) => (
       <Item
         key={`item-${index}-${workspace?.id}`}
         workspace={workspace}
@@ -65,9 +75,9 @@ const List = ({ draft }: Props) => {
       </Styled.Wrapper>
       <Styled.Content data-testid="workspace-list-content">
         <InfiniteScroll
-          hasMore={true}
+          hasMore={!last}
           loadMore={loadMore}
-          isLoading={false}
+          isLoading={status === 'pending'}
           loader={<Loader />}
         >
           {renderItems()}

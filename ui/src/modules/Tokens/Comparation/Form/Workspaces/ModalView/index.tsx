@@ -17,8 +17,6 @@
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Styled from './styled';
 import Text from 'core/components/Text';
-import InfiniteScroll from 'core/components/InfiniteScroll';
-import Loader from '../Modal/Content/loader';
 import List from './Content/List';
 
 export interface Props {
@@ -27,26 +25,12 @@ export interface Props {
 };
 
 const ModalView = ({ workspaces, onClose }: Props) => {
-const loadMore = (page: number) => {
-  console.log('loadMore')
-  // getWorkspaces(name, page);
-};
-
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
         <Text.h2 color="light">View workspaces</Text.h2>
       </Styled.Header>
-      <Styled.Content data-testid="workspace-list-content">
-        <InfiniteScroll
-          hasMore={false}
-          loadMore={loadMore}
-          isLoading={false}
-          loader={<Loader />}
-        >
-          {<List draft={workspaces} />}
-        </InfiniteScroll>
-      </Styled.Content>
+      <List draft={workspaces} />
     </Styled.Modal>
   )
 }
