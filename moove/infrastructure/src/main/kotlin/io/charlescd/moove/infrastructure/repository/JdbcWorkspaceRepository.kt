@@ -149,8 +149,11 @@ class JdbcWorkspaceRepository(
             SELECT workspaces.id                          AS workspace_id,
                    workspaces.name                        AS workspace_name,
                    workspaces.status                      AS workspace_status,
-                   workspaces.deployment_configuration_id AS workspace_deployment_configuration_id
-            FROM workspaces WHERE 1 = 1 $innerQueryStatement
+                   workspaces.deployment_configuration_id AS workspace_deployment_configuration_id,
+                   workspace_user.email                   AS workspace_user_email,
+            FROM workspaces 
+            INNER JOIN users workspace_user ON workspaces.user_id = workspace_user.id
+            WHERE 1 = 1 $innerQueryStatement
             ORDER BY workspaces.name, workspaces.id ASC
             LIMIT ${pageRequest.size}
             OFFSET ${pageRequest.offset()}
