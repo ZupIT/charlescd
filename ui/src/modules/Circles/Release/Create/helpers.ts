@@ -15,7 +15,11 @@
  */
 
 import { Module } from 'modules/Modules/interfaces/Module';
-import { Module as ModuleProps, ModuleForm } from '../interfaces/Module';
+import {
+  Module as ModuleProps,
+  ModuleForm,
+  SearchModuleForm,
+} from '../interfaces/Module';
 import { Tag } from '../interfaces/Tag';
 import map from 'lodash/map';
 import find from 'lodash/find';
@@ -130,9 +134,27 @@ export const checkMetadata = (metadata: Metadata) => {
     }
   });
 
-  console.log('error', error);
-
   return error;
+};
+
+export const searchResolver = ({ metadata, buildId }: SearchModuleForm) => {
+  const error: Error = {};
+  const errorMetadata = checkMetadata(metadata);
+
+  if (isEmpty(buildId)) {
+    error['buildId'] = {
+      type: 'buildId.required',
+      message: 'This field is required',
+    };
+  }
+
+  return {
+    values: {},
+    errors: {
+      ...error,
+      ...errorMetadata,
+    },
+  };
 };
 
 export const validationResolver = ({ modules, metadata }: ModuleForm) => {

@@ -28,3 +28,8 @@ export interface ModuleForm {
   modules: Module[];
   metadata: Metadata;
 }
+
+export interface SearchModuleForm {
+  buildId: string;
+  metadata: Metadata;
+}

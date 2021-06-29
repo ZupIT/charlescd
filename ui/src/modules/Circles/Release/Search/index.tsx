@@ -25,6 +25,8 @@ import { getBuildOptions, getMetadata, toKeyValue } from './helpers';
 import Styled from '../styled';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { Scope } from '../Metadata/interfaces';
+import { SearchModuleForm } from '../interfaces/Module';
+import { searchResolver } from '../Create/helpers';
 
 export interface Props {
   circleId: string;
@@ -38,9 +40,10 @@ const defaultValues = {
 };
 
 const SearchRelease = ({ circleId, onDeployed }: Props) => {
-  const form = useForm({
+  const form = useForm<SearchModuleForm>({
     defaultValues,
     mode: 'onChange',
+    resolver: searchResolver,
   });
   const {
     control,
@@ -119,7 +122,6 @@ const SearchRelease = ({ circleId, onDeployed }: Props) => {
             isLoading={loading}
             onInputChange={debounce(onSearchChange, 500)}
             onChange={onSelect}
-            rules={{ required: true }}
           />
         </Styled.SearchWrapper>
         {metadata && <Metadata fieldArray={metadataFields} />}
