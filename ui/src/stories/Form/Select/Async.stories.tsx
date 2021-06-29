@@ -15,21 +15,23 @@
  */
 
 import { Story } from '@storybook/react';
-import SearchInput, { Props } from 'core/components/Form/SearchInput';
-import styled from './styled';
+import { Props } from 'core/components/Form/Select/Async';
+import Select from 'core/components/Form/Select/Async/Select';
+import styled from '../styled';
 
 export default {
-  title: 'Components/Form/Search Input',
-  component: SearchInput,
+  title: 'Components/Form/Select/Select Async',
+  component: Select,
+  parameters: { control: false }
 };
 
 const Template: Story<Props> = (props: Props) => {
   return (
     <styled.Form>
-      <SearchInput {...props} />
+      <Select {...props} />
     </styled.Form>
   );
 };
 
-export const searchInput = Template.bind({});
-searchInput.args = {};
+export const selectAsync = Template.bind({});
+selectAsync.args = {};

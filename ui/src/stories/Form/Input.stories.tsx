@@ -16,12 +16,23 @@
 
 import { Story } from '@storybook/react';
 import Input, { Props } from 'core/components/Form/Input';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Input',
   component: Input,
 };
 
-const Template: Story<Props> = (props: Props) => <Input {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <Input  {...props }/>
+    </styled.Form>
+  );
+};
+
 export const input = Template.bind({});
-input.args = {};
+input.args = {
+  name: "input",
+  label: "Base input"
+};

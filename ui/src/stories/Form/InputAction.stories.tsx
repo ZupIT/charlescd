@@ -16,14 +16,23 @@
 
 import { Story } from '@storybook/react';
 import InputAction, { Props } from 'core/components/Form/InputAction';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Input Action',
   component: InputAction,
 };
 
-const Template: Story<Props> = (props: Props) => <InputAction {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <InputAction  {...props}/>
+    </styled.Form>
+  );
+};
+
 export const inputAction = Template.bind({});
 inputAction.args = {
-  icon: 'copy'
+  name:"input",
+  icon:"copy"
 };

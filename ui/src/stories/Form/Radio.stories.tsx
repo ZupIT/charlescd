@@ -16,13 +16,22 @@
 
 import { Story } from '@storybook/react';
 import Radio, { Props } from 'core/components/Form/Radio';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Radio',
   component: Radio,
 };
 
-const Template: Story<Props> = (props: Props) => <Radio {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <Radio {...props} />
+      <Radio {...props} />
+    </styled.Form>
+  );
+};
+
 export const radio = Template.bind({});
 radio.args = {
   name: 'charles',

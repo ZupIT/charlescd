@@ -16,12 +16,21 @@
 
 import { Story } from '@storybook/react';
 import TextArea, { Props } from 'core/components/Form/TextArea';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Text Area',
   component: TextArea,
 };
 
-const Template: Story<Props> = (props: Props) => <TextArea {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <TextArea {...props} />
+    </styled.Form>
+  );
+};
 export const textArea = Template.bind({});
-textArea.args = {};
+textArea.args = {
+  label: 'Text area'
+};

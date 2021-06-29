@@ -25,7 +25,7 @@ import { handleChange } from './helpers';
 import MultiValue from './MultiValue';
 import ValueContainer from './ValueContainer';
 
-type Props = {
+export type Props = {
   onChange?: (event: Option[]) => void;
 } & DefaultProps;
 

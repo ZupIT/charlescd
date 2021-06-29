@@ -16,12 +16,23 @@
 
 import { Story } from '@storybook/react';
 import Number, { Props } from 'core/components/Form/Number';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Number',
   component: Number,
 };
 
-const Template: Story<Props> = (props: Props) => <Number {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <Number {...props} />
+    </styled.Form>
+  );
+};
+
 export const number = Template.bind({});
-number.args = {};
+number.args = {
+  name: 'input',
+  label: 'Input number only'
+};

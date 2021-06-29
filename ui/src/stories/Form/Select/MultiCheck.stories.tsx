@@ -15,21 +15,27 @@
  */
 
 import { Story } from '@storybook/react';
-import SearchInput, { Props } from 'core/components/Form/SearchInput';
-import styled from './styled';
+import Select, { Props } from 'core/components/Form/Select/MultiCheck/Select';
+import styled from '../styled';
 
 export default {
-  title: 'Components/Form/Search Input',
-  component: SearchInput,
+  title: 'Components/Form/Select/Select Multi',
+  component: Select,
+  parameters: { control: false }
 };
 
 const Template: Story<Props> = (props: Props) => {
   return (
     <styled.Form>
-      <SearchInput {...props} />
+      <Select {...props} />
     </styled.Form>
   );
 };
 
-export const searchInput = Template.bind({});
-searchInput.args = {};
+export const selectMulti = Template.bind({});
+selectMulti.args = {
+  options: [
+    { value: 'apple', label: 'apple' },
+    { value: 'orange', label: 'orange' }
+  ]
+};

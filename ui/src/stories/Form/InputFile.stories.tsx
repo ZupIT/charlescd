@@ -16,12 +16,20 @@
 
 import { Story } from '@storybook/react';
 import InputFile, { Props } from 'core/components/Form/InputFile';
+import styled from './styled';
 
 export default {
   title: 'Components/Form/Input File',
   component: InputFile,
 };
 
-const Template: Story<Props> = (props: Props) => <InputFile {...props} />;
+const Template: Story<Props> = (props: Props) => { 
+  return (
+    <styled.Form>
+      <InputFile {...props} />
+    </styled.Form>
+  );
+};
+
 export const inputFile = Template.bind({});
 inputFile.args = {};

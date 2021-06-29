@@ -20,7 +20,7 @@ import { OptionTypeBase } from 'react-select';
 import { Option } from '../interfaces';
 import Select from './Select';
 
-interface Props {
+export interface Props {
   name: string;
   control: Control<any>;
   options?: OptionTypeBase[];
