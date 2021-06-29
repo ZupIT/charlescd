@@ -41,9 +41,9 @@ const Item = ({ workspace, selected, onChange }: Props) => {
         <Text.h4 color="light">{workspace?.name}</Text.h4>
         <Styled.Subtitle>
           <Text.h4 fontStyle="italic" color="dark">
-            Owned by:
+            Owned by:⠀
           </Text.h4>
-          <Text.h4 color="light">{workspace?.authorEmail}</Text.h4>
+          <Text.h4 color="light">{workspace?.author?.email}</Text.h4>
         </Styled.Subtitle>
       </Styled.Description>
       <Icon {...checkProps(isChecked)} size="22px" onClick={onClick} />
