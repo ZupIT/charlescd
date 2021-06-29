@@ -18,11 +18,10 @@ import { Fragment, useEffect, useState, useCallback } from 'react';
 import map from 'lodash/map';
 import debounce from 'lodash/debounce';
 import InfiniteScroll from 'core/components/InfiniteScroll';
-import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Item from './Item';
 import Loader from './Loader';
 import Styled from './styled';
-import { useWorkspaces } from '../../Modal/hooks';
+import { useWorkspaces } from '../../Add/hooks';
 import { TokenWorkspace } from 'modules/Tokens/interfaces';
 
 export interface Props {
