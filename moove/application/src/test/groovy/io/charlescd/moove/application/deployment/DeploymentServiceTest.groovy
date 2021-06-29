@@ -150,7 +150,7 @@ class DeploymentServiceTest extends Specification {
     }
 
     private User getDummyUser() {
-        new User("qwerty-12345-asdf-98760", "charles", "email@email.com", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        new User("qwerty-12345-asdf-98760", "charles", "email@email.com", "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
     }
     private Circle getDummyCircle() {
         new Circle("qwerty-12345-asdf-98760", "charles", "reference", getDummyUser(),

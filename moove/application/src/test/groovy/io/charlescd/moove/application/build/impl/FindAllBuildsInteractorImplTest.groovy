@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.build.FindAllBuildsInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.BuildRepository
@@ -77,9 +78,8 @@ class FindAllBuildsInteractorImplTest extends Specification {
         def pageRequest = new PageRequest()
 
         def workspaceId = "b49c3575-c842-4cbb-8d41-bcad7c42091f"
-        def authorId = "7bdbca7a-a0dc-4721-a861-198b238c0e32"
 
-        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = TestUtils.user
         def build = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED)
 
         def page = new Page<Build>([build], pageRequest.page, pageRequest.size, 1)

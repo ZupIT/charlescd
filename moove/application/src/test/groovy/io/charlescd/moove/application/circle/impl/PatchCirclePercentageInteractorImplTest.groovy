@@ -360,6 +360,7 @@ class PatchCirclePercentageInteractorImplTest extends Specification {
                 "charles@zup.com.br",
                 "http://charles.com/dummy_photo.jpg",
                 [],
+                [],
                 false,
                 LocalDateTime.now()
         )

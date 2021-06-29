@@ -86,6 +86,7 @@ class TestUtils {
                 email,
                 "http://charles.com/dummy_photo.jpg",
                 [],
+                [],
                 false,
                 LocalDateTime.now()
         )
@@ -97,6 +98,7 @@ class TestUtils {
                 "charles",
                 emailRoot,
                 "http://charles.com/dummy_photo.jpg",
+                [],
                 [],
                 true,
                 LocalDateTime.now()
