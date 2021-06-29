@@ -31,9 +31,11 @@ import { Option } from './Modal/constants';
 
 interface Props {
   mode?: Mode;
+  tokenWorkspaces: string[];
+  allWorkspaces: boolean;
 }
 
-const Workspaces = ({ mode }: Props) => {
+const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
   const { register, setValue, getValues, watch, trigger } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
   const [isViewOpen, setIsViewOpen] = useState<boolean>();
@@ -98,7 +100,8 @@ const Workspaces = ({ mode }: Props) => {
   const renderModalViewWorkspaces = () => 
     isViewOpen &&
       <ModalView
-        workspaces={workspaces}
+        allWorkspaces={allWorkspaces}
+        tokenWorkspaces={tokenWorkspaces}
         onClose={toggleIsViewOpen}
       />
   

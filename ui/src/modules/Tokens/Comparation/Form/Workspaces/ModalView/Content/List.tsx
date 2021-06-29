@@ -23,12 +23,14 @@ import Item from './Item';
 import Loader from './Loader';
 import Styled from './styled';
 import { useWorkspaces } from '../../Modal/hooks';
+import { TokenWorkspace } from 'modules/Tokens/interfaces';
 
 export interface Props {
-  draft: WorkspacePaginationItem[];
+  tokenWorkspaces: string[];
+  allWorkspaces: boolean;
 }
 
-const List = ({ draft }: Props) => {
+const List = ({ tokenWorkspaces, allWorkspaces }: Props) => {
   const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState<string>('');
 
@@ -53,13 +55,21 @@ const List = ({ draft }: Props) => {
     console.log('loadMore')
   };
 
-  const renderItems = () => 
+  const renderItemsAll = () => 
     map(workspaces, (workspace, index) => (
       <Item
         key={`item-${index}-${workspace?.id}`}
         workspace={workspace}
       />
     ))
+
+  const renderItems = () => 
+  map(tokenWorkspaces, (workspace: TokenWorkspace, index) => (
+    <Item
+      key={`item-${index}-${workspace?.id}`}
+      workspace={workspace}
+    />
+  ))
 
   return (
     <Fragment>
@@ -74,14 +84,17 @@ const List = ({ draft }: Props) => {
         />
       </Styled.Wrapper>
       <Styled.Content data-testid="workspace-list-content">
-        <InfiniteScroll
-          hasMore={!last}
-          loadMore={loadMore}
-          isLoading={status === 'pending'}
-          loader={<Loader />}
-        >
-          {renderItems()}
-        </InfiniteScroll>
+        {!allWorkspaces
+          ? renderItems()
+          : <InfiniteScroll
+              hasMore={!last}
+              loadMore={loadMore}
+              isLoading={status === 'pending'}
+              loader={<Loader />}
+            >
+              {renderItemsAll()}
+            </InfiniteScroll> 
+        }
       </Styled.Content>
     </Fragment>
   );

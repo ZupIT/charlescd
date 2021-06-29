@@ -34,4 +34,9 @@ export type TokenCreate = {
   workspaces: string[],
   allWorkspaces: boolean,
   subjects?: { [k: string]: boolean }
-}
+};
+
+export interface TokenWorkspace {
+  id: string,
+  name: string,
+};

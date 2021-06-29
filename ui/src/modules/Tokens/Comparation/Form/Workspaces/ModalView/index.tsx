@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Styled from './styled';
 import Text from 'core/components/Text';
 import List from './Content/List';
 
 export interface Props {
-  workspaces: WorkspacePaginationItem[];
+  allWorkspaces: boolean;
+  tokenWorkspaces?: string[];
   onClose: () => void;
 };
 
-const ModalView = ({ workspaces, onClose }: Props) => {
+const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
         <Text.h2 color="light">View workspaces</Text.h2>
       </Styled.Header>
-      <List draft={workspaces} />
+      <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
     </Styled.Modal>
   )
 }

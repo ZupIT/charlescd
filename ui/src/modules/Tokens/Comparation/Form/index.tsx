@@ -142,7 +142,12 @@ const FormToken = ({ mode, data }: Props) => {
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {name && !errors?.name?.message && <Workspaces mode={mode} />}
+          {name && !errors?.name?.message && 
+            <Workspaces 
+              mode={mode} 
+              allWorkspaces={data?.allWorkspaces} 
+              tokenWorkspaces={data?.workspaces} 
+            />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
