@@ -19,513 +19,135 @@
 package tests
 
 import (
-	"encoding/json"
-	"github.com/ZupIT/charlescd/compass/internal/configuration"
-	"github.com/ZupIT/charlescd/compass/internal/datasource"
-	"github.com/ZupIT/charlescd/compass/internal/repository"
-	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
-	"github.com/ZupIT/charlescd/compass/tests/integration"
+	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	metric2 "github.com/ZupIT/charlescd/compass/internal/use_case/metric"
+	mocks "github.com/ZupIT/charlescd/compass/tests/mocks/repository"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/gorm"
-	"io/ioutil"
-	"strings"
 	"testing"
 )
 
-type SuiteMetric struct {
+type MetricSuite struct {
 	suite.Suite
-	DB *gorm.DB
-
-	repository repository.MetricRepository
-	metric     *repository.Metric
+	deleteMetric   metric2.DeleteMetric
+	createMetric   metric2.CreateMetric
+	updateMetric   metric2.UpdateMetric
+	metricRep      *mocks.MetricRepository
+	metricGroupRep *mocks.MetricsGroupRepository
 }
 
-func (s *SuiteMetric) SetupSuite() {
-	integration.setupEnv()
+func (m *MetricSuite) SetupSuite() {
+	m.metricRep = new(mocks.MetricRepository)
+	m.metricGroupRep = new(mocks.MetricsGroupRepository)
+	m.deleteMetric = metric2.NewDeleteMetric(m.metricRep)
+	m.createMetric = metric2.NewCreateMetric(m.metricRep, m.metricGroupRep)
+	m.updateMetric = metric2.NewUpdateMetric(m.metricRep)
 }
 
-func (s *SuiteMetric) BeforeTest(_, _ string) {
-	var err error
-	s.DB, err = configuration.GetDBConnection("../../migrations")
-	require.Nil(s.T(), err)
-
-	s.DB.LogMode(integration.dbLog)
-
-	pluginMain := repository.NewPluginRepository()
-	datasourceMain := datasource.NewMain(s.DB, pluginMain)
-
-	s.repository = repository.NewMetricRepository(s.DB, datasourceMain, pluginMain)
-	integration.clearDatabase(s.DB)
+func TestMetricSuite(t *testing.T) {
+	suite.Run(t, new(MetricSuite))
 }
 
-func (s *SuiteMetric) AfterTest(_, _ string) {
-	s.DB.Close()
+func (m *MetricSuite) BeforeTest(suiteName, testName string) {
+	m.SetupSuite()
 }
 
-func TestInitMetric(t *testing.T) {
-	suite.Run(t, new(SuiteMetric))
+func (m *MetricSuite) TestCreateMetric() {
+
+	metricCreate := newBasicMetric()
+	var r float64
+	m.metricGroupRep.On("FindById", mock.Anything).Return(domain.MetricsGroup{}, nil)
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r, nil)
+	m.metricRep.On("SaveMetric", mock.Anything).Return(metricCreate, nil)
+	res, err := m.createMetric.Execute(metricCreate)
+
+	require.NotNil(m.T(), res)
+	require.Nil(m.T(), err)
+
+	metricCreate.BaseModel = res.BaseModel
+	require.Equal(m.T(), metricCreate.BaseModel, res.BaseModel)
+	require.Equal(m.T(), metricCreate.Nickname, res.Nickname)
+	require.Equal(m.T(), metricCreate.CircleID, res.CircleID)
 }
 
-func (s *SuiteMetric) TestValidateMetric() {
-	filters := make([]datasourcePKG.MetricFilter, 0)
-	filters = append(filters, datasourcePKG.MetricFilter{Field: integration.bigString, Value: integration.bigString, Operator: "="})
+func (m *MetricSuite) TestCreateMetricError() {
 
-	groupBy := make([]repository.MetricGroupBy, 0)
-	groupBy = append(groupBy, repository.MetricGroupBy{Field: integration.bigString})
+	var r float64
+	m.metricGroupRep.On("FindById", mock.Anything).Return(domain.MetricsGroup{}, nil)
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r, nil)
+	m.metricRep.On("SaveMetric", mock.Anything).Return(domain.Metric{},
+		logging.NewError("error", errors.New("some error"), nil))
+	_, err := m.createMetric.Execute(domain.Metric{})
 
-	metric := repository.Metric{
-		Nickname: integration.bigString,
-		Filters:  filters,
-		GroupBy:  groupBy,
-	}
-	var errList = s.repository.Validate(metric)
-
-	require.NotEmpty(s.T(), errList)
+	require.Error(m.T(), err)
 }
 
-func (s *SuiteMetric) TestParse() {
-	stringReader := strings.NewReader(`{
-    "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
-    "metricGroupId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7",
-    "metric": "metric 213",
-    "filters": [
-        {
-            "field": "destination",
-            "value": "moove",
-            "operator": "EQUAL"
-        }
-    ],
-    "groupBy": [
-        {
-            "field": "app"
-        }
-    ],
-    "condition": "EQUAL",
-    "threshold": 30.0
-}`)
-	stringReadCloser := ioutil.NopCloser(stringReader)
-
-	res, err := s.repository.ParseMetric(stringReadCloser)
-
-	require.Nil(s.T(), err)
-	require.NotNil(s.T(), res)
+func (m *MetricSuite) TestCreateMetricFindGroupError() {
+	m.metricGroupRep.On("FindById", mock.Anything).Return(domain.MetricsGroup{},
+		logging.NewError("error", errors.New("some error"), nil))
+	_, err := m.createMetric.Execute(domain.Metric{})
+	require.Error(m.T(), err)
 }
 
-func (s *SuiteMetric) TestParseError() {
-	stringReader := strings.NewReader(`{ "dataSourceId": "4bdcab48-483d-4136-8f41-318a5c7f1ec7saldajsndas" }`)
-	stringReadCloser := ioutil.NopCloser(stringReader)
-
-	_, err := s.repository.ParseMetric(stringReadCloser)
-
-	require.NotNil(s.T(), err)
+func (m *MetricSuite) TestCreateMetricResultQuertError() {
+	var r float64
+	m.metricGroupRep.On("FindById", mock.Anything).Return(domain.MetricsGroup{}, nil)
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r, logging.NewError("error", errors.New("some error"), nil))
+	_, err := m.createMetric.Execute(domain.Metric{})
+	require.Error(m.T(), err)
 }
 
-func (s *SuiteMetric) TestSaveMetric() {
-	circleId := uuid.New()
+func (m *MetricSuite) TestUpdateMetric() {
+	metricCreate := newBasicMetric()
+	var r float64
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r, nil)
+	m.metricRep.On("UpdateMetric", mock.Anything).Return(metricCreate, nil)
+	res, err := m.updateMetric.Execute(metricCreate)
 
-	metricgroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    uuid.New(),
-		WorkspaceID: uuid.New(),
-	}
+	require.Nil(m.T(), err)
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-	s.DB.Create(&metricgroup)
-
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricgroup.ID,
-		DataSourceID:   dataSource.ID,
-		Query:          "group_metric_example_2",
-		Metric:         "MetricName",
-		Filters:        nil,
-		GroupBy:        nil,
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	res, err := s.repository.SaveMetric(metricStruct)
-
-	require.Nil(s.T(), err)
-
-	metricStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), res, metricStruct)
+	metricCreate.BaseModel = res.BaseModel
+	require.Equal(m.T(), metricCreate.BaseModel, res.BaseModel)
+	require.Equal(m.T(), metricCreate.CircleID, res.CircleID)
 }
 
-func (s *SuiteMetric) TestUpdateMetric() {
-	circleId := uuid.New()
+func (m *MetricSuite) TestUpdateMetricError() {
+	var r float64
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r, nil)
+	m.metricRep.On("UpdateMetric", mock.Anything).Return(domain.Metric{},
+		logging.NewError("error", errors.New("some error"), nil))
+	_, err := m.updateMetric.Execute(domain.Metric{})
 
-	metricgroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
-
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-	s.DB.Create(&metricgroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricgroup.ID,
-		DataSourceID:   dataSource.ID,
-		Metric:         "MetricName",
-		Filters:        nil,
-		GroupBy:        nil,
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	s.DB.Create(&metricStruct)
-
-	metricStruct.Metric = "Name"
-
-	res, err := s.repository.UpdateMetric(metricStruct)
-
-	require.Nil(s.T(), err)
-
-	metricStruct.BaseModel = res.BaseModel
-	metricStruct.MetricExecution.Status = res.MetricExecution.Status
-	require.Equal(s.T(), metricStruct, res)
+	require.Error(m.T(), err)
 }
 
-func (s *SuiteMetric) TestRemoveMetric() {
-	id := uuid.New()
+func (m *MetricSuite) TestUpdateMetricResultQueryError() {
+	var r float64
+	m.metricRep.On("ResultQuery", mock.Anything).Return(r,
+		logging.NewError("error", errors.New("some error"), nil))
+	_, err := m.updateMetric.Execute(domain.Metric{})
 
-	resErr := s.repository.RemoveMetric(id.String())
-
-	require.Nil(s.T(), resErr)
-	require.Nil(s.T(), resErr)
+	require.Error(m.T(), err)
 }
 
-func (s *SuiteMetric) TestRemoveMetricError() {
-	id := uuid.New()
+func (m *MetricSuite) TestDeleteMetric() {
+	workspaceId := uuid.New()
 
-	s.DB.Close()
-	resErr := s.repository.RemoveMetric(id.String())
+	m.metricRep.On("RemoveMetric", mock.Anything).Return(nil)
+	err := m.deleteMetric.Execute(workspaceId)
 
-	require.NotNil(s.T(), resErr)
+	require.Nil(m.T(), err)
 }
 
-func (s *SuiteMetric) TestFindMetricById() {
-	circleId := uuid.New()
+func (m *MetricSuite) TestDeleteMetricError() {
+	workspaceId := uuid.New()
 
-	metricGroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
+	m.metricRep.On("RemoveMetric", mock.Anything).Return(logging.NewError("error", errors.New("some error"), nil))
+	err := m.deleteMetric.Execute(workspaceId)
 
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-	s.DB.Create(&metricGroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	s.DB.Create(&metricStruct)
-
-	res, err := s.repository.FindMetricById(metricStruct.ID.String())
-
-	require.Nil(s.T(), err)
-
-	metricStruct.BaseModel = res.BaseModel
-	require.Equal(s.T(), metricStruct, res)
-}
-
-func (s *SuiteMetric) TestSaveMetricError() {
-	circleId := uuid.New()
-
-	metricStruct := repository.Metric{
-		Query:     "group_metric_example_2",
-		Metric:    "MetricName",
-		Filters:   nil,
-		GroupBy:   nil,
-		Condition: "=",
-		Threshold: 1,
-		CircleID:  circleId,
-	}
-
-	_, err := s.repository.SaveMetric(metricStruct)
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestUpdateMetricError() {
-	circleId := uuid.New()
-
-	metricStruct := repository.Metric{
-		Metric:    "MetricName",
-		Filters:   nil,
-		GroupBy:   nil,
-		Condition: "=",
-		Threshold: 1,
-		CircleID:  circleId,
-	}
-
-	s.DB.Create(&metricStruct)
-
-	metricStruct.Metric = "Name"
-
-	_, err := s.repository.UpdateMetric(metricStruct)
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestFindMetricByIdError() {
-
-	_, err := s.repository.FindMetricById("any-id")
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestResultQueryGetPluginError() {
-	circleId := uuid.New()
-
-	metricGroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
-
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-	s.DB.Create(&metricGroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	_, err := s.repository.ResultQuery(metricStruct)
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestResultQuery() {
-	circleId := uuid.New()
-
-	metricGroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
-
-	dataSourceInsert, dataSourceStruct := integration.datasourceInsert("datasource/prometheus/prometheus")
-
-	s.DB.Exec(dataSourceInsert)
-	s.DB.Create(&metricGroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSourceStruct.ID,
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	res, err := s.repository.ResultQuery(metricStruct)
-
-	require.Nil(s.T(), err)
-	require.NotNil(s.T(), res)
-}
-
-func (s *SuiteMetric) TestQueryGetPluginBySrcError() {
-	circleId := uuid.New()
-
-	metricGroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
-
-	dataSource := datasource.DataSource{
-		Name:        "DataTest",
-		PluginSrc:   "prometheus",
-		Data:        json.RawMessage(`{"url": "localhost:8080"}`),
-		WorkspaceID: uuid.UUID{},
-		DeletedAt:   nil,
-	}
-
-	s.DB.Create(&dataSource)
-	s.DB.Create(&metricGroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSource.ID,
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
-
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestQuery() {
-	circleId := uuid.New()
-
-	metricGroup := repository.MetricsGroup{
-		Name:        "group 1",
-		Metrics:     []repository.Metric{},
-		CircleID:    circleId,
-		WorkspaceID: uuid.New(),
-	}
-	dataSourceInsert, dataSourceStruct := integration.datasourceInsert("datasource/prometheus/prometheus")
-
-	s.DB.Exec(dataSourceInsert)
-	s.DB.Create(&metricGroup)
-	metricStruct := repository.Metric{
-		MetricsGroupID: metricGroup.ID,
-		DataSourceID:   dataSourceStruct.ID,
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       circleId,
-	}
-
-	res, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 1, Unit: "h"})
-
-	require.Empty(s.T(), res)
-	require.Nil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestQueryDatasourceError() {
-	metricStruct := repository.Metric{
-		MetricsGroupID: uuid.New(),
-		DataSourceID:   uuid.New(),
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      1,
-		CircleID:       uuid.New(),
-	}
-
-	_, err := s.repository.Query(metricStruct, datasourcePKG.Period{Value: 13, Unit: "h"}, datasourcePKG.Period{Value: 13, Unit: "h"})
-	require.NotNil(s.T(), err)
-}
-
-func (s *SuiteMetric) TestCountMetrics() {
-	metrics := make([]repository.Metric, 0)
-
-	metricStruct := repository.Metric{
-		MetricsGroupID: uuid.New(),
-		DataSourceID:   uuid.New(),
-		Metric:         "MetricName",
-		Filters:        []datasourcePKG.MetricFilter{},
-		GroupBy:        []repository.MetricGroupBy{},
-		Condition:      "=",
-		Threshold:      5,
-		CircleID:       uuid.New(),
-	}
-	execution := repository.MetricExecution{
-		MetricID:  metricStruct.ID,
-		LastValue: 5,
-		Status:    "REACHED",
-	}
-	metricStruct.MetricExecution = execution
-	metrics = append(metrics, metricStruct)
-
-	configured, reached, all := s.repository.CountMetrics(metrics)
-
-	require.Equal(s.T(), 1, all)
-	require.Equal(s.T(), 1, reached)
-	require.Equal(s.T(), 1, configured)
-}
-
-func (s *SuiteMetric) TestFindAllByGroup() {
-	ds := integration.newBasicDatasource()
-	s.DB.Create(&ds)
-
-	group1 := integration.newBasicMetricGroup()
-	group2 := integration.newBasicMetricGroup()
-	s.DB.Create(&group1)
-	s.DB.Create(&group2)
-
-	metric1 := integration.newBasicMetric()
-	metric1.DataSourceID = ds.ID
-	metric1.MetricsGroupID = group1.ID
-
-	metric2 := integration.newBasicMetric()
-	metric2.DataSourceID = ds.ID
-	metric2.MetricsGroupID = group1.ID
-
-	metric3 := integration.newBasicMetric()
-	metric3.DataSourceID = ds.ID
-	metric3.MetricsGroupID = group2.ID
-
-	s.DB.Create(&metric1)
-	s.DB.Create(&metric2)
-	s.DB.Create(&metric3)
-
-	listedMetrics, err := s.repository.FindAllByGroup(group1.ID.String())
-
-	require.Nil(s.T(), err)
-	require.Len(s.T(), listedMetrics, 2)
-	require.Equal(s.T(), metric1.ID, listedMetrics[0].ID)
-	require.Equal(s.T(), metric2.ID, listedMetrics[1].ID)
-}
-
-func (s *SuiteMetric) TestFindAllByGroupError() {
-	s.DB.Close()
-
-	_, err := s.repository.FindAllByGroup(uuid.New().String())
-
-	require.NotNil(s.T(), err)
+	require.Error(m.T(), err)
 }

@@ -19,117 +19,51 @@
 package tests
 
 import (
-	"github.com/ZupIT/charlescd/compass/internal/repository"
-	"os"
-	"testing"
-
+	"errors"
+	"github.com/ZupIT/charlescd/compass/internal/domain"
+	"github.com/ZupIT/charlescd/compass/internal/logging"
+	plugin2 "github.com/ZupIT/charlescd/compass/internal/use_case/plugin"
+	mocks "github.com/ZupIT/charlescd/compass/tests/mocks/repository"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"testing"
 )
 
-type SuitePlugins struct {
+type PluginSuite struct {
 	suite.Suite
-
-	repository repository.PluginRepository
+	listPlugin plugin2.ListPlugins
+	pluginRep  *mocks.PluginRepository
 }
 
-func (s *SuitePlugins) SetupSuite() {
-	os.Setenv("ENV", "TEST")
-	s.repository = repository.NewPluginRepository()
+func (p *PluginSuite) SetupSuite() {
+	p.pluginRep = new(mocks.PluginRepository)
+	p.listPlugin = plugin2.NewListPlugins(p.pluginRep)
 }
 
-func TestInitPlugins(t *testing.T) {
-	suite.Run(t, new(SuitePlugins))
+func TestPluginSuite(t *testing.T) {
+	suite.Run(t, new(PluginSuite))
 }
 
-func (s *SuitePlugins) TestFindAll() {
-	gInput := []interface{}{
-		map[string]interface{}{
-			"name":     "viewId",
-			"label":    "View ID",
-			"type":     "text",
-			"required": true,
-		},
-		map[string]interface{}{
-			"name":     "serviceAccount",
-			"label":    "Service Account",
-			"type":     "textarea",
-			"required": true,
-		},
-	}
-
-	pInput := []interface{}{
-		map[string]interface{}{
-			"name":     "url",
-			"label":    "Url",
-			"type":     "text",
-			"required": true,
-		},
-	}
-
-	expectedPlugins := []repository.Plugin{
-		{
-			ID:          "datasourceerrorconnection",
-			Category:    "datasource",
-			Name:        "Fake Valid Datasource Error Connection",
-			Src:         "datasource/errorconnection/errorconnection",
-			Description: "Fake Valid Datasource Error Connection",
-			InputParameters: map[string]interface{}{
-				"configurationInputs": []interface{}{},
-			},
-		},
-		{
-			ID:          "googleanalytics",
-			Category:    "datasource",
-			Name:        "Google Analytics",
-			Src:         "datasource/googleanalytics/googleanalytics",
-			Description: "My google analytics",
-			InputParameters: map[string]interface{}{
-				"configurationInputs": gInput,
-			},
-		},
-		{
-			ID:          "prometheus",
-			Category:    "datasource",
-			Name:        "Prometheus",
-			Src:         "datasource/prometheus/prometheus",
-			Description: "My prometheus",
-			InputParameters: map[string]interface{}{
-				"configurationInputs": pInput,
-			},
-		},
-		{
-			ID:          "datasourcevalidaction",
-			Category:    "datasource",
-			Name:        "Fake Valid Datasource",
-			Src:         "datasource/validaction/validaction",
-			Description: "Fake Valid Datasource",
-			InputParameters: map[string]interface{}{
-				"configurationInputs": []interface{}{},
-			},
-		},
-	}
-
-	os.Setenv("PLUGINS_DIR", "../../dist")
-	plugins, err := s.repository.FindAll("datasource")
-
-	require.Nil(s.T(), err)
-	for i, p := range plugins {
-		require.Equal(s.T(), expectedPlugins[i], p)
-	}
+func (p *PluginSuite) BeforeTest(suiteName, testName string) {
+	p.SetupSuite()
 }
 
-func (s *SuitePlugins) TestFindAllFull() {
-	os.Setenv("PLUGINS_DIR", "../../dist")
-	res, err := s.repository.FindAll("")
+func (p *PluginSuite) TestListPlugins() {
+	listPlugins := newListPlugins()
+	p.pluginRep.On("FindAll", mock.Anything).Return(listPlugins, nil)
+	res, err := p.listPlugin.Execute("mock-type")
 
-	require.Nil(s.T(), err)
-	require.NotEmpty(s.T(), res)
+	require.NotNil(p.T(), res)
+	require.Nil(p.T(), err)
 }
 
-func (s *SuitePlugins) TestFindAllNoSuchDirectory() {
-	os.Setenv("PLUGINS_DIR", "./dist")
+func (p *PluginSuite) TestFindAllByWorkspaceError() {
+	p.pluginRep.On("FindAll", mock.Anything).Return(
+		[]domain.Plugin{},
+	    logging.NewError("error", errors.New("some error"), nil))
 
-	_, err := s.repository.FindAll("")
-	require.NotNil(s.T(), err)
+	_, err := p.listPlugin.Execute("mock-type")
+	require.Error(p.T(), err)
 }
+

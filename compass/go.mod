@@ -3,6 +3,7 @@ module github.com/ZupIT/charlescd/compass
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0

@@ -5,9 +5,7 @@ package mocks
 import (
 	domain "github.com/ZupIT/charlescd/compass/internal/domain"
 	datasource "github.com/ZupIT/charlescd/compass/pkg/datasource"
-
 	mock "github.com/stretchr/testify/mock"
-
 	uuid "github.com/google/uuid"
 )
 
