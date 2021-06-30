@@ -19,7 +19,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
