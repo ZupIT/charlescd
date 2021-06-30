@@ -32,7 +32,7 @@ export interface Props {
 const List = ({ tokenWorkspaces, allWorkspaces }: Props) => {
   const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
   const [name, setName] = useState<string>('');
-
+  
   useEffect(() => {
     if (status === 'idle') {
       getWorkspaces();
@@ -44,14 +44,12 @@ const List = ({ tokenWorkspaces, allWorkspaces }: Props) => {
     setName(value);
     resetWorkspaces();
     getWorkspaces(value, page);
-    console.log('onSearch')
   }, [getWorkspaces, resetWorkspaces]);
 
   const handleChange = debounce(onSearch, 700);
 
   const loadMore = (page: number) => {
     getWorkspaces(name, page);
-    console.log('loadMore')
   };
 
   const renderItemsAll = () => 
