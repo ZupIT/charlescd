@@ -25,6 +25,7 @@ interface Props {
   isOpen?: boolean;
   onClose: () => void;
   isOutsideClick?: boolean;
+  name?: string;
 }
 
 const Modal = ({
@@ -32,7 +33,8 @@ const Modal = ({
   className,
   isOpen = true,
   onClose,
-  isOutsideClick
+  isOutsideClick,
+  name
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
 
@@ -44,7 +46,7 @@ const Modal = ({
 
   return (
     <Styled.Wrapper
-      data-testid="modal-default"
+      data-testid={`modal-default-${name}`}
       className={className}
       isOpen={isOpen}
     >

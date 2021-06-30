@@ -26,9 +26,9 @@ export interface Props {
 
 const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
   return (
-    <Styled.Modal onClose={onClose}>
+    <Styled.Modal onClose={onClose} name='view'>
       <Styled.Header>
-        <Text.h2 color="light">View workspaces</Text.h2>
+        <Text.h2 color="light">View workspaces!!</Text.h2>
       </Styled.Header>
       <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
     </Styled.Modal>
