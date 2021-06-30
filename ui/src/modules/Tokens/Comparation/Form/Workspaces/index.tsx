@@ -25,7 +25,7 @@ import Icon from 'core/components/Icon';
 import { Mode } from '../../helpers';
 import { MAX_ITEMS, MIN_ITEMS } from './Modal/Content/constants';
 import Modal from './Modal';
-import ModalView from '../../View';
+import ModalView from '../../View/Modal';
 import Styled from './styled';
 import { Option } from './Modal/constants';
 
