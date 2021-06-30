@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-import Styled from './styled';
-import Text from 'core/components/Text';
-import List from './Content/List';
+import { render, screen } from 'unit-test/testUtils';
+import ModalView, {Props} from '../';
 
-export interface Props {
-  allWorkspaces: boolean;
-  tokenWorkspaces?: string[];
-  onClose: () => void;
-};
-
-const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
-  return (
-    <Styled.Modal onClose={onClose} name='view'>
-      <Styled.Header>
-        <Text.h2 color="light">View workspaces</Text.h2>
-      </Styled.Header>
-      <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
-    </Styled.Modal>
-  )
+const props: Props = {
+  allWorkspaces: false,
+  tokenWorkspaces: ['workspace 1', 'workspace 2'],
+  onClose: jest.fn(),
 }
 
-export default ModalView;
+test('should render modal view workspaces', () => {
+  render(<ModalView {...props} />);
+
+  expect(screen.getByText('View workspaces')).toBeInTheDocument();
+  expect(screen.getByLabelText('Filter workspaces')).toBeInTheDocument();
+  expect(screen.getByTestId('workspace-list-content')).toBeInTheDocument();
+});
