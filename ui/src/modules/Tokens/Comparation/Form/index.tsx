@@ -40,7 +40,6 @@ interface Props {
 }
 
 const FormToken = ({ mode, data }: Props) => {
-  console.log('FORM TOKEN')
   const { save, response, status } = useSave();
   const isModeCreate = mode === 'create';
   const isModeView = mode === 'view';
