@@ -15,65 +15,38 @@
  */
 
 import styled from 'styled-components';
-import Card from 'core/components/Card';
-import Button from 'core/components/Button';
-import Form from 'core/components/Form';
-import ContentIcon from 'core/components/ContentIcon';
+import ComponentModal from 'core/components/Modal';
 
-const Layer = styled.div`
-  margin: 40px 0;
-`;
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    width: 543px;
+    padding: 35px 0 28px 0;
+    max-height: 650px;
+    bottom: 100px;
+  }
 
-const ComponentCard = styled(Card.Config)`
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
-
-const ComponentWrapper = styled.div`
-  display: flex;
-`;
-
-const ComponentIfon = styled.div`
-  display: flex;
-  width: 120px;
-  align-items: center;
-  margin-top: 15px;
-
-  > :first-child {
-    margin-right: 5px;
+  .modal-content {
+    overflow-y: auto;
+    max-height: 600px;
   }
 `;
 
-const ButtonRounded = styled(Button.Rounded)`
-  margin: 10px 0px;
-`;
+const Header = styled.div`
+  padding: 0 40px;
 
-const InputContentIcon = styled(ContentIcon)`
-  > i {
-    margin-top: 15px;
+  > :last-child {
+    margin-top: 20px;
   }
 `;
 
-const FormLink = styled(Form.Link)`
-  width: 393px;
-`;
-
-interface StepProp {
-  isDisabled: boolean;
-}
-const Step = styled('div')<StepProp>`
-  display: ${({ isDisabled }) => (isDisabled ? 'none' : 'block')};
+const Content = styled.div`
+  margin-top: 22px;
+  max-height: 500px;
+  overflow-y: auto;
 `;
 
 export default {
-  Layer,
-  ButtonRounded,
-  InputContentIcon,
-  FormLink,
-  Component: {
-    Card: ComponentCard,
-    Wrapper: ComponentWrapper,
-    Info: ComponentIfon
-  },
-  Step
+  Content,
+  Modal,
+  Header,
 };

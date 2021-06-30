@@ -23,11 +23,11 @@ import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { Mode } from '../../helpers';
-import { MAX_ITEMS, MIN_ITEMS } from './Modal/Add/Content/constants';
-import Modal from './Modal/Add';
-import ModalView from './Modal/View';
+import { MAX_ITEMS, MIN_ITEMS } from './Modal/Content/constants';
+import Modal from './Modal';
+import ModalView from '../../View';
 import Styled from './styled';
-import { Option } from './Modal/Add/constants';
+import { Option } from './Modal/constants';
 
 interface Props {
   mode?: Mode;

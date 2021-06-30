@@ -21,7 +21,7 @@ import InfiniteScroll from 'core/components/InfiniteScroll';
 import Item from './Item';
 import Loader from './Loader';
 import Styled from './styled';
-import { useWorkspaces } from '../../Add/hooks';
+import { useWorkspaces } from 'modules/Tokens/Comparation/Form/Workspaces/Modal/hooks';
 import { TokenWorkspace } from 'modules/Tokens/interfaces';
 
 export interface Props {
