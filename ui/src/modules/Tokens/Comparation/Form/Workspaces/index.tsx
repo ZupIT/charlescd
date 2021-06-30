@@ -74,6 +74,7 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
     trigger('workspaces');
   };
 
+  // TODO remove
   const ShowMore = () => (
     size(workspaces) > MIN_ITEMS &&
       <Styled.ShowMore

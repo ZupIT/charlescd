@@ -20,7 +20,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { renderHook } from '@testing-library/react-hooks';
 import userEvent from '@testing-library/user-event';
 
-test('should open view workspaces modal', () => {
+test('should open view workspaces modal for specific workspaces', () => {
   const { result } = renderHook(() => useForm());
   const methods = result.current;
 
@@ -41,3 +41,26 @@ test('should open view workspaces modal', () => {
 
   expect(screen.getByTestId('modal-default-view')).toBeInTheDocument();
 });
+
+test('should open view workspaces modal for all workspaces', () => {
+  const { result } = renderHook(() => useForm());
+  const methods = result.current;
+
+  const tokenWorkspaces: string[] = [];
+  render(
+    <FormProvider {...methods}>
+      <Workspaces 
+        mode='view' 
+        tokenWorkspaces={tokenWorkspaces} 
+        allWorkspaces={true} 
+      />
+    </FormProvider>
+  );
+
+  expect(screen.getByRole('button')).toHaveTextContent('View workspaces');
+
+  act(() => userEvent.click(screen.getByTestId('button-iconRounded-view')));
+
+  expect(screen.getByTestId('modal-default-view')).toBeInTheDocument();
+});
+
