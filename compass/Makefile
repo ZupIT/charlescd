@@ -11,7 +11,7 @@ DIST_PATH=dist
 CMD_PATH=cmd/*.go
 BINARY_NAME=compass
 
-COMPOSE_TESTS=./test/docker-compose.test.yaml
+COMPOSE_TESTS=./tests/resources/docker-compose.test.yaml
 
 
 start:
@@ -31,14 +31,14 @@ tests:
 				$(GOTEST) ./...
 tests-dep-up:
 				docker-compose -f $(COMPOSE_TESTS) up -d --build db provider
-				sh ./test/build-plugins.test.sh
+				sh ./tests/resources/build-plugins.test.sh
 				sh ./build-plugins.sh
 tests-dep-down:
 				docker-compose -f $(COMPOSE_TESTS) down
 cover:
-				$(GOTEST) -v -coverpkg ./internal/action,./internal/datasource,./internal/dispatcher,./internal/metric,./internal/metricsgroup,./internal/metricsgroupaction,./internal/moove,./internal/plugin ./internal/tests/ -coverprofile=cover.out
+				$(GOTEST) -v -coverpkg ./internal/use_case/action/,./internal/use_case/datasource/,./internal/use_case/metric/,./internal/use_case/metrics_group/,./internal/use_case/metrics_group_action/,./internal/use_case/plugin/, ./tests/ -coverprofile=cover.out
 				$(GOTOOL) cover -func=cover.out
 cover-browser:
-				$(GOTEST) -v -coverpkg ./internal/action,./internal/datasource,./internal/dispatcher,./internal/metric,./internal/metricsgroup,./internal/metricsgroupaction,./internal/moove,./internal/plugin ./internal/tests/ -coverprofile=cover.out
+				$(GOTEST) -v -coverpkg ./internal/use_case/action/,./internal/use_case/datasource/,./internal/use_case/metric/,./internal/use_case/metrics_group/,./internal/use_case/metrics_group_action/,./internal/use_case/plugin/, ./tests/ -coverprofile=cover.out
 				$(GOTOOL) cover -html=cover.out -o cover.html
 				open cover.html

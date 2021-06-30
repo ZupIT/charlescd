@@ -28,5 +28,5 @@ export interface UserGroup {
   name: string;
   author?: Author;
   createdAt?: string;
-  users: User[];
+  users?: User[];
 }

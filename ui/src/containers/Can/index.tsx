@@ -63,7 +63,7 @@ const Element = ({
         isDisabled: !allowed,
         style: {
           cursor: 'default',
-          opacity: '0.3',
+          opacity: '0.4',
           transform: 'scale(1)'
         },
         'data-tip': true,
