@@ -16,14 +16,10 @@
 
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import take from 'lodash/take';
-import size from 'lodash/size';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import ContentIcon from 'core/components/ContentIcon';
 import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import { Mode } from '../../helpers';
-import { MAX_ITEMS, MIN_ITEMS } from './Modal/Content/constants';
 import Modal from './Modal';
 import ModalView from '../../View/Modal';
 import Styled from './styled';
@@ -39,10 +35,8 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
   const { register, setValue, getValues, watch, trigger } = useFormContext();
   const [isOpen, setIsOpen] = useState<boolean>();
   const [isViewOpen, setIsViewOpen] = useState<boolean>();
-  const [isShowMore, setIsShowMore] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
   const watchAllWorkspaces = watch('allWorkspaces') as boolean;
-  const preview = isShowMore ? take(workspaces, MAX_ITEMS) : take(workspaces, MIN_ITEMS)
 
   const validateWorkspaces = useCallback(() => {
     const { allWorkspaces, workspaces } = getValues();
@@ -59,8 +53,6 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
 
   const toggleIsViewOpen = () => setIsViewOpen(!isViewOpen);
 
-  const toggleShowMore = () => setIsShowMore(!isShowMore);
-
   const onContinue = (draft: WorkspacePaginationItem[], option: Option) => {
     toggleIsOpen();
     if (option.value === 'ALL') {
@@ -73,22 +65,6 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
 
     trigger('workspaces');
   };
-
-  // TODO remove
-  const ShowMore = () => (
-    size(workspaces) > MIN_ITEMS &&
-      <Styled.ShowMore
-        data-testid="showmore-toggle"
-        onClick={toggleShowMore}
-      >
-        <Icon
-          color="light"
-          name={isShowMore ? 'up' : 'alternate-down'}
-          size="18"
-        />
-        <Text.h4 color="dark">Showing {size(preview)} of {size(workspaces)} workspaces</Text.h4>
-      </Styled.ShowMore>
-  )
 
   const renderModalAddWorkspaces = () => 
     isOpen &&
@@ -119,7 +95,6 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
               : 'Your token have access only on these workspaces'
           }
         </Styled.Caption>
-        <ShowMore />
         {mode === 'create' && 
           <Styled.Button
             name='plus-circle'
