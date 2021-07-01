@@ -30,3 +30,12 @@ test('should render modal view workspaces', () => {
   expect(screen.getByLabelText('Filter workspaces')).toBeInTheDocument();
   expect(screen.getByTestId('workspace-list-content')).toBeInTheDocument();
 });
+
+// TODO test
+test('should render modal view workspaces, when allWorkspaces is true', () => {
+  render(<ModalView allWorkspaces={true} tokenWorkspaces={[]} onClose={jest.fn()} />);
+
+  expect(screen.getByText('View workspaces')).toBeInTheDocument();
+  expect(screen.getByLabelText('Filter workspaces')).toBeInTheDocument();
+  expect(screen.getByTestId('workspace-list-content')).toBeInTheDocument();
+});
