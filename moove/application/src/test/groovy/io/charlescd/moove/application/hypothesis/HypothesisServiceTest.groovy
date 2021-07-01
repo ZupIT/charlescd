@@ -1,6 +1,7 @@
 package io.charlescd.moove.application.hypothesis
 
 import io.charlescd.moove.application.HypothesisService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.domain.Hypothesis
 import io.charlescd.moove.domain.User
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -22,7 +23,7 @@ class HypothesisServiceTest extends Specification {
         given:
         def id = "1"
         def workspaceId = UUID.randomUUID().toString()
-        def author = new User("1", "User authpr", "author@teste.com", "http://google.com", [], true, LocalDateTime.now())
+        def author = TestUtils.user
         def hypothesis = new Hypothesis("1", "Hyp Name", "Desc", author, LocalDateTime.now(), [], [], workspaceId)
 
         when:
@@ -33,7 +34,7 @@ class HypothesisServiceTest extends Specification {
         notThrown()
         response.id == id
         response.workspaceId == workspaceId
-        response.author.id == "1"
+        response.author.id == author.id
         response.description == "Desc"
     }
 

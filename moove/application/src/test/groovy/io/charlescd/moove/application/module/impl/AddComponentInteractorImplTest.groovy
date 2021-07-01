@@ -119,7 +119,7 @@ class AddComponentInteractorImplTest extends Specification {
 
     private User getDummyUser() {
         new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
-                "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+                "https://www.photos.com/johndoe", [], [], false, LocalDateTime.now())
     }
 
     def "should throw an exception when module does not exists"() {
