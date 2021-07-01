@@ -55,13 +55,13 @@ class FindWorkspaceByUserIdInteractorImplTest extends Specification {
         def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         when:
         def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
@@ -85,13 +85,13 @@ class FindWorkspaceByUserIdInteractorImplTest extends Specification {
         def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], true, LocalDateTime.now())
+                [], [], true, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         when:
         def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
@@ -115,13 +115,13 @@ class FindWorkspaceByUserIdInteractorImplTest extends Specification {
         def authorization = "authorization"
 
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
 
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
 
         def user = new User(id.toString(), "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
 
         when:
         def response = findWorkspaceByUserIdInteractor.execute(authorization,id)
