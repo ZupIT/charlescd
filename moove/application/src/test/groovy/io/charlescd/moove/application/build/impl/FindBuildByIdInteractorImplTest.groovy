@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.build.FindBuildByIdInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.exceptions.NotFoundException
@@ -64,9 +65,7 @@ class FindBuildByIdInteractorImplTest extends Specification {
         given:
         def buildId = "3c25d9d2-ea98-4027-9a74-e8217b1698d2"
         def workspaceId = "13727904-b81e-4615-b90c-dd606b6e2a89"
-        def authorId = "7bdbca7a-a0dc-4721-a861-198b238c0e32"
-
-        def author = new User(authorId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = TestUtils.user
 
         def dummyBuild = getDummyBuild(workspaceId, author, BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED)
 

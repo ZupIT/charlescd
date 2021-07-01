@@ -97,7 +97,7 @@ class DeleteWebhookSubscriptionInteractorImplTest extends Specification {
 
     private static User getAuthor() {
         return new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "charlescd", authorEmail, "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
     }
 
     private static String getAuthorization() {

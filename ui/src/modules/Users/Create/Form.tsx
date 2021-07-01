@@ -56,9 +56,9 @@ const FormUser = ({ onFinish }: Props) => {
     }
   }, [newUser, history, onFinish]);
 
-  const onSubmit = async (user: NewUser) => {
+  const onSubmit = async ({pwd, ...user}: NewUser) => {
     setStatus('idle');
-    await create({ ...user, isRoot: false });
+    await create({ ...user, root: false, password: pwd });
     setStatus('completed');
   };
 
@@ -92,9 +92,9 @@ const FormUser = ({ onFinish }: Props) => {
             required: isRequired(),
             maxLength: maxLength(100)
           })}
-          name="password"
+          name="pwd"
           label="Create password"
-          error={errors?.password?.message}
+          error={errors?.pwd?.message}
         />
       </Styled.Fields>
       <Button.Default
