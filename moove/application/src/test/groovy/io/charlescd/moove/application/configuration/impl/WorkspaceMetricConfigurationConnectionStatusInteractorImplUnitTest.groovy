@@ -44,7 +44,7 @@ class WorkspaceMetricConfigurationConnectionStatusInteractorImplUnitTest extends
     def url = "http://localhost:9090"
 
     def author = new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
-            "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+            "https://www.photos.com/johndoe", [], [], false, LocalDateTime.now())
 
     def metricConfiguration = new MetricConfiguration("provider-id", MetricConfiguration.ProviderEnum.PROMETHEUS, url,
             LocalDateTime.now(), workspaceId, author)

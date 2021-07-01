@@ -28,6 +28,7 @@ import { MetricsGroupsResume } from '../MetricsGroups/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { getThresholdStatus } from '../MetricsGroups/helpers';
 import Styled from '../styled';
+import Can from 'containers/Can';
 
 type Props = {
   onClickCreate: () => void;
@@ -45,15 +46,17 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
-    <Button.Rounded
-      name="add"
-      icon="add"
-      color="dark"
-      onClick={onClickCreate}
-      isDisabled={!circle?.id}
-    >
-      Add metrics group
-    </Button.Rounded>
+    <Can I="write" a="circles" passThrough>
+      <Button.Rounded
+        name="add"
+        icon="add"
+        color="dark"
+        onClick={onClickCreate}
+        isDisabled={!circle?.id}
+      >
+        Add metrics group
+      </Button.Rounded>
+    </Can>
   );
 
   const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) =>

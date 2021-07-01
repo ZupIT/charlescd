@@ -135,7 +135,7 @@ class RemoveMemberFromUserGroupInteractorImplTest extends Specification {
     }
 
     private User getDummyUser(String userId) {
-        new User(userId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        new User(userId, "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
     }
 
 }

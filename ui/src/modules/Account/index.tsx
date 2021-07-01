@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import TabPanel from 'core/components/TabPanel';
@@ -38,6 +39,7 @@ import Styled from './styled';
 import Menu from './Menu';
 import Loader from './Loaders';
 import Icon from 'core/components/Icon';
+import Card from 'core/components/Card';
 
 const Account = () => {
   const name = getProfileByKey('name');
@@ -82,6 +84,18 @@ const Account = () => {
         <ChangePassword onSubmit={() => setToggleModal(false)} />
       </Styled.Modal.Default>
     );
+
+  const Groups = () =>
+    <Styled.Groups>
+      {map(currentUser.userGroups, (userGroup) => (
+        <Card.Config
+          id={`user-group-${userGroup.id}`}
+          key={userGroup.name}
+          icon="users"
+          description={userGroup.name}
+        />
+      ))}
+    </Styled.Groups>
 
   const renderContent = () => (
     <>
@@ -128,6 +142,9 @@ const Account = () => {
       <Styled.Layer>
         <ContentIcon icon="users">
           <Text.h2 color="light">User group</Text.h2>
+          <Styled.Groups>
+            <Groups />
+          </Styled.Groups>
         </ContentIcon>
       </Styled.Layer>
     </>

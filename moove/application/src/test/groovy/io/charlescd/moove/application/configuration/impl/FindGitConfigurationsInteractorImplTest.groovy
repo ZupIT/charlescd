@@ -16,6 +16,7 @@
 
 package io.charlescd.moove.application.configuration.impl
 
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.configuration.FindGitConfigurationsInteractor
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.GitConfigurationRepository
@@ -65,7 +66,7 @@ class FindGitConfigurationsInteractorImplTest extends Specification {
         given:
         def workspaceId = "0dbe9694-fc50-400c-ab3b-b176bbfbdf4d"
         def pageRequest = new PageRequest()
-        def author = new User("0d2260ff-9a4c-425c-9402-c43cfda97b92", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = TestUtils.user
         def gitCredentials = new GitCredentials("http://github.com.br", "zup", "zup@123", null, GitServiceProvider.GITHUB)
         def gitConfiguration = new GitConfiguration("b15627e4-d784-4c5c-9aea-c5d0f7627480", "dummy git configuration", gitCredentials, LocalDateTime.now(), author, workspaceId)
         def page = new Page([gitConfiguration], 0, 20, 1)
