@@ -39,7 +39,7 @@ test('should open view workspaces modal for specific workspaces', () => {
 
   act(() => userEvent.click(screen.getByTestId('button-iconRounded-view')));
 
-  expect(screen.getByTestId('modal-default-view')).toBeInTheDocument();
+  expect(screen.getByTestId('modal-default')).toBeInTheDocument();
 });
 
 test('should open view workspaces modal for all workspaces', () => {
@@ -61,6 +61,6 @@ test('should open view workspaces modal for all workspaces', () => {
 
   act(() => userEvent.click(screen.getByTestId('button-iconRounded-view')));
 
-  expect(screen.getByTestId('modal-default-view')).toBeInTheDocument();
+  expect(screen.getByTestId('modal-default')).toBeInTheDocument();
 });
 

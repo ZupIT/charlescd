@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { render, screen } from 'unit-test/testUtils';
+import { render, screen, waitFor } from 'unit-test/testUtils';
 import ModalView, {Props} from '../';
+import 'unit-test/setup-msw';
 
 const props: Props = {
   allWorkspaces: false,
@@ -31,11 +32,15 @@ test('should render modal view workspaces', () => {
   expect(screen.getByTestId('workspace-list-content')).toBeInTheDocument();
 });
 
-// TODO test
-test('should render modal view workspaces, when allWorkspaces is true', () => {
+test('should render modal view workspaces, when allWorkspaces is true', async () => {
   render(<ModalView allWorkspaces={true} tokenWorkspaces={[]} onClose={jest.fn()} />);
 
   expect(screen.getByText('View workspaces')).toBeInTheDocument();
   expect(screen.getByLabelText('Filter workspaces')).toBeInTheDocument();
   expect(screen.getByTestId('workspace-list-content')).toBeInTheDocument();
+  
+  expect(screen.getByTestId('modal-list-loader')).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText('12')).toBeInTheDocument());
+  
+  await waitFor(() => expect(screen.queryByTestId('modal-list-loader')).not.toBeInTheDocument());
 });

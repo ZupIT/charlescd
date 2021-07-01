@@ -25,6 +25,7 @@ const ListLoader = () => (
       height={300}
       backgroundColor="#3a393c"
       foregroundColor="#2c2b2e"
+      data-testid='modal-list-loader'
     >
       <rect x="0" y="0" rx="2" ry="2" width="543" height="72" />
       <rect x="0" y="74" rx="2" ry="2" width="543" height="72" />
