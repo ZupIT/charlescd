@@ -15,16 +15,21 @@
  */
 
 import { Story } from '@storybook/react';
-import InputLink, { Props } from 'core/components/Form/InputLink';
+import SearchInput, { Props } from 'core/components/Form/SearchInput';
+import styled from './styled';
 
 export default {
-  title: 'Components/Form/Input',
-  component: InputLink,
+  title: 'Components/Form/Search Input',
+  component: SearchInput,
 };
 
-const Template: Story<Props> = (props: Props) => <InputLink {...props} />;
-export const inputLink = Template.bind({});
-inputLink.args = {
-  name: 'link',
-  href: 'https://charlescd.io'
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <SearchInput {...props} />
+    </styled.Form>
+  );
 };
+
+export const searchInput = Template.bind({});
+searchInput.args = {};

@@ -14,32 +14,25 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './InputPassword';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import InputLink from './InputLink';
-import Number from './Number';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
-
-export { Input, Password, SearchInput, Select };
+import { Story } from '@storybook/react';
+import Number, { Props } from 'core/components/Form/Number';
+import styled from './styled';
 
 export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  InputLink,
-  Number,
-  Checkbox,
-  Radio
+  title: 'Components/Form/Number',
+  component: Number,
+};
+
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <Number {...props} />
+    </styled.Form>
+  );
+};
+
+export const number = Template.bind({});
+number.args = {
+  name: 'input',
+  label: 'Input number only'
 };

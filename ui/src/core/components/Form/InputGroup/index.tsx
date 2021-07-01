@@ -18,7 +18,7 @@ import React, { Ref, useRef, useImperativeHandle } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   maxLength?: number;
   prepend?: string;
   append?: string;

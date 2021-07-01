@@ -14,32 +14,25 @@
  * limitations under the License.
  */
 
-import Input from './Input';
-import Password from './InputPassword';
-import SearchInput from './SearchInput';
-import Select from './Select';
-import InputAction from './InputAction';
-import InputTitle from './InputTitle';
-import InputGroup from './InputGroup';
-import InputPhoto from './InputPhoto';
-import InputLink from './InputLink';
-import Number from './Number';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
-
-export { Input, Password, SearchInput, Select };
+import { Story } from '@storybook/react';
+import InputAction, { Props } from 'core/components/Form/InputAction';
+import styled from './styled';
 
 export default {
-  Input,
-  Password,
-  SearchInput,
-  Select,
-  InputAction,
-  InputTitle,
-  InputGroup,
-  InputPhoto,
-  InputLink,
-  Number,
-  Checkbox,
-  Radio
+  title: 'Components/Form/Input Action',
+  component: InputAction,
+};
+
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <styled.Form>
+      <InputAction  {...props}/>
+    </styled.Form>
+  );
+};
+
+export const inputAction = Template.bind({});
+inputAction.args = {
+  name:"input",
+  icon:"copy"
 };
