@@ -147,6 +147,7 @@ const FormToken = ({ mode, data }: Props) => {
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
               buttonText="Next"
+              buttonType="submit"
               onClickSave={() => setNext(true)}
             />
             {isModeView && <Info />}

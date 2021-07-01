@@ -35,6 +35,7 @@ interface Props {
   isDisabled?: boolean;
   error?: string;
   buttonText?: string;
+  buttonType?: 'button' | 'submit';
 }
 const InputTitle = React.forwardRef(
   (
@@ -49,6 +50,7 @@ const InputTitle = React.forwardRef(
       isDisabled,
       error,
       buttonText = 'Save',
+      buttonType = 'button',
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
@@ -87,7 +89,7 @@ const InputTitle = React.forwardRef(
           {!isResumed && !readOnly && (
             <Button.Default
               id="input-title"
-              type="button"
+              type={buttonType}
               size="EXTRA_SMALL"
               onClick={onButtonClick}
               isDisabled={disabled || isDisabled}
