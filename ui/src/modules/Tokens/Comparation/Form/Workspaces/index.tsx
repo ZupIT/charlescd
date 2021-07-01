@@ -24,6 +24,7 @@ import Modal from './Modal';
 import ModalView from '../../View/Modal';
 import Styled from './styled';
 import { Option } from './Modal/constants';
+import { iconByMode, labelByMode } from './helpers';
 
 interface Props {
   mode?: Mode;
@@ -37,6 +38,7 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
   const [isViewOpen, setIsViewOpen] = useState<boolean>();
   const workspaces = watch('workspaces') as WorkspacePaginationItem[];
   const watchAllWorkspaces = watch('allWorkspaces') as boolean;
+  const [isAddMode, setIsAddMode] = useState<boolean>(true);
 
   const validateWorkspaces = useCallback(() => {
     const { allWorkspaces, workspaces } = getValues();
@@ -55,6 +57,7 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
 
   const onContinue = (draft: WorkspacePaginationItem[], option: Option) => {
     toggleIsOpen();
+    setIsAddMode(false);
     if (option.value === 'ALL') {
       setValue('workspaces', []);
       setValue('allWorkspaces', true);
@@ -97,12 +100,12 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
         </Styled.Caption>
         {mode === 'create' && 
           <Styled.Button
-            name='plus-circle'
-            icon='plus-circle'
+            name={iconByMode(isAddMode)}
+            icon={iconByMode(isAddMode)}
             color="dark"
             onClick={toggleIsOpen}
           >
-            Add workspaces
+            {labelByMode(isAddMode)}
           </Styled.Button>}
         {mode === 'view' && 
           <Styled.Button
