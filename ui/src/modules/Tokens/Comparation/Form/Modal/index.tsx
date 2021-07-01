@@ -50,10 +50,10 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
 
   return (
     <Styled.Modal onClose={onClose}>
-      <Text.h2 weight="bold" color="light" id="modal-token-title">
+      <Text.h2 weight="bold" color="light" data-testid="modal-token-title">
         {title}
       </Text.h2>
-      <Text.h5 color="dark" id="modal-token-subtitle">
+      <Text.h5 color="dark" data-testid="modal-token-subtitle">
         {description}
       </Text.h5>
       <InputAction

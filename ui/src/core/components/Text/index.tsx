@@ -45,7 +45,6 @@ const Text = (props: Props) => {
     className,
     onClick,
     role = '',
-    id = 'text-id',
   } = props;
 
   return (
@@ -60,7 +59,6 @@ const Text = (props: Props) => {
       className={className}
       lineHeight={lineHeight}
       role={role}
-      data-testid={id}
     >
       {children}
     </Styled.Text>
