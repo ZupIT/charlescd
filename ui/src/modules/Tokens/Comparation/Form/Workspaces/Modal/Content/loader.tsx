@@ -16,7 +16,6 @@
 
 import ContentLoader from 'react-content-loader';
 
-// TODO move to Workspaces/Loader/index.tsx
 const ListLoader = () => (
   <div>
     <ContentLoader

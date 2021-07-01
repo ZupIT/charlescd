@@ -37,5 +37,4 @@ const Item = ({ workspace }: Props) => {
   )
 }
 
-// TODO memo?
 export default memo(Item);
