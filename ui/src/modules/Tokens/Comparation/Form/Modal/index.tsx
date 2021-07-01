@@ -50,10 +50,10 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
 
   return (
     <Styled.Modal onClose={onClose}>
-      <Text.h2 weight="bold" color="light">
+      <Text.h2 weight="bold" color="light" id="modal-token-title">
         {title}
       </Text.h2>
-      <Text.h5 color="dark">
+      <Text.h5 color="dark" id="modal-token-subtitle">
         {description}
       </Text.h5>
       <InputAction
@@ -66,9 +66,9 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
       />
       <Styled.Warning>
         <Icon name="warning" color="warning" />
-        <Text.h5 color="dark">
-          Make sure you copy the above token now.
-          We don't store it and you will not be able to see it again.
+        <Text.h5 color="dark" id="modal-token-warning">
+          Make sure you copy the above token now. We don't store it and you will
+          not be able to see it again.
         </Text.h5>
       </Styled.Warning>
     </Styled.Modal>
