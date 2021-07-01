@@ -1,416 +1,700 @@
 postgresqlGlobal: &postgresInfo
+  # -- Default PostgreSQL Hostname
   host: &postgresHost charlescd-postgresql
+  # -- Default PostgreSQL Port
   port: &postgresPort 5432
 
+# -- Default Hostname for CharlesCD
 hostGlobal: &hostGlobal http://charles.info.example
+# -- Default Hostname for Keycloak with CharlesCD (Local Authentication or IDM)
 keycloakHost: &keycloakHost http://charles.info.example/keycloak
 
 CharlesApplications:
   butler:
+    # -- Enable Buttler Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-butler
+    # -- Service Account for Butler
     serviceAccountName: charlescd-butler
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /healthcheck
+      # -- Health Check Port
       port: 3000
+      # -- Health Check Initial Delay
       initialDelay: 60
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-butler
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-butler
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 3000
+    # -- Replica Count
     replicaCount: 1
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 128m
+        # -- Resource Memory Limit
         memory: 256Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 128m
+        # -- Resource Memory Requests
         memory: 128Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     #butler envs
     database:
       <<: *postgresInfo
+      # -- Database user
       user: charlescd_butler
+      # -- Database password
       password: 3f2Yq8R4HhDCnefR
+      # -- Database name
       name: charlescd_butler
+      # -- Boolean for database use SSL
       ssl: false
+    # -- Max size payload for Butler
     requestSizeLimit: 50mb
+    # -- Boolean for skip verify git endpoint certificate, useful for self-signed certificates on gitlab.
     tlsSkipVerify: false
 
   moove:
+    # -- Enable Moove Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-moove
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /actuator/health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 180
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-moove
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-moove
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 1
+        # -- Resource Memory Limit
         memory: 1024Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 128m
+        # -- Resource Memory Requests
         memory: 128Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     #moove envs
     database:
       <<: *postgresInfo
+      # -- Database user
       user: charlescd_moove
+      # -- Database password
       password: 7Qs2KuM9gYzw48BS
+      # -- Database name
       name: charlescd_moove
+    # -- CORS Configuration
     allowedOriginHost: *hostGlobal
+    # -- Boolean for skip verify git endpoint certificate, useful for self-signed certificates on gitlab.
     gitlabIgnoreSSL: true
     keycloak:
+      # -- Keycloak Host URL - Used for IDM
       host: "http://examplename-keycloak-http/keycloak/auth"
+      # -- Keycloak Realm
       realm: charlescd
+      # -- Keycloak Public Client ID
       publicClientId: charlescd-client
+      # -- Keycloak Client ID
       clientId: realm-charlescd
+      # -- Keycloak Client Secret
       clientSecret: "441cfd37-8443-4f3d-bf6c-ee9861b04e28"
+    # -- Enable IDM
     internalIdmEnabled: true
 
   villager:
+    # -- Enable Villager Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-villager
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 60
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-villager
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-villager
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 256m
+        # -- Resource Memory Limit
         memory: 512Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 128m
+        # -- Resource Memory Requests
         memory: 128Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     #villager envs
+    # -- Timeout in seconds for build
     buildTimeout: 15
     database:
       <<: *postgresInfo
+      # -- Database user
       user: charlescd_villager
+      # -- Database password
       password: ZkQ67Lnhs2bM3MPN
+      # -- Database name
       name: charlescd_villager
 
   ui:
+    # -- Enable UI Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-ui
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /
+      # -- Health Check Port
       port: 3000
+      # -- Health Check Initial Delay
       initialDelay: 20
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-ui
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-ui
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 3000
+    # -- Replica Count
     replicaCount: 1
     database: {}
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 128m
+        # -- Resource Memory Limit
         memory: 128Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 64m
+        # -- Resource Memory Requests
         memory: 64Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready - false because UI does not use database
     postgresqlWait: false
     #ui envs
+    # -- CharlesCD API Host
     apiHost: *hostGlobal
+    # -- CharlesCD Auth URI
     authUri: *keycloakHost
+    # -- CharlesCD Keycloak Realm
     authRealm: charlescd
+    # -- CharlesCD Keycloak Auth Client
     authClient: charlescd-client
+    # -- CharlesCD IDM - 0 to Default Keycloak | 1 - External IDM
     isIdmEnabled: "0"
+    # -- IDM Login URI
     idmLoginUri: /protocol/openid-connect/auth
+    # -- IDM Logout URI
     idmLogoutUri: /protocol/openid-connect/logout
+    # -- IDM Redirect Host
     idmRedirectHost: *hostGlobal
 
   circleMatcher:
+    # -- Enable Circle-Matcher Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-circle-matcher
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /actuator/health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 120
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-circle-matcher
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-circle-matcher
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
     database: {}
+    # -- Enable HPA
     hpa: true
     autoscaling:
+      # -- Min replicas
       minReplicas: 1
+      # -- Max replicas
       maxReplicas: 10
+      # -- Memory trigger to scale the service
       targetMemoryUtilizationPercentage: 80
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 500m
+        # -- Resource Memory Limit
         memory: 384Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 500m
+        # -- Resource Memory Requests
         memory: 384Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
     #Circle matcher envs
+    # -- CORS configuration
     allowedOriginHost: *hostGlobal
     redis:
-      # available: redis-standalone, redis-cluster and redis-sentinel
+      # -- Available Profiles: redis-standalone, redis-cluster and redis-sentinel
       profile: redis-standalone
+      # -- Redis Host
       host: charlescd-redis-master
+      # -- Redis Port
       port: 6379
+      # -- Redis Password
       password: hb2Fj9MGKjBkZ6zV
+      # -- Enable SSL
       ssl: false
       cluster:
+        # -- Enable Cluster
         enabled: false
+        # -- Nodes of the Cluster
         nodes: "example"
       sentinel:
+        # -- Enable Sentinel
         enabled: false
+        # -- Nodes of Sentinel
         nodes: "example"
+        # -- Master Node
         master: "example"
 
   compass:
+    # -- Enable Compass Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-compass
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 60
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-compass
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-compass
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     resources:
       limits:
+        # -- Resource CPU Limit
         cpu: 128m
+        # -- Resource Memory Limit
         memory: 128Mi
       requests:
+        # -- Resource CPU Requests
         cpu: 64m
+        # -- Resource Memory Requests
         memory: 64Mi
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
     #compass envs
     database:
       <<: *postgresInfo
+      # -- Database name
       name: charlescd_compass
+      # -- Database user
       user: charlescd_compass
+      # -- Database password
       password: C1UinUu6N0vc
+    # -- Database ignore SSL
     databaseIgnoreSSL: disable
+    # -- Compass Plugin Directory
     pluginsDir: "./plugins"
+    # -- Dispatch Interval in seconds
     dispatchInterval: "15s"
     limits:
+      # -- Requests per Second
       requestsPerSecond: "5"
+      # -- Token TTL
       tokenTTL: "5"
+      # -- Headers TTL
       headersTTL: "5"
+    # -- Moove integration with Compass
     moove:
+      # -- Moove User
       user: "Y2hhcmxlc2FkbWluQGFkbWlu"
+      # -- Moove Bearer Token
       auth: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MTEyNTMzMzcsImlhdCI6MTYxMTI0OTczNywianRpIjoiNmU5OWYyZjUtOTBlMS00OGFjLWFlN2QtYWJkMjIyODIwY2FmIiwiaXNzIjoiaHR0cDovL2NoYXJsZXMuaW5mby5leGFtcGxlL2tleWNsb2FrL2F1dGgvcmVhbG1zL2NoYXJsZXNjZCIsImF1ZCI6ImRhcndpbi1jbGllbnQiLCJzdWIiOiJkYThjYTQ5OC1lNDQ5LTQzMjYtYThkZC00ODM5NDI0Y2JkZDAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJjaGFybGVzY2QtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjI5Mzk2ZDZlLWI4ZDctNGU0ZC1hYTI2LWVlYWVlM2M5ODRjNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNSb290Ijp0cnVlLCJuYW1lIjoiY2hhcmxlc2FkbWluQGFkbWluIGNoYXJsZXNhZG1pbkBhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImdpdmVuX25hbWUiOiJjaGFybGVzYWRtaW5AYWRtaW4iLCJmYW1pbHlfbmFtZSI6ImNoYXJsZXNhZG1pbkBhZG1pbiIsImVtYWlsIjoiY2hhcmxlc2FkbWluQGFkbWluIn0.NLzu9222nMb-eyIiKwbznPzSTXe26QQp5cYGWw4MhfTW43gl6bXFAd-YMSXMEz5mmRy73NlW8WWnMKfQpC2FR-3wSKajVTB5_Y2CJC8PTLjXUpcZS2UxvBuV_ANZiINNovGiX87XFNhm9bHZxXzYUhDKqGh2C72G18fZKUTGMCfcTFHhFjxWDx1MEm5AN5JzPNbtcYWmrCMufgTsaQD9pQrHWxr9-8kNgKYff6wMVJLR6YIVpNVy7eHWTTOKwa59BFpw-w45clA3dtcs5cbMQo6GoA52_f5XdyvCZ-llYfvYpT09iPMsekWjG0TTbo2hCA59VKnMZA0r7JtPan9wrQ"
       database:
         <<: *postgresInfo
+        # -- Database name
         name: charlescd_moove
+        # -- Database user
         user: charlescd_moove
+        # -- Database password
         password: 7Qs2KuM9gYzw48BS
 
   hermes:
+    # -- Enable Hermes Installation
     enabled: true
+    # -- Name of Deployment
     name: charlescd-hermes
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 60
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-hermes
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-hermes
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
+    # -- Pod Resources
     resources: {}
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     #hermes envs
     database:
       <<: *postgresInfo
+      # -- Database user
       user: charlescd_hermes
+      # -- Database password
       password: aGVybWVz
+      # -- Database name
       name: charlescd_hermes
     amqp:
+      # -- AMQP URL
       url: amqp://guest:guest@charlescd-rabbitmq:5672/
       message:
+        # -- Queue Message
         queue: queue-message
+        # -- Routing Key
         routingKey: routing-key-message
+        # -- Exchange Message
         exchange: exchange-message
       waitMessage:
+        # -- Queue Message Wait
         queue: queue-message-wait
+        # -- Exchange Message Wait
         exchange: exchange-message-wait
     publisher:
+      # -- Publisher Cron Time
       time: "@every 5s"
+      # -- Number of Attempts
       attempts: 3
     consumer:
       messageRetry:
+        # -- Consumer Message Retry Expiration
         expiration: 60000
+        # -- Consumer Message Retry Attempts
         attempts: 3
+    # -- Subscription Register Limit
     subscriptionRegisterLimit: 5
 
   gate:
-    enabled: false
+    # -- Enable Gate Installation
+    enabled: true
+    # -- Name of Deployment
     name: charlescd-gate
     sidecarIstio:
+      # -- Enable istio in installation
       enabled: true
     healthCheck:
+      # -- Health Check Path
       path: /health
+      # -- Health Check Port
       port: 8080
+      # -- Health Check Initial Delay
       initialDelay: 60
     image:
+      # -- Repository Registry
       registry: zupcharles
+      # -- Repository Image Name
       application: charlescd-gate
+    # -- Check if need credentials for pulling images from repository
     imagePullSecrets: false
+    # -- Image Pull Policy
     pullPolicy: Always
     service:
+      # -- Service Name
       name: charlescd-gate
+      # -- Service Type
       type: ClusterIP
       ports:
+        # -- Port Protocol
         - name: http
+        # -- Port Number
           port: 8080
+    # -- Replica Count
     replicaCount: 1
+    # -- Resources
     resources: {}
+    # -- Node Selector, it specifies a map of key-value pairs. For the pod to be eligible to run on a node
     nodeSelector: {}
+    # -- Tolerations rules
     tolerations: []
+    # -- Affinity rules
     affinity: {}
+    # -- Boolean, init container that waits for database be ready
     postgresqlWait: true
     #gate envs
     database:
       <<: *postgresInfo
+      # -- Database user
       user: charlescd_moove
+      # -- Database password
       password: 7Qs2KuM9gYzw48BS
+      # -- Database name
       name: charlescd_moove
+    # -- Gate Policy Path
     policyPath: ./resources/policy.csv
+    # -- Gate Auth Config Path
     authConfPath: ./resources/auth.conf
+    # -- Gate Queires Path
     queiresPath: ./internal/repository/queries/
 
 postgresql:
+  # -- Enable PostgreSQL Installation
   enabled: true
+  # -- PostgreSQL Service
   fullnameOverride: *postgresHost
+  # -- Name of InitDB Scripts - DO NOT CHANGE
   initdbScriptsConfigMap: charlescd-postgres
+  # -- Postgres User
   pguser: postgres
+  # -- Postgres Password
   pgpassword: postgres
   resources:
     limits:
+      # -- Resource CPU Limit
       cpu: 128m
+      # -- Resource Memory Limit
       memory: 256Mi
     requests:
+      # -- Resource CPU Requests
       cpu: 128m
+      # -- Resource Memory Requests
       memory: 128Mi
 
+# -- Job that executes initDB Scripts if you choose to use your own PostgreSQL Database
 job:
+  # -- Enable Job Creation and Execution
   enabled: false
+  # -- Job Name
   name: init-db
 
 redis:
+  # -- Enable Redis Installation
   enabled: true
+  # -- Redis Service Name
   fullnameOverride: charlescd-redis
   auth:
+    # -- Redis Auth Password
     password: "hb2Fj9MGKjBkZ6zV"
   cluster:
+    # -- Boolean, Is cluster?
     enabled: false
 
 keycloak:
+  # -- Enable Keycloak Installation
   enabled: true
   postgresql:
+    # -- Enable Keycloak's Postgres
     enabled: false
   database:
     <<: *postgresInfo
+    # -- Database name
     name: keycloak
+    # -- Database user
     user: keycloak
+    # -- Database password
     password: DCWYW66Mq2ca6w8u
+  # -- CharlesCD Host URI
   charlesHost: *hostGlobal
+  # -- Service Name
   fullnameOverride: keycloak
+  # -- Keycloak Extra Environment Vars
   extraEnv: |
     - name: PROXY_ADDRESS_FORWARDING
       value: "true"
@@ -436,12 +720,16 @@ keycloak:
         -Dkeycloak.migration.strategy=IGNORE_EXISTING
 
   securityContext:
+    # -- Security Context Run as User, Default: 0
     runAsUser: 0
+    # -- Security Context Run as non Root, Default: false
     runAsNonRoot: false
 
+  # -- Keycloak Context Path
   contextPath: keycloak/auth
 
   startupScripts:
+    # -- Keycloak Startup Script
     contextPath.cli: |
       embed-server --server-config=standalone-ha.xml --std-out=echo
       batch
@@ -455,6 +743,7 @@ keycloak:
       run-batch
       stop-embedded-server
 
+  # -- Keycloak Liveness Probe
   livenessProbe: |
     httpGet:
       path: {{ if ne .Values.contextPath "" }}/{{ .Values.contextPath }}{{ end }}/
@@ -462,6 +751,7 @@ keycloak:
     initialDelaySeconds: 300
     timeoutSeconds: 5
 
+  # -- Keycloak readiness Probe
   readinessProbe: |
     httpGet:
       path: {{ if ne .Values.contextPath "" }}/{{ .Values.contextPath }}{{ end }}/realms/master
@@ -469,6 +759,7 @@ keycloak:
     initialDelaySeconds: 30
     timeoutSeconds: 1
 
+  # -- Keycloak Startup Probe
   startupProbe: |
     httpGet:
       path: /keycloak/auth/
@@ -478,6 +769,7 @@ keycloak:
     failureThreshold: 60
     periodSeconds: 5
 
+  # -- Keycloak extra InitContainers
   extraInitContainers: |
     - name: check-db-ready
       image: postgres:9.6.5
@@ -485,65 +777,94 @@ keycloak:
         'until pg_isready -h {{ .Values.database.host }} -p {{ .Values.database.port }};
         do echo waiting for database; sleep 2; done;']
   auth:
+    # -- Auth Init Password
     adminPassword: firstpassword
 
+  # -- Keycloak Extra Volumes
   extraVolumes: |
     - name: realm-secret
       configMap:
         name: keycloak-realm
 
+  # -- Keycloak Extra Volumes Mounts
   extraVolumeMounts: |
     - name: realm-secret
       mountPath: "/realm/"
       readOnly: false
 
 envoy:
+  # -- Enable Envoy Installation
   enabled: true
   ui:
+    # -- Enable UI Installation
     enabled: true
   moove:
+    # -- Enable Moove Installation
     enabled: true
   circlematcher:
+    # -- Enable Circle-Matcher Installation
     enabled: true
   keycloak:
+    # -- Enable Keycloak Installation
     enabled: true
   compass:
+    # -- Enable Compass Installation
     enabled: true
   hermes:
+    # -- Enable Hermes Installation
     enabled: true
   gate:
-    enabled: false
-  cors:
+    # -- Enable Gate Installation
     enabled: true
+  cors:
+    # -- Enable CORS
+    enabled: true
+    # -- List of CORS Hosts with protocol [http; https]
     hosts: []
   idm:
+    # -- IDM Endpoint
     endpoint: "keycloak-http"
+    # -- IDM Port
     port: 80
+    # -- IDM Path
     path: /keycloak/auth/realms/charlescd/protocol/openid-connect/userinfo
+    # -- IDM Protocol
     protocol: http
 
 
 ingress:
+  # -- Enable Ingress
   enabled: true
+  # -- Ingress Host
   host: charles.info.example
+  # -- Ingress Class
   class: nginx
 
 nginx_ingress_controller:
+  # -- Enable NGINX Ingress Controller Installation
   enabled: true
 
 ingress-nginx:
   controller:
     service:
+      # -- Ingress-nginx Annotations
       annotations: {}
+    # -- Ingress Class
     ingressClass: nginx
 
 rabbitmq:
+  # -- Enable RabbitMQ Installation
   enabled: true
+  # -- RabbitMQ Service Name
   fullnameOverride: charlescd-rabbitmq
   auth:
+    # -- RabbitMQ Username
     username: guest
+    # -- RabbitMQ Password
     password: guest
+    # -- RabbitMQ Erlang Secret
     existingErlangSecret: charlescd-rabbitmq-erl
+  # -- RabbitMQ Configuration
   configuration: |-
     ## Username and password
     ##
