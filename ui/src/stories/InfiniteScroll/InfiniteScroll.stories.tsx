@@ -22,7 +22,6 @@ import Styled from './Styled';
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
-  parameters: { controls: { sort: 'requiredFirst' } },
   argTypes: {
     loadMore: {
       description: 'This function will be called as long as the property `hasMore` is true and scroll is at the end.',

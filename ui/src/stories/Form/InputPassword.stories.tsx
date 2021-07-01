@@ -22,7 +22,6 @@ import styled from './styled';
 export default {
   title: 'Components/Form/Input Password',
   component: InputPassword,
-  parameters: { controls: { sort: 'requiredFirst' } },
   argTypes: {
     id: {
       control: false,

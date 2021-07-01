@@ -32,6 +32,7 @@ export const parameters = {
     matchers: {
       date: /Date$/,
     },
+    sort: 'requiredFirst'
   },
   layout: 'centered',
 };
