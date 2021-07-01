@@ -21,8 +21,7 @@ import styled from '../styled';
 
 export default {
   title: 'Components/Form/Select/Select Async',
-  component: Select,
-  parameters: { control: false }
+  component: Select
 };
 
 const Template: Story<Props> = (props: Props) => {

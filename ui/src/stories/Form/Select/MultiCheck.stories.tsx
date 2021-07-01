@@ -16,12 +16,12 @@
 
 import { Story } from '@storybook/react';
 import Select, { Props } from 'core/components/Form/Select/MultiCheck/Select';
+import CustomOption from 'core/components/Form/Select/CustomOptions';
 import styled from '../styled';
 
 export default {
   title: 'Components/Form/Select/Select Multi',
-  component: Select,
-  parameters: { control: false }
+  component: Select
 };
 
 const Template: Story<Props> = (props: Props) => {
@@ -34,8 +34,10 @@ const Template: Story<Props> = (props: Props) => {
 
 export const selectMulti = Template.bind({});
 selectMulti.args = {
+  customOption: CustomOption.Check,
   options: [
     { value: 'apple', label: 'apple' },
-    { value: 'orange', label: 'orange' }
+    { value: 'orange', label: 'orange' },
+    { value: 'banana', label: 'banana' }
   ]
 };
