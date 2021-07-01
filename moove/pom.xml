@@ -48,7 +48,7 @@
         <eclipse.egit.github.core.version>2.1.5</eclipse.egit.github.core.version>
         <feign.jackson.version>9.5.1</feign.jackson.version>
         <modelmapper.version>2.3.0</modelmapper.version>
-        <keycloak.admin.client.version>7.0.1</keycloak.admin.client.version>
+        <keycloak.admin.client.version>13.0.0</keycloak.admin.client.version>
         <cglib.nodep.version>3.3.0</cglib.nodep.version>
         <hibernate.types.version>2.5.0</hibernate.types.version>
         <spring.jdbc.version>5.2.4.RELEASE</spring.jdbc.version>
