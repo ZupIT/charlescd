@@ -36,7 +36,7 @@ const Item = styled.div`
 
 const Content = styled.div`
   margin-top: 22px;
-  height: 300px;
+  height: calc(100% - 260px);
   overflow-y: auto;
 `;
 
