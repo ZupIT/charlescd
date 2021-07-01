@@ -88,3 +88,10 @@ test('should show button next when creating a new token', () => {
   expect(screen.getByPlaceholderText('Type a name')).toBeInTheDocument();
   expect(screen.getByText('Next')).toBeInTheDocument();
 });
+
+// TODO test
+test.only('should show edit workspaces button', () => {
+  render(<Form mode="create" />);
+
+  screen.debug()
+});
