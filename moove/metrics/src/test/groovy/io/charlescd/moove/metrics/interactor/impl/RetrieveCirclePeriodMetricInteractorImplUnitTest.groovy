@@ -40,7 +40,7 @@ class RetrieveCirclePeriodMetricInteractorImplUnitTest extends Specification {
     def circleId = "circle-id"
 
     def author = new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
-            "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+            "https://www.photos.com/johndoe", [], [], false, LocalDateTime.now())
 
     def metricConfiguration = new MetricConfiguration("ae366287-0fd3-4c91-bd3e-debe455cd2cb", MetricConfiguration.ProviderEnum.PROMETHEUS, "https://metric-provider-url.com",
             LocalDateTime.now(), workspaceId, author)

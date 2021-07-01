@@ -16,9 +16,9 @@
 
 package io.charlescd.moove.application.user
 
-import io.charlescd.moove.application.user.response.SimpleUserResponse
+import io.charlescd.moove.application.user.response.SimpleUserWithUserGroupResponse
 
 interface FindUserByEmailInteractor {
 
-    fun execute(email: String, authorization: String): SimpleUserResponse
+    fun execute(email: String, authorization: String): SimpleUserWithUserGroupResponse
 }

@@ -91,6 +91,6 @@ class UpdateGitConfigurationInteractorImplTest extends Specification {
 
     private static User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<Workspace>(), false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
     }
 }

@@ -62,7 +62,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         />
       </Styled.Header>
       <Styled.Caption>
-        <Text.h5 color="dark">
+        <Text.h5 color="dark" data-testid="add-workspace-modal-doc">
           {renderDescription()}
           Read our 
           <DocumentationLink
