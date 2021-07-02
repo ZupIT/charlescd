@@ -26,7 +26,7 @@ export default {
 const Template: Story<Props> = (props: Props) => {
   return (
     <styled.Form>
-      <Input  {...props }/>
+      <Input {...props }/>
     </styled.Form>
   );
 };
