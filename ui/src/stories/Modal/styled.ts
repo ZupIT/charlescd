@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-import { Story } from '@storybook/react';
-import Wizard, { Props } from 'core/components/Modal/Wizard';
-import Styled from './styled';
+import styled from 'styled-components';
+
+const Outside = styled.div`
+  width: 200px;
+  height: 400px;
+`;
 
 export default {
-  title: 'Components/Modal/Wizard',
-  component: Wizard,
+  Outside,
 };
-
-const Template: Story<Props> = (props: Props) => {
-  return(
-    <Styled.Outside>
-      <Wizard {...props} />
-    </Styled.Outside>
-  );
-};
-export const wizard = Template.bind({});
-wizard.args = {};
