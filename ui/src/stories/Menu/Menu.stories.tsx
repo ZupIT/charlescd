@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { Story, Meta } from '@storybook/react';
+import { Story } from '@storybook/react';
 import Menu, { Props } from 'core/components/Menu';
+import Styled from './styled';
 
 export default {
   title: 'Components/Menu',
   component: Menu,
-  decorators: [
-    (Story) => (
-      <div style={{padding: '10px', marginBottom: '15px'}}>
-        <Story />
-      </div>
-    ),
-  ],
-} as Meta;
+};
 
-const Template: Story<Props> = (props: Props) => <Menu {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return(
+    <Menu {...props}>
+      <Styled.Content>Filter (click to see menu)</Styled.Content>
+    </Menu>
+  );
+};
 export const menu = Template.bind({});
 menu.args = {
   actions: [
@@ -42,6 +42,6 @@ menu.args = {
       name: 'inactives',
     }
   ],
-  children: 'Filter (click to see menu)',
+  children: '',
   active: 'actives'
 };
