@@ -25,6 +25,10 @@ export const parameters = {
         name: 'dark',
         value: '#1C1C1E',
       },
+      {
+        name: 'light',
+        value: 'FFF',
+      }
     ],
   },
   actions: { argTypesRegex: "^on[A-Z].*" },
