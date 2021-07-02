@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/plugins/action/commons"
 	"os"
 	"strings"
 )
@@ -52,7 +53,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	deployment, err := getCurrentDeploymentAtCircle(ec.OriginCircleID, ec.WorkspaceID, ac.MooveURL)
+	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.OriginCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.OriginCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
@@ -66,19 +67,19 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	user, err := getUserByEmail(os.Getenv("MOOVE_USER"), ac.MooveURL)
+	user, err := commons.GetUserByEmail(os.Getenv("MOOVE_USER"), ac.MooveURL)
 	if err != nil {
 		logger.Error("DO_USER_FIND", "DoDeploymentAction", err, ac.MooveURL)
 		return err
 	}
 
-	request := DeploymentRequest{
+	request := commons.DeploymentRequest{
 		AuthorID: user.Id,
 		CircleID: ec.DestinationCircleID,
 		BuildID:  deployment.BuildId,
 	}
 
-	err = deployBuildAtCircle(request, ec.WorkspaceID, ac.MooveURL)
+	err = commons.DeployBuildAtCircle(request, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleId: %s, BuildId: %s, AuthorId: %s",
 			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
@@ -131,7 +132,7 @@ func ValidateActionConfiguration(actionConfig []byte) []error {
 		errs = append(errs, errors.New("moove url is required"))
 	}
 
-	err = testConnection(config.MooveURL)
+	err = commons.TestConnection(config.MooveURL)
 	if err != nil {
 		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, fmt.Sprintf("%+v", config))
 		errs = append(errs, errors.New("moove could not be reached"))
