@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
+	"github.com/ZupIT/charlescd/compass/plugins/action/commons"
 	"strings"
 )
 
@@ -50,7 +51,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	deployment, err := getCurrentDeploymentAtCircle(ec.DestinationCircleID, ec.WorkspaceID, ac.MooveURL)
+	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.DestinationCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, DestinationCircleID: %s, WorkspaceId: %s", ac.MooveURL, ec.DestinationCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
@@ -64,7 +65,7 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 		return err
 	}
 
-	err = undeployBuildAtCircle(deployment.Id, ec.WorkspaceID, ac.MooveURL)
+	err = commons.UndeployBuildAtCircle(deployment.Id, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
 		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleID: %s, BuildId: %s",
 			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId)
@@ -108,7 +109,7 @@ func ValidateActionConfiguration(actionConfig []byte) []error {
 		errs = append(errs, errors.New("moove url is required"))
 	}
 
-	err = testConnection(config.MooveURL)
+	err = commons.TestConnection(config.MooveURL)
 	if err != nil {
 		logger.Error("VALIDATE_CIRCLE_ACTION_CONFIG", "ValidateActionConfiguration", err, fmt.Sprintf("%+v", config))
 		errs = append(errs, errors.New("moove could not be reached"))
