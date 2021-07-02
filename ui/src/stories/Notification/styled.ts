@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-import { Story } from '@storybook/react';
-import Notification, { Props } from 'core/components/Notification';
-import Styled from './styled';
+import styled from 'styled-components';
+
+const Outside = styled.div`
+  width: 400px;
+  height: 40px;
+`;
 
 export default {
-  title: 'Components/Notification',
-  component: Notification,
-};
-
-const Template: Story<Props> = (props: Props) => (
-  <Styled.Outside>
-    <Notification {...props} />
-  </Styled.Outside>
-);
-export const notification = Template.bind({});
-notification.args = {
-  notification: {
-    isVisible: true,
-    text: 'success message',
-    status: 'success',
-  },
+  Outside,
 };
