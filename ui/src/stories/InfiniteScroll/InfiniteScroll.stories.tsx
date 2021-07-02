@@ -17,7 +17,7 @@
 import { Story } from '@storybook/react';
 import InfiniteScroll, { Props } from 'core/components/InfiniteScroll';
 import { useState } from 'react';
-import Styled from './Styled';
+import Styled from './styled';
 
 export default {
   title: 'Components/InfiniteScroll',
