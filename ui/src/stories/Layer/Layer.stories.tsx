@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Story, Meta } from '@storybook/react';
+import { Story } from '@storybook/react';
 import Layer, { Props } from 'core/components/Layer';
 import Styled from './styled';
 
@@ -28,7 +28,7 @@ export default {
       },
     },
   },
-} as Meta;
+};
 
 const Template: Story<Props> = (props: Props) => {
   return(
