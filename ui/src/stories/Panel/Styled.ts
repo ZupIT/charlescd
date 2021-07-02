@@ -17,7 +17,7 @@
 import styled from 'styled-components';
 
 const Text = styled.div`
-  color: white;
+  color: lightgray;
 `;
 
 export default {
