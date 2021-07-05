@@ -52,7 +52,15 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     mode: 'onChange',
     resolver: validationResolver,
   });
-  const { register, control, handleSubmit, watch, errors, getValues } = form;
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    errors,
+    getValues,
+    formState,
+  } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -138,7 +146,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        {/* {error &&  */}
         <Message errorMessage="Error message" status={'error'} />
         <Styled.Submit
           id="submit"
@@ -146,7 +153,11 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           size="EXTRA_SMALL"
           isLoading={savingBuild}
           isDisabled={
-            isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying
+            isEmptyFields ||
+            !isEmpty(errors) ||
+            !isEmpty(error) ||
+            isDeploying ||
+            !formState.isValid
           }
         >
           Deploy
