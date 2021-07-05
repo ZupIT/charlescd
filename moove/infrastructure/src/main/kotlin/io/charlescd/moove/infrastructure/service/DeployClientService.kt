@@ -73,7 +73,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             namespace = deploymentConfiguration.namespace,
             components = buildComponentsDeployRequest(build),
             circle = CircleRequest(circleId, isDefault),
-            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider)
+            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
+            metadata = deployment.metadata
         )
     }
 

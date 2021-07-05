@@ -24,7 +24,7 @@ import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
-import {checkComponentAndVersionMaxLength} from './helpers';
+import { checkComponentAndVersionMaxLength } from './helpers';
 
 interface Props {
   index: number;
@@ -36,7 +36,7 @@ interface Props {
 
 interface TagProps {
   artifact: string;
-  name: string
+  name: string;
 }
 
 const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
@@ -47,14 +47,8 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const [isError, setIsError] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
-  const {
-    errors,
-    register,
-    control,
-    getValues,
-    setValue,
-    clearErrors
-  } = useFormContext();
+  const { errors, register, control, getValues, setValue, clearErrors } =
+    useFormContext();
 
   useEffect(() => {
     getAllModules();
@@ -88,9 +82,11 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     name: string
   ) => {
     setValue(`${prefixName}.tag`, '');
-    const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
+    const tag: TagProps = await getComponentTag(moduleId, componentId, {
+      name,
+    });
 
-    if(tag) checkComponentAndVersionMaxLength({tag, onError, setIsError});
+    if (tag) checkComponentAndVersionMaxLength({ tag, onError, setIsError });
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));

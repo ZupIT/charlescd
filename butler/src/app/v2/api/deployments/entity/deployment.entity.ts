@@ -20,6 +20,7 @@ import { ReadDeploymentDto } from '../dto/read-deployment.dto'
 import { Deployment } from '../interfaces'
 import { ComponentEntityV2 as ComponentEntity } from './component.entity'
 import { Execution } from './execution.entity'
+import { Metadata } from '../interfaces/deployment.interface'
 
 @Entity('v2deployments')
 export class DeploymentEntityV2 implements Deployment {
@@ -27,11 +28,11 @@ export class DeploymentEntityV2 implements Deployment {
   @PrimaryColumn({ name: 'id' })
   public id!: string
 
-  @Column({ name: 'author_id' })
-  public authorId!: string
-
   @Column({ name: 'callback_url' })
   public callbackUrl!: string
+
+  @Column({ name: 'author_id' })
+  public authorId!: string
 
   @CreateDateColumn({ name: 'created_at' })
   public createdAt!: Date
@@ -69,6 +70,9 @@ export class DeploymentEntityV2 implements Deployment {
   @Column({ name: 'default_circle' })
   public defaultCircle!: boolean
 
+  @Column({ type: 'jsonb', name: 'metadata', nullable: true })
+  public metadata!: Metadata | null
+
   constructor(
     deploymentId: string,
     authorId: string,
@@ -77,7 +81,8 @@ export class DeploymentEntityV2 implements Deployment {
     components: ComponentEntity[],
     defaultCircle: boolean,
     namespace: string,
-    timeoutInSeconds: number
+    timeoutInSeconds: number,
+    metadata: Metadata | null
   ) {
     this.id = deploymentId
     this.authorId = authorId
@@ -87,6 +92,8 @@ export class DeploymentEntityV2 implements Deployment {
     this.defaultCircle = defaultCircle
     this.namespace = namespace
     this.timeoutInSeconds = timeoutInSeconds
+    this.metadata = metadata
+    this.authorId = authorId
   }
 
   public toReadDto(): ReadDeploymentDto {

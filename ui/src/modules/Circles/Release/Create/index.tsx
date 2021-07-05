@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
-import { validationResolver, formatDataModules, validFields } from './helpers';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import Button from 'core/components/Button';
+import ConnectionStatus from 'core/components/ConnectionStatus';
+import Module from './Module';
+import Metadata from '../Metadata';
 import { ModuleForm } from '../interfaces/Module';
+import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
-import Module from './Module';
+import { Scope } from '../Metadata/interfaces';
+import { toKeyValue } from '../Search/helpers';
 import Styled from '../styled';
-import ConnectionStatus from 'core/components/ConnectionStatus';
 
 const defaultValues = {
   modules: [MODULE],
-  releaseName: ''
+  releaseName: '',
 };
 
 interface Props {
@@ -44,27 +47,28 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const {
     composeBuild,
     response: build,
-    loading: savingBuild
+    loading: savingBuild,
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
-    resolver: validationResolver
+    resolver: validationResolver,
   });
-  const { register, control, handleSubmit, watch, errors, getValues } = form;
+  const { register, control, handleSubmit, watch, getValues, formState } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'modules'
+    name: 'modules',
   });
+  const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const isNotUnique = fields.length > ONE;
   const [error, setError] = useState('');
   const [isDeploying, setIsDeploying] = useState(false);
 
   useEffect(() => {
     if (watchFields) {
-      const isValid = validFields(watchFields);
+      let isValid = validFields(watchFields);
       setIsEmptyFields(!isValid);
     }
   }, [watchFields]);
@@ -77,12 +81,18 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   useEffect(() => {
     if (build) {
+      const { metadata } = getValues();
+
       createDeployment({
         buildId: build.id,
-        circleId
+        circleId,
+        metadata: {
+          scope: Scope.APPLICATION,
+          content: toKeyValue(metadata),
+        },
       });
     }
-  }, [createDeployment, build, circleId]);
+  }, [createDeployment, build, circleId, getValues]);
 
   const onSubmit = () => {
     setIsDeploying(true);
@@ -91,16 +101,17 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      releaseName: data.releaseName
+      releaseName: data.releaseName,
     });
   };
 
   const checkMaxLengthError = (hasError?: boolean) => {
-    if(hasError)
-      setError('Sum of component name and version name cannot be greater than 63 characters.');
-    else
-      setError('');
-  }
+    if (hasError)
+      setError(
+        'Sum of component name and version name cannot be greater than 63 characters.'
+      );
+    else setError('');
+  };
 
   return (
     <FormProvider {...form}>
@@ -127,25 +138,23 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Styled.Module.Info color="dark">
           You can add other modules:
         </Styled.Module.Info>
-        <Styled.Module.Button
+        <Button.Default
           type="button"
+          size="EXTRA_SMALL"
           id="add-module"
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          isDisabled={isEmptyFields}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
-        </Styled.Module.Button>
-        {error && 
-          <ConnectionStatus
-            errorMessage={error}
-            status={"error"}
-          />}
+        </Button.Default>
+        {error && <ConnectionStatus errorMessage={error} status={'error'} />}
+        <Metadata fieldArray={metadataFields} />
         <Styled.Submit
           id="submit"
           type="submit"
-          size="EXTRA_SMALL"
+          size="SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
+          isDisabled={!formState.isValid || isDeploying || isEmptyFields}
         >
           Deploy
         </Styled.Submit>

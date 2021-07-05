@@ -17,4 +17,5 @@
 export interface CreateDeployment {
   buildId: string;
   circleId: string;
+  metadata?: Map<string, string>;
 }

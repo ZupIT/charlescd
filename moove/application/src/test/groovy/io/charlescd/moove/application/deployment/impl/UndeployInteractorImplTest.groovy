@@ -234,6 +234,7 @@ class UndeployInteractorImplTest extends Specification {
                 getCircle(false, MatcherTypeEnum.SIMPLE_KV),
                 buildId,
                 TestUtils.workspaceId,
+                null,
                 null
         )
     }
@@ -248,6 +249,7 @@ class UndeployInteractorImplTest extends Specification {
                 getCircle(false, MatcherTypeEnum.REGULAR),
                 buildId,
                 TestUtils.workspaceId,
+                null,
                 null
         )
     }
@@ -298,6 +300,6 @@ class UndeployInteractorImplTest extends Specification {
 
     private static Deployment getDeployment(DeploymentStatusEnum status, LocalDateTime deployedAt, LocalDateTime undeployAt, Boolean isDefaultCircle) {
         return new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', TestUtils.user,
-                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle, MatcherTypeEnum.SIMPLE_KV), buildId, TestUtils.workspaceId, undeployAt)
+                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle, MatcherTypeEnum.SIMPLE_KV), buildId, TestUtils.workspaceId, null, undeployAt)
     }
 }

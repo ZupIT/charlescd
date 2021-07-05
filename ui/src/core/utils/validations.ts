@@ -43,7 +43,8 @@ export const isRequiredAndNotBlank = {
   validate: {
     notBlank: isNotBlank
   },
-  setValueAs: trimValue
+  setValueAs: trimValue,
+  message: 'This field is required and not blank'
 } as const;
 
 export const maxLength = (value = 64, message?: string) => ({
@@ -59,6 +60,11 @@ export const minLength = (value: number, message?: string) => ({
 export const isRequired = () => ({
   value: true,
   message: 'This field is required'
+});
+
+export const metadataPattern = () => ({
+  value: /^[a-zA-Z0-9]+([a-zA-Z0-9-_.]*[a-zA-Z0-9])?$/gi,
+  message: 'It needs to beginning and ending with an alphanumeric character (a-z or 0-9) with dashes, underscores, dots or alphanumerics between'
 });
 
 export const emailPattern = () => ({

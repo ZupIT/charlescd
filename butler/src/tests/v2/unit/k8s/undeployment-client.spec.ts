@@ -33,6 +33,7 @@ const deployment: Deployment = {
   defaultCircle: false,
   circleId: 'circle-id2',
   createdAt: new Date(),
+  metadata: null,
   components: [
     {
       id: 'component-id-1',

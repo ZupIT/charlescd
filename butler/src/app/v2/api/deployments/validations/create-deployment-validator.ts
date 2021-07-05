@@ -23,7 +23,9 @@ import { DeploymentStatusEnum } from '../enums/deployment-status.enum'
 import { GitProvidersEnum } from '../../../core/configuration/interfaces'
 import { CreateGitDeploymentDto } from '../dto/create-git-request.dto'
 import { ExceptionBuilder } from '../../../core/utils/exception.utils'
+import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 import Joi = require('joi')
+import { Metadata } from '../interfaces/deployment.interface'
 
 export interface JsonAPIError {
     errors: {
@@ -89,7 +91,8 @@ export class CreateDeploymentValidator {
       components,
       value.namespace,
       new CreateGitDeploymentDto(value.git.token, value.git.provider),
-      value.timeoutInSeconds
+      value.timeoutInSeconds,
+      value.metadata
     )
     return dto
   }
@@ -109,8 +112,33 @@ export class CreateDeploymentValidator {
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255),
-      timeoutInSeconds: Joi.number().integer().min(5).optional()
+      timeoutInSeconds: Joi.number().integer().min(5).optional(),
+      metadata: Joi.allow(null).custom( (metadata, helper) => {
+        if (!this.isValidMetadata(metadata)) {
+          return helper.error('invalid.metadata')
+        }
+        if (!this.hasLabelFormat(metadata)){
+          return helper.error('imageTag.dns.format')
+        }
+      }).messages(
+        {
+          'invalid.metadata' : 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
+          'imageTag.dns.format': 'Metadata key and value must consist of alphanumeric characters,' +
+              ' "-" or ".", and must start and end with an alphanumeric character'
+        }
+      )
     })
+  }
+
+  private isValidMetadata(metadata: Metadata) {
+    if (metadata.scope == MetadataScopeEnum.APPLICATION || metadata.scope == MetadataScopeEnum.CLUSTER) {
+      const invalidMetadata = Object.keys(metadata.content).find(
+        key => !this.isValidKey(key) || !this.isValidValue(metadata.content[key])
+      )
+      return Object.keys(metadata.content).length > 0 && invalidMetadata == null
+    } else {
+      throw new ExceptionBuilder('Invalid metadata scope', HttpStatus.BAD_REQUEST).build()
+    }
   }
 
   private componentSchema() {
@@ -124,13 +152,10 @@ export class CreateDeploymentValidator {
       helmRepository: Joi.string().required().label('helmRepository')
     })
       .custom((obj, helper) => {
-        const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
 
         const { buildImageTag, componentName } = obj
 
-        const compareTag = buildImageTag.match(regExpr)?.join('-')
-
-        if (compareTag !== buildImageTag){
+        if (!this.isValidDnsFormat(buildImageTag)) {
           return helper.error('imageTag.dns.format')
         }
 
@@ -155,6 +180,35 @@ export class CreateDeploymentValidator {
         }
       )
   }
+  
+  private isValidDnsFormat(value: string) {
+    const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
+
+  private isValidLabelFormat(value: string) {
+    const startNameFormat  = '[A-Za-z0-9]'
+    const extensionNameFormat  = '[-A-Za-z0-9_.]'
+    const endNameFormat = '[A-Za-z0-9]'
+    const labelFormat = `(${startNameFormat}${extensionNameFormat}*)?${endNameFormat}`
+    const regExpr = new RegExp(labelFormat, 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
+
+  private isValidLabelValueFormat(value: string) {
+    if (value.length == 0) {
+      return true
+    }
+    const startNameFormat  = '[A-Za-z0-9]'
+    const extensionNameFormat  = '[-A-Za-z0-9_.]'
+    const endNameFormat = '[A-Za-z0-9]'
+    const labelFormat = `(${startNameFormat}${extensionNameFormat}*)?${endNameFormat}`
+    const regExpr = new RegExp(labelFormat, 'g')
+    const comparedValue = value.match(regExpr)?.join('-')
+    return comparedValue === value
+  }
 
   private extractTag(buildImageTag: string, buildImageUrl: string): string {
     const extractedTag = buildImageUrl.split(':')
@@ -163,5 +217,22 @@ export class CreateDeploymentValidator {
     }
     return extractedTag[extractedTag.length -1]
   }
+
+
+  private isValidValue(value: string): boolean {
+    return value.length  >= 0 && value.length <= 253
+  }
+
+  private hasLabelFormat(metadata: Metadata) {
+    const invalidLabelFormat = Object.keys(metadata.content).find(
+      key => !this.isValidLabelFormat(key) || !this.isValidLabelValueFormat(metadata.content[key])
+    )
+    return invalidLabelFormat == null
+  }
+
+  private isValidKey(key: string) {
+    return key.length  > 0 && key.length <= 63
+  }
+
 }
 

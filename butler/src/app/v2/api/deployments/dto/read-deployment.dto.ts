@@ -19,8 +19,8 @@ export class ReadDeploymentDto {
   public readonly id: string
 
   constructor(
-    id: string,
-  ) {
+    id: string
+  ){
     this.id = id
   }
 }

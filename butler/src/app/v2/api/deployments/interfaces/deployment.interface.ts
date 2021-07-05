@@ -15,6 +15,7 @@
  */
 
 import { Component } from './'
+import { MetadataScopeEnum } from '../enums/metadata-scope.enum'
 
 export interface Deployment {
     id: string
@@ -32,6 +33,13 @@ export interface Deployment {
     defaultCircle: boolean
 
     namespace: string
+
+    metadata: Metadata | null
+}
+
+export interface Metadata {
+    scope: MetadataScopeEnum
+    content: Record<string, string>
 }
 
 export type DeploymentComponent = Omit<Component, 'deployment'>
