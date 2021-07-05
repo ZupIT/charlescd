@@ -40,7 +40,7 @@ const ModalCopyToken = ({ title, tokenName, description, token, onClose }: Props
   };
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout =  null;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isCopied) {
       timeout = setTimeout(() => {
         setIsCopied(false);

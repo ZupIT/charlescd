@@ -17,6 +17,7 @@
 package io.charlescd.moove.application.build.impl
 
 import io.charlescd.moove.application.BuildService
+import io.charlescd.moove.application.TestUtils
 import io.charlescd.moove.application.build.BuildCallbackInteractor
 import io.charlescd.moove.application.build.request.BuildCallbackRequest
 import io.charlescd.moove.domain.*
@@ -76,7 +77,7 @@ class BuildCallbackInteractorImplTest extends Specification {
                 "c22f321d-d2c6-4ebc-a212-c36740257f9e", BuildCallbackRequest.Status.SUCCESS, [buildCallbackComponentPart]
         )
         def buildCallbackRequest = new BuildCallbackRequest(BuildCallbackRequest.Status.SUCCESS, [buildCallbackModulePart])
-        def author = new User("0d2260ff-9a4c-425c-9402-c43cfda97b92", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = TestUtils.user
         def build = getDummyBuild("46ecf2cb-62a5-4978-90dc-3bce0d48cabd", author, BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED)
 
         when:
@@ -125,7 +126,7 @@ class BuildCallbackInteractorImplTest extends Specification {
                 "c22f321d-d2c6-4ebc-a212-c36740257f9e", BuildCallbackRequest.Status.SUCCESS, [buildCallbackComponentPart]
         )
         def buildCallbackRequest = new BuildCallbackRequest(BuildCallbackRequest.Status.SUCCESS, [buildCallbackModulePart])
-        def author = new User("0d2260ff-9a4c-425c-9402-c43cfda97b92", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = TestUtils.user
         def build = getDummyBuild("46ecf2cb-62a5-4978-90dc-3bce0d48cabd", author, BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED)
 
         when:

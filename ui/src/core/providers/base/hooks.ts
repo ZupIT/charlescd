@@ -160,8 +160,8 @@ export const useFetch = <T>(
 
   useEffect(() => {
     return () => {
-      mounted.current = false;
-    }
+      mounted.current = false
+    };
   }, []);
 
   return [{ response, error, loading }, trigger, promise];
