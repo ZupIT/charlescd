@@ -141,9 +141,9 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: npm install
+      - run: npm ci
         working-directory: ./ui
-      - run: npm build
+      - run: npm run build
         working-directory: ./ui
         env:
           CI: true
