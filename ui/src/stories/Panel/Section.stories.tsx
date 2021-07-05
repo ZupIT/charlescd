@@ -16,7 +16,7 @@
 
 import { Story } from '@storybook/react';
 import Section, { Props } from 'core/components/Panel/Section';
-import Styled from './styled';
+import Styled from './Styled';
 
 export default {
   title: 'Components/Panel/Section',
