@@ -32,4 +32,7 @@ const Template: Story<Props> = (props: Props) => {
 };
 
 export const inputFile = Template.bind({});
-inputFile.args = {};
+inputFile.args = {
+  id: '',
+  name: '',
+};

@@ -16,6 +16,7 @@
 
 import { Story } from '@storybook/react';
 import Notification, { Props } from 'core/components/Notification';
+import Styled from './styled';
 
 export default {
   title: 'Components/Notification',
@@ -23,9 +24,9 @@ export default {
 };
 
 const Template: Story<Props> = (props: Props) => (
-  <div style={{ width: '400px', height: '40px' }}>
+  <Styled.Outside>
     <Notification {...props} />
-  </div>
+  </Styled.Outside>
 );
 export const notification = Template.bind({});
 notification.args = {

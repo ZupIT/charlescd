@@ -16,10 +16,18 @@
 
 import styled from 'styled-components';
 
-const Text = styled.div`
-  color: lightgray;
+const Content = styled.span`
+  color: gray;
+`;
+
+const Outside = styled.div`
+  width: 200px;
+  height: 80px;
+  background-color: lightgray;
+  border-radius: 2px;
 `;
 
 export default {
-  Text,
-};
+  Content,
+  Outside,
+}

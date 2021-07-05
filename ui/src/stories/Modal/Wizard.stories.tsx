@@ -16,12 +16,19 @@
 
 import { Story } from '@storybook/react';
 import Wizard, { Props } from 'core/components/Modal/Wizard';
+import Styled from './styled';
 
 export default {
   title: 'Components/Modal/Wizard',
   component: Wizard,
 };
 
-const Template: Story<Props> = (props: Props) => <Wizard {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return(
+    <Styled.Outside>
+      <Wizard {...props} />
+    </Styled.Outside>
+  );
+};
 export const wizard = Template.bind({});
 wizard.args = {};

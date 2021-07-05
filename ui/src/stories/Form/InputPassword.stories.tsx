@@ -22,63 +22,6 @@ import styled from './styled';
 export default {
   title: 'Components/Form/Input Password',
   component: InputPassword,
-  parameters: { controls: { sort: 'requiredFirst' } },
-  argTypes: {
-    id: {
-      control: false,
-    },
-    className: {
-      control: false,
-    },
-    resume: {
-      control: false,
-    },
-    readOnly: {
-      control: false,
-    },
-    type: {
-      control: false,
-    },
-    name: {
-      control: false,
-    },
-    label: {
-      control: false,
-    },
-    tipTitle: {
-      control: false,
-    },
-    tipDescription: {
-      control: false,
-    },
-    maxLength: {
-      control: false,
-    },
-    autoComplete: {
-      control: false,
-    },
-    defaultValue: {
-      control: false,
-    },
-    placeholder: {
-      control: false,
-    },
-    disabled: {
-      control: false,
-    },
-    isLoading: {
-      control: false,
-    },
-    hasError: {
-      control: false,
-    },
-    error: {
-      control: false,
-    },
-    icon: {
-      control: false,
-    },
-  }
 };
 
 const Template: Story<Props> = (props: Props) => {

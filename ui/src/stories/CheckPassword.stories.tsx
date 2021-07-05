@@ -24,6 +24,9 @@ export default {
 
 const Template: Story<Props> = (props: Props) => <CheckPassword {...props} />;
 export const password = Template.bind({});
-password.args = {};
+password.args = {
+  password: 'test',
+  confirmPass: 'test',
+};
 
 password.storyName = 'CheckPassword';

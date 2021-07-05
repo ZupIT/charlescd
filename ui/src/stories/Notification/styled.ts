@@ -16,10 +16,11 @@
 
 import styled from 'styled-components';
 
-const Text = styled.div`
-  color: lightgray;
+const Outside = styled.div`
+  width: 400px;
+  height: 40px;
 `;
 
 export default {
-  Text,
+  Outside,
 };

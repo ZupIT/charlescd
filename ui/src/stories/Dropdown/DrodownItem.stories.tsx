@@ -20,6 +20,13 @@ import Item, { Props } from 'core/components/Dropdown/DropdownItem';
 export default {
   title: 'Components/Dropdown/DropdownItem',
   component: Item,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Should be used inside Dropdown component',
+      },
+    },
+  },
 };
 
 const Template: Story<Props> = (props: Props) => <Item {...props} />;

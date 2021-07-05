@@ -17,12 +17,11 @@
 import { Story } from '@storybook/react';
 import InfiniteScroll, { Props } from 'core/components/InfiniteScroll';
 import { useState } from 'react';
-import Styled from './Styled';
+import Styled from './styled';
 
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
-  parameters: { controls: { sort: 'requiredFirst' } },
   argTypes: {
     loadMore: {
       description: 'This function will be called as long as the property `hasMore` is true and scroll is at the end.',

@@ -29,6 +29,7 @@ const Loading = styled.span`
   text-align: center;
   margin: 8px 0;
   display: block;
+  color: whitesmoke;
 `;
 
 export default {

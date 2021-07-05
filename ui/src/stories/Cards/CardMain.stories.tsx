@@ -26,4 +26,5 @@ const Template: Story<Props> = (props: Props) => <CardMain {...props} />;
 export const main = Template.bind({});
 main.args = {
   children: '...',
+  color: 'primary',
 };

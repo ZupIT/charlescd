@@ -14,12 +14,34 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-
-const Text = styled.div`
-  color: lightgray;
-`;
+import { Story } from '@storybook/react';
+import Menu, { Props } from 'core/components/Menu';
+import Styled from './styled';
 
 export default {
-  Text,
+  title: 'Components/Menu',
+  component: Menu,
+};
+
+const Template: Story<Props> = (props: Props) => {
+  return(
+    <Menu {...props}>
+      <Styled.Content>Filter (click to see menu)</Styled.Content>
+    </Menu>
+  );
+};
+export const menu = Template.bind({});
+menu.args = {
+  actions: [
+    {
+      label: 'Active',
+      name: 'actives',
+    },
+    {
+      label: 'Inactive',
+      name: 'inactives',
+    }
+  ],
+  children: '',
+  active: 'actives'
 };

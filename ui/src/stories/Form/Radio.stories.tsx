@@ -26,15 +26,10 @@ export default {
 const Template: Story<Props> = (props: Props) => {
   return (
     <styled.Form>
-      <Radio {...props} />
-      <Radio {...props} />
+      <Radio name='charles' value='charles' label='charles' />
+      <Radio name='other' value='other' label='other' />
     </styled.Form>
   );
 };
 
 export const radio = Template.bind({});
-radio.args = {
-  name: 'charles',
-  value: 'charles',
-  label: 'charles'
-};

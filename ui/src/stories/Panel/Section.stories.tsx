@@ -16,14 +16,22 @@
 
 import { Story } from '@storybook/react';
 import Section, { Props } from 'core/components/Panel/Section';
+import Styled from './styled';
 
 export default {
   title: 'Components/Panel/Section',
   component: Section,
 };
 
-const Template: Story<Props> = (props: Props) => <Section {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return(
+    <Section {...props}>
+      <Styled.Text>content</Styled.Text>
+    </Section>
+  );
+};
+
 export const section = Template.bind({});
 section.args = {
-  children: 'panel section...',
+  children: '',
 };

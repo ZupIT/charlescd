@@ -16,19 +16,11 @@
 
 import { Story } from '@storybook/react';
 import Content, { Props } from 'core/components/Panel/Content';
-import Styled from './Styled';
+import Styled from './styled';
 
 export default {
   title: 'Components/Panel/Content',
   component: Content,
-  argTypes:{
-    children: {
-      control: false
-    },
-    size: {
-      control: false
-    },
-  }
 };
 
 const Template: Story<Props> = (props: Props) => {

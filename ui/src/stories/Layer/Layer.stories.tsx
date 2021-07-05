@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-import { Story, Meta } from '@storybook/react';
-import Menu, { Props } from 'core/components/Menu';
+import { Story } from '@storybook/react';
+import Layer, { Props } from 'core/components/Layer';
+import Styled from './styled';
 
 export default {
-  title: 'Components/Menu',
-  component: Menu,
-  decorators: [
-    (Story) => (
-      <div style={{padding: '10px', marginBottom: '15px'}}>
-        <Story />
-      </div>
-    ),
-  ],
-} as Meta;
-
-const Template: Story<Props> = (props: Props) => <Menu {...props} />;
-export const menu = Template.bind({});
-menu.args = {
-  actions: [
-    {
-      label: 'Active',
-      name: 'actives',
+  title: 'Components/Layer',
+  component: Layer,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Wrapper that adds spacing and animation to a children content.',
+      },
     },
-    {
-      label: 'Inactive',
-      name: 'inactives',
-    }
-  ],
-  children: 'Filter (click to see menu)',
-  active: 'actives'
+  },
 };
+
+const Template: Story<Props> = (props: Props) => {
+  return(
+    <Styled.Outside>
+      <Layer {...props}>
+        <Styled.Content>my content inside Layer</Styled.Content>
+      </Layer>
+    </Styled.Outside>
+  );
+};
+export const layer = Template.bind({});

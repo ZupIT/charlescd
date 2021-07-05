@@ -24,4 +24,6 @@ export default {
 
 const Template: Story<Props> = (props: Props) => <InputTitle {...props} />;
 export const inputTitle = Template.bind({});
-inputTitle.args = {};
+inputTitle.args = {
+  name: ''
+};

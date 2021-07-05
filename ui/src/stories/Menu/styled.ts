@@ -16,10 +16,10 @@
 
 import styled from 'styled-components';
 
-const Text = styled.div`
+const Content = styled.span`
   color: lightgray;
 `;
 
 export default {
-  Text,
+  Content,
 };
