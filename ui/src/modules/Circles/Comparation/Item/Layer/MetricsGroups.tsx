@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import ReactTooltip from 'react-tooltip';
 import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
@@ -28,6 +28,7 @@ import { MetricsGroupsResume } from '../MetricsGroups/types';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import { getThresholdStatus } from '../MetricsGroups/helpers';
 import Styled from '../styled';
+import Can from 'containers/Can';
 
 type Props = {
   onClickCreate: () => void;
@@ -45,15 +46,17 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
-    <ButtonRounded
-      name="add"
-      icon="add"
-      color="dark"
-      onClick={onClickCreate}
-      isDisabled={!circle?.id}
-    >
-      Add metrics group
-    </ButtonRounded>
+    <Can I="write" a="circles" passThrough>
+      <ButtonRounded
+        name="add"
+        icon="add"
+        color="dark"
+        onClick={onClickCreate}
+        isDisabled={!circle?.id}
+      >
+        Add metrics group
+      </ButtonRounded>
+    </Can>
   );
 
   const renderMetricsGroupsCard = (metrics: MetricsGroupsResume[]) =>

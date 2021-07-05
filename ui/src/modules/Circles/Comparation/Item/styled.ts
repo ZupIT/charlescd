@@ -33,13 +33,18 @@ const Actions = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   > :first-child {
-    margin-right: 36px;
+    margin-left: 0px;
   }
 
   > :last-child {
-    margin-left: 36px;
+    margin-left: 24px;
+  }
+
+  > :nth-last-child(2) {
+    margin-left: 24px;
   }
 `;
 
@@ -180,7 +185,14 @@ const FieldErrorWrapper = styled.div`
   }
 `;
 
+const A = styled.a`
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+`;
+
 export default {
+  A,
   Link,
   Actions,
   Action,
@@ -197,5 +209,5 @@ export default {
   MetricsGroupsCountContent,
   MetricsGroupsThresholdsContent,
   WarningPercentageContainer,
-  FieldErrorWrapper
+  FieldErrorWrapper,
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import {
@@ -54,9 +54,7 @@ import {
   isUndeployable,
   isBusy,
   getTooltipMessage,
-  circleCannotBeDeleted,
-  isDeploying,
-  isUndeploying,
+  cannotCircleBeDeleted,
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -123,7 +121,7 @@ const CirclesComparationItem = ({
   }, [response]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout = null;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isBusy(circle?.deployment?.status)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
@@ -233,10 +231,7 @@ const CirclesComparationItem = ({
   };
 
   const isInactive = () =>
-    isDeploying(circle?.deployment?.status) ||
-    isUndeploying(circle?.deployment?.status) ||
-    circleCannotBeDeleted(circle);
-
+    cannotCircleBeDeleted(circle);
   const renderDropdown = () => (
     <Dropdown>
       {!circle?.default && (
@@ -271,16 +266,14 @@ const CirclesComparationItem = ({
           onClick={() => copyToClipboard(pathCircleById(id))}
         />
       </Can>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          id="dropdown-item-delete-circle"
-          icon="delete"
-          name="Delete"
-          tooltip={getTooltipMessage(circle)}
-          isInactive={isInactive()}
-          onClick={() => setAction('Delete')}
-        />
-      </Can>
+      <Dropdown.Item
+        id="dropdown-item-delete-circle"
+        icon="delete"
+        name="Delete"
+        tooltip={getTooltipMessage(circle)}
+        isInactive={isInactive()}
+        onClick={() => setAction('Delete')}
+      />
     </Dropdown>
   );
 
@@ -303,15 +296,16 @@ const CirclesComparationItem = ({
     <Styled.Actions>
       {circle?.deployment && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
-          <LabeledIcon
-            icon="override"
-            marginContent="5px"
-            onClick={() => setActiveSection(SECTIONS.RELEASE)}
-          >
-            <Text tag="H5" color="dark">
-              Override release
-            </Text>
-          </LabeledIcon>
+          <Styled.A onClick={() => setActiveSection(SECTIONS.RELEASE)}>
+            <LabeledIcon
+              icon="override"
+              marginContent="5px"
+            >
+              <Text tag="H5" color="dark">
+                Override release
+              </Text>
+            </LabeledIcon>
+          </Styled.A>
         </Can>
       )}
       <LabeledIcon

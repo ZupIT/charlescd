@@ -127,7 +127,7 @@ const Scopes = ({ mode }: Props) => {
       <Text tag="H2" color="light">Scopes</Text>
       <Styled.Content>
         <Styled.Description>
-          <Text tag="H5" color="dark">
+          <Text tag="H5" color="dark" data-testid="scope-doc">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
             <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>

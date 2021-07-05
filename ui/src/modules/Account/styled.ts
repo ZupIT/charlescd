@@ -119,6 +119,15 @@ const FieldErrorWrapper = styled.div`
   }
 `;
 
+const Groups = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > div {
+    margin-top: 10px;
+  }
+`;
+
 export default {
   FieldErrorWrapper,
   Wrapper,
@@ -136,5 +145,6 @@ export default {
     Info: ModalInfo
   },
   Error,
-  CheckPassword
+  CheckPassword,
+  Groups
 };

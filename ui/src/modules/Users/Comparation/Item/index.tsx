@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import map from 'lodash/map';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
@@ -38,6 +39,7 @@ import Loader from './Loaders';
 import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 import useForm from 'core/hooks/useForm';
+import CardConfig from 'core/components/Card/Config';
 
 interface Props {
   email: string;
@@ -144,6 +146,18 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
     </Styled.Actions>
   );
 
+  const Groups = () =>
+    <Styled.Groups>
+      {map(currentUser.userGroups, (userGroup) => (
+        <CardConfig
+          id={`user-group-${userGroup.id}`}
+          key={userGroup.name}
+          icon="users"
+          description={userGroup.name}
+        />
+      ))}
+    </Styled.Groups>
+
   const renderPanel = () => (
     <TabPanel
       title={currentUser.name}
@@ -202,9 +216,10 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text tag="H2" color="light">
-            User groups
-          </Text>
+          <Text tag="H2" color="light">User groups</Text>
+          <Styled.Groups>
+            <Groups />
+          </Styled.Groups>
         </ContentIcon>
       </Styled.Layer>
     </TabPanel>

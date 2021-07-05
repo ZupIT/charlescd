@@ -38,7 +38,7 @@ class CircleTest extends Specification {
 
     private Circle getDummyCircle(Boolean isDefault) {
         def author = new User('7bdbca7a-a0dc-4721-a861-198b238c0e32', "charles", "charles@zup.com.br",
-                "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+                "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
 
         return new Circle('f8296cfc-6ae1-11ea-bc55-0242ac130003', "Default", 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, isDefault, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
