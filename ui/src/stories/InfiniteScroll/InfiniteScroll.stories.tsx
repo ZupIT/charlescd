@@ -17,18 +17,18 @@
 import { Story } from '@storybook/react';
 import InfiniteScroll, { Props } from 'core/components/InfiniteScroll';
 import { useState } from 'react';
-import Styled from './styled';
+import Styled from './Styled';
 
 export default {
   title: 'Components/InfiniteScroll',
   component: InfiniteScroll,
   argTypes: {
     loadMore: {
-      description: 'This function will be called as long as the property `hasMore` is true and scroll is at the end.',
-    }
-  }
+      description:
+        'This function will be called as long as the property `hasMore` is true and scroll is at the end.',
+    },
+  },
 };
-
 
 const Template: Story<Props> = (props: Props) => {
   const [loading, setLoading] = useState(false);
@@ -36,29 +36,29 @@ const Template: Story<Props> = (props: Props) => {
     content: ['item 1', 'item 2'],
     last: false,
   });
-  
+
   const loadMore = () => {
     setLoading(true);
     setTimeout(() => {
-      setList({last: true, content: [...list.content, 'item 3', 'item 4']});
+      setList({ last: true, content: [...list.content, 'item 3', 'item 4'] });
       setLoading(false);
     }, 2000);
   };
 
-  const loader = () => (<Styled.Loading>loading...</Styled.Loading>);
+  const loader = () => <Styled.Loading>loading...</Styled.Loading>;
 
   return (
     <InfiniteScroll
-      hasMore={!list.last} 
+      hasMore={!list.last}
       loadMore={loadMore}
-      isLoading={loading}  
+      isLoading={loading}
       loader={loader()}
     >
-      {list.content.map(item => (
+      {list.content.map((item) => (
         <Styled.Item key={item}>{item}</Styled.Item>
       ))}
     </InfiniteScroll>
-  )
+  );
 };
 export const infiniteScroll = Template.bind({});
 
@@ -66,8 +66,8 @@ infiniteScroll.parameters = {
   docs: {
     source: {
       type: 'code',
-    }
-  }
+    },
+  },
 };
 
 infiniteScroll.storyName = 'InfiniteScroll';
