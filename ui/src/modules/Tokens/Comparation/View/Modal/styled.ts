@@ -26,7 +26,7 @@ const Modal = styled(ComponentModal.Default)`
   }
 
   .modal-content {
-    overflow-y: auto;
+    overflow-y: hidden;
     max-height: 600px;
   }
 `;
