@@ -32,7 +32,7 @@ const Modal = ({
   className,
   isOpen = true,
   onClose,
-  isOutsideClick
+  isOutsideClick,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
 
