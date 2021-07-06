@@ -67,7 +67,7 @@ test('should open a user and successfully update the name', async () => {
   expect(InputName).toBeInTheDocument();
   await act(async () => userEvent.type(InputName, 'Charles'));
 
-  const ButtonSubmit = await screen.findByTestId('button-default-submit');
+  const ButtonSubmit = await screen.findByTestId('button-default-input-title');
   expect(ButtonSubmit).toBeInTheDocument();
   await act(async () => userEvent.click(ButtonSubmit));
 });

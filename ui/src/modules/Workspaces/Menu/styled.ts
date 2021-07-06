@@ -97,5 +97,5 @@ export default {
   Icon,
   Link,
   Button,
-  Empty
+  Empty,
 };

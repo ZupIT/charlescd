@@ -30,6 +30,7 @@ export interface Props {
   onClick?: () => void;
   role?: string;
   title?: string;
+  id?: string;
 }
 
 

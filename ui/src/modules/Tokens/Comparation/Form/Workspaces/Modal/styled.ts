@@ -81,7 +81,10 @@ const Subtitle = styled.div`
   margin-top: 5px;
 `;
 
-const Description = styled.div``;
+const Description = styled.div`
+  text-overflow: ellipsis;
+  overflow: hidden;
+`;
 
 const Caption = styled.div`
   margin: 10px 40px 20px;
@@ -96,5 +99,5 @@ export default {
   Item,
   Subtitle,
   Description,
-  Caption
-}
+  Caption,
+};
