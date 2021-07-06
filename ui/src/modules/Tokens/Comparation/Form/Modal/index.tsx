@@ -52,15 +52,15 @@ const ModalCopyToken = ({ title, tokenName, description, token, onClose }: Props
 
   return (
     <Styled.Modal onClose={onClose}>
-      <Text tag="H2" weight="bold" color="light" data-testid="modal-token-title">
+      <Text.h2 weight="bold" color="light" data-testid="modal-token-title">
         {title}
-      </Text>
+      </Text.h2>
       <LabeledIcon icon='token'>
         {tokenName}
       </LabeledIcon>
-      <Text tag="H5" color="dark" data-testid="modal-token-subtitle">
+      <Text.h5 color="dark" data-testid="modal-token-subtitle">
         {description}
-      </Text>
+      </Text.h5>
       <InputAction
         isDisabled
         name="new-token"
@@ -71,10 +71,10 @@ const ModalCopyToken = ({ title, tokenName, description, token, onClose }: Props
       />
       <Styled.Warning>
         <Icon name="warning" color="warning" />
-        <Text tag="H5" color="dark" id="modal-token-warning">
+        <Text.h5 color="dark" id="modal-token-warning">
           Make sure you copy the above token now. We don't store it and you will
           not be able to see it again.
-        </Text>
+        </Text.h5>
       </Styled.Warning>
     </Styled.Modal>
   );
