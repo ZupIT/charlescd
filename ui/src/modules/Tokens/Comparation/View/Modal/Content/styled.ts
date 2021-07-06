@@ -49,7 +49,7 @@ const Item = styled.div`
 
 const Content = styled.div`
   margin-top: 16px;
-  height: 300px;
+  height: 100vh;
   overflow-y: auto;
 `;
 
