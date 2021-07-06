@@ -18,6 +18,7 @@ package io.charlescd.moove.application.user.impl
 
 import io.charlescd.moove.application.UserService
 import io.charlescd.moove.application.user.FindWorkspaceByUserIdInteractor
+import io.charlescd.moove.application.workspace.response.SimpleAuthorResponse
 import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.Permission
@@ -47,7 +48,8 @@ class FindWorkspaceByUserIdInteractorImpl(private val userService: UserService, 
                     workspace.id,
                     workspace.name,
                     workspacePermission.distinctBy { it.name }.map { it.name },
-                    workspace.status.name
+                    workspace.author.email,
+                    SimpleAuthorResponse(workspace.status.name)
                 )
             }
         }

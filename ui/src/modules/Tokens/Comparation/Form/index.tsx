@@ -43,16 +43,22 @@ const FormToken = ({ mode, data }: Props) => {
   const { save, response, status } = useSave();
   const isModeCreate = mode === 'create';
   const isModeView = mode === 'view';
-  const [isModalCopy, setIsModalCopy] = useState<boolean>();
-  const methods = useForm<TokenCreate>({ mode: 'onChange', defaultValues: data });
+  const [isModalCopy, setIsModalCopy] = useState<boolean>(false);
+  const [next, setNext] = useState(mode === 'view');
+  const methods = useForm<TokenCreate>({
+    mode: 'onChange',
+    defaultValues: data,
+  });
   const history = useHistory();
   const {
-    register, handleSubmit, watch,
-    errors, formState: { isValid }, 
+    register,
+    handleSubmit,
+    watch,
+    errors,
+    formState: { isValid },
   } = methods;
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const name = watch('name') as string;
   const workspaces = watch('workspaces') as string[];
   const allWorkspaces = watch('allWorkspaces') as boolean;
 
@@ -79,7 +85,7 @@ const FormToken = ({ mode, data }: Props) => {
       nameRef.current?.focus();
     }
   }, [mode, nameRef, isModeCreate]);
-  
+
   useEffect(() => {
     if (response?.token) {
       setIsModalCopy(true);
@@ -94,26 +100,30 @@ const FormToken = ({ mode, data }: Props) => {
       token={response?.token}
       onClose={onCloseModalCopy}
     />
-  )
+  );
 
-  const LastUsed = () => (
-    data?.last_used_at
-      ? <Text.h5 color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text.h5>
-      : <Text.h5 color="dark">This token has not been used yet.</Text.h5>
-  )
+  const LastUsed = () =>
+    data?.last_used_at ? (
+      <Text.h5 color="dark">
+        Last used at {dateTimeFormatter(data.last_used_at)}
+      </Text.h5>
+    ) : (
+      <Text.h5 color="dark">This token has not been used yet.</Text.h5>
+    );
 
-  const Author = () => (
-    data?.author
-      ? <Text.h5 color="dark">Created by {data.author}</Text.h5>
-      : <></>
-  )
+  const Author = () =>
+    data?.author ? (
+      <Text.h5 color="dark">Created by {data.author}</Text.h5>
+    ) : (
+      <></>
+    );
 
   const Info = () => (
     <Styled.Info>
       <Author />
       <LastUsed />
     </Styled.Info>
-  )
+  );
 
   return (
     <Styled.Content>
@@ -124,25 +134,26 @@ const FormToken = ({ mode, data }: Props) => {
             <Styled.InputTitle
               name="name"
               placeholder="Type a name"
-              ref={self => {
+              ref={(self) => {
                 nameRef.current = self;
-                return register(self, 
-                  {
-                    required: isRequired(),
-                    validate: {
-                      notBlank: isNotBlank,
-                    },
-                    maxLength: maxLength()
-                  });
+                return register(self, {
+                  required: isRequired(),
+                  validate: {
+                    notBlank: isNotBlank,
+                  },
+                  maxLength: maxLength(),
+                });
               }}
               defaultValue={data?.name}
               readOnly={!isEmpty(data)}
               error={errors?.name?.message}
               buttonText="Next"
+              buttonType="submit"
+              onClickSave={() => setNext(true)}
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {name && !errors?.name?.message && 
+          {next && 
             <Workspaces 
               mode={mode} 
               allWorkspaces={data?.allWorkspaces} 

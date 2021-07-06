@@ -14,29 +14,6 @@
  * limitations under the License.
  */
 
-export interface Token {
-  id: string;
-  name: string;
-  permissions: string[];
-  workspaces: string[];
-  allWorkspaces?: boolean;
-  token?: string;
-  author: string;
-  revoked?: boolean;
-  created_at?: string;
-  revoked_at?: string;
-  last_used_at?: string;
-}
+package io.charlescd.moove.domain
 
-export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces: boolean,
-  subjects?: { [k: string]: boolean }
-};
-
-export interface TokenWorkspace {
-  id: string,
-  name: string,
-};
+data class SimpleAuthor(val email: String)
