@@ -32,4 +32,6 @@ const Template: Story<Props> = (props: Props) => {
 };
 
 export const searchInput = Template.bind({});
-searchInput.args = {};
+searchInput.args = {
+  onSearch: () => {},
+};

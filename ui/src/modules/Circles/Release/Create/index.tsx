@@ -146,7 +146,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        <Message errorMessage="Error message" status={'error'} />
+        <Message errorMessage={error} status={'error'} />
         <Styled.Submit
           id="submit"
           type="submit"
