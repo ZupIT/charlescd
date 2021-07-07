@@ -1,4 +1,4 @@
-name: new-ui dev-release
+name: ui dev-release
 
 on:
   push:

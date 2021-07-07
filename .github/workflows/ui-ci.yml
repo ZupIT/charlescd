@@ -1,4 +1,4 @@
-name: build and test new ui
+name: build and test ui
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
       working-directory: ./ui
     - run: npm run build
       working-directory: ./ui
-    - run: npm test:coverage
+    - run: npm run test:coverage
       working-directory: ./ui
       env:
         CI: true
