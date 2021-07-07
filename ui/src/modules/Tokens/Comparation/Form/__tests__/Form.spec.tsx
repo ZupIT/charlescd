@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Token } from 'modules/Tokens/interfaces';
@@ -90,4 +90,27 @@ test('should show button next when creating a new token', () => {
 
   expect(screen.getByPlaceholderText('Type a name')).toBeInTheDocument();
   expect(screen.getByText('Next')).toBeInTheDocument();
+});
+
+test('should show edit workspaces button', async () => {
+  render(<Form mode="create" />);
+
+  const inputName = await screen.findByTestId('input-text-name');
+  userEvent.type(inputName, 'Token 001');
+
+  userEvent.click(screen.getByRole('button'));
+  userEvent.click(await screen.findByText('Add workspaces'));
+
+  await waitFor(() => expect(screen.getByTestId('modal-default')).toBeInTheDocument());
+
+  expect(screen.getByText('Allow access for all workspaces')).toBeInTheDocument();
+
+  expect(screen.getByText('Next')).toBeInTheDocument();
+  userEvent.click(screen.getByTestId('button-default-continue'));
+
+  await waitFor(() => 
+    expect(screen.getByTestId('button-iconRounded-edit')).toHaveTextContent('Edit workspaces')
+  );
+
+  expect(screen.queryByText('Add workspaces')).not.toBeInTheDocument();
 });

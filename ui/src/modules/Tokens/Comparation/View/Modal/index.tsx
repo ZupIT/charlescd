@@ -14,5 +14,25 @@
  * limitations under the License.
  */
 
-export const FIRST = 0;
-export const ONE = 1;
+import Styled from './styled';
+import Text from 'core/components/Text';
+import List from './Content/List';
+
+export interface Props {
+  allWorkspaces: boolean;
+  tokenWorkspaces?: string[];
+  onClose: () => void;
+};
+
+const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
+  return (
+    <Styled.Modal onClose={onClose}>
+      <Styled.Header>
+        <Text.h2 color="light">View workspaces</Text.h2>
+      </Styled.Header>
+      <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
+    </Styled.Modal>
+  )
+}
+
+export default ModalView;

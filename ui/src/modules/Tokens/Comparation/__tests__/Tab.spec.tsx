@@ -114,9 +114,8 @@ test('should revoke token', async () => {
   );
   const revokeToken = screen.getByText('Revoke token');
   userEvent.click(revokeToken);
-  await waitFor(() =>
-    expect(screen.getByText('Are you sure you want to revoke this token?'))
-  );
+  await waitFor(() => expect(screen.getByText('Are you sure you want to revoke the following token:')));
+  expect(screen.getByTestId('token-name')).toHaveTextContent('TOKEN 2');
   expect(screen.getByText('Yes, revoke token')).toBeInTheDocument();
 });
 
@@ -154,14 +153,13 @@ test('should regenerate token', async () => {
   );
   const regenerateToken = screen.getByText('Regenerate token');
   userEvent.click(regenerateToken);
-  await waitFor(() =>
-    expect(screen.getByText('Are you sure you want to regenerate this token?'))
-  );
+  await waitFor(() => expect(screen.getByText('Are you sure you want to regenerate the following token:')));
+  expect(screen.getByTestId('token-name')).toHaveTextContent('TOKEN 2');
+
   const confirmRegenerate = screen.getByText('Yes, regenerate token');
   userEvent.click(confirmRegenerate);
-  await waitFor(() =>
-    expect(screen.getByText('Your token has been regenerated!'))
-  );
+  await waitFor(() => expect(screen.getByText('Your token has been regenerated!')));
+  expect(screen.getByTestId('labeledIcon-token')).toHaveTextContent('TOKEN 2');
 });
 
 test('should create a token', async () => {
@@ -192,4 +190,5 @@ test('should create a token', async () => {
   userEvent.click(generateToken);
 
   await waitFor(() => expect(screen.getByText('Your token has been created!')));
+  await waitFor(() => expect(screen.getByText('TOKEN 2')).toBeInTheDocument());
 });

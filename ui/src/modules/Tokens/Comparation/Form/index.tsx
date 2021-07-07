@@ -95,6 +95,7 @@ const FormToken = ({ mode, data }: Props) => {
   const ModalNewToken = () => (
     <ModalCopy
       title="Your token has been created!"
+      tokenName={response?.name}
       description="You have succesfully added a new personal acces token. Copy the token now!"
       token={response?.token}
       onClose={onCloseModalCopy}
@@ -152,7 +153,12 @@ const FormToken = ({ mode, data }: Props) => {
             />
             {isModeView && <Info />}
           </ContentIcon>
-          {next && <Workspaces mode={mode} />}
+          {next && 
+            <Workspaces 
+              mode={mode} 
+              allWorkspaces={data?.allWorkspaces} 
+              tokenWorkspaces={data?.workspaces} 
+            />}
           {(workspaces || allWorkspaces) && (
             <Fragment>
               <Scopes mode={mode} />
