@@ -14,5 +14,39 @@
  * limitations under the License.
  */
 
-export const FIRST = 0;
-export const ONE = 1;
+import styled from 'styled-components';
+import ComponentModal from 'core/components/Modal';
+
+const Modal = styled(ComponentModal.Default)`
+  .modal-container {
+    width: 543px;
+    padding: 35px 0 28px 0;
+    max-height: 650px;
+    bottom: 100px;
+  }
+
+  .modal-content {
+    overflow-y: hidden;
+    max-height: 600px;
+  }
+`;
+
+const Header = styled.div`
+  padding: 0 40px;
+
+  > :last-child {
+    margin-top: 20px;
+  }
+`;
+
+const Content = styled.div`
+  margin-top: 22px;
+  max-height: 500px;
+  overflow-y: auto;
+`;
+
+export default {
+  Content,
+  Modal,
+  Header,
+};

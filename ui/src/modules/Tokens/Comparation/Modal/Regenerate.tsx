@@ -21,12 +21,14 @@ interface Props {
   onClose: Function;
   onContinue: Function;
   isLoading?: boolean;
+  tokenName?: string;
 }
 
-const ModalRegenerate = ({ onClose, onContinue, isLoading }: Props) => {
+const ModalRegenerate = ({ onClose, onContinue, isLoading, tokenName }: Props) => {
   return (
     <Modal.Trigger
-      title="Are you sure you want to regenerate this token?"
+      title="Are you sure you want to regenerate the following token:"
+      itemName={tokenName}
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, regenerate token"
       onContinue={onContinue}

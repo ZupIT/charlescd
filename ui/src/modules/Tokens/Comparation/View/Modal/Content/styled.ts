@@ -15,49 +15,21 @@
  */
 
 import styled from 'styled-components';
-import ComponentModal from 'core/components/Modal';
-import { SearchInput } from 'core/components/Form';
+import { Input } from 'core/components/Form';
 
-const Modal = styled(ComponentModal.Default)`
-  .modal-container {
-    width: 543px;
-    padding: 35px 0 28px 0;
-    max-height: 650px;
-    bottom: 100px;
-  }
-
-  .modal-content {
-    overflow-y: auto;
-    max-height: 600px;
-  }
-`;
-
-const Header = styled.div`
-  padding: 0 40px;
-
-  > :last-child {
-    margin-top: 20px;
-  }
-`;
-
-const Search = styled(SearchInput)`
+const Search = styled(Input)`
   margin-top: 5px;
   margin-bottom: 20px;
-  width: 100%;
+  margin: 5px 40px 10px;
 
   > input {
     background-color: transparent;
+    border-bottom: 1px solid ${({ theme }) => theme.token.workspace.search.input};
   }
 `;
 
-const Content = styled.div`
-  margin-top: 22px;
-  max-height: 500px;
-  overflow-y: auto;
-`;
-
-const Empty = styled.div`
-  margin: 48px 30px 18px 30px;
+const Wrapper = styled.div`
+  height: 50px;
 `;
 
 const Item = styled.div`
@@ -75,29 +47,25 @@ const Item = styled.div`
   }
 `;
 
+const Content = styled.div`
+  margin-top: 16px;
+  height: 500px;
+  overflow-y: auto;
+`;
+
+const Description = styled.div``;
+
 const Subtitle = styled.div`
   display: flex;
   flex-direction: row;
   margin-top: 5px;
 `;
 
-const Description = styled.div`
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
-
-const Caption = styled.div`
-  margin: 10px 40px 20px;
-`;
-
 export default {
-  Content,
-  Empty,
-  Modal,
-  Header,
   Search,
+  Wrapper,
   Item,
-  Subtitle,
+  Content,
   Description,
-  Caption,
-};
+  Subtitle,
+}

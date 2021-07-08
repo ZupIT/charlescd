@@ -22,7 +22,7 @@ const endpoint = '/gate/api/v1/system-token';
 
 const initialModulesFilter: ModulesFilter = {
   name: '',
-  page: 0
+  page: 0,
 };
 
 export interface ModulesFilter {
@@ -34,7 +34,7 @@ export const findAll = (filter: ModulesFilter = initialModulesFilter) => {
   const params = new URLSearchParams({
     size: `${DEFAULT_PAGE_SIZE}`,
     name: filter?.name || '',
-    page: `${filter.page ?? 0}`
+    page: `${filter.page ?? 0}`,
   });
 
   return baseRequest(`${endpoint}?${params}`);
@@ -42,11 +42,9 @@ export const findAll = (filter: ModulesFilter = initialModulesFilter) => {
 
 export const findById = (id: string) => baseRequest(`${endpoint}/${id}`);
 
-export const create = (token: Token) =>
-  postRequest(`${endpoint}`, token);
+export const create = (token: Token) => postRequest(endpoint, token);
 
-export const revoke = (id: string) =>
-  postRequest(`${endpoint}/${id}/revoke`);
+export const revoke = (id: string) => postRequest(`${endpoint}/${id}/revoke`);
 
 export const regenerate = (id: string) =>
   putRequest(`${endpoint}/${id}/regenerate`);

@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-export interface Token {
-  id: string;
-  name: string;
-  permissions: string[];
-  workspaces: string[];
-  allWorkspaces?: boolean;
-  token?: string;
-  author: string;
-  revoked?: boolean;
-  created_at?: string;
-  revoked_at?: string;
-  last_used_at?: string;
+import Styled from './styled';
+import Text from 'core/components/Text';
+import List from './Content/List';
+
+export interface Props {
+  allWorkspaces: boolean;
+  tokenWorkspaces?: string[];
+  onClose: () => void;
+};
+
+const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
+  return (
+    <Styled.Modal onClose={onClose}>
+      <Styled.Header>
+        <Text.h2 color="light">View workspaces</Text.h2>
+      </Styled.Header>
+      <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
+    </Styled.Modal>
+  )
 }
 
-export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces: boolean,
-  subjects?: { [k: string]: boolean }
-};
-
-export interface TokenWorkspace {
-  id: string,
-  name: string,
-};
+export default ModalView;
