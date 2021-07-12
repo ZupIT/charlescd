@@ -1,0 +1,263 @@
+{
+	"info": {
+		"_postman_id": "c6d30d59-b11d-4543-92b6-ae612e829eb5",
+		"name": "Charles Butler",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "V2",
+			"item": [
+				{
+					"name": "Deployment",
+					"item": [
+						{
+							"name": "List Logs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"postman.setGlobalVariable(\"deploymentId\", response[\"id\"]);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"",
+											"postman.setGlobalVariable('deploymentID', uuid.v4());",
+											"postman.setGlobalVariable('moduleId', uuid.v4());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"deploymentId\": \"{{deploymentID}}\",\n\t\"circle\": {\n\t\t\"headerValue\": \"b46fd548-0082-4021-ba80-a50703c44a3b\"\n\t},\n    \"modules\": [\n        {\n            \"moduleId\": \"{{moduleId}}\",\n            \"helmRepository\": \"https://some-helm.repo\",\n            \"components\": [\n                {\n                    \"componentId\": \"e82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name\"\n                },\n                {\n                    \"componentId\": \"b82f9bbb-169b-4b11-b48f-7f4fc7561651\",\n                    \"buildImageUrl\": \"imageurl.com\",\n                    \"buildImageTag\": \"tag1\",\n                    \"componentName\": \"component-name2\"\n                }\n            ]\n        }\n    ],\n    \"authorId\": \"{{authorId}}\",\n    \"cdConfigurationId\": \"{{cdConfigurationId}}\",\n    \"callbackUrl\": \"http://localhost:8883/deploy/notifications/deployment\"    \n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/v2/deployments/{{deploymentId}}/logs",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"v2",
+										"deployments",
+										"{{deploymentId}}",
+										"logs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Undeployment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"postman.setGlobalVariable(\"deploymentId\", response[\"id\"]);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"",
+											"postman.setGlobalVariable('deploymentID', uuid.v4());",
+											"postman.setGlobalVariable('moduleId', uuid.v4());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "\n{\n  \"authorId\": \"{{authorId}}\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/v2/deployments/{{deploymentId}}/undeploy",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"v2",
+										"deployments",
+										"{{deploymentId}}",
+										"undeploy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List executions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/v2/executions?page=1&size=20",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"v2",
+										"executions"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "size",
+											"value": "20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Deployment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"postman.setGlobalVariable(\"deploymentId\", response[\"id\"]);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"",
+											"postman.setGlobalVariable('deploymentID', uuid.v4());",
+											"postman.setGlobalVariable('moduleId', uuid.v4());",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"timeoutInSeconds\": 200,\n  \"deploymentId\": \"{{deploymentId}}\",\n  \"namespace\": \"some-namespace\",\n  \"git\": {\n    \"token\": \"git-token\",\n    \"provider\": \"GITHUB\"\n  },\n  \"components\": [\n    {\n      \"componentName\": \"some-component\",\n      \"helmRepository\": \"https://api.github.com/repos/some-helm-url-repository/contents\",\n      \"buildImageUrl\": \"build-image-url\",\n      \"buildImageTag\": \"build-image-tag\",\n      \"componentId\": \"{{componentId}}\"\n    }\n  ],\n  \"circle\": {\n    \"id\": \"{{circleId}}\",\n    \"default\": false\n  },\n  \"authorId\": \"{{authorId}}\",\n  \"callbackUrl\": \"http://localhost:xxxx/\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/v2/deployments",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"v2",
+										"deployments"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
