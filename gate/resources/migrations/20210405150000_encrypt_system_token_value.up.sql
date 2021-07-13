@@ -1,1 +1,1 @@
-ALTER TABLE system_tokens ADD token bytea;
+ALTER TABLE system_tokens ADD token VARCHAR(64);

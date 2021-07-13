@@ -19,18 +19,16 @@
 package repository
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"strings"
 
-	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository/models"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
-	"github.com/nleof/goyesql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type SystemTokenRepository interface {
@@ -43,20 +41,11 @@ type SystemTokenRepository interface {
 }
 
 type systemTokenRepository struct {
-	queries goyesql.Queries
-	db      *gorm.DB
+	db *gorm.DB
 }
 
-func NewSystemTokenRepository(db *gorm.DB, queriesPath string) (SystemTokenRepository, error) {
-	queries, err := goyesql.ParseFile(fmt.Sprintf("%s%s", queriesPath, "system_token_queries.sql"))
-	if err != nil {
-		return systemTokenRepository{}, err
-	}
-
-	return systemTokenRepository{
-		queries: queries,
-		db:      db,
-	}, nil
+func NewSystemTokenRepository(db *gorm.DB) (SystemTokenRepository, error) {
+	return systemTokenRepository{db: db}, nil
 }
 
 func (systemTokenRepository systemTokenRepository) Create(systemToken domain.SystemToken) (domain.SystemToken, error) {
@@ -137,8 +126,11 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 
 func (systemTokenRepository systemTokenRepository) FindByToken(token string) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
+	tokenHash := fmt.Sprintf("%x", sha256.Sum256([]byte(token)))
 
-	res := systemTokenRepository.db.Raw(systemTokenRepository.queries["find-system-token-from-token"], token).First(&systemToken)
+	res := systemTokenRepository.db.Model(models.SystemToken{}).
+		Where("token = ?", tokenHash).
+		First(&systemToken)
 
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
@@ -178,22 +170,17 @@ func handleSystemTokenError(message string, operation string, err error, errType
 }
 
 func systemTokenMap(systemToken models.SystemToken) map[string]interface{} {
+	tokenHash := fmt.Sprintf("%x", sha256.Sum256([]byte(systemToken.Token)))
 	return map[string]interface{}{
 		"id":             systemToken.ID,
 		"name":           systemToken.Name,
 		"revoked":        systemToken.Revoked,
 		"all_workspaces": systemToken.AllWorkspaces,
-		"token": clause.Expr{
-			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
-			Vars: []interface{}{
-				fmt.Sprintf("%s", systemToken.Token),
-				fmt.Sprintf("%s", configuration.Get("ENCRYPTION_KEY")),
-			},
-		},
-		"created_at":   systemToken.CreatedAt,
-		"revoked_at":   systemToken.RevokedAt,
-		"last_used_at": systemToken.LastUsedAt,
-		"author_email": systemToken.Author,
+		"token":          tokenHash,
+		"created_at":     systemToken.CreatedAt,
+		"revoked_at":     systemToken.RevokedAt,
+		"last_used_at":   systemToken.LastUsedAt,
+		"author_email":   systemToken.Author,
 	}
 }
 
