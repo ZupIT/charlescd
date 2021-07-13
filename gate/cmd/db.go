@@ -22,6 +22,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/golang-migrate/migrate/v4"
@@ -37,9 +38,9 @@ import (
 
 type persistenceManager struct {
 	systemTokenRepository repository.SystemTokenRepository
-	permissionRepository repository.PermissionRepository
-	userRepository repository.UserRepository
-	workspaceRepository repository.WorkspaceRepository
+	permissionRepository  repository.PermissionRepository
+	userRepository        repository.UserRepository
+	workspaceRepository   repository.WorkspaceRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -114,7 +115,7 @@ func initCryptoLib() error {
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 	queriesPath := configuration.Get("QUERIES_PATH")
 
-	systemTokenRepo, err := repository.NewSystemTokenRepository(db, queriesPath)
+	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
 		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
 	}
@@ -136,8 +137,8 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	return persistenceManager{
 		systemTokenRepository: systemTokenRepo,
-		permissionRepository: permissionRepo,
-		userRepository: userRepo,
-		workspaceRepository: workspaceRepo,
+		permissionRepository:  permissionRepo,
+		userRepository:        userRepo,
+		workspaceRepository:   workspaceRepo,
 	}, nil
 }
