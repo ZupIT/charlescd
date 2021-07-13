@@ -17,7 +17,7 @@
 								"exec": [
 									"const response = JSON.parse(responseBody);",
 									"",
-									"pm.collectionVariables.set(\"{{subscriptionId}}\", response[\"id\"]);",
+									"pm.collectionVariables.set(\"subscriptionId\", response[\"id\"]);",
 									"",
 									"",
 									"pm.test(\"Status created\", function() {",
@@ -57,7 +57,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"externalId\": \"{{externalId}}\",\n    \"apiKey\": \"\",\n    \"url\": \"https://some-url/api/webhook\",\n    \"description\": \"some-description\",\n    \"events\": [\"SOME-EVENT\"]\n    \n}",
+							"raw": "{\n    \"externalId\": \"{{externalId}}\",\n    \"apiKey\": \"\",\n    \"url\": \"https://some-url/api/webhook\",\n    \"description\": \"some-description\",\n    \"events\": [\"{{some-event}}\"]\n    \n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -87,6 +87,11 @@
 							"script": {
 								"exec": [
 									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
 									""
 								],
 								"type": "text/javascript"
@@ -140,6 +145,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
 									""
 								],
 								"type": "text/javascript"
@@ -193,6 +204,12 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"No Content\", function() {",
+									"    pm.response.to.have.status(204)",
+									"})",
 									""
 								],
 								"type": "text/javascript"
@@ -434,10 +451,6 @@
 		{
 			"key": "some-event",
 			"value": "SOME-EVENT"
-		},
-		{
-			"key": "{{subscriptionId}}",
-			"value": ""
 		}
 	]
 }
