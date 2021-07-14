@@ -14,8 +14,8 @@
 						"exec": [
 							"const response = JSON.parse(responseBody);",
 							"",
-							"postman.setGlobalVariable(\"systemTokenId\", response[\"id\"]);",
-							"postman.setGlobalVariable(\"systemToken\", response[\"token\"]);",
+							"pm.collectionVariables.set(\"systemTokenId\", response[\"id\"]);",
+							"pm.collectionVariables.set(\"systemToken\", response[\"token\"]);",
 							"",
 							"pm.test(\"Status created\", function() {",
 							"    pm.response.to.have.status(201)",
@@ -189,6 +189,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"pm.collectionVariables.set(\"systemToken\", response[\"token\"]);",
+							"",
 							"const response = JSON.parse(responseBody);",
 							"pm.test(\"Status success\", function() {",
 							"    pm.response.to.have.status(200)",
@@ -281,6 +283,14 @@
 		{
 			"key": "token",
 			"value": "token"
+		},
+		{
+			"key": "systemTokenId",
+			"value": ""
+		},
+		{
+			"key": "systemToken",
+			"value": ""
 		}
 	]
 }
