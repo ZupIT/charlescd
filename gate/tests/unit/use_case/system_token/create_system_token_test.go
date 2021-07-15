@@ -186,7 +186,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
 
 	require.Zero(st.T(), result)
 	require.NotNil(st.T(), err)
-	require.Equal(st.T(), "some permissions were not found", err.Error())
+	require.Equal(st.T(), "permissions were not found", err.Error())
 
 	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
@@ -249,7 +249,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 
 	require.Zero(st.T(), result)
 	require.NotNil(st.T(), err)
-	require.Equal(st.T(), "some workspaces were not found", err.Error())
+	require.Equal(st.T(), "workspaces were not found", err.Error())
 
 	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))

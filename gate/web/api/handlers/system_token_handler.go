@@ -19,14 +19,15 @@
 package handlers
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers/representation"
 	uuidPkg "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"strconv"
 )
 
 func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken) echo.HandlerFunc {
