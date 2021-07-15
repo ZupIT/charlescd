@@ -162,7 +162,7 @@ func (systemTokenRepository systemTokenRepository) UpdateRevokeStatus(systemToke
 		UpdateColumns(models.SystemToken{Revoked: systemToken.Revoked, RevokedAt: systemToken.RevokedAt})
 
 	if res.Error != nil {
-		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.UpdateRevoke.Updates", res.Error, logging.InternalError)
+		return handleSystemTokenError("Update system token failed", "SystemTokenRepository.UpdateRevokeStatus.Update", res.Error, logging.InternalError)
 	}
 
 	return nil
