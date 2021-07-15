@@ -37,7 +37,7 @@ type SystemTokenRepository interface {
 	FindById(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
 	Update(systemToken domain.SystemToken) error
-	UpdateRevoke(systemToken domain.SystemToken) error
+	UpdateRevokeStatus(systemToken domain.SystemToken) error
 	UpdateLastUsedAt(systemToken domain.SystemToken) error
 }
 
@@ -155,7 +155,7 @@ func (systemTokenRepository systemTokenRepository) Update(systemToken domain.Sys
 	return nil
 }
 
-func (systemTokenRepository systemTokenRepository) UpdateRevoke(systemToken domain.SystemToken) error {
+func (systemTokenRepository systemTokenRepository) UpdateRevokeStatus(systemToken domain.SystemToken) error {
 	res := systemTokenRepository.db.
 		Table("system_tokens").
 		Where("id = ?", systemToken.ID).

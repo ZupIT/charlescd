@@ -20,12 +20,13 @@ package system_token
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/ZupIT/charlescd/gate/internal/service"
 	"github.com/google/uuid"
-	"strings"
 )
 
 type CreateSystemToken interface {
@@ -34,19 +35,19 @@ type CreateSystemToken interface {
 
 type createSystemToken struct {
 	systemTokenRepository repository.SystemTokenRepository
-	permissionRepository repository.PermissionRepository
-	userRepository repository.UserRepository
-	workspaceRepository repository.WorkspaceRepository
-	authTokenService service.AuthTokenService
+	permissionRepository  repository.PermissionRepository
+	userRepository        repository.UserRepository
+	workspaceRepository   repository.WorkspaceRepository
+	authTokenService      service.AuthTokenService
 }
 
 func NewCreateSystemToken(systemTokenRepository repository.SystemTokenRepository, permissionRepository repository.PermissionRepository, userRepository repository.UserRepository, workspaceRepository repository.WorkspaceRepository, authTokenService service.AuthTokenService) CreateSystemToken {
 	return createSystemToken{
 		systemTokenRepository: systemTokenRepository,
-		permissionRepository: permissionRepository,
-		userRepository: userRepository,
-		workspaceRepository: workspaceRepository,
-		authTokenService: authTokenService,
+		permissionRepository:  permissionRepository,
+		userRepository:        userRepository,
+		workspaceRepository:   workspaceRepository,
+		authTokenService:      authTokenService,
 	}
 }
 
@@ -65,13 +66,29 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 		return domain.SystemToken{}, logging.NewError("User not found", errors.New("user not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
+	if !input.AllWorkspaces && len(input.Workspaces) == 0 {
+		return domain.SystemToken{}, logging.
+			NewError(
+				"Workspaces is required when allWorkspaces is false",
+				errors.New("workspaces is required when allWorkspaces is false"), logging.BusinessError, nil, "CreateSystemToken.Execute",
+			)
+	}
+
+	if len(input.Permissions) == 0 {
+		return domain.SystemToken{}, logging.
+			NewError(
+				"Permissions is required",
+				errors.New("permissions is required"), logging.BusinessError, nil, "CreateSystemToken.Execute",
+			)
+	}
+
 	permissions, err := createSystemToken.permissionRepository.FindAll(input.Permissions)
 	if err != nil {
 		return domain.SystemToken{}, logging.WithOperation(err, "CreateSystemToken.Execute")
 	}
 
 	if len(permissions) != len(input.Permissions) {
-		return domain.SystemToken{}, logging.NewError("Some permissions were not found", errors.New("some permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Permissions were not found", errors.New("permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
 	workspaces, err := createSystemToken.workspaceRepository.FindByIds(input.Workspaces)
@@ -80,7 +97,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	if len(workspaces) != len(input.Workspaces) {
-		return domain.SystemToken{}, logging.NewError("Some workspaces were not found", errors.New("some workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Workspaces were not found", errors.New("workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
 	}
 
 	systemToken := CreateSystemTokenInput.InputToDomain(input)
