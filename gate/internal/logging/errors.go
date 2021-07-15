@@ -20,10 +20,11 @@ package logging
 
 import (
 	"fmt"
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
+
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/google/uuid"
 )

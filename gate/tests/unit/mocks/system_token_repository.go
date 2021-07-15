@@ -135,8 +135,8 @@ func (_m *SystemTokenRepository) UpdateLastUsedAt(systemToken domain.SystemToken
 	return r0
 }
 
-// UpdateRevoke provides a mock function with given fields: systemToken
-func (_m *SystemTokenRepository) UpdateRevoke(systemToken domain.SystemToken) error {
+// UpdateRevokeStatus provides a mock function with given fields: systemToken
+func (_m *SystemTokenRepository) UpdateRevokeStatus(systemToken domain.SystemToken) error {
 	ret := _m.Called(systemToken)
 
 	var r0 error
