@@ -24,13 +24,11 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"github.com/ZupIT/charlescd/compass/plugins/action/commons"
-	"os"
 	"strings"
 )
 
 type executionConfiguration struct {
-	DestinationCircleID string `json:"destinationCircleId"`
-	OriginCircleID      string `json:"originCircleId"`
+	DestinationCircleID string `json:"destinationCircleID"`
 	WorkspaceID         string `json:"workspaceId"`
 }
 
@@ -42,48 +40,36 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	var ac *actionConfiguration
 	err := json.Unmarshal(actionConfig, &ac)
 	if err != nil {
-		logger.Error("ACTION_PARSE_ERROR", "DoDeploymentAction", err, fmt.Sprintf("ActionConfig: %s", string(actionConfig)))
+		logger.Error("ACTION_PARSE_ERROR", "DoUndeploymentAction", err, fmt.Sprintf("ActionConfig: %s", string(actionConfig)))
 		return err
 	}
 
 	var ec *executionConfiguration
 	err = json.Unmarshal(executionConfig, &ec)
 	if err != nil {
-		logger.Error("EXECUTION_PARSE_ERROR", "DoDeploymentAction", err, fmt.Sprintf("ExecutionConfig: %s", string(executionConfig)))
+		logger.Error("EXECUTION_PARSE_ERROR", "DoUndeploymentAction", err, fmt.Sprintf("ExecutionConfig: %s", string(executionConfig)))
 		return err
 	}
 
-	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.OriginCircleID, ec.WorkspaceID, ac.MooveURL)
+	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.DestinationCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.OriginCircleID, ec.WorkspaceID)
-		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
+		dataErr := fmt.Sprintf("MooveUrl: %s, DestinationCircleID: %s, WorkspaceId: %s", ac.MooveURL, ec.DestinationCircleID, ec.WorkspaceID)
+		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
 	if deployment.BuildId == "" {
 		err = errors.New("circle has no active build")
-		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", ec.OriginCircleID, ec.WorkspaceID)
-		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
+		dataErr := fmt.Sprintf("DestinationCircleID: %s, WorkspaceId: %s", ec.DestinationCircleID, ec.WorkspaceID)
+		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
-	user, err := commons.GetUserByEmail(os.Getenv("MOOVE_USER"), ac.MooveURL)
+	err = commons.UndeployBuildAtCircle(deployment.Id, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		logger.Error("DO_USER_FIND", "DoDeploymentAction", err, ac.MooveURL)
-		return err
-	}
-
-	request := commons.DeploymentRequest{
-		AuthorID: user.Id,
-		CircleID: ec.DestinationCircleID,
-		BuildID:  deployment.BuildId,
-	}
-
-	err = commons.DeployBuildAtCircle(request, ec.WorkspaceID, ac.MooveURL)
-	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleId: %s, BuildId: %s, AuthorId: %s",
-			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
-		logger.Error("DO_CIRCLE_DEPLOYMENT", "DoDeploymentAction", err, dataErr)
+		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleID: %s, BuildId: %s",
+			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId)
+		logger.Error("DO_CIRCLE_UNDEPLOYMENT", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
@@ -99,16 +85,8 @@ func ValidateExecutionConfiguration(executionConfig []byte) []error {
 		return append(errs, errors.New("error validating execution configuration"))
 	}
 
-	if strings.TrimSpace(config.OriginCircleID) == strings.TrimSpace(config.DestinationCircleID) {
-		errs = append(errs, errors.New("origin circle id and destination circle id should not be the same"))
-	}
-
 	if strings.TrimSpace(config.DestinationCircleID) == "" {
-		errs = append(errs, errors.New("destination circle id is required"))
-	}
-
-	if strings.TrimSpace(config.OriginCircleID) == "" {
-		errs = append(errs, errors.New("origin circle id is required"))
+		errs = append(errs, errors.New("circle id is required"))
 	}
 
 	if strings.TrimSpace(config.WorkspaceID) == "" {
@@ -117,7 +95,6 @@ func ValidateExecutionConfiguration(executionConfig []byte) []error {
 
 	return errs
 }
-
 func ValidateActionConfiguration(actionConfig []byte) []error {
 	errs := make([]error, 0)
 	var config actionConfiguration
