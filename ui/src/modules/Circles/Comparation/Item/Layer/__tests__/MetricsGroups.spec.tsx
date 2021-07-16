@@ -19,8 +19,15 @@ import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { circleData, newCircleData } from './fixtures';
 import MetricsGroups from '../MetricsGroups';
+import { saveProfile } from 'core/utils/profile';
+import { setUserAbilities } from 'core/utils/abilities';
+import { saveWorkspace } from 'core/utils/workspace';
 
 test('render Metrics Groups Layer without data', async () => {
+  saveWorkspace({id: '1', name: 'workspace 1', status: 'COMPLETE'});
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: true});
+  setUserAbilities();
+
   const handleClick = jest.fn();
 
   render(<MetricsGroups circleId={'1'} onClickCreate={handleClick} circle={circleData}/>);
@@ -32,10 +39,14 @@ test('render Metrics Groups Layer without data', async () => {
   expect(screen.getByText('Metrics Groups')).toBeInTheDocument();
 
   await act(async () => userEvent.click(addMetricsGroups));
-  expect(handleClick).toHaveBeenCalled();
+  expect(handleClick).toHaveBeenCalledTimes(1);
 });
 
 test('render Metrics Groups Layer without any circle data', async () => {
+  saveWorkspace({id: '1', name: 'workspace 1', status: 'COMPLETE'});
+  saveProfile({ id: '123', name: 'charles admin', email: 'charlesadmin@admin', root: false});
+  setUserAbilities();
+
   const handleClick = jest.fn();
 
   render(<MetricsGroups circleId={'1'} onClickCreate={handleClick} circle={newCircleData}/>);

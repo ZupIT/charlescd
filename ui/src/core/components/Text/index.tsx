@@ -30,6 +30,7 @@ export interface Props {
   title?: string;
   onClick?: () => void;
   role?: string;
+  id?: string;
 }
 
 const Text = (props: Props) => {
@@ -43,7 +44,7 @@ const Text = (props: Props) => {
     children,
     className,
     onClick,
-    role = ''
+    role = '',
   } = props;
 
   return (
@@ -70,7 +71,7 @@ const TextComponent = {
   h3: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h3} {...props} />,
   h4: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h4} {...props} />,
   h5: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h5} {...props} />,
-  h6: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h6} {...props} />
+  h6: (props: Props) => <Text fontSize={HEADINGS_FONT_SIZE.h6} {...props} />,
 };
 
 export default TextComponent;

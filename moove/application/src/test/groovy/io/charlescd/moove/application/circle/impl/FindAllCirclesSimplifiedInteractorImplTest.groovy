@@ -49,15 +49,16 @@ class FindAllCirclesSimplifiedInteractorImplTest extends Specification {
         def circleList = [womenCircle, menCircle]
 
         when:
-        def response = this.findAllCirclesSimpleInteractor.execute(null, null, workspaceId, pageRequest)
+        def response = this.findAllCirclesSimpleInteractor.execute(null, null, null, workspaceId, pageRequest)
 
         then:
-        1 * this.circleRepository.find(_, _, _, _) >> { arguments ->
+        1 * this.circleRepository.find(_, _, _, _, _) >> { arguments ->
 
             assert arguments[0] == null
             assert arguments[1] == null
-            assert arguments[2] == workspaceId
-            assert arguments[3] == pageRequest
+            assert arguments[2] == null
+            assert arguments[3] == workspaceId
+            assert arguments[4] == pageRequest
 
             return new Page<SimpleCircle>(circleList, 0, 10, 1)
         }
@@ -86,15 +87,16 @@ class FindAllCirclesSimplifiedInteractorImplTest extends Specification {
         def circleList = [womenCircle, menCircle]
 
         when:
-        def response = this.findAllCirclesSimpleInteractor.execute("Women", "4b664b17-ca05-4ced-a73c-1293f8d0f756", workspaceId, pageRequest)
+        def response = this.findAllCirclesSimpleInteractor.execute("Women", "4b664b17-ca05-4ced-a73c-1293f8d0f756", null, workspaceId, pageRequest)
 
         then:
-        1 * this.circleRepository.find(_, _, _, _) >> { arguments ->
+        1 * this.circleRepository.find(_, _, _, _, _) >> { arguments ->
 
             assert arguments[0] == "Women"
             assert arguments[1] == "4b664b17-ca05-4ced-a73c-1293f8d0f756"
-            assert arguments[2] == workspaceId
-            assert arguments[3] == pageRequest
+            assert arguments[2] == null
+            assert arguments[3] == workspaceId
+            assert arguments[4] == pageRequest
 
             return new Page<Circle>(circleList, 0, 10, 1)
         }

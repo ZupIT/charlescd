@@ -154,67 +154,6 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         }
     }
 
-    def 'when replacing deployment configuration id, should patch information successfully'() {
-        def author = getDummyUser()
-        given:
-        def previousDeploymentConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
-        def newDeploymentConfigId = TestUtils.deploymentConfigId
-        def newDeploymentConfig = TestUtils.deploymentConfig
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousDeploymentConfigId)
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
-
-        when:
-        interactor.execute(workspace.id, request)
-
-        then:
-        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        0 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
-        0 * gitConfigurationRepository.exists(_, _)
-        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
-        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> newDeploymentConfig
-        0 * metricConfigurationRepository.exists(_, _)
-        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
-        1 * workspaceRepository.update(_) >> { arguments ->
-            def workspaceUpdated = arguments[0]
-            workspaceUpdated instanceof Workspace
-
-            assert workspaceUpdated.id == workspace.id
-            assert workspaceUpdated.name == workspace.name
-            assert workspaceUpdated.author == workspace.author
-            assert workspaceUpdated.status == workspace.status
-            assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
-            assert workspaceUpdated.registryConfigurationId == workspace.gitConfigurationId
-            assert workspaceUpdated.deploymentConfigurationId == newDeploymentConfigId
-        }
-    }
-
-    def 'when deployment configuration id does not exist, should throw exception'() {
-        given:
-        def deploymentConfigId = TestUtils.deploymentConfigId
-        def newDeploymentConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
-        def author = getDummyUser()
-        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
-                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, deploymentConfigId)
-
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
-
-        when:
-        interactor.execute(workspace.id, request)
-
-        then:
-        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        0 * gitConfigurationRepository.exists(_, _)
-        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
-        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId)
-        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
-        0 * workspaceRepository.update(_)
-
-        def ex = thrown(NotFoundException)
-        ex.resourceName == "deploymentConfigurationId"
-        ex.id == newDeploymentConfigId
-    }
-
     def 'when registry configuration id does not exist, should throw exception'() {
         given:
         def registryConfigurationId = "e6128936-3fb2-4d10-9264-4ac63b689e56"
@@ -528,7 +467,107 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         }
     }
 
-    def 'when removing deployment configuration and dont have active deployment, should patch information successfully'() {
+    def 'when deployment configuration id does not exist, should throw exception'() {
+        given:
+        def deploymentConfigId = TestUtils.deploymentConfigId
+        def newDeploymentConfigId = "9014531b-372f-4b11-9259-dc9a5779f69a"
+        def author = getDummyUser()
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", author, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, deploymentConfigId)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        0 * gitConfigurationRepository.exists(_, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
+        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
+        0 * workspaceRepository.update(_)
+
+        def ex = thrown(NotFoundException)
+        ex.resourceName == "deploymentConfigurationId"
+        ex.id == newDeploymentConfigId
+    }
+
+    def 'when replacing deployment configuration id and not have active deployment, should patch information successfully'() {
+
+        given:
+        def previousDeploymentConfigId = "ba7006e0-a653-46dd-90be-71a0987f548a"
+
+        def newDeploymentConfigId = TestUtils.deploymentConfigId
+
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", TestUtils.user, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, previousDeploymentConfigId)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", newDeploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
+        0 * gitConfigurationRepository.exists(_, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
+        1 * deploymentConfigurationRepository.exists(workspace.id, newDeploymentConfigId) >> true
+        0 * metricConfigurationRepository.exists(_, _)
+        1 * workspaceRepository.update(_) >> { arguments ->
+            def workspaceUpdated = arguments[0]
+            workspaceUpdated instanceof Workspace
+
+            assert workspaceUpdated.id == workspace.id
+            assert workspaceUpdated.name == workspace.name
+            assert workspaceUpdated.author == workspace.author
+            assert workspaceUpdated.status == workspace.status
+            assert workspaceUpdated.gitConfigurationId == workspace.gitConfigurationId
+            assert workspaceUpdated.registryConfigurationId == workspace.gitConfigurationId
+            assert workspaceUpdated.deploymentConfigurationId == newDeploymentConfigId
+        }
+    }
+
+    def 'when replacing deployment configuration id and have active deployment, should throw exception'() {
+        given:
+        def workspace = TestUtils.workspace
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> true
+        0 * workspaceRepository.update(_)
+        def exception = thrown(BusinessException)
+        exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
+    }
+
+    def 'when replacing deployment configuration and is a new configuration, should patch information successfully'() {
+        given:
+
+        def workspace = new Workspace("309d992e-9d3c-4a32-aa78-e19471affd56", "Workspace Name", TestUtils.user, LocalDateTime.now(), [],
+                WorkspaceStatusEnum.INCOMPLETE, null, null, null, null, null)
+
+        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
+
+        when:
+        interactor.execute(workspace.id, request)
+
+        then:
+        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
+        0 * deploymentRepository.existActiveListByWorkspaceId(workspace.id)
+        0 * gitConfigurationRepository.exists(_, _)
+        0 * villagerService.checkIfRegistryConfigurationExists(_, _)
+        1 * deploymentConfigurationRepository.exists(workspace.id,  TestUtils.deploymentConfigId) >> true
+        0 * metricConfigurationRepository.exists(_, _)
+        1 * workspaceRepository.update(_)
+
+    }
+
+    def 'when removing deployment configuration and not have active deployment, should patch information successfully'() {
         given:
         def workspace = TestUtils.workspace
         def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
@@ -542,7 +581,6 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         1 * workspaceRepository.update(_)
 
     }
-
 
     def 'when removing deployment configuration and have active deployment, should throw exception'() {
         given:
@@ -560,40 +598,10 @@ class PatchWorkspaceInteractorImplTest extends Specification {
         exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
     }
 
-    def 'when replacing deployment configuration and dont have active deployment, should patch information successfully'() {
-        given:
-        def workspace = TestUtils.workspace
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REPLACE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
-
-        when:
-        interactor.execute(workspace.id, request)
-
-        then:
-        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> false
-        1 * workspaceRepository.update(_)
-
-    }
-
-    def 'when replacing deployment configuration and have active deployment, should throw exception'() {
-        given:
-        def workspace = TestUtils.workspace
-        def request = new PatchWorkspaceRequest([new PatchOperation(OpCodeEnum.REMOVE, "/deploymentConfigurationId", TestUtils.deploymentConfigId)])
-
-        when:
-        interactor.execute(workspace.id, request)
-
-        then:
-        1 * workspaceRepository.find(workspace.id) >> Optional.of(workspace)
-        1 * deploymentRepository.existActiveListByWorkspaceId(workspace.id) >> true
-        0 * workspaceRepository.update(_)
-        def exception = thrown(BusinessException)
-        exception.errorCode == MooveErrorCode.ACTIVE_DEPLOYMENT_NAMESPACE_ERROR
-    }
 
     private User getDummyUser() {
         new User('4e806b2a-557b-45c5-91be-1e1db909bef6', 'User name', 'user@email.com', 'user.photo.png',
-                new ArrayList<WorkspacePermissions>(), false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
     }
 
 }

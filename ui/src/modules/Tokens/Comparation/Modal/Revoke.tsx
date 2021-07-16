@@ -21,9 +21,10 @@ interface Props {
   onClose?: Function;
   onContinue?: Function;
   isLoading?: boolean;
+  tokenName?: string;
 }
 
-const ModalRevoke = ({ onClose, onContinue, isLoading }: Props) => {
+const ModalRevoke = ({ onClose, onContinue, isLoading, tokenName }: Props) => {
   const handleDismiss = () => {
     onClose();
   }
@@ -34,7 +35,8 @@ const ModalRevoke = ({ onClose, onContinue, isLoading }: Props) => {
 
   return (
     <Modal.Trigger
-      title="Are you sure you want to revoke this token?"
+      title="Are you sure you want to revoke the following token:"
+      itemName={tokenName}
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, revoke token"
       isLoading={isLoading}
