@@ -65,6 +65,7 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
         name="gitProvider"
         label="Choose the Git provider"
         options={gitProviders}
+        rules={{ required: true }}
       />
       <Form.Input
         ref={register({ required: true })}
