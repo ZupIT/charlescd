@@ -89,7 +89,7 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
         Adding your Deployment Configuration tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. See our{' '}
         <Link href={`${CHARLES_DOC}/reference/cd-configuration`}>
           documentation
-        </Link>
+        </Link>{' '}
         for further details.
       </Text>
       {renderForm()}

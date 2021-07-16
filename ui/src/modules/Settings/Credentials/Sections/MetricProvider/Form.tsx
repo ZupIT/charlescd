@@ -166,7 +166,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to do metrics generation since
         this can vary from workspace to another. See our{' '}
-        <Link href={`${CHARLES_DOC}/reference/metrics`}>documentation</Link>
+        <Link href={`${CHARLES_DOC}/reference/metrics`}>documentation</Link>{' '}
         for further details.
       </Text>
       {renderForm()}

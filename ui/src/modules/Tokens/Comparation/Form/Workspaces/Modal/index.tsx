@@ -68,7 +68,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
           Read our 
           <Link href={CHARLES_DOC}>
             documentation
-          </Link>
+          </Link>{' '}
           for further details.
         </Text>
       </Styled.Caption>

@@ -190,7 +190,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         See our{' '}
         <Link href={`${CHARLES_DOC}/reference/metrics/action`}>
           documentation
-        </Link>
+        </Link>{' '}
         for further details.
       </Styled.Info>
       <FormProvider {...formMethods}>

@@ -132,7 +132,7 @@ const Scopes = ({ mode }: Props) => {
             created with one or more scopes. Read our  
             <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
               documentation
-            </Link>
+            </Link>{' '}
             for further details.
           </Text>
         </Styled.Description>
