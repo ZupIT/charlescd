@@ -576,7 +576,6 @@ CharlesApplications:
     # -- Enable Gate Installation
     enabled: true
     # -- Name of Deployment
-
     name: charlescd-gate
     sidecarIstio:
       # -- Enable istio in installation
