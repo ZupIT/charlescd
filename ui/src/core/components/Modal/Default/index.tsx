@@ -32,7 +32,7 @@ const Modal = ({
   className,
   isOpen = true,
   onClose,
-  isOutsideClick
+  isOutsideClick,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>();
 
@@ -44,7 +44,7 @@ const Modal = ({
 
   return (
     <Styled.Wrapper
-      data-testid="modal-default"
+      data-testid='modal-default'
       className={className}
       isOpen={isOpen}
     >

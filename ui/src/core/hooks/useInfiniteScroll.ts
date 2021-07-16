@@ -29,7 +29,7 @@ export default function useInfiniteScroll<
 >({
   hasMore,
   loadMore,
-  rootMargin
+  rootMargin,
 }: InfiniteScrollArgs): [
   RefObject<LoaderElementType>,
   RefObject<ScrollElementType>,
@@ -54,13 +54,14 @@ export default function useInfiniteScroll<
 
     const options: IntersectionObserverInit = {
       root: scrollContainerNode,
-      rootMargin: rootMargin
+      rootMargin: rootMargin,
     };
 
-    const listener: IntersectionObserverCallback = entries => {
+    const listener: IntersectionObserverCallback = (entries) => {
       entries.forEach(
         ({ isIntersecting, intersectionRatio, boundingClientRect }) => {
           const { y } = boundingClientRect;
+
           if (
             isIntersecting &&
             intersectionRatio >= previousRatio.current &&
