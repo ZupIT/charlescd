@@ -33,14 +33,14 @@ func DoAuthorization(authorizeUserToken authorizationInteractor.AuthorizeUserTok
 		bindErr := echoCtx.Bind(&request)
 		if bindErr != nil {
 			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, logging.ParseError, nil))
+			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Cant parse body", bindErr, logging.ParseError, nil))
 		}
 
 		validationErr := echoCtx.Validate(request)
 		if validationErr != nil {
 			validationErr = logging.WithOperation(validationErr, "authorizeUserToken.InputValidation")
 			logging.LogErrorFromCtx(ctx, validationErr)
-			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+			return echoCtx.JSON(http.StatusBadRequest, validationErr)
 		}
 
 		var systemToken = echoCtx.Request().Header.Get("x-charles-token")
