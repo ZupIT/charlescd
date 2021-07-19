@@ -69,10 +69,11 @@ class CircleService(private val circleRepository: CircleRepository) {
         )
     }
 
-    fun find(name: String?, except: String?, workspaceId: String, pageRequest: PageRequest): Page<SimpleCircle> {
+    fun find(name: String?, except: String?, status: Boolean?, workspaceId: String, pageRequest: PageRequest): Page<SimpleCircle> {
         return this.circleRepository.find(
             name,
             except,
+            status,
             workspaceId,
             pageRequest
         )
