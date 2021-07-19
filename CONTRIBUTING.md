@@ -76,6 +76,6 @@ Ask any question about CharlesCD in our [mailing list](https://groups.google.com
 
 Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
-Keep evolving.
+Keep evolving!
 
 **CharlesCD team**
