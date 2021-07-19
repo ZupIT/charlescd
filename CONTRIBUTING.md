@@ -42,7 +42,7 @@ If you can't find an open problem for your issue, please [open a new one](https:
   * Make sure that bug label is included
 
 ### Do you intend to add a new feature or change an existing one?
-Suggest your change in the CharlesCD developer discussion [mailing list](https://groups.google.com/forum/#!forum/charlescd-dev) or in our [chat](https://spectrum.chat/charlescd?tab=posts). Share your ideas and collect positive feedback about the change before open an issue on GitHub. Finally, start writing code!
+Suggest your change in the CharlesCD developer discussion [mailing list](https://groups.google.com/forum/#!forum/charlescd-dev) or in our [forum](https://forum.zup.com.br/c/en/charles/13). Share your ideas and collect positive feedback about the change before open an issue on GitHub. Finally, start writing code!
 
 ## Submitting Evolutions
 ### Preparing your development environment
