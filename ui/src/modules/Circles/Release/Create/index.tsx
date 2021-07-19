@@ -146,7 +146,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        <Message errorMessage={error} status={'error'} />
+        {error && <Message errorMessage={error} status={'error'} />}
         <Styled.Submit
           id="submit"
           type="submit"
@@ -160,7 +160,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             !formState.isValid
           }
         >
-          Deploy
+          Deploy!!
         </Styled.Submit>
       </Styled.Form>
     </FormProvider>
