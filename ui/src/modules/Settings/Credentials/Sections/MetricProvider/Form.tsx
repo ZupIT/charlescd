@@ -49,7 +49,10 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
     register,
     handleSubmit,
     getValues,
-    formState,
+    formState: {
+      isValid,
+      isDirty
+    },
     watch,
   } = useForm<Datasource>({
     mode: 'onChange',
@@ -125,7 +128,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
         type="button"
         onClick={handleTestConnection}
         isLoading={loadingConnectionResponse}
-        isDisabled={!formState.isValid}
+        isDisabled={!isValid}
       >
         Test connection
       </Styled.TestConnectionButton>
@@ -150,7 +153,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
         <ButtonDefault
           type="submit"
           isLoading={loadingSave || loadingAdd}
-          isDisabled={!formState.isValid}
+          isDisabled={!isDirty || !isValid}
         >
           Save
         </ButtonDefault>
