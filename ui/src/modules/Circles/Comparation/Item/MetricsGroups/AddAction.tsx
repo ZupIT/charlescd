@@ -181,6 +181,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
             <Styled.Select
               control={control}
               name="actionId"
+              rules={{ required: true }}
               customOption={CustomOption.Description}
               options={actionsTypeResponse}
               onChange={e => setSelectedAction(e?.type)}
@@ -196,6 +197,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
             <Styled.SelectAsync
               control={control}
               name="circleId"
+              rules={{ required: true }}
               label="Select a circle to deploy"
               isDisabled={false}
               loadOptions={loadCirclesByName}
