@@ -67,19 +67,11 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	if !input.AllWorkspaces && len(input.Workspaces) == 0 {
-		return domain.SystemToken{}, logging.
-			NewError(
-				"Workspaces is required when allWorkspaces is false",
-				errors.New("workspaces is required when allWorkspaces is false"), logging.BusinessError, nil, "CreateSystemToken.Execute",
-			)
+		return domain.SystemToken{}, logging.NewError("Workspaces is required when allWorkspaces is false", errors.New("workspaces is required when allWorkspaces is false"), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
 	}
 
 	if len(input.Permissions) == 0 {
-		return domain.SystemToken{}, logging.
-			NewError(
-				"Permissions is required",
-				errors.New("permissions is required"), logging.BusinessError, nil, "CreateSystemToken.Execute",
-			)
+		return domain.SystemToken{}, logging.NewError("Permissions is required", errors.New("permissions is required"), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
 	}
 
 	permissions, err := createSystemToken.permissionRepository.FindAll(input.Permissions)
@@ -88,7 +80,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	if len(permissions) != len(input.Permissions) {
-		return domain.SystemToken{}, logging.NewError("Permissions were not found", errors.New("permissions were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Permissions were not found", errors.New("permissions were not found"), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
 	}
 
 	workspaces, err := createSystemToken.workspaceRepository.FindByIds(input.Workspaces)
@@ -97,7 +89,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	if len(workspaces) != len(input.Workspaces) {
-		return domain.SystemToken{}, logging.NewError("Workspaces were not found", errors.New("workspaces were not found"), logging.BusinessError, nil, "CreateSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("Workspaces were not found", errors.New("workspaces were not found"), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
 	}
 
 	systemToken := CreateSystemTokenInput.InputToDomain(input)
