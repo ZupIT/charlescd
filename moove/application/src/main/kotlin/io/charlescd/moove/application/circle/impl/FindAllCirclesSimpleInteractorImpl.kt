@@ -32,10 +32,11 @@ class FindAllCirclesSimpleInteractorImpl(
     override fun execute(
         name: String?,
         except: String?,
+        status: Boolean?,
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<SimpleCircleResponse> {
-        val page = circleService.find(name, except, workspaceId, pageRequest)
+        val page = circleService.find(name, except, status, workspaceId, pageRequest)
         return createResponsePage(page, convertContent(page))
     }
 

@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
-export const MIN_ITEMS = 4;
-export const MAX_ITEMS = 10;
+package io.charlescd.moove.domain
+
+data class SimpleAuthor(val email: String)

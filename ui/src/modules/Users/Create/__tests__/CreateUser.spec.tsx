@@ -88,9 +88,9 @@ test("render CreateUser Form component with empty fields", async () => {
   expect(ButtonCreateUser).toBeInTheDocument();
   await waitFor(() => expect(ButtonCreateUser).toBeDisabled());
 
-  const InputName = screen.getByTestId("input-text-name");
-  const InputEmail = screen.getByTestId("input-text-email");
-  const InputPassword = screen.getByTestId("input-password-password");
+  const InputName = screen.getByLabelText('User name');
+  const InputEmail = screen.getByLabelText('E-mail');
+  const InputPassword = screen.getByLabelText('Create password');
 
   expect(InputName).toBeEmptyDOMElement();
   expect(InputEmail).toBeEmptyDOMElement();
@@ -102,19 +102,19 @@ test("render CreateUser Form and submit when required fields filled", async () =
     <CreateUser {...props} onFinish={props.onFinish} />
   );
 
-  const ButtonCreateUser = screen.getByTestId("button-create-user");
-  const InputName = screen.getByTestId("input-text-name");
-  const InputEmail = screen.getByTestId("input-text-email");
-  const InputPassword = screen.getByTestId("input-password-password");
+  const buttonCreateUser = screen.getByRole('button');
+  const InputName = screen.getByLabelText('User name');
+  const InputEmail = screen.getByLabelText('E-mail');
+  const InputPassword = screen.getByLabelText('Create password');
 
   await act(async () => {
     userEvent.type(InputName, 'name');
     userEvent.type(InputEmail, 'charles@zup.com.br');
     userEvent.type(InputPassword, '1!@charles123');
 
-    expect(ButtonCreateUser).not.toBeDisabled();
+    expect(buttonCreateUser).not.toBeDisabled();
 
-    userEvent.click(ButtonCreateUser);
+    userEvent.click(buttonCreateUser);
   })
 
   await waitFor(() => {

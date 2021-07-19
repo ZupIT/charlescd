@@ -41,7 +41,7 @@ class FindModuleByIdInteractorImplTest extends Specification {
         def workspaceId = "28144f48-f05d-4a19-b0d2-41bb661f2e60"
 
         def author = new User("81861b6f-2b6e-44a1-a745-83e298a550c9", "John Doe", "email@gmail.com",
-                "https://www.photos.com/johndoe", [], false, LocalDateTime.now())
+                "https://www.photos.com/johndoe", [], [], false, LocalDateTime.now())
 
         def gitCredentials = new GitCredentials("address", "username", "password",
                 null, GitServiceProvider.GITHUB)

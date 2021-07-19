@@ -34,15 +34,22 @@ export interface Props {
 }
 
 const List = ({ draft, onSelect }: Props) => {
-  const { getWorkspaces, resetWorkspaces, data: { status, workspaces, last } } = useWorkspaces();
+  const {
+    getWorkspaces,
+    resetWorkspaces,
+    data: { status, workspaces, last },
+  } = useWorkspaces();
   const [name, setName] = useState<string>('');
 
-  const onSearch = useCallback((value: string) => {
-    const page = 0;
-    setName(value);
-    resetWorkspaces();
-    getWorkspaces(value, page);
-  }, [getWorkspaces, resetWorkspaces]);
+  const onSearch = useCallback(
+    (value: string) => {
+      const page = 0;
+      setName(value);
+      resetWorkspaces();
+      getWorkspaces(value, page);
+    },
+    [getWorkspaces, resetWorkspaces]
+  );
 
   const handleChange = debounce(onSearch, 700);
 
@@ -56,21 +63,21 @@ const List = ({ draft, onSelect }: Props) => {
     getWorkspaces(name, page);
   };
 
-  const renderItems = () => 
+  const renderItems = () =>
     map(workspaces, (workspace, index) => (
       <Item
         key={`item-${index}-${workspace?.id}`}
         workspace={workspace}
         selected={some(draft, workspace)}
-        onChange={workspace => onSelect(workspace)}
+        onChange={(workspace) => onSelect(workspace)}
       />
-    ))
+    ));
 
   const NoContent = () => (
     <Styled.NoContent>
       <Text.h4 color="dark">No more results.</Text.h4>
     </Styled.NoContent>
-  )
+  );
 
   return (
     <Fragment>
@@ -80,7 +87,7 @@ const List = ({ draft, onSelect }: Props) => {
           name="workspace-search"
           label="Filter workspaces"
           icon="search"
-          onChange={e => handleChange(e.currentTarget.value)}
+          onChange={(e) => handleChange(e.currentTarget.value)}
           maxLength={64}
         />
       </Styled.Item>
@@ -91,12 +98,16 @@ const List = ({ draft, onSelect }: Props) => {
           isLoading={status === 'pending'}
           loader={<Loader />}
         >
-          {isEmpty(workspaces) && status !== 'pending' ? <Empty /> : renderItems()}
+          {isEmpty(workspaces) && status !== 'pending' ? (
+            <Empty />
+          ) : (
+            renderItems()
+          )}
           {!isEmpty(workspaces) && status !== 'pending' && <NoContent />}
         </InfiniteScroll>
       </Styled.Content>
     </Fragment>
   );
-}
+};
 
 export default memo(List);

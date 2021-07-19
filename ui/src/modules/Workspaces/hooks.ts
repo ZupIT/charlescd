@@ -15,7 +15,11 @@
  */
 
 import { useEffect, useCallback, useState, useRef } from 'react';
-import { FetchStatuses, useFetch, useFetchData } from 'core/providers/base/hooks';
+import {
+  FetchStatuses,
+  useFetch,
+  useFetchData,
+} from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { findAll, saveWorkspaceName } from 'core/providers/workspace';
 import { findWorkspacesByUserId } from 'core/providers/users';
@@ -27,26 +31,28 @@ import { getProfileByKey } from 'core/utils/profile';
 import { saveWorkspace } from 'core/utils/workspace';
 
 type WorkspaceResponse = {
-  workspaces: Workspace[],
-  status: FetchStatuses,
-  last: boolean
-}
+  workspaces: Workspace[];
+  status: FetchStatuses;
+  last: boolean;
+};
 
 export const useWorkspaces = (): {
-  getWorkspaces: Function,
-  resetWorkspaces: Function,
-  data: WorkspaceResponse,
+  getWorkspaces: Function;
+  resetWorkspaces: Function;
+  data: WorkspaceResponse;
 } => {
   const findWorkspaces = useFetchData<WorkspacePagination>(findAll);
-  const findWorkspacesByUser = useFetchData<Workspace[]>(findWorkspacesByUserId);
+  const findWorkspacesByUser = useFetchData<Workspace[]>(
+    findWorkspacesByUserId
+  );
   const reset = useRef<boolean>(false);
   const [data, setData] = useState<WorkspaceResponse>({
     workspaces: [],
     status: 'idle',
-    last: true
+    last: true,
   });
 
-  const resetWorkspaces = () => reset.current = true;
+  const resetWorkspaces = () => (reset.current = true);
 
   const getWorkspaces = useCallback(
     async (name: string, page: string) => {
@@ -60,34 +66,31 @@ export const useWorkspaces = (): {
               ? res.content
               : [...data.workspaces, ...res.content],
             last: res.last,
-            status: 'resolved'
+            status: 'resolved',
           });
-
         } else {
           const userId = getProfileByKey('id');
           const res = await findWorkspacesByUser(userId, { name });
           setData({
             workspaces: reset.current ? res : [...data.workspaces, ...res],
             last: true,
-            status: 'resolved'
+            status: 'resolved',
           });
         }
 
         reset.current = false;
-
-      }
-      catch (e) {
+      } catch (e) {
         setData({ ...data, status: 'rejected' });
-      
       }
+    },
+    [findWorkspaces, findWorkspacesByUser, data]
+  );
 
-    }, [findWorkspaces, findWorkspacesByUser, data]);
-  
   return {
     getWorkspaces,
     resetWorkspaces,
-    data
-  }
+    data,
+  };
 };
 
 export const useSaveWorkspace = (): {
@@ -105,11 +108,11 @@ export const useSaveWorkspace = (): {
       if (response) {
         saveWorkspace(response);
       } else if (error) {
-        const e = await error.json();
+        const e = await error?.json?.();
         dispatch(
           toogleNotification({
             text: `${error.status}: ${e?.message}`,
-            status: 'error'
+            status: 'error',
           })
         );
       }
