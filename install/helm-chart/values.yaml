@@ -573,6 +573,7 @@ CharlesApplications:
     subscriptionRegisterLimit: 5
 
   gate:
+    # -- Enable Gate Installation
     enabled: true
     # -- Name of Deployment
     name: charlescd-gate
@@ -717,7 +718,6 @@ keycloak:
         -Dkeycloak.migration.provider=singleFile
         -Dkeycloak.migration.file=/realm/keycloak.json
         -Dkeycloak.migration.strategy=IGNORE_EXISTING
-
   securityContext:
     # -- Security Context Run as User, Default: 0
     runAsUser: 0
@@ -741,7 +741,6 @@ keycloak:
       /subsystem=keycloak-server/spi=hostname/provider=default:write-attribute(name=properties.frontendUrl, value="{{ .Values.charlesHost }}/{{ .Values.contextPath }}")
       run-batch
       stop-embedded-server
-
   # -- Keycloak Liveness Probe
   livenessProbe: |
     httpGet:
@@ -749,7 +748,6 @@ keycloak:
       port: http
     initialDelaySeconds: 300
     timeoutSeconds: 5
-
   # -- Keycloak readiness Probe
   readinessProbe: |
     httpGet:
@@ -757,7 +755,6 @@ keycloak:
       port: http
     initialDelaySeconds: 30
     timeoutSeconds: 1
-
   # -- Keycloak Startup Probe
   startupProbe: |
     httpGet:
@@ -767,7 +764,6 @@ keycloak:
     timeoutSeconds: 1
     failureThreshold: 60
     periodSeconds: 5
-
   # -- Keycloak extra InitContainers
   extraInitContainers: |
     - name: check-db-ready
@@ -784,13 +780,11 @@ keycloak:
     - name: realm-secret
       configMap:
         name: keycloak-realm
-
   # -- Keycloak Extra Volumes Mounts
   extraVolumeMounts: |
     - name: realm-secret
       mountPath: "/realm/"
       readOnly: false
-
 envoy:
   # -- Enable Envoy Installation
   enabled: true
@@ -813,6 +807,7 @@ envoy:
     # -- Enable Hermes Installation
     enabled: true
   gate:
+    # -- Enable Gate Installation
     enabled: true
   cors:
     # -- Enable CORS
