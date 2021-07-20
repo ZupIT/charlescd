@@ -211,7 +211,6 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               rules={{ required: true }}
               control={control}
               name="circleId"
-              rules={{ required: true }}
               label="Select a circle to deploy"
               isDisabled={false}
               loadOptions={loadCirclesByName}

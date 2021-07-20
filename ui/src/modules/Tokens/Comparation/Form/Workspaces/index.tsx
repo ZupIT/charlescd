@@ -18,7 +18,6 @@ import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import ContentIcon from 'core/components/ContentIcon';
-import CardConfig from 'core/components/Card/Config';
 import Text from 'core/components/Text';
 import { Mode } from '../../helpers';
 import Modal from './Modal';
