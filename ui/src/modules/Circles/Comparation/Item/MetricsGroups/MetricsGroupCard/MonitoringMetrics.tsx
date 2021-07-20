@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { OptionTypeBase } from 'react-select';
 import Styled from './styled';
-import { AreaChart } from 'core/components/Charts';
+import Chart from 'core/components/Chart';
 import areaChartOption from './areaChart.options';
 import { useMetricQuery } from '../hooks';
 import { getMetricSeries, filterMetricsSeries } from '../helpers';
@@ -98,12 +98,13 @@ const MonitoringMetrics = ({
       {chartDataLoading ? (
         <Loader.MetricsGroupsChart />
       ) : (
-        <AreaChart
+        <Chart
           options={areaChartOption}
           series={filterMetricsSeries(chartData, selectFilters)}
           width={500}
           height={200}
           data-testid="monitoring-metrics-chart"
+          type="area"
         />
       )}
       {renderChartPeriodFilter()}

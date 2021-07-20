@@ -31,7 +31,7 @@ import Styled from './styled';
 import Modal, { ChangedUser } from './Modal';
 import Form from './Form';
 import { diffCheckedUsers } from './helpers';
-import { map } from 'lodash';
+import map from 'lodash/map';
 
 interface Props {
   param: string;

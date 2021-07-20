@@ -18,7 +18,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { UserGroup } from 'modules/Groups/interfaces/UserGroups';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -26,7 +26,7 @@ import { getWorkspaceId } from 'core/utils/workspace';
 import { useDeleteUserGroup } from './hooks';
 import { FORM_USER_GROUP } from './constants';
 import FormUserGroup from './Form';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 import { getProfileByKey } from 'core/utils/profile';
 import { useHistory } from 'react-router';
@@ -60,12 +60,12 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const confirmUserGroupDelete = async () => {
     const email = getProfileByKey('email');
     const { users } = currentUserGroup;
-    const hasUser = find(users, user => user.email === email);
+    const hasUser = find(users, (user) => user.email === email);
     const isUserDuplicated = !hasUserDuplication(userGroups, email);
 
     await remove(getWorkspaceId(), currentUserGroup.id);
     onSave();
-    
+
     setToggleModal(false);
 
     if (hasUser && isUserDuplicated) {
@@ -79,7 +79,7 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   };
 
   const renderWarningModal = () => (
-    <Modal.Trigger
+    <ModalTrigger
       ref={modalRef}
       title="Do you want to remove this user group?"
       dismissLabel="Cancel, keep user group"
@@ -87,11 +87,11 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
       continueLabel="Yes, remove user group"
       onContinue={() => confirmUserGroupDelete()}
     >
-      <Text.h4 color="light" lineHeight={1.3}>
+      <Text tag="H4" color="light" lineHeight={1.3}>
         When you remove a user group, all the users associated to the group will
-        no longer access the workspace. Do you want to continue? 
-      </Text.h4>
-    </Modal.Trigger>
+        no longer access the workspace. Do you want to continue?
+      </Text>
+    </ModalTrigger>
   );
 
   const renderSection = () => (
@@ -104,13 +104,13 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
     >
       {toggleModal && renderWarningModal()}
       {userGroups &&
-        map(userGroups, userGroup => (
-          <Card.Config
+        map(userGroups, (userGroup) => (
+          <CardConfig
             id={`user-group-${userGroup.id}`}
             key={userGroup.name}
             icon="users"
             description={userGroup.name}
-            isLoading={status === "pending"}
+            isLoading={status === 'pending'}
             onClose={() => handleClose(userGroup)}
           />
         ))}
@@ -120,10 +120,12 @@ const SectionUserGroup = ({ form, setForm, onSave, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_USER_GROUP) && (
       <Layer action={() => setForm(null)}>
-        <FormUserGroup onFinish={() => {
-          onSave();
-          setForm(null);
-        }} />
+        <FormUserGroup
+          onFinish={() => {
+            onSave();
+            setForm(null);
+          }}
+        />
       </Layer>
     );
 

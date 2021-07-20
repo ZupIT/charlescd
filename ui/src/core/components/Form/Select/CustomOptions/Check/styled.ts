@@ -27,12 +27,12 @@ const Content = styled.div`
   width: calc(100% - 30px);
 `;
 
-const Label = styled(Text.h5)`
+const Label = styled(Text)`
   margin-left: 10px;
   margin-bottom: 5px;
 `;
 
-const Description = styled(Text.h5)``;
+const Description = styled(Text)``;
 
 export default {
   Wrapper,

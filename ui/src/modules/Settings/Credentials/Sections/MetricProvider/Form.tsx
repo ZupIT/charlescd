@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { Option } from 'core/components/Form/Select/interfaces';
 import Text from 'core/components/Text';
 import { CHARLES_DOC } from 'core/components/Popover';
@@ -25,11 +25,12 @@ import { serializePlugins } from './helpers';
 import { Props } from '../interfaces';
 import { useDatasource, usePlugins } from './hooks';
 import Styled from './styled';
-import { find, map } from 'lodash';
+import find from 'lodash/find';
+import map from 'lodash/map';
 import { testDataSourceConnection } from 'core/providers/datasources';
 import { useTestConnection } from 'core/hooks/useTestConnection';
-import ConnectionStatus from 'core/components/ConnectionStatus';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Message from 'core/components/Message';
+import Link from 'core/components/Link';
 
 const datasourcePlaceholder = 'charlescd-data-source-example';
 
@@ -38,27 +39,30 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
-    save: testConnection
+    save: testConnection,
   } = useTestConnection(testDataSourceConnection);
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [plugin, setPlugin] = useState<Plugin>();
   const { response: plugins, getAll } = usePlugins();
-  const { 
+  const {
     control,
     register,
     handleSubmit,
     getValues,
-    formState,
-    watch
-  } = useForm<Datasource>({ 
-        mode: 'onChange',
-        defaultValues: {
-          data: {
-            url: 'https://'
-          }
-        }
-      });
-  
+    formState: {
+      isValid,
+      isDirty
+    },
+    watch,
+  } = useForm<Datasource>({
+    mode: 'onChange',
+    defaultValues: {
+      data: {
+        url: 'https://',
+      },
+    },
+  });
+
   const urlField = watch('data.url') as string;
 
   useEffect(() => {
@@ -73,7 +77,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const onSubmit = (datasource: Datasource) => {
     save({
       ...datasource,
-      pluginSrc: plugin.src
+      pluginSrc: plugin.src,
     });
   };
 
@@ -86,7 +90,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
 
     testConnection({
       pluginSrc: plugin.src,
-      data
+      data,
     });
   };
 
@@ -99,22 +103,22 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       />
       {map(
         (plugin.inputParameters as PluginDatasource)['configurationInputs'],
-        input => (
+        (input) => (
           <Styled.Wrapper key={input.name}>
             <Styled.Input
               ref={register({ required: input.required })}
               name={`data.${input.name}`}
               label={input.label}
             />
-            {(input.name === 'url' && showPlaceholder) &&
-              <Styled.Placeholder color="light">
+            {input.name === 'url' && showPlaceholder && (
+              <Styled.Placeholder tag="H4" color="light">
                 {datasourcePlaceholder}
               </Styled.Placeholder>
-            }
+            )}
           </Styled.Wrapper>
         )
       )}
-      <ConnectionStatus
+      <Message
         successMessage="Successful connection with the metrics provider."
         errorMessage={testConnectionResponse?.message}
         status={testConnectionResponse?.status}
@@ -124,7 +128,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
         type="button"
         onClick={handleTestConnection}
         isLoading={loadingConnectionResponse}
-        isDisabled={!formState.isValid}
+        isDisabled={!isValid}
       >
         Test connection
       </Styled.TestConnectionButton>
@@ -137,7 +141,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       name="url"
       label="Select a datasource plugin"
       options={serializePlugins(plugins as Plugin[])}
-      onChange={option => onChange(option)}
+      onChange={(option) => onChange(option)}
     />
   );
 
@@ -146,29 +150,28 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
       {renderSelect()}
       {plugin && renderFields()}
       <div>
-        <Button.Default
+        <ButtonDefault
           type="submit"
           isLoading={loadingSave || loadingAdd}
-          isDisabled={!formState.isValid}
+          isDisabled={!isDirty || !isValid}
         >
           Save
-        </Button.Default>
+        </ButtonDefault>
       </div>
     </Styled.Form>
   );
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">Add Datasource</Text.h2>
-      <Text.h4 color="dark" data-testid="text-datasource">
+      <Text tag="H2" color="light">
+        Add Datasource
+      </Text>
+      <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding the URL of our tool helps Charles to do metrics generation since
         this can vary from workspace to another. See our{' '}
-        <DocumentationLink
-          text="documentation"
-          documentationLink={`${CHARLES_DOC}/reference/metrics`}
-        />
+        <Link href={`${CHARLES_DOC}/reference/metrics`}>documentation</Link>{' '}
         for further details.
-      </Text.h4>
+      </Text>
       {renderForm()}
     </Styled.Content>
   );

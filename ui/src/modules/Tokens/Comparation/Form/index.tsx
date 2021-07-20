@@ -26,7 +26,7 @@ import { Mode } from '../helpers';
 import Workspaces from './Workspaces';
 import Scopes from './Scopes';
 import ModalCopy from './Modal';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { updateParam } from 'core/utils/path';
 import routes from 'core/constants/routes';
 import { useHistory } from 'react-router';
@@ -101,22 +101,16 @@ const FormToken = ({ mode, data }: Props) => {
       onClose={onCloseModalCopy}
     />
   );
-
+  
   const LastUsed = () =>
-    data?.last_used_at ? (
-      <Text.h5 color="dark">
-        Last used at {dateTimeFormatter(data.last_used_at)}
-      </Text.h5>
-    ) : (
-      <Text.h5 color="dark">This token has not been used yet.</Text.h5>
-    );
+    data?.last_used_at 
+      ? <Text tag="H5" color="dark">Last used at {dateTimeFormatter(data.last_used_at)}</Text>
+      : <Text tag="H5" color="dark">This token has not been used yet.</Text>
 
   const Author = () =>
-    data?.author ? (
-      <Text.h5 color="dark">Created by {data.author}</Text.h5>
-    ) : (
-      <></>
-    );
+    data?.author
+      ? <Text tag="H5" color="dark">Created by {data.author}</Text>
+      : <></>
 
   const Info = () => (
     <Styled.Info>

@@ -19,14 +19,14 @@ import CardBase from 'core/components/Card/Base';
 import Text from 'core/components/Text';
 import { Props } from '.';
 
-const Title = styled(Text.h4)`
+const Title = styled(Text)`
   width: 235px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
 
-const Description = styled(Text.h5)`
+const Description = styled(Text)`
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
@@ -49,7 +49,7 @@ const Card = styled(CardBase)<Partial<Props>>`
   :hover {
     ${Title}, ${Description} {
       white-space: normal;
-      overflow: visible;
+      overflow: auto;
     }
   }
 `;

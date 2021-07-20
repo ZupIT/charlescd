@@ -17,7 +17,7 @@
 import React from 'react';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { Action } from './types';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -36,7 +36,7 @@ const SectionMetricAction = ({
   form,
   setForm,
   actions,
-  getNewActions
+  getNewActions,
 }: Props) => {
   const { deleteAction } = useDeleteAction();
 
@@ -59,8 +59,8 @@ const SectionMetricAction = ({
       action={() => setForm(FORM_METRIC_ACTION)}
       type="Optional"
     >
-      {map(actions, action => (
-        <Card.Config
+      {map(actions, (action) => (
+        <CardConfig
           key={action.id}
           icon="action"
           description={action.nickname}

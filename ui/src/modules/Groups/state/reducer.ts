@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { map } from 'lodash';
+import map from 'lodash/map';
 import { UserGroupsActionTypes, ACTION_TYPES } from './actions';
 import { UserGroupPagination } from '../interfaces/UserGroupsPagination';
 import { UserGroupState } from '../interfaces/UserGroupState';

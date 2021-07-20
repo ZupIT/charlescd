@@ -16,11 +16,11 @@
 
 import { Fragment, useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import Text from 'core/components/Text';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import { FORM_CIRCLE_MATCHER } from './constants';
 import { useDeleteCircleMatcher } from './hooks';
 import FormCircleMatcher from './Form';
@@ -55,7 +55,7 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
   };
 
   const renderConfirmation = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Remove Circle Matcher"
       dismissLabel="Cancel"
       continueLabel="Yes, remove"
@@ -63,10 +63,11 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
       onContinue={() => onRemove()}
       onDismiss={() => setShowConfirmation(false)}
     >
-      <Text.h4 color="light">
-        This operation will remove all data from this workspace to the Circle Matcher.
-      </Text.h4>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        This operation will remove all data from this workspace to the Circle
+        Matcher.
+      </Text>
+    </ModalTrigger>
   );
 
   const renderSection = () => (
@@ -78,7 +79,7 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
       type="Required"
     >
       {data && (
-        <Card.Config
+        <CardConfig
           icon="circle-matcher"
           description={data}
           onClose={() => setShowConfirmation(true)}
@@ -104,7 +105,7 @@ const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
       {showConfirmation && renderConfirmation()}
       {form ? renderForm() : renderSection()}
     </Fragment>
-  )
+  );
 };
 
 export default CircleMatcher;

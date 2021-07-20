@@ -39,11 +39,11 @@ const Content = styled.div`
   width: calc(100% - ${checkWidth});
 `;
 
-const Label = styled(Text.h4)`
+const Label = styled(Text)`
   margin-bottom: 5px;
 `;
 
-const Description = styled(Text.h5)``;
+const Description = styled(Text)``;
 
 export default {
   Wrapper,

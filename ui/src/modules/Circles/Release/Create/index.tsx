@@ -27,7 +27,7 @@ import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
 import Module from './Module';
 import Styled from '../styled';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import Message from 'core/components/Message';
 
 const defaultValues = {
   modules: [MODULE],
@@ -111,15 +111,15 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     else setError('');
   };
 
-  console.log(formState.isValid);
-
   return (
     <FormProvider {...form}>
       <Styled.Form
         onSubmit={handleSubmit(onSubmit)}
         data-testid="create-release"
       >
-        <Text.h5 color="dark">Type a name for release:</Text.h5>
+        <Text tag="H5" color="dark">
+          Type a name for release:
+        </Text>
         <Styled.Input
           name="releaseName"
           ref={register(isRequiredAndNotBlank)}
@@ -135,7 +135,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             isNotUnique={isNotUnique}
           />
         ))}
-        <Styled.Module.Info color="dark">
+        <Styled.Module.Info tag="H5" color="dark">
           You can add other modules:
         </Styled.Module.Info>
         <Styled.Module.Button
@@ -146,7 +146,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        {error && <ConnectionStatus errorMessage={error} status={'error'} />}
+        {error && <Message errorMessage={error} status={'error'} />}
         <Styled.Submit
           id="submit"
           type="submit"
@@ -160,7 +160,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             !formState.isValid
           }
         >
-          Deploy
+          Deploy!!
         </Styled.Submit>
       </Styled.Form>
     </FormProvider>

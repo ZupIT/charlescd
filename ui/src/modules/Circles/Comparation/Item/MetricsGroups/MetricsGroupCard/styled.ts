@@ -17,8 +17,8 @@
 import styled, { css } from 'styled-components';
 import SelectComponent from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import ButtonIconRoundedComponent from 'core/components/Button/ButtonRounded';
+import { baseFontSize } from 'core/components/Text/constants';
 
 interface FilterOpenProps {
   isOpen: boolean;
@@ -102,7 +102,7 @@ const ButtonIconRoundedPeriod = styled(ButtonIconRoundedComponent)`
 
   span {
     font-weight: normal;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 
   ${({ isActive }: ButtonIconProps) =>
@@ -138,7 +138,7 @@ const MetricCardBody = styled.div`
   height: 40px;
 `;
 
-const MetricNickname = styled(Text.h5)`
+const MetricNickname = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -159,7 +159,7 @@ const MetricConditionThreshold = styled.div`
   }
 `;
 
-const MetricLastValueText = styled(Text.h5)`
+const MetricLastValueText = styled(Text)`
   margin-right: 10px;
   position: relative;
   white-space: nowrap;
@@ -235,28 +235,28 @@ const ActionCardStauts = styled.div<Line>`
   border-radius: 10px;
 `;
 
-const ActionNickname = styled(Text.h5)`
+const ActionNickname = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 180px;
 `;
 
-const ActionType = styled(Text.h5)`
+const ActionType = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 150px;
 `;
 
-const ActionTypeTriggeredAt = styled(Text.h5)`
+const ActionTypeTriggeredAt = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 125px;
 `;
 
-const ActionNicknameDeleteCard = styled(Text.h5)`
+const ActionNicknameDeleteCard = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -264,7 +264,7 @@ const ActionNicknameDeleteCard = styled(Text.h5)`
   margin-left: 20px;
 `;
 
-const ActionDeleteCardText = styled(Text.h5)`
+const ActionDeleteCardText = styled(Text)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

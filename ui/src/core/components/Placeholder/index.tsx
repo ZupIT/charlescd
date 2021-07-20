@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   icon: string;
   title?: string;
   subtitle?: string;
@@ -28,25 +28,32 @@ interface Props {
   className?: string;
 }
 
-const Placeholder = ({ icon, title, subtitle, description, children, className }: Props) => (
+const Placeholder = ({
+  icon,
+  title,
+  subtitle,
+  description,
+  children,
+  className,
+}: Props) => (
   <Styled.Wrapper data-testid={`placeholder-${icon}`} className={className}>
     <Icon name={icon} />
     <Styled.Empty>
       {title && (
-        <Text.h1 color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           {title}
-        </Text.h1>
+        </Text>
       )}
       {subtitle && (
-        <Text.h1 color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           {subtitle}
-        </Text.h1>
+        </Text>
       )}
       {description && (
         <Styled.Description>
-          <Text.h3 color="dark" align="center">
+          <Text tag="H3" color="dark" align="center">
             {description}
-          </Text.h3>
+          </Text>
         </Styled.Description>
       )}
     </Styled.Empty>
