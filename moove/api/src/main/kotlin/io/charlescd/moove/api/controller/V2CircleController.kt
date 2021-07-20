@@ -74,9 +74,10 @@ class V2CircleController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(name = "name", required = false) name: String?,
         @RequestParam(name = "except", required = false) except: String?,
+        @RequestParam(name = "active", required = false) active: Boolean?,
         @Valid pageRequest: PageRequest
     ): ResourcePageResponse<SimpleCircleResponse> {
-        return this.findAllCirclesSimpleInteractor.execute(name, except, workspaceId, pageRequest)
+        return this.findAllCirclesSimpleInteractor.execute(name, except, active, workspaceId, pageRequest)
     }
 
     @ApiOperation(value = "Find Circle by Id")
@@ -138,8 +139,8 @@ class V2CircleController(
     @PostMapping("/csv", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithCsv(
-        @RequestHeader(value = "Authorization", required = false) authorization: String,
-        @RequestHeader(value = "x-charles-token", required = false) token: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
         @RequestParam("keyName") keyName: String,

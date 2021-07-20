@@ -86,23 +86,31 @@ export const createGitApi = (data: Helm, gitProvider: GitProviders) => {
   }
 };
 
+export const getSearchParams = (url: string) => {
+  try {
+    return (new URL(url)).searchParams;
+  } catch (e) {
+    return (new URL(window.location.href)).searchParams;
+  }
+}
+
 const destructGithub = (
   url: string,
   setValue: SetValue
 ) => {
-  const params = (new URL(url)).searchParams;
+  const params = getSearchParams(url);
   const splitProtocol = url.split('//');
-  const splitUrl = splitProtocol[1].split('/');
-  const reposPosition = splitUrl.indexOf('repos');
-  const baseUrl = splitUrl.slice(0, reposPosition).join("/");
+  const splitUrl = splitProtocol[1]?.split('/');
+  const reposPosition = splitUrl?.indexOf('repos');
+  const baseUrl = splitUrl?.slice(0, reposPosition)?.join("/");
 
-  const helmUrl = `${splitProtocol[0]}//${baseUrl}`
-  const organization = splitUrl[reposPosition + 1];
-  const repository = splitUrl[reposPosition + 2];
+  const helmUrl = `${splitProtocol?.[0]}//${baseUrl}`
+  const organization = splitUrl?.[reposPosition + 1];
+  const repository = splitUrl?.[reposPosition + 2];
   
   let path = '';
-  if (splitUrl[reposPosition + 4]) {
-    path = splitUrl[reposPosition + 4].split('?')[0];
+  if (splitUrl?.[reposPosition + 4]) {
+    path = splitUrl?.[reposPosition + 4].split('?')[0];
   }
 
   const branch = params.get('ref');
@@ -118,20 +126,19 @@ const destructGitlab = (
   url: string,
   setValue: SetValue
 ) => {
-  const params = (new URL(url)).searchParams;
+  const params = getSearchParams(url);
   const baseUrlFind = '/api/v4/projects';
   const baseUrlLocation = url.indexOf(baseUrlFind);
-  const baseUrl = url.slice(0, baseUrlLocation);
-  const leftInfo = url.slice(baseUrlLocation + baseUrlFind.length + 1);
-  const infoSplit = leftInfo.split('/');
-  const projectId = infoSplit[0];
+  const baseUrl = url?.slice(0, baseUrlLocation);
+  const leftInfo = url?.slice(baseUrlLocation + baseUrlFind.length + 1);
+  const infoSplit = leftInfo?.split('/');
+  const projectId = infoSplit?.[0];
   const branch = params.get('ref');
   const path = params.get('path');
 
   setValue('helmUrl', baseUrl, { shouldValidate: true });
   setValue('helmProjectId', projectId, { shouldValidate: true });
   setValue('helmBranch', branch, { shouldValidate: true });
-  console.log('path', path);
   setValue('helmPath', path, { shouldValidate: true });
 };
 
