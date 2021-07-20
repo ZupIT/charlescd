@@ -74,9 +74,10 @@ class V2CircleController(
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam(name = "name", required = false) name: String?,
         @RequestParam(name = "except", required = false) except: String?,
+        @RequestParam(name = "active", required = false) active: Boolean?,
         @Valid pageRequest: PageRequest
     ): ResourcePageResponse<SimpleCircleResponse> {
-        return this.findAllCirclesSimpleInteractor.execute(name, except, workspaceId, pageRequest)
+        return this.findAllCirclesSimpleInteractor.execute(name, except, active, workspaceId, pageRequest)
     }
 
     @ApiOperation(value = "Find Circle by Id")

@@ -51,5 +51,5 @@ const Warning = styled.div`
 
 export default {
   Modal,
-  Warning
+  Warning,
 };

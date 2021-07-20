@@ -20,6 +20,7 @@ import Icon from 'core/components/Icon';
 import useForm from 'core/hooks/useForm';
 import Button from 'core/components/Button/ButtonDefault';
 import isUndefined from 'lodash/isUndefined';
+import partition from 'lodash/partition';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
@@ -61,6 +62,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [selectedAction, setSelectedAction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
+  const [optionsExcludeDefault, setOptionsExcludeDefault] = useState([]);
   const { getCirclesSimple } = useCircleSimple();
   const {
     getActionGroup,
@@ -115,7 +117,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
     );
 
     saveAction(newPayload)
-      .then(response => {
+      .then(response => { 
         if (response) {
           onGoBack();
         }
@@ -131,6 +133,17 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
       getCirclesSimple({ name, id: circleId }).then(response => {
         const options = normalizeSelectOptions(response.content);
         setCurrentCircleOptions(options);
+        return options;
+      }
+      ),
+    500
+  );
+
+  const loadCirclesExclude = debounce(
+    (name) =>
+      getCirclesSimple({ name, active: true }).then(response => {
+        const options = partition(normalizeSelectOptions(response.content), { 'label': 'Default' })?.[1];
+        setOptionsExcludeDefault(options);
         return options;
       }
       ),
@@ -195,6 +208,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           )}
           {selectedAction === 'circledeployment' && !loading && (
             <Styled.SelectAsync
+              rules={{ required: true }}
               control={control}
               name="circleId"
               rules={{ required: true }}
@@ -205,6 +219,21 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               defaultValue={getSelectDefaultValue(
                 actionData?.executionParameters.destinationCircleId,
                 currentCircleOptions
+              )}
+            />
+          )}
+          {selectedAction === 'circleundeployment' && !loading && (
+            <Styled.SelectAsync
+              rules={{ required: true }}
+              control={control}
+              name="circleId"
+              label="Select a circle to undeploy"
+              isDisabled={false}
+              loadOptions={loadCirclesExclude}
+              defaultOptions={optionsExcludeDefault}
+              defaultValue={getSelectDefaultValue(
+                actionData?.executionParameters.destinationCircleId,
+                optionsExcludeDefault
               )}
             />
           )}

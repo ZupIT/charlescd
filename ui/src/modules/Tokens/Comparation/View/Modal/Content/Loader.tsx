@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-export interface Token {
-  id: string;
-  name: string;
-  permissions: string[];
-  workspaces: string[];
-  allWorkspaces?: boolean;
-  token?: string;
-  author: string;
-  revoked?: boolean;
-  created_at?: string;
-  revoked_at?: string;
-  last_used_at?: string;
-}
+import ContentLoader from 'react-content-loader';
 
-export type TokenCreate = {
-  name: string,
-  permissions: string[],
-  workspaces: string[],
-  allWorkspaces: boolean,
-  subjects?: { [k: string]: boolean }
-};
+const ListLoader = () => (
+  <div>
+    <ContentLoader
+      speed={1}
+      width={543}
+      height={300}
+      backgroundColor="#3a393c"
+      foregroundColor="#2c2b2e"
+      data-testid='modal-list-loader'
+    >
+      <rect x="0" y="0" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="74" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="148" rx="2" ry="2" width="543" height="72" />
+      <rect x="0" y="222" rx="2" ry="2" width="543" height="72" />
+    </ContentLoader>
+  </div>
+);
 
-export interface TokenWorkspace {
-  id: string,
-  name: string,
-};
+export default ListLoader;

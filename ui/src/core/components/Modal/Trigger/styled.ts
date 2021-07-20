@@ -17,6 +17,7 @@
 import styled from 'styled-components';
 import Text from 'core/components/Text';
 import DefaultButton from 'core/components/Button/ButtonDefault';
+import LabeledIcon from 'core/components/LabeledIcon';
 
 const Wrapper = styled.div``;
 
@@ -64,7 +65,11 @@ const Title = styled(Text)`
 `;
 
 const Description = styled.div`
-  margin: 20px 0 20px 0;
+  margin: 16px 0 24px 0;
+
+  span {
+    line-height: 1.3;
+  }
 `;
 
 const ContinueButton = styled(DefaultButton)`
@@ -102,7 +107,12 @@ const CloseButtonContainer = styled.div`
   margin-left: 324px;
 `;
 
+const ItemName = styled(LabeledIcon)`
+  padding: 16px 0 0 0;
+`;
+
 export default {
+  ItemName,
   Buttons,
   Button: {
     Continue: ContinueButton,

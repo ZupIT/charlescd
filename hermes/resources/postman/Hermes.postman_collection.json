@@ -1,0 +1,456 @@
+{
+	"info": {
+		"_postman_id": "e9307773-2097-4da1-8ee4-432ad1973f21",
+		"name": "Hermes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "subscriptions",
+			"item": [
+				{
+					"name": "Save Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.collectionVariables.set(\"subscriptionId\", response[\"id\"]);",
+									"",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"pm.collectionVariables.set(\"externalId\", uuid.v4());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823",
+								"type": "text"
+							},
+							{
+								"key": "x-author",
+								"value": "email@email.com",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"externalId\": \"{{externalId}}\",\n    \"apiKey\": \"\",\n    \"url\": \"https://some-url/api/webhook\",\n    \"description\": \"some-description\",\n    \"events\": [\"{{some-event}}\"]\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/v1/subscriptions",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823"
+							},
+							{
+								"key": "x-author",
+								"type": "text",
+								"value": "email@email.com"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/v1/subscriptions/{{subscriptionId}}/health-check",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions",
+								"{{subscriptionId}}",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List By External-Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823"
+							},
+							{
+								"key": "x-author",
+								"type": "text",
+								"value": "email@email.com"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/v1/subscriptions/external-id/{{externalId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions",
+								"external-id",
+								"{{externalId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Subscription",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"",
+									"pm.test(\"No Content\", function() {",
+									"    pm.response.to.have.status(204)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823"
+							},
+							{
+								"key": "x-author",
+								"type": "text",
+								"value": "email@email.com"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/v1/subscriptions/{{subscriptionId}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions",
+								"{{subscriptionId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Create, Update or Find a subscription"
+		},
+		{
+			"name": "messages",
+			"item": [
+				{
+					"name": "Publish",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"value": "123456789",
+								"type": "text"
+							},
+							{
+								"key": "x-author",
+								"value": "leite@email.com",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"eventType\": \"{{some-event}}\",\n  \"externalId\": \"{{externalId}}\",\n  \"event\": \"{\\\"messageKey\\\":\\\"messageValue\\\"}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/subscriptions/publish",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Message History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-workspace-id",
+								"type": "text",
+								"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823"
+							},
+							{
+								"key": "x-author",
+								"type": "text",
+								"value": "email@email.com"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/v1/subscriptions/{{subscriptionId}}/history",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"subscriptions",
+								"{{subscriptionId}}",
+								"history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Readiness",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status success\", function() {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-workspace-id",
+						"type": "text",
+						"value": "b11e0ae5-5f11-449e-9b06-99b1cad85823"
+					},
+					{
+						"key": "x-author",
+						"type": "text",
+						"value": "email@email.com"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/ready",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ready"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "externalId",
+			"value": "externalId"
+		},
+		{
+			"key": "subscriptionId",
+			"value": ""
+		},
+		{
+			"key": "some-event",
+			"value": "SOME-EVENT"
+		}
+	]
+}
