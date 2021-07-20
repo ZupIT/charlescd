@@ -31,7 +31,7 @@ import ConnectionStatus from 'core/components/ConnectionStatus';
 
 const defaultValues = {
   modules: [MODULE],
-  releaseName: ''
+  releaseName: '',
 };
 
 interface Props {
@@ -44,19 +44,27 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const {
     composeBuild,
     response: build,
-    loading: savingBuild
+    loading: savingBuild,
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
-    resolver: validationResolver
+    resolver: validationResolver,
   });
-  const { register, control, handleSubmit, watch, errors, getValues } = form;
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    errors,
+    getValues,
+    formState,
+  } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'modules'
+    name: 'modules',
   });
   const isNotUnique = fields.length > ONE;
   const [error, setError] = useState('');
@@ -79,7 +87,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     if (build) {
       createDeployment({
         buildId: build.id,
-        circleId
+        circleId,
       });
     }
   }, [createDeployment, build, circleId]);
@@ -91,16 +99,19 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      releaseName: data.releaseName
+      releaseName: data.releaseName,
     });
   };
 
   const checkMaxLengthError = (hasError?: boolean) => {
-    if(hasError)
-      setError('Sum of component name and version name cannot be greater than 63 characters.');
-    else
-      setError('');
-  }
+    if (hasError)
+      setError(
+        'Sum of component name and version name cannot be greater than 63 characters.'
+      );
+    else setError('');
+  };
+
+  console.log(formState.isValid);
 
   return (
     <FormProvider {...form}>
@@ -135,17 +146,19 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        {error && 
-          <ConnectionStatus
-            errorMessage={error}
-            status={"error"}
-          />}
+        {error && <ConnectionStatus errorMessage={error} status={'error'} />}
         <Styled.Submit
           id="submit"
           type="submit"
           size="EXTRA_SMALL"
           isLoading={savingBuild}
-          isDisabled={isEmptyFields || !isEmpty(errors) || !isEmpty(error) || isDeploying}
+          isDisabled={
+            isEmptyFields ||
+            !isEmpty(errors) ||
+            !isEmpty(error) ||
+            isDeploying ||
+            !formState.isValid
+          }
         >
           Deploy
         </Styled.Submit>

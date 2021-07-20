@@ -37,14 +37,14 @@ func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken
 		bindErr := echoCtx.Bind(&request)
 		if bindErr != nil {
 			logging.LogErrorFromCtx(ctx, bindErr)
-			return echoCtx.JSON(http.StatusInternalServerError, logging.NewError("Cant parse body", bindErr, logging.ParseError, nil))
+			return echoCtx.JSON(http.StatusBadRequest, logging.NewError("Cant parse body", bindErr, logging.ParseError, nil))
 		}
 
 		validationErr := echoCtx.Validate(request)
 		if validationErr != nil {
 			validationErr = logging.WithOperation(validationErr, "createSystemToken.InputValidation")
 			logging.LogErrorFromCtx(ctx, validationErr)
-			return echoCtx.JSON(http.StatusInternalServerError, validationErr)
+			return echoCtx.JSON(http.StatusBadRequest, validationErr)
 		}
 
 		var authorization = echoCtx.Request().Header.Get("Authorization")

@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "6d7c5833-5fa3-4148-9637-f11c3da69d46",
+		"name": "Charles Gate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create System Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"",
+							"pm.collectionVariables.set(\"systemTokenId\", response[\"id\"]);",
+							"pm.collectionVariables.set(\"systemToken\", response[\"token\"]);",
+							"",
+							"pm.test(\"Status created\", function() {",
+							"    pm.response.to.have.status(201)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \"name\": \"name\",\n    \"allWorkspaces\": true, \n    \"workspaces\": [], \n    \"permissions\": [\"modules_write\", \"modules_read\", \"circles_write\", \"circles_read\", \"deploy_write\", \"maintenance_write\"]\n }\n"
+				},
+				"url": {
+					"raw": "{{gate-host}}/api/v1/system-token",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"system-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get System Token By Id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"pm.test(\"Status success\", function() {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{gate-host}}/api/v1/system-token/{{systemTokenId}}",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"system-token",
+						"{{systemTokenId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All System Tokens",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"pm.test(\"Status success\", function() {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{gate-host}}/api/v1/system-token",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"system-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authorize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"pm.test(\"Status success\", function() {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-charles-token",
+						"value": "{{systemToken}}"
+					},
+					{
+						"key": "x-workspace-id",
+						"value": "689e4c6b-6fb2-4d2f-9423-b4923dd3f5bb",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"path\": \"/moove/modules\",\n\t\"method\": \"POST\"\n}"
+				},
+				"url": {
+					"raw": "{{gate-host}}/api/v1/authorize",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"authorize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Regenerate System Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"systemToken\", response[\"token\"]);",
+							"",
+							"const response = JSON.parse(responseBody);",
+							"pm.test(\"Status success\", function() {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{gate-host}}/api/v1/system-token/{{systemTokenId}}/regenerate",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"system-token",
+						"{{systemTokenId}}",
+						"regenerate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke System Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"pm.test(\"No content\", function() {",
+							"    pm.response.to.have.status(204)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{gate-host}}/api/v1/system-token/{{systemTokenId}}/revoke",
+					"host": [
+						"{{gate-host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"system-token",
+						"{{systemTokenId}}",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gate-host",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": "token"
+		},
+		{
+			"key": "systemTokenId",
+			"value": ""
+		},
+		{
+			"key": "systemToken",
+			"value": ""
+		}
+	]
+}
