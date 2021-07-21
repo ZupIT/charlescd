@@ -21,10 +21,10 @@ import uniqueId from 'lodash/uniqueId';
 import omit from 'lodash/omit';
 import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
-import { useGlobalState } from 'core/state/hooks';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { hasPermission } from 'core/utils/auth';
 import { includes } from 'lodash';
+import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
   I: Actions;
@@ -63,7 +63,7 @@ const Element = ({
         isDisabled: !allowed,
         style: {
           cursor: 'default',
-          opacity: '0.3',
+          opacity: '0.4',
           transform: 'scale(1)'
         },
         'data-tip': true,

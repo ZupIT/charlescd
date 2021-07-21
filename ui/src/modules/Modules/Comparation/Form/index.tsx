@@ -246,7 +246,7 @@ const FormModule = ({ module, onChange }: Props) => {
               size="EXTRA_SMALL"
               isLoading={saveLoading || updateStatus === 'pending'}
             >
-              {isEditing ? 'Edit module' : 'Create module'}
+              {isEditing ? 'Save' : 'Create module'}
             </Styled.Button>
           </Can>
         </Styled.Form>

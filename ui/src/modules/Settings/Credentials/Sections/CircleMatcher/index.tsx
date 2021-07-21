@@ -22,33 +22,36 @@ import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import Modal from 'core/components/Modal';
 import { FORM_CIRCLE_MATCHER } from './constants';
-import { useCircleMatcher } from './hooks';
+import { useDeleteCircleMatcher } from './hooks';
 import FormCircleMatcher from './Form';
 
 interface Props {
   form: string;
   setForm: Function;
   data: string;
+  onChange: () => void;
 }
 
-const CircleMatcher = ({ form, setForm, data }: Props) => {
+const CircleMatcher = ({ form, setForm, onChange, data }: Props) => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [isAction, setIsAction] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const { remove, responseRemove } = useCircleMatcher();
-
-  useEffect(() => {
-    setIsAction(true);
-    setShowConfirmation(false);
-  }, [responseRemove]);
+  const { deleteCircleMatcher } = useDeleteCircleMatcher();
 
   useEffect(() => {
     if (data) setIsAction(false);
   }, [data]);
 
-  const onRemove = () => {
+  const onRemove = async () => {
     setIsLoading(true);
-    remove();
+
+    try {
+      setIsAction(true);
+      setShowConfirmation(false);
+      await deleteCircleMatcher();
+      onChange();
+      setIsLoading(false);
+    } catch (e) {}
   };
 
   const renderConfirmation = () => (
@@ -74,7 +77,7 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
       action={() => setForm(FORM_CIRCLE_MATCHER)}
       type="Required"
     >
-      {data && !responseRemove && (
+      {data && (
         <Card.Config
           icon="circle-matcher"
           description={data}
@@ -87,7 +90,12 @@ const CircleMatcher = ({ form, setForm, data }: Props) => {
   const renderForm = () =>
     isEqual(form, FORM_CIRCLE_MATCHER) && (
       <Layer action={() => setForm(null)}>
-        <FormCircleMatcher onFinish={() => setForm(null)} />
+        <FormCircleMatcher
+          onFinish={() => {
+            setForm(null);
+            onChange();
+          }}
+        />
       </Layer>
     );
 

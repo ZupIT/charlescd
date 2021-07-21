@@ -126,7 +126,16 @@ export class CreateDeploymentValidator {
       helmRepository: Joi.string().required().label('helmRepository')
     })
       .custom((obj, helper) => {
+        const regExpr = new RegExp('[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*', 'g')
+
         const { buildImageTag, componentName } = obj
+
+        const compareTag = buildImageTag.match(regExpr)?.join('-')
+
+        if (compareTag !== buildImageTag){
+          return helper.error('imageTag.dns.format')
+        }
+
         if (buildImageTag.length + componentName.length > 63) {
           return helper.error('image.length')
         }
@@ -143,7 +152,8 @@ export class CreateDeploymentValidator {
       .messages(
         {
           'image.length': 'Sum of lengths of componentName and buildImageTag cant be greater than 63',
-          'imageTag.invalid': 'The tag suplied on the buildImageUrl must match the buildImageTag'
+          'imageTag.invalid': 'The tag suplied on the buildImageUrl must match the buildImageTag',
+          'imageTag.dns.format': 'tag must consist of lower case alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character'
         }
       )
   }

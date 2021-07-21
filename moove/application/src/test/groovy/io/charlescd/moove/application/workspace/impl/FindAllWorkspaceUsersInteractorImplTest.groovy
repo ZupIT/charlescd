@@ -79,12 +79,12 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
         given:
         def pageRequest = new PageRequest()
         def authorization = "Bearer qwerty"
-        def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], false, LocalDateTime.now())
+        def author = new User("author", "charles", "charles@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [], false, LocalDateTime.now())
         def workspaceId = "workspace-id"
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions(workspaceId, "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
-        def member1 = new User("member1", "charles", "member1@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
-        def member2 = new User("member2", "charles", "member2@zup.com.br", "http://charles.com/dummy_photo.jpg", [workspacePermission], false, LocalDateTime.now())
+        def member1 = new User("member1", "charles", "member1@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [workspacePermission], false, LocalDateTime.now())
+        def member2 = new User("member2", "charles", "member2@zup.com.br", "http://charles.com/dummy_photo.jpg", [], [workspacePermission], false, LocalDateTime.now())
         def page = new Page([member1, member2], 0, 20, 1)
         def user = buildUser()
 
@@ -147,11 +147,11 @@ class FindAllWorkspaceUsersInteractorImplTest extends Specification {
 
     private static User buildUser() {
         def author = new User("f52f94b8-6775-470f-bac8-125ebfd6b636", "zup", "zup@zup.com.br", "http://image.com.br/photo.png",
-                [], false, LocalDateTime.now())
+                [], [], false, LocalDateTime.now())
         def permission = new Permission("permission-id", "permission-name", LocalDateTime.now())
         def workspacePermission = new WorkspacePermissions("workspace-id", "workspace-name", [permission], author, LocalDateTime.now(), WorkspaceStatusEnum.COMPLETE)
         return new User("cfb1a3a4-d3af-46c6-b6c3-33f30f68b28b", "user name", "user@zup.com.br", "http://image.com.br/photo.png",
-                [workspacePermission], false, LocalDateTime.now())
+                [], [workspacePermission], false, LocalDateTime.now())
     }
 
 

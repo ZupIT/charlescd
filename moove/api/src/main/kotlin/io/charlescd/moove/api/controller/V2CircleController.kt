@@ -24,11 +24,7 @@ import io.charlescd.moove.application.circle.request.CreateCircleWithPercentageR
 import io.charlescd.moove.application.circle.request.PatchCirclePercentageRequest
 import io.charlescd.moove.application.circle.request.PatchCircleRequest
 import io.charlescd.moove.application.circle.request.UpdateCircleWithCsvRequest
-import io.charlescd.moove.application.circle.response.CircleComponentResponse
-import io.charlescd.moove.application.circle.response.CircleHistoryResponse
-import io.charlescd.moove.application.circle.response.CirclePercentageResponse
-import io.charlescd.moove.application.circle.response.CircleResponse
-import io.charlescd.moove.application.circle.response.IdentifyCircleResponse
+import io.charlescd.moove.application.circle.response.*
 import io.charlescd.moove.domain.PageRequest
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
@@ -49,6 +45,7 @@ class V2CircleController(
     private val findCircleByIdInteractor: FindCircleByIdInteractor,
     private val deleteCircleByIdInteractor: DeleteCircleByIdInteractor,
     private val findAllCirclesInteractor: FindAllCirclesInteractor,
+    private val findAllCirclesSimpleInteractor: FindAllCirclesSimpleInteractor,
     private val findAllCirclesPercentageInteractor: FindCirclesPercentageInteractor,
     private val findCircleComponentsInteractor: FindCircleComponentsInteractor,
     private val createCircleWithCsvFileInteractor: CreateCircleWithCsvFileInteractor,
@@ -68,6 +65,19 @@ class V2CircleController(
         @Valid pageRequest: PageRequest
     ): ResourcePageResponse<CircleResponse> {
         return this.findAllCirclesInteractor.execute(name, active, workspaceId, pageRequest)
+    }
+
+    @ApiOperation(value = "Find all simplifyed")
+    @GetMapping(path = ["/simple"])
+    @ResponseStatus(HttpStatus.OK)
+    fun findSimplyfied(
+        @RequestHeader("x-workspace-id") workspaceId: String,
+        @RequestParam(name = "name", required = false) name: String?,
+        @RequestParam(name = "except", required = false) except: String?,
+        @RequestParam(name = "active", required = false) active: Boolean?,
+        @Valid pageRequest: PageRequest
+    ): ResourcePageResponse<SimpleCircleResponse> {
+        return this.findAllCirclesSimpleInteractor.execute(name, except, active, workspaceId, pageRequest)
     }
 
     @ApiOperation(value = "Find Circle by Id")
@@ -129,8 +139,8 @@ class V2CircleController(
     @PostMapping("/csv", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun createWithCsv(
-        @RequestHeader(value = "Authorization", required = false) authorization: String,
-        @RequestHeader(value = "x-charles-token", required = false) token: String,
+        @RequestHeader(value = "Authorization", required = false) authorization: String?,
+        @RequestHeader(value = "x-charles-token", required = false) token: String?,
         @RequestHeader("x-workspace-id") workspaceId: String,
         @RequestParam("name") name: String,
         @RequestParam("keyName") keyName: String,

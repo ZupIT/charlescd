@@ -15,19 +15,43 @@
  */
 
 export const MODULE = {
-    createdAt: "2021-02-03 11:34:51",
-    gitRepositoryAddress: "https://github.com/example",
-    helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
-    id: "123",
-    name: "module 1"
+  "id": "123",
+  "name": "module 1",
+  "gitRepositoryAddress": "https://github.com/example",
+  "helmRepository": "undefined/api/v4/projects/undefined/repository?ref=main",
+  "createdAt": "2021-02-03 11:34:51",
+  "components": [
+    {
+      "id": "456",
+      "name": "component 1",
+      "createdAt": "2021-02-03 11:34:51",
+      "errorThreshold": 10,
+      "latencyThreshold": 5
+    }
+  ]
 };
 
-export const MODULES = [
+export const MODULES = {
+  "content": [
     {
-      createdAt: "2021-02-03 11:34:51",
-      gitRepositoryAddress: "https://github.com/example",
-      helmRepository: "undefined/api/v4/projects/undefined/repository?ref=main",
-      id: "123",
-      name: "module 1"
-  }
-];
+      "id": "123",
+      "name": "module 1",
+      "gitRepositoryAddress": "https://github.com/example",
+      "helmRepository": "undefined/api/v4/projects/undefined/repository?ref=main",
+      "createdAt": "2021-02-03 11:34:51",
+      "components": [
+        {
+          "id": "456",
+          "name": "component 1",
+          "createdAt": "2021-02-03 11:34:51",
+          "errorThreshold": 10,
+          "latencyThreshold": 5
+        }
+      ]
+    }
+  ],
+  "page": 0,
+  "size": 5,
+  "totalPages": 1,
+  "last": true
+};

@@ -704,7 +704,7 @@ test('should test connection with Harbor (error)', async () => {
   expect(submitButton).not.toBeDisabled();
 });
 
-test('should clean test connection message after change form', async () => {
+test('should clean test connection success message after change form', async () => {
   (fetch as FetchMock).mockResponse(JSON.stringify({ }));
 
   render(<FormRegistry onFinish={mockOnFinish}/>);
@@ -741,7 +741,7 @@ test('should clean test connection message after change form', async () => {
   expect(successMessage).not.toBeInTheDocument();
 });
 
-test('should clean test connection message after change form', async () => {
+test('should clean test connection error message after change form', async () => {
   const error = {
     status: '404',
     message: 'invalid registry'

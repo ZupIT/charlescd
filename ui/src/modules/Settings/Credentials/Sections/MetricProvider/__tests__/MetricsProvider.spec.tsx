@@ -58,8 +58,9 @@ test('render datasource form', async () => {
 test('should be delete Metric Provider', async () => {
   const setForm = jest.fn();
   const remove = jest.fn();
-  jest.spyOn(MetricProviderHooks, 'useDatasource').mockImplementation(() => ({
-    remove: remove,
+  jest.spyOn(MetricProviderHooks, 'useDeleteDatasource').mockImplementation(() => ({
+    removeDatasource: remove,
+    status: "resolved"
   }));
   render(
     <MetricProvider form={null} setForm={setForm} data={Datasources} getNewDatasources={jest.fn()}/>

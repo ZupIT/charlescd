@@ -86,6 +86,7 @@ class TestUtils {
                 email,
                 "http://charles.com/dummy_photo.jpg",
                 [],
+                [],
                 false,
                 LocalDateTime.now()
         )
@@ -97,6 +98,7 @@ class TestUtils {
                 "charles",
                 emailRoot,
                 "http://charles.com/dummy_photo.jpg",
+                [],
                 [],
                 true,
                 LocalDateTime.now()
@@ -175,5 +177,21 @@ class TestUtils {
 
         def jsonNode = new ObjectMapper().valueToTree(nodePart)
         return new KeyValueRule("8c6e4281-ae17-415c-b904-e5514aff6bc1", jsonNode, cirleId)
+    }
+
+    static Workspace getWorkspaceWithoutMatcher() {
+        new Workspace(
+                TestUtils.workspaceId,
+                "Charles",
+                TestUtils.user,
+                LocalDateTime.now(),
+                [],
+                WorkspaceStatusEnum.COMPLETE,
+                "abb3448d8-4421-4aba-99a9-184bdabe3we1",
+                null,
+                "aa3448d8-4421-4aba-99a9-184bdabe3046",
+                "cc3448d8-4421-4aba-99a9-184bdabeq233",
+                null
+        )
     }
 }

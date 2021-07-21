@@ -127,7 +127,7 @@ const Scopes = ({ mode }: Props) => {
       <Text.h2 color="light">Scopes</Text.h2>
       <Styled.Content>
         <Styled.Description>
-          <Text.h5 color="dark">
+          <Text.h5 color="dark" data-testid="scope-doc">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
             <DocumentationLink

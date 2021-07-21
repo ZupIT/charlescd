@@ -118,6 +118,10 @@ class JdbcDeploymentRepository(
         return findActiveDeploymentsByCircleIdAndWorkspaceId(circleId, workspaceId)
     }
 
+    override fun existActiveListByWorkspaceId(workspaceId: String): Boolean {
+        return checkIfActiveDeploymentsByWorkspaceIdExists(workspaceId)
+    }
+
     private fun deleteDeploymentsByCircleId(circleId: String) {
         val statement = "DELETE FROM deployments WHERE deployments.circle_id = ?"
 
@@ -256,6 +260,35 @@ class JdbcDeploymentRepository(
             arrayOf(workspaceId, circleId),
             deploymentExtractor
         )?.toList() ?: emptyList()
+    }
+
+    private fun checkIfActiveDeploymentsByWorkspaceIdExists(workspaceId: String): Boolean {
+
+        val baseCountStatement = StringBuilder(
+            """
+                SELECT COUNT(*)
+                FROM deployments
+                WHERE 1 = 1
+            """
+        )
+        val statement = StringBuilder(baseCountStatement)
+            .appendln("AND deployments.workspace_id = ?")
+            .appendln("AND deployments.status not in ('NOT_DEPLOYED','DEPLOY_FAILED')")
+
+        val count = this.jdbcTemplate.queryForObject(
+            statement.toString(),
+            createParametersArray(workspaceId)
+        ) { resultSet, _ ->
+            resultSet.getInt(1)
+        }
+
+        return count != null && count >= 1
+    }
+
+    private fun createParametersArray(param: String?): Array<Any> {
+        val parameters = ArrayList<Any>()
+        param?.let { parameters.add("$param") }
+        return parameters.toTypedArray()
     }
 
     override fun countBetweenTodayAndDaysPastGroupingByStatus(

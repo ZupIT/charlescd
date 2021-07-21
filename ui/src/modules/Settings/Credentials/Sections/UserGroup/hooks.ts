@@ -14,15 +14,53 @@
  * limitations under the License.
  */
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { create, detach, findByName, findAll } from 'core/providers/userGroup';
 import { findAll as findAllRoles } from 'core/providers/roles';
 import { addConfig } from 'core/providers/workspace';
-import { useFetch, FetchProps, useFetchData } from 'core/providers/base/hooks';
+import { useFetch, FetchProps, useFetchData, FetchStatuses } from 'core/providers/base/hooks';
 import { toogleNotification } from 'core/components/Notification/state/actions';
 import { useDispatch } from 'core/state/hooks';
 import { UserGroup, GroupRoles, Role } from './interfaces';
 import { ALREADY_ASSOCIATED_MESSAGE, ALREADY_ASSOCIATED_CODE } from './constants';
+
+type DeleteUserGroup = {
+  remove: (id: string, groupId: string) => Promise<Response>;
+  status: FetchStatuses;
+}
+export const useDeleteUserGroup = (): DeleteUserGroup => {
+  const detachUserGroup = useFetchData<Response>(detach);
+  const [status, setStatus] = useState<FetchStatuses>("idle");
+  const dispatch = useDispatch();
+
+  const remove = async (id: string, groupId: string) => {
+    try {
+      setStatus("pending");
+      const res = await detachUserGroup(id, groupId);
+      setStatus("resolved");
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting user group',
+          status: 'success'
+        })
+      );
+      return res;
+    } catch (e) {
+      setStatus("rejected");
+      dispatch(
+        toogleNotification({
+          text: `[${e.status}] User Group could not be removed.`,
+          status: 'error'
+        })
+      );
+    }
+  }
+
+  return {
+    remove,
+    status
+  }
+}
 
 export const useUserGroup = (): FetchProps => {
   const dispatch = useDispatch();
@@ -112,6 +150,17 @@ export const useUserGroup = (): FetchProps => {
       );
     }
   }, [errorRemove, dispatch]);
+
+  useEffect(() => {
+    if (responseRemove) {
+      dispatch(
+        toogleNotification({
+          text: 'Success deleting user group',
+          status: 'success'
+        })
+      );
+    }
+  }, [responseRemove, dispatch]);
 
   return {
     getAll,

@@ -31,18 +31,19 @@ import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { useDatasource } from './Sections/MetricProvider/hooks';
 import { Datasource } from './Sections/MetricProvider/interfaces';
-import { Workspace } from 'modules/Workspaces/interfaces/Workspace';
+import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
   onClickHelp?: (status: boolean) => void;
-  workspace: Workspace;
+  onChangeWorkspace: () => void;
 }
 
 type FormState = {
   name: string;
 }
 
-const Credentials = ({ workspace, onClickHelp }: Props) => {
+const Credentials = ({ onChangeWorkspace, onClickHelp }: Props) => {
+  const { item: workspace } = useGlobalState(({ workspaces }) => workspaces);
   const id = getWorkspaceId();
   const [form, setForm] = useState<string>('');
   const { updateWorkspaceName } = useWorkspaceUpdateName();
@@ -58,7 +59,7 @@ const Credentials = ({ workspace, onClickHelp }: Props) => {
   const { register, handleSubmit, errors } = useForm<FormState>({
     mode: 'onChange'
   });
-  
+
   const handleSaveClick = ({ name }: Record<string, string>) => {
     updateWorkspaceName(name);
   };
@@ -122,16 +123,19 @@ const Credentials = ({ workspace, onClickHelp }: Props) => {
       <Section.Registry
         form={form}
         setForm={setForm}
+        onChange={onChangeWorkspace}
         data={workspace?.registryConfiguration}
       />
       <Section.DeploymentConfiguration
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.deploymentConfiguration}
       />
       <Section.CircleMatcher
         form={form}
         setForm={setForm}
+        onChange={onChangeWorkspace}
         data={workspace.circleMatcherUrl}
       />
       <Section.MetricProvider
@@ -151,11 +155,13 @@ const Credentials = ({ workspace, onClickHelp }: Props) => {
       <Section.Webhook
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.webhookConfiguration}
       />
       <Section.UserGroup
         form={form}
         setForm={setForm}
+        onSave={onChangeWorkspace}
         data={workspace.userGroups}
       />
     </TabPanel>

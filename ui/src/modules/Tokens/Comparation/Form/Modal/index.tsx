@@ -20,15 +20,17 @@ import InputAction from 'core/components/Form/InputAction';
 import { copyToClipboard } from 'core/utils/clipboard';
 import Styled from './styled';
 import Icon from 'core/components/Icon';
+import LabeledIcon from 'core/components/LabeledIcon';
 
 interface Props {
   title: string;
+  tokenName: string;
   description: string;
   token: string;
   onClose?: () => void;
 }
 
-const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
+const ModalCopyToken = ({ title, tokenName, description, token, onClose }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
   const TIMEOUT_COPIED = 1500;
 
@@ -38,7 +40,7 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
   };
 
   useEffect(() => {
-    let timeout = 0;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isCopied) {
       timeout = setTimeout(() => {
         setIsCopied(false);
@@ -50,10 +52,13 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
 
   return (
     <Styled.Modal onClose={onClose}>
-      <Text.h2 weight="bold" color="light">
+      <Text.h2 weight="bold" color="light" data-testid="modal-token-title">
         {title}
       </Text.h2>
-      <Text.h5 color="dark">
+      <LabeledIcon icon='token'>
+        {tokenName}
+      </LabeledIcon>
+      <Text.h5 color="dark" data-testid="modal-token-subtitle">
         {description}
       </Text.h5>
       <InputAction
@@ -66,9 +71,9 @@ const ModalCopyToken = ({ title, description, token, onClose }: Props) => {
       />
       <Styled.Warning>
         <Icon name="warning" color="warning" />
-        <Text.h5 color="dark">
-          Make sure you copy the above token now.
-          We don't store it and you will not be able to see it again.
+        <Text.h5 color="dark" id="modal-token-warning">
+          Make sure you copy the above token now. We don't store it and you will
+          not be able to see it again.
         </Text.h5>
       </Styled.Warning>
     </Styled.Modal>

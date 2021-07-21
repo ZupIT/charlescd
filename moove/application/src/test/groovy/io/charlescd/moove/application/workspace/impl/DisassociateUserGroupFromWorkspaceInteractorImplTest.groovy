@@ -139,7 +139,7 @@ class DisassociateUserGroupFromWorkspaceInteractorImplTest extends Specification
     }
 
     private User getDummyUser(String memberId) {
-        new User(memberId, "user-name", "user-photo", "user-email", [], false, LocalDateTime.now())
+        new User(memberId, "user-name", "user-photo", "user-email", [], [], false, LocalDateTime.now())
     }
 
     private Workspace getDummyWorkspace(String workspaceId, User author, List<UserGroup> userGroupList) {

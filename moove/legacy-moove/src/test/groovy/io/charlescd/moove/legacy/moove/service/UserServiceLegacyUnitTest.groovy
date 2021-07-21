@@ -63,6 +63,23 @@ class UserServiceLegacyUnitTest extends Specification {
         thrown(BusinessExceptionLegacy)
     }
 
+    void "should delete a user successfully"() {
+        given:
+        def userId = "1"
+        def user = new User(userId, "User", "user@zup.com.br", "http://teste.com", true, null, LocalDateTime.now())
+        when:
+        this.userServiceLegacy.delete(userId, authorization)
+
+        then:
+        1 * this.userRepository.findById(userId) >> Optional.of(user)
+        1 * this.keycloakServiceLegacy.getEmailByAuthorizationToken(authorization) >> user.email
+        1 * this.userRepository.findByEmail(user.email) >> Optional.of(user)
+        1 * this.userRepository.delete(user)
+        1 * this.userRepository.deleteFromUserGroupById(user.id)
+        1 * this.keycloakServiceLegacy.deleteUserByEmail(user.email)
+        notThrown()
+    }
+
     static String getAuthorization() {
         return "Bearer eydGF0ZSI6ImE4OTZmOGFhLTIwZDUtNDI5Ny04YzM2LTdhZWJmZ_qq3"
     }

@@ -37,7 +37,6 @@
         <compiler-plugin.version>3.8.0</compiler-plugin.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <velocity.version>1.7</velocity.version>
-        <velocity.tools.version>2.0</velocity.tools.version>
         <apache.lang3.version>3.8.1</apache.lang3.version>
         <aspectj.version>1.9.2</aspectj.version>
         <logback.version>1.1.7</logback.version>
@@ -115,17 +114,6 @@
             <groupId>org.jooq</groupId>
             <artifactId>jooq-test</artifactId>
             <version>3.12.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>${velocity.tools.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>antlr</artifactId>
-                    <groupId>antlr</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

@@ -30,6 +30,7 @@ import { FIRST, ONE } from './constants';
 import Styled from './styled';
 import Dropdown from 'core/components/Dropdown';
 import { copyToClipboard } from 'core/utils/clipboard';
+import { hasPermission } from 'core/utils/auth';
 
 interface Props {
   module: Module;
@@ -49,13 +50,22 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
 
   const renderAction = (component: Component, index: number) => (
     <Styled.Dropdown color="light">
+      <Can I="write" a="modules" passThrough>
+        <Dropdown.Item
+          icon="edit"
+          name="Edit"
+          onClick={() => onSelectComponent(component)}
+        />
+      </Can>
       {(index !== FIRST || module.components.length > ONE)
         && (
-          <Dropdown.Item
-            icon="delete"
-            name="Delete"
-            onClick={() => removeComponent(module?.id, component?.id)}
-          />
+          <Can I="write" a="modules" passThrough>
+            <Dropdown.Item
+              icon="delete"
+              name="Delete"
+              onClick={() => removeComponent(module?.id, component?.id)}
+            />
+          </Can>
         )
       }
       <Dropdown.Item
@@ -113,7 +123,7 @@ const ViewModule = ({ module, onChange, onSelectComponent }: Props) => {
               isLoading={loading}
               description={component?.name}
               actions={renderAction(component, index)}
-              onClick={() => onSelectComponent(component)}
+              onClick={() => hasPermission('modules_write') && onSelectComponent(component)}
             >
               <Styled.Component.Wrapper>
                 <Styled.Component.Info>
