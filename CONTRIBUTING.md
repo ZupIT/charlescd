@@ -10,6 +10,8 @@ CharlesCD is licensed over [ASL - Apache License](https://github.com/ZupIT/charl
 
 All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org). When committing use the ```-s ``` option to include the Signed-off-by line at the end of the commit log message. At root of this repository it was included the DCO text verbatim in the [dco.txt](https://github.com/ZupIT/charlescd/blob/main/dco.txt) file.
 
+All contributions should use [GPG commit signature verification](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification) . When committing use the ```-S ``` option to include the signing. To sign commits using GPG and have those commits verified on GitHub, follow steps describe [here](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification).
+
 ### Tests aren’t optional
 We strongly encourage you write tests before the implementation:
 * Any bugfix that doesn’t include a test proving the existence of the bug being fixed, will be returned to sender.
