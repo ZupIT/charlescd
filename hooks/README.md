@@ -12,7 +12,8 @@ to verify if the changed files in commit have license header appropriately.
 
 ## Pre-Push
 
-This hook runs during ```git push```, after the remote refs have been updated but before any objects have been transferred. 
+This hook runs during ```git push```, after the remote refs have been updated but before any objects have been transferred. In CharlesCD is used
+to verify if the commits to push have DCO Sign Off.
 
 
 # Configuration
