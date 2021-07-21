@@ -81,11 +81,11 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 
 func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.FullMessageResponse, errors.Error) {
 	var msgList []Message
-	var msgIds []string
+	var msgsIds []string
 	for _, r := range messagesRequest {
 		msg := requestToEntity(r)
 		msgList = append(msgList, msg)
-		msgIds = append(msgIds, msg.ID.String())
+		msgsIds = append(msgsIds, msg.ID.String())
 	}
 
 	result := main.db.Model(&Message{}).Create(&msgList)
@@ -94,14 +94,14 @@ func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.FullMes
 			WithOperations("Publish.Result")
 	}
 
-	return main.findByMessagesId(msgIds)
+	return main.findByMessagesIds(msgsIds)
 }
 
-func (main Main) findByMessagesId(messageIds []string) ([]payloads.FullMessageResponse, errors.Error) {
+func (main Main) findByMessagesIds(messagesIds []string) ([]payloads.FullMessageResponse, errors.Error) {
 	var response []payloads.FullMessageResponse
 
 	result := main.db.Model(&Message{}).
-		Where("id IN ?", messageIds).Limit(messageResponseSizeLimit).
+		Where("id IN ?", messagesIds).Limit(messageResponseSizeLimit).
 		Scan(&response)
 	if result.Error != nil {
 		return []payloads.FullMessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
