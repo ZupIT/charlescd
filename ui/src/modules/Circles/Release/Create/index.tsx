@@ -160,7 +160,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             !formState.isValid
           }
         >
-          Deploy!!
+          Deploy
         </Styled.Submit>
       </Styled.Form>
     </FormProvider>
