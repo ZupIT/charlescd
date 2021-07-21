@@ -14,7 +14,7 @@ do
 	echo "Branch deleted. Do nothing'"
     	  exit 0
 	else
-		if [ "$remote_sha" = $z40 ]
+		if [ "$remote_sha" = $DUMMY_BASH ]
 		then
 			echo "New branch, examine all commits'"
 			RANGE="$local_sha"
