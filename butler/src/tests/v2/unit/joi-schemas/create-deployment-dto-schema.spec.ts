@@ -204,6 +204,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     ],
     authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
     callbackUrl: UrlConstants.deploymentCallbackUrl,
+    overrideCircle: false
   }
   const validator = new CreateDeploymentValidator(params)
   const validatorResult = validator.validate()
