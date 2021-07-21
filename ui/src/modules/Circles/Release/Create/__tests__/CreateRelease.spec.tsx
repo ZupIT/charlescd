@@ -177,3 +177,12 @@ test('should disable button on deploy', async () => {
 
   expect(screen.getByTestId('button-default-submit')).toBeDisabled();
 });
+
+test('should check button deploy', async () => {
+  render(
+    <CreateRelease circleId="123" onDeployed={() => { }} />
+  );
+
+  await waitFor(() => 
+    expect(screen.getByTestId('button-default-submit')).toHaveTextContent('Deploy'));
+});
