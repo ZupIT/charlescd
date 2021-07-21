@@ -19,7 +19,7 @@ do
 			echo "New branch, examine all commits'"
 			RANGE="$local_sha"
 		else
-			echo "Update to existing branch, examine new commits'"
+			echo "Existing branch, examine new commits'"
 			RANGE="$remote_sha..$local_sha"
 		fi
 
@@ -29,7 +29,7 @@ do
 
 		if [ -n "$NOT_SIGNED_OFF" ]
 		then
-			echo >&2 "ERROR: Found commits do not have DCO Signoff in $local_ref, not pushing."
+			echo >&2 "ERROR: Found commits do not have DCO Sign Off in $local_ref, not pushing."
 			exit 1
 		fi
 	fi
