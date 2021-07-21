@@ -14,14 +14,7 @@ do
 	echo "Branch deleted. Do nothing'"
     	  exit 0
 	else
-		if [ "$remote_sha" = $DUMMY_BASH ]
-		then
-			echo "New branch, examine all commits'"
-			RANGE="$local_sha"
-		else
-			echo "Existing branch, examine new commits'"
-			RANGE="$remote_sha..$local_sha"
-		fi
+		RANGE="$remote_sha..$local_sha"
 
 		echo "Verifing DCO signoff in commits'"
 		SIGNED_OFF=$(git rev-list --no-merges --author "$AUTHOR" --grep "^Signed-off-by: " "$RANGE")
