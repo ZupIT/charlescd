@@ -3,7 +3,7 @@
 :wave:Welcome! Please read the following sections to learn how to ask questions and how to work on something.
 
 ## Before you contribute
-### Legal
+
 ### Legal
 As you contribute, keep in mind that the code, docs and other materials submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
 
@@ -79,6 +79,6 @@ Ask any question about CharlesCD in our [mailing list](https://groups.google.com
 
 Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
-Keep evolving
+Keep evolving.
 
 **CharlesCD team**
