@@ -57,7 +57,7 @@ CharlesCD has many modules. The environment settings are different between them.
 4. Configure the environment(s) for module(s) that you are collaborating
 5. Create a branch: ```git checkout -b your_branch source_branch ```
 6. Test, code, test again and repeat.
-7. Commit your changes: ```git commit -s -m "My wonderful new evolution" ``` (don’t forget the ```-s ``` flag)
+7. Commit your changes: ```git commit -s -S -m "My wonderful new evolution" ``` (don’t forget the ```-s ``` flag)
 9. Rebase from original repo: ```git pull --rebase upstream source_branch ```
 8. Push your commit to get it back up to your fork: ```git push origin your_branch ```
 
