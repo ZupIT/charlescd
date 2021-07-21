@@ -4,11 +4,14 @@
 
 ## Before you contribute
 ### Legal
+### Legal
 As you contribute, keep in mind that the code, docs and other materials submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
 
 CharlesCD is licensed over [ASL - Apache License](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header, please check [here](https://www.apache.org/licenses/LICENSE-2.0).
+Config pre-commit githook in your local machine to help you to not commit files without license header. Please check [here](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
 
 All contributions are subject to the [Developer Certificate of Origin (DCO)](https://developercertificate.org). When committing use the ```-s ``` option to include the Signed-off-by line at the end of the commit log message. At root of this repository it was included the DCO text verbatim in the [dco.txt](https://github.com/ZupIT/charlescd/blob/main/dco.txt) file.
+Config pre-push githook in your local machine to help you to not push without DCO Sign Off. Please check [here](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
 
 ### Tests aren’t optional
 We strongly encourage you write tests before the implementation:
@@ -76,6 +79,6 @@ Ask any question about CharlesCD in our [mailing list](https://groups.google.com
 
 Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
-Keep evolving.
+Keep evolving
 
 **CharlesCD team**

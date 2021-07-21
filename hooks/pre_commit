@@ -7,7 +7,7 @@ YEAR=$(date +'%Y')
 
 FILES_WITHOUT_HEADER=()
 
-echo "Getting changed files'"
+echo "Getting changed files"
 
 CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR -- '*.ts' '*.go' '*.groovy' '*.java' '*.tsx' '*.kt' | sed 's| |\\ |g')
 
