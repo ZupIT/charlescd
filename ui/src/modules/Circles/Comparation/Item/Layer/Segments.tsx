@@ -96,6 +96,7 @@ const LayerSegments = ({
     ) : (
       <ButtonIconRounded
         name="add"
+        icon="add"
         color="dark"
         onClick={onClickCreate}
         isDisabled={!circle?.name}
