@@ -43,7 +43,6 @@ type Main struct {
 	executionMain messageexecutionhistory.UseCases
 }
 
-
 func NewMain(db *gorm.DB, amqpClient *rabbitclient.Client, executionMain messageexecutionhistory.UseCases) UseCases {
 	return Main{db, amqpClient, executionMain}
 }
