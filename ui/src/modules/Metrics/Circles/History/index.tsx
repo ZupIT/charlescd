@@ -15,7 +15,7 @@
  */
 
 import React, { useRef, useState, useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import Text from 'core/components/Text';
 import Styled from './styled';
 import CircleRow from './CircleRow';
@@ -58,22 +58,21 @@ const HistoryComponent = () => {
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Circles</Text.h5>
+            <Text tag="H5" color="dark">Circles</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Last update</Text.h5>
+            <Text tag="H5" color="dark">Last update</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Life time</Text.h5>
+            <Text tag="H5" color="dark">Life time</Text>
           </Styled.TableColumn>
         </Styled.TableHead>
         <Styled.CircleRowWrapper>
           <InfiniteScroll
-            dataLength={circles.length}
-            next={loadMore}
             hasMore={hasMoreData}
+            loadMore={loadMore}
+            isLoading={loading}
             loader={<Loader.History />}
-            height={500}
           >
             {circles?.map(circle => (
               <CircleRow circle={circle} key={circle.id} />

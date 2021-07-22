@@ -19,7 +19,7 @@ import {
   Input as InputComponent,
   Select as SelectComponent
 } from 'core/components/Form';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Icon from 'core/components/Icon';
 import {
   RULE_SIZE,
@@ -150,7 +150,7 @@ interface CheckBoxProps {
   isClause?: boolean;
   hasGroup?: boolean;
 }
-const Operator = styled(Button.Default)<CheckBoxProps>`
+const Operator = styled(ButtonDefault)<CheckBoxProps>`
   position: absolute;
   width: 53px;
   display: ${({ hasGroup }) => (hasGroup ? 'flex' : 'none')};
@@ -186,7 +186,7 @@ const Select = styled(SelectComponent.Single)`
   margin: 0 40px;
 `;
 
-const ClauseButton = styled(Button.Default)`
+const ClauseButton = styled(ButtonDefault)`
   display: flex;
   align-items: center;
   border: 1px solid #fff;
@@ -199,7 +199,7 @@ const ClauseButton = styled(Button.Default)`
   }
 `;
 
-const SubmitButton = styled(Button.Default)`
+const SubmitButton = styled(ButtonDefault)`
   margin-top: 40px;
 `;
 

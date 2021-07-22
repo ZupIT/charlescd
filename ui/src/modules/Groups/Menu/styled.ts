@@ -18,9 +18,9 @@ import styled from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
 import IconComponent from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
 import LoaderMenuComponent from './Loaders';
 
@@ -35,7 +35,7 @@ const ListItem = styled(LabeledIcon)`
   display: flex;
 `;
 
-const Item = styled(ComponentText.h4)`
+const Item = styled(Text)`
   text-overflow: ellipsis;
   overflow: hidden;
   width: 240px;
@@ -70,7 +70,7 @@ const Link = styled('button')<LinkProps>`
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   border: none;
   background-color: transparent;
   padding: 0;
@@ -86,11 +86,11 @@ const ModalInput = styled(Form.Input)`
   }
 `;
 
-const ModalTitle = styled(ComponentText.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 90px;
   height: 40px;
   margin-top: 20px;

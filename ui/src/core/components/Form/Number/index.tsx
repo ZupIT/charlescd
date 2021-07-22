@@ -18,7 +18,7 @@ import React, { KeyboardEvent, useImperativeHandle, useRef } from 'react';
 import { isIntoMax, isNumber } from './helper';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   name: string;
   label?: string;
   max?: number;

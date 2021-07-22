@@ -47,9 +47,9 @@ const InputFile = React.forwardRef(
       <Styled.Wrapper>
         <Styled.InputWrapper>
           <label htmlFor={`${id}-${name}`} title={file?.name}>
-            <Text.h5 align="center" weight="bold" color="dark">
+            <Text tag="H5" align="center" weight="bold" color="dark">
               {file ? `${file.name}` : 'Choose file'}
-            </Text.h5>
+            </Text>
             {!file && <Icon name="upload" color="dark" />}
           </label>
           <Styled.InputFile

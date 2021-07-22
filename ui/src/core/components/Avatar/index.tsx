@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import uppercase from 'lodash/upperCase';
-import first from 'lodash/first';
-import { Profile } from 'modules/Users/interfaces/User';
 import Styled from './styled';
+import { getInitials } from './helper';
 
 export interface Props {
-  size?: string;
-  profile: Profile;
+  name: string;
+  size?: number;
 }
 
-const Avatar = ({ size, profile }: Props) => (
-  <Styled.Wrapper>
-    <Styled.Avatar.WithoutPhoto data-testid="avatar" size={size}>
-      {uppercase(first(profile.name))}
-    </Styled.Avatar.WithoutPhoto>
-  </Styled.Wrapper>
+const Avatar = ({ name, size = 40 }: Props) => (
+  <Styled.Avatar data-testid="avatar">
+    <Styled.Initials data-testid="avatar-initials" size={size}>
+      {getInitials(name)}
+    </Styled.Initials>
+  </Styled.Avatar>
 );
 
 export default Avatar;

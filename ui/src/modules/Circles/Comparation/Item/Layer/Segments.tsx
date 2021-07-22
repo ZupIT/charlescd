@@ -20,7 +20,7 @@ import Text from 'core/components/Text';
 import Segments from 'modules/Circles/Segments';
 import { Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
-import ButtonIconRounded from 'core/components/Button/Rounded';
+import ButtonIconRounded from 'core/components/Button/ButtonRounded';
 import { CirclePercentagePagination } from 'modules/Circles/interfaces/CirclesPagination';
 import { SECTIONS } from '../enums';
 import CirclePercentageList from '../Percentage/CirclePercentageList';
@@ -51,9 +51,9 @@ const renderPercentage = (
       {!circle.deployment && (
         <Styled.WarningPercentageContainer>
           <Icon name="alert" color="warning" />
-          <Text.h4 color="warning">
+          <Text tag="H4" color="warning">
             The percentage will be activated only when the circle is active.
-          </Text.h4>
+          </Text>
         </Styled.WarningPercentageContainer>
       )}
       <CirclePercentageList responseGetCircles={percentageCircles} />
@@ -108,7 +108,7 @@ const LayerSegments = ({
   return (
     <Styled.Layer>
       <ContentIcon icon="segments">
-        <Text.h2 color="light">Segments</Text.h2>
+        <Text tag="H2" color="light">Segments</Text>
       </ContentIcon>
       <Styled.Content>{renderContent()}</Styled.Content>
     </Styled.Layer>

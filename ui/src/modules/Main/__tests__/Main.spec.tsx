@@ -25,7 +25,6 @@ import Main, {
   Users,
   Groups,
   Account,
-  Hypotheses,
   Circles,
   Modules,
   Settings,
@@ -100,7 +99,6 @@ test('lazy loading', async () => {
       <Users />
       <Groups />
       <Account />
-      <Hypotheses />
       <Circles />
       <Modules />
       <Settings />

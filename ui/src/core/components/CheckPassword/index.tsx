@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import CheckPassword from './CheckPassword';
+import CheckPassword, { Props } from './CheckPassword';
 import { validationResolver } from './validationResolver';
 
+export type { Props };
 export { validationResolver };
 export default CheckPassword;

@@ -84,5 +84,5 @@ const PopperContainer = styled.div`
 export default {
   Wrapper,
   Dropdown,
-  PopperContainer
+  PopperContainer,
 };

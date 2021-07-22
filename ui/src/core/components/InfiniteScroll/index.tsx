@@ -15,10 +15,10 @@
  */
 
 import useInfiniteScroll from 'core/hooks/useInfiniteScroll';
-import React, { useEffect, ReactNode, Children } from 'react';
+import { useEffect, ReactNode, Children } from 'react';
 import Styled from './styled';
 
-type Props = {
+export type Props = {
   children: ReactNode;
   loader: ReactNode;
   hasMore: boolean;

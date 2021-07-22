@@ -73,3 +73,13 @@ export const urlPattern = () => ({
 
 export const atLeastOne = (values: string[]) =>
   values?.length ? true : 'At least one must be checked';
+
+export const validJSON = (value: string) => {
+  try {
+    JSON.parse(value);
+  
+    return true;
+  } catch(e) {
+    return 'Enter a valid json';
+  }
+}
