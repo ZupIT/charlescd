@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 
 const Header = styled.div`
   height: 41px;
@@ -58,7 +58,7 @@ const Title = styled.div`
   }
 `;
 
-const Text = styled(ComponentText.h5)`
+const TabPanelText = styled(Text)`
   width: 150px;
   overflow: hidden;
   white-space: nowrap;
@@ -84,7 +84,7 @@ const Tab = styled.div`
 
 export default {
   Content,
-  Text,
+  TabPanelText,
   Header,
   Panel,
   Tab,

@@ -16,9 +16,10 @@
 
 import styled from 'styled-components';
 import { slideInLeft, fadeIn } from 'core/assets/style/animate';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import IconComponent from 'core/components/Icon';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 import { Input } from 'core/components/Form';
 import ContentIconComponent from 'core/components/ContentIcon';
 
@@ -56,7 +57,7 @@ const InputText = styled(Input)`
   width: 220px;
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   display: flex;
   align-items: center;
   border: 2px solid ${({ theme }) => theme.button.default.outline.border};
@@ -99,7 +100,7 @@ const CardLeftLine = styled.div`
   background: ${({ theme }) => theme.circleMatcher.leftLine.background};
 `;
 
-const ButtonOutlineRounded = styled(ButtonComponent.Rounded)`
+const ButtonOutlineRounded = styled(ButtonComponentRounded)`
   border: 1px solid ${({ theme }) => theme.button.default.outline.border};
   color: ${({ theme }) => theme.button.default.outline.color};
   padding: 9.5px 18.5px;
@@ -109,7 +110,7 @@ const ButtonOutlineRounded = styled(ButtonComponent.Rounded)`
   justify-content: center;
 
   span {
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 `;
 

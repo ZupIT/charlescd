@@ -15,7 +15,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import ContentIcon from 'core/components/ContentIcon';
 import Layer from 'core/components/Layer';
 import Text from 'core/components/Text';
@@ -41,18 +41,18 @@ const Section = ({
   type
 }: Props) => {
   const renderAction = () => (
-    <Button.Rounded name="add" icon="add" color="dark" onClick={action}>
+    <ButtonRounded name="add" icon="add" color="dark" onClick={action}>
       {`Add ${name}`}
-    </Button.Rounded>
+    </ButtonRounded>
   );
 
   return (
     <Layer data-testid={id ? `section-${id}` : ''}>
       <ContentIcon icon={icon}>
-        <Text.h2 color="light">{name}</Text.h2>
+        <Text tag="H2" color="light">{name}</Text>
       </ContentIcon>
       <Styled.Type data-testid={`configuration-type-${type}`}>
-        <Text.h5 color="dark">{type}</Text.h5>
+        <Text tag="H5" color="dark">{type}</Text>
       </Styled.Type>
       <Styled.Content>
         {showAction && renderAction()}

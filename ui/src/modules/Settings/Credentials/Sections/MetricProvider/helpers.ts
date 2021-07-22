@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import map from 'lodash/map';
 import { Option } from 'core/components/Form/Select/interfaces';
 import { Plugin } from './interfaces';
 

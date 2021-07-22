@@ -63,7 +63,7 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
           {errors.name && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.name.message}</Text.h6>
+              <Text tag="H6" color="error">{errors.name.message}</Text>
             </Styled.FieldErrorWrapper>
           )}
         </form>
