@@ -18,7 +18,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import NewDropDown from 'core/components/Dropdown/NewDropDown';
+import DropDown from 'core/components/Dropdown';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 import { Metric, MetricsGroup } from '../types';
@@ -35,7 +35,7 @@ const MetricCard = ({
   metric,
   metricGroup,
   handleDeleteMetric,
-  handleEditMetric
+  handleEditMetric,
 }: Props) => {
   const thresholdStatus = getThresholdStatus(metric.execution.status);
 
@@ -43,7 +43,7 @@ const MetricCard = ({
     const textByCondition = {
       EQUAL: 'Equal:',
       GREATER_THAN: 'Greater than:',
-      LOWER_THAN: 'Lower than:'
+      LOWER_THAN: 'Lower than:',
     } as Record<string, string>;
 
     return textByCondition[condition] ?? 'Not configured';
@@ -55,6 +55,7 @@ const MetricCard = ({
       data-testid={`metric-group-card-${metric.nickname}`}
     >
       <Styled.MetricNickname
+        tag="H5"
         color="light"
         title={metric.nickname}
         data-testid={`${metric.nickname}-nickname`}
@@ -62,15 +63,16 @@ const MetricCard = ({
         {metric.nickname}
       </Styled.MetricNickname>
       <Styled.MetricConditionThreshold>
-        <Text.h5
+        <Text
+          tag="H5"
           color="dark"
           data-testid={`${metric.nickname}-threshold-condition`}
         >
           {getMetricCondition(metric.condition)}
-        </Text.h5>
-        <Text.h5 color="light" title={metric.threshold.toString()}>
+        </Text>
+        <Text tag="H5" color="light" title={metric.threshold.toString()}>
           {metric.threshold !== 0 && metric.threshold}
-        </Text.h5>
+        </Text>
       </Styled.MetricConditionThreshold>
       <Styled.MetricLastValue
         color={thresholdStatus.color}
@@ -83,6 +85,7 @@ const MetricCard = ({
           data-for={`thresholdTooltip-${metric.id}`}
         />
         <Styled.MetricLastValueText
+          tag="H5"
           color="light"
           title={metric.execution.lastValue.toString()}
         >
@@ -95,18 +98,18 @@ const MetricCard = ({
         )}
       </Styled.MetricLastValue>
       <Styled.MetricDropdown>
-        <NewDropDown icon="vertical-dots" size="16px">
-          <NewDropDown.Item
+        <DropDown icon="vertical-dots" size="16px">
+          <DropDown.Item
             icon="edit"
             name="Edit metric"
             onClick={() => handleEditMetric(metric, metricGroup)}
           />
-          <NewDropDown.Item
+          <DropDown.Item
             icon="delete"
             name="Delete"
             onClick={() => handleDeleteMetric(metricGroup.id, metric.id)}
           />
-        </NewDropDown>
+        </DropDown>
       </Styled.MetricDropdown>
     </Styled.MetricCardBody>
   );

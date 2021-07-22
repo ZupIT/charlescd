@@ -17,6 +17,9 @@
 /dist
 /public/config.js
 
+# storybook
+/storybook-static
+
 # misc
 .DS_Store
 .env.development

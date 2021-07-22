@@ -29,9 +29,9 @@ const Summary = ({ legend, isLoading }: Props) => {
   return (
     <>
       <Styled.ReleaseHistoryHeader>
-        <Text.h2 color="light" weight="bold">
+        <Text tag="H2" color="light" weight="bold">
           Release
-        </Text.h2>
+        </Text>
       </Styled.ReleaseHistoryHeader>
       {isLoading ? (
         <div data-testid="loader-legend">
@@ -40,15 +40,15 @@ const Summary = ({ legend, isLoading }: Props) => {
       ) : (
         <Styled.ReleaseHistoryLegend>
           <Styled.Dot status="deployed" />
-          <Text.h5 color="dark">Deployed: {legend?.deployed}</Text.h5>
+          <Text tag="H5" color="dark">Deployed: {legend?.deployed}</Text>
           <Styled.Dot status="deploying" />
-          <Text.h5 color="dark">Deploying: {legend?.deploying}</Text.h5>
+          <Text tag="H5" color="dark">Deploying: {legend?.deploying}</Text>
           <Styled.Dot status="error" />
-          <Text.h5 color="dark">Error: {legend?.failed}</Text.h5>
+          <Text tag="H5" color="dark">Error: {legend?.failed}</Text>
           <Styled.Dot status="notDeployed" />
-          <Text.h5 color="dark">Undeployed: {legend?.notDeployed}</Text.h5>
+          <Text tag="H5" color="dark">Undeployed: {legend?.notDeployed}</Text>
           <Styled.Dot status="undeploying" />
-          <Text.h5 color="dark">Undeploying: {legend?.undeploying}</Text.h5>
+          <Text tag="H5" color="dark">Undeploying: {legend?.undeploying}</Text>
         </Styled.ReleaseHistoryLegend>
       )}
     </>

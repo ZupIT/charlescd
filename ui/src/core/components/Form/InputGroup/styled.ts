@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 
 const InputGroup = styled.div`
   display: flex;
@@ -33,7 +33,7 @@ const Input = styled.input`
   height: 20px;
   border-radius: 4px;
   border: none;
-  font-size: ${HEADINGS_FONT_SIZE.h5};
+  font-size: ${baseFontSize.H5};
   background-color: ${({ theme }) => theme.input.group.input.background};
   color: ${({ theme }) => theme.input.group.input.color};
 

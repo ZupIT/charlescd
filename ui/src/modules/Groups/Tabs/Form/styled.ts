@@ -15,8 +15,8 @@
  */
 
 import styled from 'styled-components';
-import Button from 'core/components/Button';
-import AvatarName from 'core/components/AvatarName';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
+import Avatar from 'core/components/Avatar';
 
 const LayerTitle = styled.div`
   margin-top: 50px;
@@ -26,7 +26,7 @@ const LayerUsers = styled.div`
   margin-top: 40px;
 `;
 
-const ButtonAdd = styled(Button.Rounded)`
+const ButtonAdd = styled(ButtonRounded)`
   margin-top: 10px;
   margin-bottom: 5px;
 `;
@@ -42,7 +42,7 @@ const UserAvatar = styled.img`
   border-radius: 50%;
 `;
 
-const UserAvatarNoPhoto = styled(AvatarName)`
+const UserAvatarNoPhoto = styled(Avatar)`
   margin: 5px;
 `;
 

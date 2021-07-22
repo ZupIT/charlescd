@@ -26,7 +26,7 @@ type Props = {
 const SummaryItem = ({ name, color, className }: Props) => (
   <Styled.Item className={className} data-testid={`summary-${color}-${name}`}>
     <Styled.Dot color={color} />
-    <Styled.Name color="dark">{name}</Styled.Name>
+    <Styled.Name tag="H5" color="dark">{name}</Styled.Name>
   </Styled.Item>
 );
 
