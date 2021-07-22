@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import map from 'lodash/map';
 import isEmpty from 'lodash/isEmpty';
 import debounce from 'debounce-promise';
 import useForm from 'core/hooks/useForm';
 import Text from 'core/components/Text';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { CHARLES_DOC } from 'core/components/Popover';
 import { Option } from 'core/components/Form/Select/interfaces';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
+import Link from 'core/components/Link';
 import { getWorkspaceId } from 'core/utils/workspace';
 import Loader from './Loader';
 import { useUserGroup, useRole } from './hooks';
@@ -111,13 +112,13 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
   const renderForm = () => (
     <>
       <Styled.Description>
-        <Text.h5 color="dark">
+        <Text tag="H5" color="dark">
           Select permissions for the group selected above.
-        </Text.h5>
-        <Text.h5 color="dark" fontStyle="italic">
+        </Text>
+        <Text tag="H5" color="dark" fontStyle="italic">
           After saving it, you can combine another group of users with different
           permissions.
-        </Text.h5>
+        </Text>
       </Styled.Description>
       {renderRoles()}
     </>
@@ -151,27 +152,24 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
   return (
     <Styled.Content>
       <Styled.Title>
-        <Text.h2 weight="bold" color="light">
+        <Text tag="H2" weight="bold" color="light">
           Add user group
-        </Text.h2>
+        </Text>
       </Styled.Title>
       <Styled.Description>
-        <Text.h4 color="dark" data-testid="user-group-help-text">
+        <Text tag="H4" color="dark" data-testid="user-group-help-text">
           With the user group you have more control over the entire application.
           You can choose which accesses this group will have in this workspace.
           See our{' '}
-          <Styled.DocumentationLink
-            target="_blank"
-            href={`${CHARLES_DOC}/reference/users-group`}
-          >
+          <Link href={`${CHARLES_DOC}/reference/users-group`} >
             documentation
-          </Styled.DocumentationLink>{' '}
+          </Link>{' '}
           for further details.
-        </Text.h4>
+        </Text>
       </Styled.Description>
       {renderFields()}
       {group && renderForm()}
-      <Button.Default
+      <ButtonDefault
         id="save"
         type="submit"
         onClick={onSubmit}
@@ -179,7 +177,7 @@ const FormUserGroup = ({ onFinish }: Props<UserGroup>) => {
         isLoading={loadingSave || loadingAdd}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Content>
   );
 };

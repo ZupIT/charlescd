@@ -72,11 +72,6 @@ const Fields = styled.div`
   align-items: flex-end;
 `;
 
-const DocumentationLink = styled.a`
-  color: ${({ theme }) => theme.text.link};
-  text-decoration: underline;
-`;
-
 export default {
   Content,
   Title,
@@ -84,6 +79,5 @@ export default {
   SelectAsync,
   Fields,
   Roles,
-  Description,
-  DocumentationLink
+  Description
 };

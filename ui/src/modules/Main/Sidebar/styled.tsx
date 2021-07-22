@@ -104,7 +104,7 @@ interface TextProps {
   isActive?: boolean;
 }
 
-const LinkText = styled(Text.h5)<TextProps>`
+const LinkText = styled(Text)<TextProps>`
   color: ${({ isActive, theme }) =>
     isActive ? theme.sidebar.menuTextActive : theme.sidebar.menuText};
 `;

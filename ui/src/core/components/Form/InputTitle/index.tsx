@@ -20,11 +20,11 @@ import React, {
   useImperativeHandle,
   ChangeEvent,
 } from 'react';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   name: string;
   placeholder?: string;
   className?: string;
@@ -87,7 +87,7 @@ const InputTitle = React.forwardRef(
             defaultValue={defaultValue}
           />
           {!isResumed && !readOnly && (
-            <Button.Default
+            <ButtonDefault
               id="input-title"
               type={buttonType}
               size="EXTRA_SMALL"
@@ -95,10 +95,10 @@ const InputTitle = React.forwardRef(
               isDisabled={disabled || isDisabled}
             >
               {buttonText}
-            </Button.Default>
+            </ButtonDefault>
           )}
         </Styled.Field>
-        {error && <Styled.Error color="error">{error}</Styled.Error>}
+        {error && <Styled.Error tag="H6" color="error">{error}</Styled.Error>}
       </Styled.Wrapper>
     );
   }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import Card from '../';
+import CardBase from 'core/components/Card/Base';
+import CardBody from 'core/components/Card/Body';
 
 test('render Card', () => {
   render(
-    <Card.Base>
-      <Card.Body>
-        content
-      </Card.Body>
-    </Card.Base>
+    <CardBase>
+      <CardBody>content</CardBody>
+    </CardBase>
   );
 
   expect(screen.getByText('content')).toBeInTheDocument();

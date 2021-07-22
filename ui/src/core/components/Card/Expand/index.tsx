@@ -27,7 +27,7 @@ export interface Props {
   onClick: () => void;
 }
 
-const CardExpand = ({ onClick, children, className }: Props) => {
+const Expand = ({ onClick, children, className }: Props) => {
   const ref = useRef<HTMLDivElement>();
 
   useOutsideClick(ref, () => onClick());
@@ -37,13 +37,15 @@ const CardExpand = ({ onClick, children, className }: Props) => {
       <Styled.Expand ref={ref} className={className}>
         {children}
       </Styled.Expand>
-      <Styled.Action onClick={onClick} />
+      <Styled.WrapperAction>
+        <Styled.Action onClick={onClick} />
+      </Styled.WrapperAction>
     </Fragment>
   );
 };
 
-CardExpand.Item = ExpandItem;
-CardExpand.Artifact = ExpandArtifact;
-CardExpand.Module = ExpandModule;
+Expand.Item = ExpandItem;
+Expand.Artifact = ExpandArtifact;
+Expand.Module = ExpandModule;
 
-export default CardExpand;
+export default Expand;

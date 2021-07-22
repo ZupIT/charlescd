@@ -19,7 +19,7 @@ import { Control, Controller } from 'react-hook-form';
 import Select from './Select';
 import { Option } from '../interfaces';
 
-interface Props {
+export interface Props {
   name: string;
   control: Control<any>;
   options: Option[];

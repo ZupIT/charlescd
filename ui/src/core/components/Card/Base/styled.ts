@@ -22,6 +22,7 @@ const Card = styled.div`
   flex-direction: column;
   padding: 10px 0px;
   width: 269px;
+  background-color: ${({ color }) => color};
 
   ${({ onClick }) =>
     onClick &&
