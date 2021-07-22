@@ -52,7 +52,7 @@ const Icon = styled(IconComponent)`
   padding-left: 5px;
 `;
 
-const H5 = styled(Text.h5)`
+const MenuText = styled(Text)`
   padding-right: 16px;
 `;
 
@@ -60,7 +60,7 @@ export default {
   Action,
   Actions,
   Content,
-  H5,
+  MenuText,
   Icon,
   Wrapper,
   WrapperIcon

@@ -15,8 +15,8 @@
  */
 
 import styled from 'styled-components';
-import Card from 'core/components/Card';
-import Button from 'core/components/Button';
+import CardConfig from 'core/components/Card/Config';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import Form from 'core/components/Form';
 import ContentIcon from 'core/components/ContentIcon';
 import ComponentDropdown from 'core/components/Dropdown';
@@ -25,7 +25,7 @@ const Layer = styled.div`
   margin: 40px 0;
 `;
 
-const ComponentCard = styled(Card.Config)`
+const ComponentCard = styled(CardConfig)`
   margin-top: 10px;
   margin-bottom: 10px;
 `;
@@ -45,7 +45,7 @@ const ComponentIfon = styled.div`
   }
 `;
 
-const ButtonRounded = styled(Button.Rounded)`
+const ButtonRounded = styled(ButtonComponentRounded)`
   margin: 10px 0px;
 `;
 
@@ -55,7 +55,7 @@ const InputContentIcon = styled(ContentIcon)`
   }
 `;
 
-const FormLink = styled(Form.Link)`
+const FormLink = styled(Form.InputLink)`
   width: 393px;
 `;
 

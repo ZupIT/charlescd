@@ -40,34 +40,34 @@ const ReleaseRow = ({ release }: Props) => {
         data-testid={`release-table-row-${release.id}`}
       >
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.tag}</Text.h5>
+          <Text tag="H5" color="light">{release.tag}</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">
+          <Text tag="H5" color="light">
             {release.circleName ? release.circleName : '-'}
-          </Text.h5>
+          </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">
+          <Text tag="H5" color="light">
             {release.deployedAt ? dateTimeFormatter(release.deployedAt) : '-'}
-          </Text.h5>
+          </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">
+          <Text tag="H5" color="light">
             {release.deployDuration
               ? humanizeDurationFromSeconds(release.deployDuration)
               : '-'}
-          </Text.h5>
+          </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">
+          <Text tag="H5" color="light">
             {release.undeployedAt
               ? dateTimeFormatter(release.undeployedAt)
               : '-'}
-          </Text.h5>
+          </Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="light">{release.authorName}</Text.h5>
+          <Text tag="H5" color="light">{release.authorName}</Text>
         </Styled.TableColumn>
       </Styled.TableRow>
       {activeRow && (

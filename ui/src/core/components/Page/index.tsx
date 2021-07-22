@@ -21,7 +21,7 @@ import Text from '../Text';
 import { PlaceholderCardItems } from './constants';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   children?: ReactNode;
   icon?: string;
   title?: string;
@@ -62,41 +62,46 @@ Page.Placeholder = ({
   hasCards,
   currentPage,
   children,
-  className
+  className,
 }: Props) => {
-
-  return <Styled.Placeholder data-testid="page-placeholder" className={className}>
-            <Icon name={icon} />
-            <Styled.PlaceholderText>
-              {title && (
-                <Text.h1 color="dark" weight="bold" align="center">
-                  {title}
-                </Text.h1>
+  return (
+    <Styled.Placeholder data-testid="page-placeholder" className={className}>
+      <Icon name={icon} />
+      <Styled.PlaceholderText>
+        {title && (
+          <Text tag="H1" color="dark" weight="bold" align="center">
+            {title}
+          </Text>
+        )}
+        {subtitle && (
+          <Text tag="H1" color="dark" weight="bold" align="center">
+            {subtitle}
+          </Text>
+        )}
+      </Styled.PlaceholderText>
+      {hasCards && (
+        <Styled.PlaceholderCardWrapper>
+          {map(PlaceholderCardItems, ({ icon, text, linkTo }: Action) => (
+            <>
+              {!(currentPage === icon) && (
+                <Styled.PlaceholderCard
+                  to={linkTo}
+                  data-testid={icon}
+                  key={icon}
+                >
+                  <Icon name={icon} color="dark" size="15px" />
+                  <Text tag="H4" color="dark" weight="bold">
+                    {text}
+                  </Text>
+                </Styled.PlaceholderCard>
               )}
-              {subtitle && (
-                <Text.h1 color="dark" weight="bold" align="center">
-                  {subtitle}
-                </Text.h1>
-              )}
-            </Styled.PlaceholderText>
-            {hasCards && (
-              <Styled.PlaceholderCardWrapper>
-                {map(PlaceholderCardItems, ({ icon, text, linkTo }: Action) => (
-                  <>
-                    {!(currentPage === icon) && 
-                      <Styled.PlaceholderCard to={linkTo} data-testid={icon} key={icon}>
-                        <Icon name={icon} color="dark" size="15px" />
-                        <Text.h4 color="dark" weight="bold">
-                          {text}
-                        </Text.h4>
-                      </Styled.PlaceholderCard>
-                    }
-                  </>
-                ))}
-              </Styled.PlaceholderCardWrapper>
-            )}
-            {children}
-          </Styled.Placeholder>
+            </>
+          ))}
+        </Styled.PlaceholderCardWrapper>
+      )}
+      {children}
+    </Styled.Placeholder>
+  );
 };
 
 export default Page;

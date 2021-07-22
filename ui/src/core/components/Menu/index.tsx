@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, useState, useRef } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import map from 'lodash/map';
 import Icon from 'core/components/Icon';
 import useOutsideClick from 'core/hooks/useClickOutside';
@@ -67,7 +67,7 @@ const Menu = ({
           )}
           {icon && <Icon name={icon} />}
         </Styled.WrapperIcon>
-        <Styled.H5 color="dark">{label}</Styled.H5>
+        <Styled.MenuText tag="H5" color="dark">{label}</Styled.MenuText>
       </Styled.Action>
     ));
 
