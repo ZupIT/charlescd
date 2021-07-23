@@ -52,7 +52,6 @@ open class UndeployInteractorImpl @Inject constructor(
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         undeploy(authorization, token, deployment, deploymentConfiguration)
         setNotDeployedStatus(deployment)
-        updateStatusInCircleMatcher(deployment.circle, workspace)
     }
 
     private fun getAuthorId(authorization: String?, token: String?): String {
