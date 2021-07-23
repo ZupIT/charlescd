@@ -22,7 +22,7 @@ import ReleaseRow from './ReleaseRow';
 import SummaryRelease from './SummaryRelease';
 import Loader from '../../Loaders/index';
 import { useCirclesReleases } from '../hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import { CircleRelease } from '../interfaces';
 
 type Props = {
@@ -59,7 +59,7 @@ const CircleReleasesTable = ({ circleId }: Props) => {
   const renderEmpetyReleases = () => (
     <Styled.NoReleaseWrapper>
       <Icon name="not-allowed" color="dark" size="16px" />
-      <Text.h5 color="dark">Doesn´t exists any release for this circle</Text.h5>
+      <Text tag="H5" color="dark">Doesn´t exists any release for this circle</Text>
     </Styled.NoReleaseWrapper>
   );
 
@@ -68,27 +68,26 @@ const CircleReleasesTable = ({ circleId }: Props) => {
       <SummaryRelease isLoading={loading} />
       <Styled.TableHead>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Release</Text.h5>
+          <Text tag="H5" color="dark">Release</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Deployed</Text.h5>
+          <Text tag="H5" color="dark">Deployed</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Undeployed</Text.h5>
+          <Text tag="H5" color="dark">Undeployed</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Create date</Text.h5>
+          <Text tag="H5" color="dark">Create date</Text>
         </Styled.TableColumn>
         <Styled.TableColumn>
-          <Text.h5 color="dark">Author</Text.h5>
+          <Text tag="H5" color="dark">Author</Text>
         </Styled.TableColumn>
       </Styled.TableHead>
       <InfiniteScroll
-        dataLength={releases.length}
-        next={loadMore}
         hasMore={hasMoreData}
+        loadMore={loadMore}
+        isLoading={loading}
         loader={<Loader.Releases />}
-        height={300}
       >
         {releases?.map((release, index) => (
           <ReleaseRow release={release} key={index} />

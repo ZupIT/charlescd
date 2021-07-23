@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { getProfileByKey } from 'core/utils/profile';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
@@ -29,12 +28,12 @@ const Placeholder = () => {
         <Icon name="empty-user-groups" />
       </Styled.Wrapper>
       <Styled.Empty>
-        <Text.h1 color="dark" weight="bold" align="center">
+        <Text tag="H1" color="dark" weight="bold" align="center">
           Hello, {profileName}!
-        </Text.h1>
-        <Text.h1 color="dark" weight="bold" align="center">
+        </Text>
+        <Text tag="H1" color="dark" weight="bold" align="center">
           Select or create a workspace in the side menu.
-        </Text.h1>
+        </Text>
       </Styled.Empty>
     </>
   );

@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { components } from 'react-select';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { ReactComponent as DownSVG } from 'core/assets/svg/down.svg';
 import SingleValue from 'core/components/Form/Select/Single/SingleValue';
 import FloatingLabel from 'core/components/Form/Select/FloatingLabel';

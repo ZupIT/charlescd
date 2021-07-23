@@ -160,7 +160,7 @@ export const useFetch = <T>(
 
   useEffect(() => {
     return () => {
-      mounted.current = false
+      mounted.current = false;
     };
   }, []);
 
@@ -200,6 +200,6 @@ export const useFetchStatus = (): FetchStatus => {
     isIdle,
     isPending,
     isResolved,
-    isRejected
+    isRejected,
   };
 };

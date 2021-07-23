@@ -17,7 +17,7 @@
 import { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
 import { useDeleteDatasource } from './hooks';
@@ -61,12 +61,12 @@ const MetricProvider = ({ form, setForm, data, getNewDatasources }: Props) => {
       action={() => setForm(FORM_METRIC_PROVIDER)}
       type="Optional"
     >
-      {map(datasources, datasource => (
-        <Card.Config
+      {map(datasources, (datasource) => (
+        <CardConfig
           key={datasource.id}
           icon="metrics"
           description={datasource.name}
-          isLoading={status === "pending"}
+          isLoading={status === 'pending'}
           onClose={() => handleClose(datasource.id)}
         />
       ))}

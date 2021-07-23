@@ -16,7 +16,7 @@
 
 import React, { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -51,7 +51,7 @@ const SectionGit = ({ form, setForm, data }: Props) => {
       type="Optional"
     >
       {data && !responseRemove && (
-        <Card.Config
+        <CardConfig
           icon="git"
           description={data.name}
           isLoading={loadingRemove}

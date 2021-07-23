@@ -132,7 +132,7 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -141,9 +141,9 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: yarn install
+      - run: npm ci
         working-directory: ./ui
-      - run: yarn build
+      - run: npm run build
         working-directory: ./ui
         env:
           CI: true

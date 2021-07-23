@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen } from 'unit-test/testUtils';
-import userEvent from '@testing-library/user-event';
 import Avatar from '../';
 
 const profile = {
-  size: '10px',
-  profile: {
-    name: 'Charles',
-    email: 'charles@zup.com.br',
-  }
+  size: 10,
+  name: 'Charles',
 }
 
 test('render Avatar with default props', () => {
   render(<Avatar { ...profile } />);
 
   const element = screen.getByTestId('avatar');
-  const avatarInitial = screen.getByText('C');
+  const initials = screen.getByText('C');
 
   expect(element).toHaveStyle(`width: ${profile.size};`);
-  expect(avatarInitial).toBeInTheDocument();
+  expect(initials).toBeInTheDocument();
 });
