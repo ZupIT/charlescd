@@ -48,8 +48,9 @@ func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken
 		}
 
 		var authorization = echoCtx.Request().Header.Get("Authorization")
-
-		createdSystemToken, err := createSystemToken.Execute(authorization, request.RequestToInput())
+		input := request.RequestToInput()
+		input.RemoveDuplicationOnFields()
+		createdSystemToken, err := createSystemToken.Execute(authorization, input)
 		if err != nil {
 			return HandleError(echoCtx, ctx, err)
 		}
