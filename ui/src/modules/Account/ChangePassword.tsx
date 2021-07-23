@@ -16,7 +16,7 @@
 
 import React, { useEffect } from 'react';
 import Text from 'core/components/Text';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { useForm } from 'react-hook-form';
 import { isRequired } from 'core/utils/validations';
 import { validationResolver } from 'core/components/CheckPassword';
@@ -62,8 +62,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
 
   return (
     <Styled.ChangePassword onSubmit={handleSubmit(onSubmitForm)}>
-      <Text.h2 color="light">Change password</Text.h2>
-      <Styled.Modal.Info color="dark">
+      <Text tag="H2" color="light">Change password</Text>
+      <Styled.Modal.Info tag="H5" color="dark">
         Fill in the fields below to change your password:
       </Styled.Modal.Info>
       <Styled.Password
@@ -74,7 +74,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
           required: isRequired()
         })}
       />
-      <Styled.Modal.Info color="dark">
+      <Styled.Modal.Info tag="H5" color="dark">
         Your new password must be at least 10 characters long, uppercase,
         lowercase, numbers and at least one special character.
       </Styled.Modal.Info>
@@ -95,7 +95,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         })}
       />
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
-      <Button.Default
+      <ButtonDefault
         id="change-password"
         type="submit"
         size="EXTRA_SMALL"
@@ -103,7 +103,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         isDisabled={!formState.isValid}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.ChangePassword>
   );
 };

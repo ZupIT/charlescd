@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import Link from 'core/components/Link';
 import { Module } from 'modules/Modules/interfaces/Module';
 import Item from '../Item';

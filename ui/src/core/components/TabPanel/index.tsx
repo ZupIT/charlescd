@@ -19,7 +19,7 @@ import Icon, { Props as IconProps } from 'core/components/Icon';
 import { NEW_TAB } from './constants';
 import Styled from './styled';
 
-interface Props {
+export interface Props extends IconProps {
   title?: string;
   children?: ReactNode;
   actions?: ReactNode;
@@ -34,14 +34,14 @@ const TabPanel = ({
   actions,
   name,
   className,
-  size
-}: Props & IconProps) => (
+  size,
+}: Props) => (
   <Styled.Panel className={className} data-testid={`tabpanel-${title}`}>
     <Styled.Header>
       <Styled.Tab>
         <Styled.Title>
           <Icon name={name} size={size} color="light" />
-          <Styled.Text color="light">{title}</Styled.Text>
+          <Styled.TabPanelText tag="H5" color="light">{title}</Styled.TabPanelText>
         </Styled.Title>
         {onClose && (
           <Icon name="cancel" size="15px" color="dark" onClick={onClose} />

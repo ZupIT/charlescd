@@ -29,7 +29,7 @@ const ExpandItem = ({ icon, children }: Props) => (
     <Styled.Icon>
       <Icon name={icon} color="light" size="15px" />
     </Styled.Icon>
-    <Text.h5 color="light">{children}</Text.h5>
+    <Text tag="H5" color="light">{children}</Text>
   </Styled.Item>
 );
 
