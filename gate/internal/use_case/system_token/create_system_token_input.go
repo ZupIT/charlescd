@@ -20,6 +20,7 @@ package system_token
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
+	"github.com/ZupIT/charlescd/gate/internal/utils"
 	"github.com/google/uuid"
 	"time"
 )
@@ -46,4 +47,9 @@ func (input CreateSystemTokenInput) InputToDomain() domain.SystemToken {
 		LastUsedAt:    nil,
 		Author:        "",
 	}
+}
+
+func (input *CreateSystemTokenInput) RemoveDuplicationOnFields() {
+	input.Permissions = utils.RemoveDuplicationOnArray(input.Permissions)
+	input.Workspaces = utils.RemoveDuplicationOnArray(input.Workspaces)
 }
