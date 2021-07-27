@@ -51,17 +51,17 @@ const ParametersForm = ({ onSubmit }: Props) => {
             />
           )}
           <Styled.InputText
+            {...register(`parameters[${index}].key`, {
+              required: true
+            })}
             label="Type a key"
-            name={`parameters[${index}].key`}
-            ref={register({ required: true })}
-            defaultValue={field.key}
-          />
+            defaultValue={field.key} />
           <Styled.InputText
+            {...register(`parameters[${index}].value`, {
+              required: true
+            })}
             label="Type a value"
-            name={`parameters[${index}].value`}
-            ref={register({ required: true })}
-            defaultValue={field.value}
-          />
+            defaultValue={field.value} />
         </Styled.InputWrapper>
       ))}
       <Styled.Button

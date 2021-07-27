@@ -68,32 +68,26 @@ const ChangePassword = ({ onSubmit }: Props) => {
       </Styled.Modal.Info>
       <Styled.Password
         label="Enter your current password"
-        name="oldPassword"
-        error={errors?.oldPassword?.message}
-        ref={register({
+        {...register('oldPassword', {
           required: isRequired()
         })}
-      />
+        error={errors?.oldPassword?.message} />
       <Styled.Modal.Info tag="H5" color="dark">
         Your new password must be at least 10 characters long, uppercase,
         lowercase, numbers and at least one special character.
       </Styled.Modal.Info>
       <Styled.Password
         label="New password"
-        name="newPassword"
-        error={errors?.newPassword?.message}
-        ref={register({
+        {...register('newPassword', {
           required: isRequired()
         })}
-      />
+        error={errors?.newPassword?.message} />
       <Styled.Password
         label="Confirm new password"
-        name="confirmPassword"
-        error={errors?.confirmPassword?.message}
-        ref={register({
+        {...register('confirmPassword', {
           required: isRequired()
         })}
-      />
+        error={errors?.confirmPassword?.message} />
       <Styled.CheckPassword password={newPassword} confirmPass={confirmPass} />
       <ButtonDefault
         id="change-password"

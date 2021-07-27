@@ -58,15 +58,13 @@ const SliderPercentage = ({ limitValue, isDisabled }: Props) => {
           {limitValue}%
         </Text>
         <Styled.SliderNumberInput
-          name="slider"
-          max={100}
-          placeholder="Value"
-          disabled={isDisabled}
-          ref={register({
+          {...register('slider', {
             required: 'Percentage is required.',
             validate: value => validatePercentage(Number(value), limitValue)
           })}
-        />
+          max={100}
+          placeholder="Value"
+          disabled={isDisabled} />
       </Styled.SliderInputContainer>
       <Text tag="H5" color="error">{errors?.slider?.message}</Text>
     </Styled.SliderContainer>

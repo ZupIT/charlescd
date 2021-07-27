@@ -75,12 +75,10 @@ const Scopes = ({ mode }: Props) => {
       <Styled.Content left displayAction={displayAction(subject)} key={`${subject}_${action}`}>
         <Form.Checkbox
           label={capitalize(action)}
-          ref={register({ validate: atLeastOne })}
-          name="permissions"
+          {...register('permissions', { validate: atLeastOne })}
           value={`${subject}_${action}`}
           onChange={(checked: boolean) => onChangeAction(action, subject, checked)}
-          description={actionTemplate(action, subject)}
-        />
+          description={actionTemplate(action, subject)} />
       </Styled.Content>
     ))
   )
@@ -91,11 +89,9 @@ const Scopes = ({ mode }: Props) => {
         <Form.Checkbox
           name={`subjects.${subject}`}
           label={capitalize(subject)}
-          ref={register()}
           value=""
           onChange={(checked: boolean) => onChangeSubject(subject, checked)}
-          description={subjectTemplate(subject)}
-        />
+          description={subjectTemplate(subject)} />
         {renderActions(subject)}
       </React.Fragment>
     ));

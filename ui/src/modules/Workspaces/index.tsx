@@ -71,17 +71,15 @@ const Workspaces = () => {
             Create workspace
           </Styled.Modal.Title>
           <Styled.Modal.Input
-            name="name"
-            label="Type a name"
-            error={errors?.name?.message}
-            ref={register({
+            {...register('name', {
               required: isRequired(),
               validate: {
                 notBlank: isNotBlank,
               },
               maxLength: maxLength(),
             })}
-          />
+            label="Type a name"
+            error={errors?.name?.message} />
           <Styled.Modal.Button
             type="submit"
             isDisabled={!isValid}

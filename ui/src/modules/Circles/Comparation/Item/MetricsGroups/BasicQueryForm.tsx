@@ -31,59 +31,52 @@ const BasicQueryForm = () => {
     keyName: 'fieldId'
   });
 
-  return (
-    <>
-      {fields.map((field, index) => (
-        <Styled.RuleWrapper key={field.fieldId}>
-          <StyledRule.Rule data-testid="segments-rules">
-            <StyledRule.RuleTrash>
-              <StyledRule.Button.Icon
-                name="trash"
-                size="15px"
-                color="light"
-                onClick={() => remove(index)}
-              />
-            </StyledRule.RuleTrash>
-            <StyledRule.Input
-              type="hidden"
-              ref={register()}
-              name={`filters[${index}].id`}
-              defaultValue={field.id}
+  return <>
+    {fields.map((field, index) => (
+      <Styled.RuleWrapper key={field.fieldId}>
+        <StyledRule.Rule data-testid="segments-rules">
+          <StyledRule.RuleTrash>
+            <StyledRule.Button.Icon
+              name="trash"
+              size="15px"
+              color="light"
+              onClick={() => remove(index)}
             />
-            <StyledRule.Input
-              label="Filter"
-              name={`filters[${index}].field`}
-              ref={register({ required: true })}
-              maxLength={100}
-              defaultValue={field.field}
-            />
-            <StyledRule.Select
-              options={operatorsOptions}
-              control={control}
-              rules={{ required: true }}
-              label="Conditional"
-              name={`filters[${index}].operator`}
-              defaultValue={getOperator(field.operator)}
-            />
-            <StyledRule.Input
-              label="Value"
-              name={`filters[${index}].value`}
-              ref={register({ required: true })}
-              maxLength={100}
-              defaultValue={field.value}
-            />
-          </StyledRule.Rule>
-        </Styled.RuleWrapper>
-      ))}
-      <StyledRule.Button.Clause
-        id="add-clause"
-        size="EXTRA_SMALL"
-        onClick={() => append({})}
-      >
-        <Icon name="add" size="16px" color="light" /> Filter
-      </StyledRule.Button.Clause>
-    </>
-  );
+          </StyledRule.RuleTrash>
+          <StyledRule.Input type="hidden" name={`filters[${index}].id`} defaultValue={field.id} />
+          <StyledRule.Input
+            {...register(`filters[${index}].field`, {
+              required: true
+            })}
+            label="Filter"
+            maxLength={100}
+            defaultValue={field.field} />
+          <StyledRule.Select
+            options={operatorsOptions}
+            control={control}
+            rules={{ required: true }}
+            label="Conditional"
+            name={`filters[${index}].operator`}
+            defaultValue={getOperator(field.operator)}
+          />
+          <StyledRule.Input
+            {...register(`filters[${index}].value`, {
+              required: true
+            })}
+            label="Value"
+            maxLength={100}
+            defaultValue={field.value} />
+        </StyledRule.Rule>
+      </Styled.RuleWrapper>
+    ))}
+    <StyledRule.Button.Clause
+      id="add-clause"
+      size="EXTRA_SMALL"
+      onClick={() => append({})}
+    >
+      <Icon name="add" size="16px" color="light" /> Filter
+    </StyledRule.Button.Clause>
+  </>;
 };
 
 export default BasicQueryForm;

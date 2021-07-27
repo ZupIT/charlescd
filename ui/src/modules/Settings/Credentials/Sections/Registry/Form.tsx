@@ -140,82 +140,60 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
   };
 
   const renderAwsFields = () => {
-    return (
-      <>
-        <Form.Input
-          ref={register(isRequiredAndNotBlank)}
-          name="region"
-          label="Enter the region"
-        />
-        <Switch
-          name="aws-auth-handler"
-          label="Enable access and secret key"
-          active={awsUseSecret}
-          onChange={() => setAwsUseSecret(!awsUseSecret)}
-        />
-        {awsUseSecret && (
-          <>
-            <Form.Password
-              ref={register(isRequiredAndNotBlank)}
-              name="accessKey"
-              label="Enter the access key"
-            />
-            <Form.Password
-              ref={register(isRequiredAndNotBlank)}
-              name="secretKey"
-              label="Enter the secret key"
-            />
-          </>
-        )}
-      </>
-    );
+    return <>
+      <Form.Input {...register('region', isRequiredAndNotBlank)} label="Enter the region" />
+      <Switch
+        name="aws-auth-handler"
+        label="Enable access and secret key"
+        active={awsUseSecret}
+        onChange={() => setAwsUseSecret(!awsUseSecret)}
+      />
+      {awsUseSecret && (
+        <>
+          <Form.Password
+            {...register('accessKey', isRequiredAndNotBlank)}
+            label="Enter the access key" />
+          <Form.Password
+            {...register('secretKey', isRequiredAndNotBlank)}
+            label="Enter the secret key" />
+        </>
+      )}
+    </>;
   };
 
   const renderGCPFields = () => {
-    return (
-      <>
-        <Form.Input
-          ref={register(isRequiredAndNotBlank)}
-          name="organization"
-          label="Enter the project id"
-        />
-        <Styled.Subtitle tag="H4" color="dark">
-          Enter the json key below:
-        </Styled.Subtitle>
-        <Editor
-          ref={register({
-            ...isRequiredAndNotBlank,
-            validate: {
-              ...isRequiredAndNotBlank.validate,
-              validJSON,
-            },
-          })}
-          name="jsonKey"
-          width="270px"
-          height="190px"
-        />
-        <Text tag="H5" color="error">
-          {errors?.jsonKey?.message}
-        </Text>
-      </>
-    );
+    return <>
+      <Form.Input
+        {...register('organization', isRequiredAndNotBlank)}
+        label="Enter the project id" />
+      <Styled.Subtitle tag="H4" color="dark">
+        Enter the json key below:
+      </Styled.Subtitle>
+      <Editor
+        {...register('jsonKey', {
+          ...isRequiredAndNotBlank,
+          validate: {
+            ...isRequiredAndNotBlank.validate,
+            validJSON,
+          },
+        })}
+        width="270px"
+        height="190px" />
+      <Text tag="H5" color="error">
+        {errors?.jsonKey?.message}
+      </Text>
+    </>;
   };
 
   const renderLoginFields = () => {
-    return (
-      <>
-        <Form.Input
-          ref={register(isRequiredAndNotBlank)}
-          name="username"
-          label="Enter the username"
-        />
-        <Form.Password
-          ref={register(isRequiredAndNotBlank)}
-          name="password"
-          label="Enter the password"
-        />
-      </>
-    );
+    return <>
+      <Form.Input
+        {...register('username', isRequiredAndNotBlank)}
+        label="Enter the username" />
+      <Form.Password
+        {...register('password', isRequiredAndNotBlank)}
+        label="Enter the password" />
+    </>;
   };
 
   const handleFields = () => {
@@ -236,14 +214,13 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
       </Text>
       <Styled.Fields>
         <Form.Input
-          ref={register(isRequiredAndNotBlank)}
-          name="name"
-          label="Type a name for Registry"
-        />
+          {...register('name', isRequiredAndNotBlank)}
+          label="Type a name for Registry" />
         {registryType !== 'DOCKER_HUB' && (
           <>
             <Form.Input
-              ref={register({
+              error={errors?.address?.message}
+              {...register('address', {
                 required: isRequired(),
                 validate: {
                   notBlank: isNotBlank,
@@ -251,10 +228,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
                 setValueAs: trimValue,
                 pattern: urlPattern(),
               })}
-              error={errors?.address?.message}
-              name="address"
-              label="Enter the registry url"
-            />
+              label="Enter the registry url" />
             {showPlaceholder && (
               <Styled.Placeholder tag="H4" color="light">
                 {registryPlaceholder[registryType]}

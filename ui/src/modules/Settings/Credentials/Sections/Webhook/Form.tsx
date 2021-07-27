@@ -72,21 +72,17 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
   const renderOptions = () => (
     <Fragment>
       <Form.Checkbox
-        ref={register({ required: true })}
-        name="events"
+        {...register('events', { required: true })}
         label="Deploy"
         value="DEPLOY"
         defaultChecked={!isAllEventsChecked && includes(data?.events, 'DEPLOY')}
-        description="Deploy started or finished"
-      />
+        description="Deploy started or finished" />
       <Form.Checkbox
-        ref={register({ required: true })}
-        name="events"
+        {...register('events', { required: true })}
         label="Undeploy"
         value="UNDEPLOY"
         defaultChecked={!isAllEventsChecked && includes(data?.events, 'UNDEPLOY')}
-        description="Undeploy started or finished"
-      />
+        description="Undeploy started or finished" />
     </Fragment>
   );
 
@@ -106,54 +102,44 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       </Text>
       <Styled.Fields>
         <Form.Input
-          ref={register({
+          {...register('description', {
             required: isRequired(),
             minLength: minLength(4),
             maxLength: maxLength(255),
           })}
-          name="description"
           label="Description"
           disabled={isEditMode}
           defaultValue={data?.description}
-          error={errors?.description?.message}
-        />
+          error={errors?.description?.message} />
         <Form.Input
-          ref={register({
+          {...register('url', {
             required: isRequired(),
             maxLength: maxLength(1048),
             pattern: urlPattern()
           })}
-          name="url"
           label="Webhook URL"
           disabled={isEditMode}
           defaultValue={data?.url}
-          error={errors?.url?.message}
-        />
+          error={errors?.url?.message} />
         <Form.Password
-          ref={register()}
-          name="apiKey"
+          {...register('apiKey')}
           label="Secret (Optional)"
           disabled={isEditMode}
           autoComplete="new-password"
-          defaultValue={data?.apiKey}
-        />
+          defaultValue={data?.apiKey} />
         <Text tag="H5" color="dark">
           Which events would you like to trigger this webhook?
         </Text>
         <Form.Radio
-          ref={register({ required: true })}
-          name="eventType"
+          {...register('eventType', { required: true })}
           value="everything"
           label="Send me everything"
-          defaultChecked={size(data?.events) === size(EVENTS) || isCreateMode}
-        />
+          defaultChecked={size(data?.events) === size(EVENTS) || isCreateMode} />
         <Form.Radio
-          ref={register({ required: true })}
-          name="eventType"
+          {...register('eventType', { required: true })}
           value="individual"
           label="Let me select individual events"
-          defaultChecked={size(data?.events) < size(EVENTS) && isEditMode}
-        />
+          defaultChecked={size(data?.events) < size(EVENTS) && isEditMode} />
         {watchEventType === 'individual' && renderOptions()}
         <ButtonDefault
           type="submit"

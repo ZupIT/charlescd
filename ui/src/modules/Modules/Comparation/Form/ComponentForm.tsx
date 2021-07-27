@@ -47,10 +47,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           />
         )}
         <Styled.Components.Input
-          label="Enter name"
-          name={`components[${index}].name`}
-          error={errors?.components?.[index]?.name.message}
-          ref={register({
+          {...register(`components[${index}].name`, {
             ...isRequiredAndNotBlank,
             maxLength: maxLength(50),
             validate: {
@@ -58,20 +55,17 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
               duplicatedComponent
             }
           })}
-          defaultValue={field.name}
-        />
+          label="Enter name"
+          error={errors?.components?.[index]?.name.message}
+          defaultValue={field.name} />
         <Styled.Components.Number
-          name={`components[${index}].latencyThreshold`}
+          {...register(`components[${index}].latencyThreshold`, isRequiredAndNotBlank)}
           label="Latency Threshold (ms)"
-          ref={register(isRequiredAndNotBlank)}
-          defaultValue={field.latencyThreshold}
-        />
+          defaultValue={field.latencyThreshold} />
         <Styled.Components.Number
-          name={`components[${index}].errorThreshold`}
+          {...register(`components[${index}].errorThreshold`, isRequiredAndNotBlank)}
           label="Http Error Threshold (%)"
-          ref={register(isRequiredAndNotBlank)}
-          defaultValue={field.errorThreshold}
-        />
+          defaultValue={field.errorThreshold} />
       </Styled.Components.Wrapper>
       <Styled.Options tag="H5" onClick={() => handleMoreOptions(index)} color="dark">
         {editMoreOptions ? 'Hide and clean ' : 'Show '}
@@ -82,11 +76,9 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <>
           <Styled.FieldPopover>
             <Styled.Input
+              {...register(`components[${index}].hostValue`, isRequiredAndNotBlank)}
               label="Insert a host for virtual service use"
-              name={`components[${index}].hostValue`}
-              ref={register(isRequiredAndNotBlank)}
-              defaultValue={field.hostValue}
-            />
+              defaultValue={field.hostValue} />
             <Styled.Popover
               title="Host name"
               icon="info"
@@ -98,11 +90,9 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           </Styled.FieldPopover>{' '}
           <Styled.FieldPopover>
             <Styled.Input
+              {...register(`components[${index}].gatewayName`, isRequiredAndNotBlank)}
               label="Insert a ingress name if necessary"
-              name={`components[${index}].gatewayName`}
-              ref={register(isRequiredAndNotBlank)}
-              defaultValue={field.gatewayName}
-            />
+              defaultValue={field.gatewayName} />
             <Styled.Popover
               title="Istio ingress"
               icon="info"

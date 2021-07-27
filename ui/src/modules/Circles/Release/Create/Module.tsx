@@ -142,19 +142,17 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
       </Styled.SelectWrapper>
       <Styled.SelectWrapper>
         <Styled.Module.Input
-          type="hidden"
-          name={`${prefixName}.tag`}
-          ref={register({ required: true })}
-        />
+          {...register(`${prefixName}.tag`, {
+            required: true
+          })}
+          type="hidden"/>
         <Styled.Module.Input
-          name={`${prefixName}.version`}
-          ref={register(isRequiredAndNotBlank)}
+          {...register(`${prefixName}.version`, isRequiredAndNotBlank)}
           // eslint-disable-next-line react-hooks/exhaustive-deps
           onChange={useCallback(debounce(onSearchTag, 700), [])}
           isLoading={status.isPending}
           hasError={isEmptyTag || isError}
-          label="Version name"
-        />
+          label="Version name" />
         {isEmptyTag && (
           <Styled.Error tag="H6" color="error">
             This version is not in the configured registry.

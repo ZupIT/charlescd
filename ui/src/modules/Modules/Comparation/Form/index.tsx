@@ -116,18 +116,20 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert organization"
-          name="helmOrganization"
-          ref={helmRegister({ ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm organization") })}
-          error={helmErrors?.helmOrganization?.message}
-        />
+          {...helmRegister(
+            'helmOrganization',
+            { ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm organization") },
+          )}
+          error={helmErrors?.helmOrganization?.message} />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert repository"
-          name="helmRepository"
-          ref={helmRegister({ ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm repository") })}
-          error={helmErrors?.helmRepository?.message}
-        />
+          {...helmRegister(
+            'helmRepository',
+            { ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm repository") },
+          )}
+          error={helmErrors?.helmRepository?.message} />
       </Styled.FieldPopover>
     </Fragment>
   );
@@ -136,10 +138,11 @@ const FormModule = ({ module, onChange }: Props) => {
     <Styled.FieldPopover>
       <Styled.Input
         label="Insert Project ID"
-        name="helmProjectId"
-        ref={helmRegister({ ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm projectid") })}
-        error={helmErrors?.helmProjectId?.message}
-      />
+        {...helmRegister(
+          'helmProjectId',
+          { ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm projectid") },
+        )}
+        error={helmErrors?.helmProjectId?.message} />
     </Styled.FieldPopover>
   );
 
@@ -155,35 +158,28 @@ const FormModule = ({ module, onChange }: Props) => {
       <Styled.FieldPopover>
         <Styled.Input
           label="Base URL"
-          name="helmUrl"
-          ref={helmRegister({ ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm url") })}
-          error={helmErrors?.helmUrl?.message}
-        />
+          {...helmRegister(
+            'helmUrl',
+            { ...isRequiredAndNotBlank, validate: value => validateSlash(value, "helm url") },
+          )}
+          error={helmErrors?.helmUrl?.message} />
       </Styled.FieldPopover>
       {helmGitProvider === 'GITHUB' ? renderGithub() : renderGitlab()}
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert path (Optional)"
-          name="helmPath"
-          ref={
-            helmRegister({ validate: {
-              slash: value => validateSlash(value, "helm path")
-            }})
-          }
-          error={helmErrors?.helmPath?.message}
-        />
+          {...helmRegister('helmPath', { validate: {
+            slash: value => validateSlash(value, "helm path")
+          }})}
+          error={helmErrors?.helmPath?.message} />
       </Styled.FieldPopover>
       <Styled.FieldPopover>
         <Styled.Input
           label="Insert branch (Optional, Default=main)"
-          name="helmBranch"
-          ref={
-            helmRegister({ validate: {
-              slash: value => validateSlash(value, "helm branch"),
-            }})
-          }
-          error={helmErrors?.helmBranch?.message}
-        />
+          {...helmRegister('helmBranch', { validate: {
+            slash: value => validateSlash(value, "helm branch"),
+          }})}
+          error={helmErrors?.helmBranch?.message} />
       </Styled.FieldPopover>
     </Fragment>
   );

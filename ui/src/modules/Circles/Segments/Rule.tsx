@@ -62,19 +62,12 @@ const Rule = ({
           />
         )}
       </Styled.RuleTrash>
+      <Styled.Input type="hidden" name={`${prefixName}.type`} defaultValue="RULE" />
       <Styled.Input
-        type="hidden"
-        ref={register()}
-        name={`${prefixName}.type`}
-        defaultValue="RULE"
-      />
-      <Styled.Input
+        {...register(`${prefixName}.content.key`, isRequiredAndNotBlank)}
         label="Key"
-        ref={register(isRequiredAndNotBlank)}
         disabled={viewMode}
-        name={`${prefixName}.content.key`}
-        defaultValue={rule?.content?.key}
-      />
+        defaultValue={rule?.content?.key} />
       <Styled.Select
         options={options}
         control={control}
@@ -86,11 +79,9 @@ const Rule = ({
       />
       <Styled.Input
         label="Value"
-        ref={register(isRequiredAndNotBlank)}
         disabled={viewMode}
         name={`${prefixName}.content.value[0]`}
-        defaultValue={rule?.content?.value}
-      />
+        defaultValue={rule?.content?.value} />
     </Styled.Rule>
   );
 };
