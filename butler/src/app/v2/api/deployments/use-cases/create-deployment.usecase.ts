@@ -112,7 +112,7 @@ export class CreateDeploymentUseCase {
     )
     const requestedComponentIds: string[] = this.getDeploymentRequestComponentIds(createDeploymentDto)
     const unchangedComponents: ComponentEntity[] = activeComponents
-      .filter(component => !requestedComponentIds.includes(component.name))
+      .filter(component => !requestedComponentIds.includes(component.componentId))
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
     const components = await this.getDeploymentComponents(createDeploymentDto.namespace, createDeploymentDto.circle.id, createDeploymentDto.components, createDeploymentDto.git.token, createDeploymentDto.git.provider)
