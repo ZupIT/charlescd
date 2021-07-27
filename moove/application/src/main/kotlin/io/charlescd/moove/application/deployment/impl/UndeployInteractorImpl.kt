@@ -49,6 +49,7 @@ open class UndeployInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
 
+        notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         undeploy(authorization, token, deployment, deploymentConfiguration)
         setNotDeployedStatus(deployment)
@@ -61,7 +62,6 @@ open class UndeployInteractorImpl @Inject constructor(
     private fun undeploy(authorization: String?, token: String?, deployment: Deployment, deploymentConfiguration: DeploymentConfiguration) {
         try {
             deployService.undeploy(deployment.id, getAuthorId(authorization, token), deploymentConfiguration)
-            notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.FAIL, deployment, ex.message!!)
             throw ex
