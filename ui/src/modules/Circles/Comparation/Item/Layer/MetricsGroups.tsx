@@ -46,12 +46,13 @@ const LayerMetricsGroups = ({ onClickCreate, circleId, circle }: Props) => {
   }, [getMetricsgroupsResume, circleId, status]);
 
   const renderAddMetricsGroups = () => (
-    <Can I="write" a="circles" isDisabled={!circle?.id} passThrough>
+    <Can I="write" a="circles" passThrough>
       <ButtonRounded
         name="add"
         icon="add"
         color="dark"
         onClick={onClickCreate}
+        isDisabled={!circle?.id}
       >
         Add metrics group
       </ButtonRounded>
