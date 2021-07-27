@@ -82,29 +82,29 @@ const Deploys = () => {
             isLoading={loading}
             data-testid="metrics-deploy-apply"
           >
-            <Text.h5 weight="bold" align="center" color="light">
+            <Text tag="H5" weight="bold" align="center" color="light">
               Apply
-            </Text.h5>
+            </Text>
           </Styled.Button>
         </Styled.FilterForm>
       </Styled.Card>
 
       <Styled.Plates>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Deploy</Text.h4>
-          <Text.h1 color="light">
+          <Text tag="H4" color="dark">Deploy</Text>
+          <Text tag="H1" color="light">
             {loading ? <Loader.Card /> : response?.successfulDeployments}
-          </Text.h1>
+          </Text>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Error</Text.h4>
-          <Text.h1 color="light">
+          <Text tag="H4" color="dark">Error</Text>
+          <Text tag="H1" color="light">
             {loading ? <Loader.Card /> : response?.failedDeployments}
-          </Text.h1>
+          </Text>
         </Styled.Card>
         <Styled.Card width="175px" height="94px">
-          <Text.h4 color="dark">Average time</Text.h4>
-          <Text.h1 color="light">
+          <Text tag="H4" color="dark">Average time</Text>
+          <Text tag="H1" color="light">
             {loading ? (
               <Loader.Card />
             ) : (
@@ -112,7 +112,7 @@ const Deploys = () => {
                 response?.successfulDeploymentsAverageTime
               )
             )}
-          </Text.h1>
+          </Text>
         </Styled.Card>
       </Styled.Plates>
       <Styled.Card width="1220px" height="521px" data-testid="apexchart-deploy">

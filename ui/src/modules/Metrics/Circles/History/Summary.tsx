@@ -28,9 +28,9 @@ const Summary = ({ isLoading, onSearch }: Props) => {
   return (
     <>
       <Styled.HistoryHeader>
-        <Text.h2 color="light" weight="bold">
+        <Text tag="H2" color="light" weight="bold">
           History
-        </Text.h2>
+        </Text>
         <Styled.HistorySearchInput
           resume
           onSearch={onSearch}
@@ -44,9 +44,9 @@ const Summary = ({ isLoading, onSearch }: Props) => {
       ) : (
         <Styled.HistoryLegend>
           <Styled.Dot status="active" />
-          <Text.h5 color="dark">Active</Text.h5>
+          <Text tag="H5" color="dark">Active</Text>
           <Styled.Dot status="inactive" />
-          <Text.h5 color="dark">Inactive</Text.h5>
+          <Text tag="H5" color="dark">Inactive</Text>
         </Styled.HistoryLegend>
       )}
     </>

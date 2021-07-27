@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { copyToClipboard } from 'core/utils/clipboard';
 import {
@@ -22,7 +22,7 @@ import {
   useDeleteCircle,
   useSaveCircleManually,
   useSaveCircleWithFile,
-  useCircleUndeploy
+  useCircleUndeploy,
 } from 'modules/Circles/hooks';
 import { delParam, updateParam } from 'core/utils/path';
 import { useDispatch } from 'core/state/hooks';
@@ -32,7 +32,7 @@ import TabPanel from 'core/components/TabPanel';
 import Text from 'core/components/Text';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Dropdown from 'core/components/Dropdown';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import { NEW_TAB } from 'core/components/TabPanel/constants';
 import { Circle, Deployment } from 'modules/Circles/interfaces/Circle';
 import CreateRelease from 'modules/Circles/Release';
@@ -54,9 +54,7 @@ import {
   isUndeployable,
   isBusy,
   getTooltipMessage,
-  circleCannotBeDeleted,
-  isDeploying,
-  isUndeploying
+  cannotCircleBeDeleted,
 } from './helpers';
 import { SECTIONS } from './enums';
 import Styled from './styled';
@@ -74,7 +72,7 @@ const CirclesComparationItem = ({
   id,
   onChange,
   updateCircle,
-  circlesListResponse
+  circlesListResponse,
 }: Props) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -87,7 +85,7 @@ const CirclesComparationItem = ({
   const {
     undeployRelease,
     status: undeployStatus,
-    resetStatus: resetUndeployStatus
+    resetStatus: resetUndeployStatus,
   } = useCircleUndeploy();
   const [updateManualResponse, updateCircleManually] = useSaveCircleManually(
     id
@@ -108,22 +106,22 @@ const CirclesComparationItem = ({
   useEffect(() => {
     if (
       response &&
-      !response?.deployment && 
-      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying ) {
-        updateCircle();
-        setCircle(response);
+      !response?.deployment &&
+      circle?.deployment?.status === DEPLOYMENT_STATUS.undeploying
+    ) {
+      updateCircle();
+      setCircle(response);
     }
-  }, [response, circle, updateCircle])
+  }, [response, circle, updateCircle]);
 
   useEffect(() => {
     if (response) {
       setCircle(response);
     }
-
   }, [response]);
 
   useEffect(() => {
-    let timeout = 0;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isBusy(circle?.deployment?.status)) {
       timeout = setTimeout(() => {
         pollingCircle(circle?.id);
@@ -153,8 +151,8 @@ const CirclesComparationItem = ({
         ...circle,
         deployment: {
           ...circle.deployment,
-          status: DEPLOYMENT_STATUS.undeploying
-        }
+          status: DEPLOYMENT_STATUS.undeploying,
+        },
       });
     }
   }, [undeployStatus, setCircle, circle, resetUndeployStatus, updateCircle]);
@@ -233,10 +231,7 @@ const CirclesComparationItem = ({
   };
 
   const isInactive = () =>
-    isDeploying(circle?.deployment?.status) ||
-    isUndeploying(circle?.deployment?.status) ||
-    circleCannotBeDeleted(circle);
-
+    cannotCircleBeDeleted(circle);
   const renderDropdown = () => (
     <Dropdown>
       {!circle?.default && (
@@ -271,53 +266,56 @@ const CirclesComparationItem = ({
           onClick={() => copyToClipboard(pathCircleById(id))}
         />
       </Can>
-      <Can I="write" a="circles" passThrough>
-        <Dropdown.Item
-          id="dropdown-item-delete-circle"
-          icon="delete"
-          name="Delete"
-          tooltip={getTooltipMessage(circle)}
-          isInactive={isInactive()}
-          onClick={() => setAction('Delete')}
-        />
-      </Can>
+      <Dropdown.Item
+        id="dropdown-item-delete-circle"
+        icon="delete"
+        name="Delete"
+        tooltip={getTooltipMessage(circle)}
+        isInactive={isInactive()}
+        onClick={() => setAction('Delete')}
+      />
     </Dropdown>
   );
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Do you want to delete this circle?"
       dismissLabel="Cancel, keep circle"
       continueLabel="Yes, delete circle"
       onContinue={() => handleDelete(circle?.deployment?.status)}
       onDismiss={() => setAction('Cancel')}
     >
-      <Text.h4 color="light">
+      <Text tag="H4" color="light">
         When deleting this circle, users will be sent to Default and all metrics
         in this circle will be lost. Do you wish to continue?
-      </Text.h4>
-    </Modal.Trigger>
+      </Text>
+    </ModalTrigger>
   );
 
   const renderActions = () => (
     <Styled.Actions>
       {circle?.deployment && !isBusy(circle?.deployment?.status) && (
         <Can I="write" a="deploy" passThrough>
-          <LabeledIcon
-            icon="override"
-            marginContent="5px"
-            onClick={() => setActiveSection(SECTIONS.RELEASE)}
-          >
-            <Text.h5 color="dark">Override release</Text.h5>
-          </LabeledIcon>
+          <Styled.A onClick={() => setActiveSection(SECTIONS.RELEASE)}>
+            <LabeledIcon
+              icon="override"
+              marginContent="5px"
+            >
+              <Text tag="H5" color="dark">
+                Override release
+              </Text>
+            </LabeledIcon>
+          </Styled.A>
         </Can>
       )}
       <LabeledIcon
         icon="clock"
         marginContent="5px"
         onClick={() => setActiveSection(SECTIONS.HISTORY)}
-        >
-          <Text.h5 color="dark">History</Text.h5>
+      >
+        <Text tag="H5" color="dark">
+          History
+        </Text>
       </LabeledIcon>
       {renderDropdown()}
     </Styled.Actions>
@@ -331,7 +329,11 @@ const CirclesComparationItem = ({
   const renderPanelContent = () => (
     <>
       {action === 'Delete' && renderWarning()}
-      <LayerName name={circle?.name} onSave={saveCircleName} isDefault={circle?.default} />
+      <LayerName
+        name={circle?.name}
+        onSave={saveCircleName}
+        isDefault={circle?.default}
+      />
       <LayerSegments
         circle={circle}
         isEditing={isEditing}

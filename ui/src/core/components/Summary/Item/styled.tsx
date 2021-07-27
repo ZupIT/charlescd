@@ -35,7 +35,7 @@ const Dot = styled.div<DotProps>`
   margin-right: 5px;
 `;
 
-const Name = styled(Text.h5)`
+const Name = styled(Text)`
   line-height: 15px;
 `;
 

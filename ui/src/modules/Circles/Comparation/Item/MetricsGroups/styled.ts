@@ -16,15 +16,15 @@
 
 import styled, { css } from 'styled-components';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
-import ButtonIconRoundedComponent from 'core/components/Button/Rounded';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
+import ButtonComponentRounded from 'core/components/Button/ButtonRounded';
 import SelectComponent from 'core/components/Form/Select';
 import InputNumberComponent from 'core/components/Form/Number';
 import Text from 'core/components/Text';
 import InputComponent from 'core/components/Form/Input';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
-import { HEADINGS_FONT_SIZE } from 'core/components/Text/enums';
+import { baseFontSize } from 'core/components/Text/constants';
 
 interface ButtonDefaultProps {
   isValid: boolean;
@@ -51,7 +51,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const ButtonAdd = styled(ButtonComponent.Rounded)`
+const ButtonAdd = styled(ButtonComponentRounded)`
   margin-top: 15px;
   margin-bottom: 15px;
 `;
@@ -61,7 +61,7 @@ const Input = styled(InputComponent)`
   margin: 10px 0 20px;
 `;
 
-const ButtonDefault = styled(ButtonComponent.Default)<ButtonDefaultProps>`
+const ButtonDefault = styled(ButtonComponentDefault)<ButtonDefaultProps>`
   background-color: ${({ theme, isValid }) => {
     const { saveButton } = theme.circleSegmentation.importCSV;
     return isValid
@@ -74,11 +74,11 @@ const Form = styled.form`
   width: 540px;
 `;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 20px 0;
 `;
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   margin-top: 40px;
 `;
 
@@ -120,13 +120,13 @@ const Actions = styled.div`
   }
 `;
 
-const ButtonIconRounded = styled(ButtonIconRoundedComponent)`
+const ButtonIconRounded = styled(ButtonComponentRounded)`
   height: 40px;
   padding: 13px 25px;
 
   span {
     font-weight: normal;
-    font-size: ${HEADINGS_FONT_SIZE.h6};
+    font-size: ${baseFontSize.H6};
   }
 
   ${({ isActive }: ButtonIconProps) =>
@@ -155,11 +155,11 @@ const ModalInput = styled(InputComponent)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   width: 155px;
   padding-left: 0;
   padding-right: 0;

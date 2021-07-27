@@ -236,10 +236,6 @@ class CredentialConfigurationServiceUnitTest {
             authorId = "authorId"
         )
 
-        val villagerResponse = CreateVillagerRegistryConfigurationResponse(
-            id = "id"
-        )
-
         val workspaceId = "workspaceId"
 
         val user = User(
@@ -252,9 +248,6 @@ class CredentialConfigurationServiceUnitTest {
             createdAt = LocalDateTime.now()
         )
         val authorization = getAuthorization()
-
-        val expectedResponse =
-            CredentialConfigurationRepresentation("id", "name", user.toSimpleRepresentation())
 
         every {
             villagerApi.createRegistryConfiguration(villagerRequest, workspaceId)

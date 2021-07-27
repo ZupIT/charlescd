@@ -14,39 +14,42 @@
  * limitations under the License.
  */
 
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 
 interface Props {
   onClose?: Function;
   onContinue?: Function;
   isLoading?: boolean;
+  tokenName?: string;
 }
 
-const ModalRevoke = ({ onClose, onContinue, isLoading }: Props) => {
+const ModalRevoke = ({ onClose, onContinue, isLoading, tokenName }: Props) => {
   const handleDismiss = () => {
     onClose();
-  }
+  };
 
   const handleContinue = () => {
     onContinue();
-  }
+  };
 
   return (
-    <Modal.Trigger
-      title="Are you sure you want to revoke this token?"
+    <ModalTrigger
+      title="Are you sure you want to revoke the following token:"
+      itemName={tokenName}
       dismissLabel="Cancel, keep token"
       continueLabel="Yes, revoke token"
       isLoading={isLoading}
       onContinue={handleContinue}
       onDismiss={handleDismiss}
     >
-      <Text.h4 color="dark">
-        Any application or script using this token will no longer be able to access Charles C.D. APIs.
-        You cannot undo this action. Do you want to continue?
-      </Text.h4>
-    </Modal.Trigger>
-  )
-}
+      <Text tag="H4" color="dark">
+        Any application or script using this token will no longer be able to
+        access Charles C.D. APIs. You cannot undo this action. Do you want to
+        continue?
+      </Text>
+    </ModalTrigger>
+  );
+};
 
-export default ModalRevoke
+export default ModalRevoke;

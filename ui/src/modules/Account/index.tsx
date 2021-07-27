@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import useForm from 'core/hooks/useForm';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import Avatar from 'core/components/Avatar';
 import ContentIcon from 'core/components/ContentIcon';
 import TabPanel from 'core/components/TabPanel';
@@ -38,6 +39,7 @@ import Styled from './styled';
 import Menu from './Menu';
 import Loader from './Loaders';
 import Icon from 'core/components/Icon';
+import CardConfig from 'core/components/Card/Config';
 
 const Account = () => {
   const name = getProfileByKey('name');
@@ -83,12 +85,24 @@ const Account = () => {
       </Styled.Modal.Default>
     );
 
+  const Groups = () =>
+    <Styled.Groups>
+      {map(currentUser.userGroups, (userGroup) => (
+        <CardConfig
+          id={`user-group-${userGroup.id}`}
+          key={userGroup.name}
+          icon="users"
+          description={userGroup.name}
+        />
+      ))}
+    </Styled.Groups>
+
   const renderContent = () => (
     <>
       {renderModal()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
+          <Avatar key={currentUser.id} size={68} name={currentUser?.name} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
@@ -110,24 +124,27 @@ const Account = () => {
               {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
-                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                  <Text tag="H6" color="error">{errors.name.message}</Text>
                 </Styled.FieldErrorWrapper>
               )}
             </>
           ) : (
-            <Text.h2 color="light">{user.name}</Text.h2>
+            <Text tag="H2" color="light">{user.name}</Text>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
-          <Text.h2 color="light">E-mail</Text.h2>
-          <Text.h5 color="dark">{email}</Text.h5>
+          <Text tag="H2" color="light">E-mail</Text>
+          <Text tag="H5" color="dark">{email}</Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text.h2 color="light">User group</Text.h2>
+          <Text tag="H2" color="light">User group</Text>
+          <Styled.Groups>
+            <Groups />
+          </Styled.Groups>
         </ContentIcon>
       </Styled.Layer>
     </>
@@ -141,7 +158,7 @@ const Account = () => {
           marginContent="5px"
           onClick={() => setToggleModal(true)}
         >
-          <Text.h5 color="dark">Change password</Text.h5>
+          <Text tag="H5" color="dark">Change password</Text>
         </LabeledIcon>
       )}
     </Styled.Actions>

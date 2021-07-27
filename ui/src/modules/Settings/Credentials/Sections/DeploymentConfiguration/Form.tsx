@@ -16,12 +16,12 @@
 
 import { useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { CHARLES_DOC } from 'core/components/Popover';
 import Form from 'core/components/Form';
 import Select from 'core/components/Form/Select';
 import Text from 'core/components/Text';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { gitProviders } from './constants';
 import { DeploymentConfiguration } from './interfaces';
 import { Props } from '../interfaces';
@@ -65,33 +65,33 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
         name="gitProvider"
         label="Choose the Git provider"
         options={gitProviders}
+        rules={{ required: true }}
       />
       <Form.Input
         ref={register({ required: true })}
         name="gitToken"
         label="Enter the Git token"
       />
-      <Button.Default
+      <ButtonDefault
         type="submit"
         isDisabled={!isValid}
         isLoading={loadingAdd || loadingSave}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 
   return (
     <Styled.Content>
-      <Text.h2 color="light">Add Deployment Configuration</Text.h2>
-      <Text.h4 color="dark" data-testid="text-datasource">
+      <Text tag="H2" color="light">Add Deployment Configuration</Text>
+      <Text tag="H4" color="dark" data-testid="text-datasource">
         Adding your Deployment Configuration tool allows Charles to deploy artifacts and manage resources inside your Kubernetes cluster. See our{' '}
-        <DocumentationLink
-          text="documentation"
-          documentationLink={`${CHARLES_DOC}/reference/cd-configuration`}
-        />
+        <Link href={`${CHARLES_DOC}/reference/cd-configuration`}>
+          documentation
+        </Link>{' '}
         for further details.
-      </Text.h4>
+      </Text>
       {renderForm()}
     </Styled.Content>
   );

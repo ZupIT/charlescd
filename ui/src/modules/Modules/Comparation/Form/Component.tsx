@@ -126,10 +126,10 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   return (
     <Styled.Content>
       <Styled.Icon name="arrow-left" color="dark" onClick={() => onClose()} />
-      <Styled.Title color="light">
+      <Styled.Title tag="H2" color="light">
         {isEdit ? 'Edit component' : 'Create component'}
       </Styled.Title>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle tag="H5" color="dark">
         use the fields below to add the component:
       </Styled.Subtitle>
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
@@ -158,6 +158,7 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
           />
         </Styled.FieldPopover>
         <Styled.Subtitle
+          tag="H5"
           data-testid="subtitle-advanced-options"
           onClick={() => setIsAdvancedOptions(!isAdvancedOptions)}
           color="dark"

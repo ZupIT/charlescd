@@ -24,7 +24,7 @@ import { formatModuleOptions, formatComponentOptions } from './helpers';
 import { useComponentTags } from '../hooks';
 import Styled from '../styled';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
-import {checkComponentAndVersionMaxLength} from './helpers';
+import { checkComponentAndVersionMaxLength } from './helpers';
 
 interface Props {
   index: number;
@@ -36,7 +36,7 @@ interface Props {
 
 interface TagProps {
   artifact: string;
-  name: string
+  name: string;
 }
 
 const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
@@ -53,7 +53,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     control,
     getValues,
     setValue,
-    clearErrors
+    clearErrors,
   } = useFormContext();
 
   useEffect(() => {
@@ -88,9 +88,11 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
     name: string
   ) => {
     setValue(`${prefixName}.tag`, '');
-    const tag: TagProps = await getComponentTag(moduleId, componentId, { name });
+    const tag: TagProps = await getComponentTag(moduleId, componentId, {
+      name,
+    });
 
-    if(tag) checkComponentAndVersionMaxLength({tag, onError, setIsError});
+    if (tag) checkComponentAndVersionMaxLength({ tag, onError, setIsError });
 
     setValue(`${prefixName}.tag`, tag?.artifact, { shouldValidate: true });
     setIsEmptyTag(isEmpty(tag?.artifact));
@@ -134,7 +136,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
           rules={{ required: true }}
           control={control}
         />
-        <Styled.Error color="error">
+        <Styled.Error tag="H6" color="error">
           {getErrorMessage('component')}
         </Styled.Error>
       </Styled.SelectWrapper>
@@ -154,7 +156,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
           label="Version name"
         />
         {isEmptyTag && (
-          <Styled.Error color="error">
+          <Styled.Error tag="H6" color="error">
             This version is not in the configured registry.
           </Styled.Error>
         )}

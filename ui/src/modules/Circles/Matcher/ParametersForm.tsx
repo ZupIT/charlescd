@@ -17,7 +17,7 @@
 import React from 'react';
 import { useFieldArray, FieldValues, useFormContext } from 'react-hook-form';
 import Icon from 'core/components/Icon';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { blankParameter } from './constants';
 import Styled from './styled';
 
@@ -72,9 +72,9 @@ const ParametersForm = ({ onSubmit }: Props) => {
         <Icon name="add" size="15px" />
         Add parameter
       </Styled.Button>
-      <Button.Default isDisabled={!isValid} type="submit">
+      <ButtonDefault isDisabled={!isValid} type="submit">
         Send
-      </Button.Default>
+      </ButtonDefault>
     </form>
   );
 };

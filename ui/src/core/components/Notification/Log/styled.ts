@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import ComponentText from 'core/components/Text';
+import Text from 'core/components/Text';
 import ComponentIcon from 'core/components/Icon';
 import { Props } from './';
 
@@ -30,7 +30,7 @@ const Log = styled.div<Pick<Props, 'type'>>`
   background-color: ${({ theme, type }) => theme.log[type].background};
 `;
 
-const Text = styled(ComponentText.h5)<Pick<Props, 'type'>>`
+const LogText = styled(Text)<Pick<Props, 'type'>>`
   width: 200px;
   overflow: hidden;
   white-space: nowrap;
@@ -51,6 +51,6 @@ const Content = styled.div`
 export default {
   Log,
   Content,
-  Text,
+  LogText,
   Icon
 };

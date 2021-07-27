@@ -16,7 +16,7 @@
 
 import { useState, useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { Configuration } from 'modules/Workspaces/interfaces/Workspace';
 import Section from 'modules/Settings/Credentials/Section';
 import Layer from 'modules/Settings/Credentials/Section/Layer';
@@ -31,7 +31,12 @@ interface Props {
   onSave: () => void;
 }
 
-const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) => {
+const SectionDeploymentConfiguration = ({
+  form,
+  setForm,
+  onSave,
+  data,
+}: Props) => {
   const [isAction, setIsAction] = useState(true);
   const { status, remove } = useCDConfiguration();
 
@@ -54,7 +59,7 @@ const SectionDeploymentConfiguration = ({ form, setForm, onSave, data }: Props) 
       type="Required"
     >
       {data && status !== 'resolved' && (
-        <Card.Config
+        <CardConfig
           icon="cd-configuration"
           description={data.name}
           isLoading={status === 'pending'}

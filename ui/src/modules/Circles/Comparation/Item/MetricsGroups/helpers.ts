@@ -125,7 +125,8 @@ export const createActionPayload = (
   const { actionId, nickname } = data;
 
   const payloadByAction = {
-    circledeployment: () => createCirclePromotionPayload(data, circleId)
+    circledeployment: () => createCirclePromotionPayload(data, circleId),
+    circleundeployment: () => createCirclePromotionPayload(data, circleId),
   } as Record<string, Function>;
 
   return {

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useState, ReactNode, forwardRef, Ref } from 'react';
+import { useState, ReactNode, forwardRef, Ref } from 'react';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
 export interface Props {
   title: string;
+  itemName?: string;
   className?: string;
   dismissLabel: string;
   continueLabel?: string;
@@ -38,16 +39,17 @@ const Trigger = forwardRef(({
   continueLabel,
   dismissLabel,
   title,
+  itemName,
   isDisabled,
   isLoading,
   children
 }: Props, ref: Ref<HTMLDivElement>) => {
   const [toggle, switchToggle] = useState(true);
 
-  const handleDismiss = () => {
-    switchToggle(!toggle);
-    onDismiss();
-  };
+    const handleDismiss = () => {
+      switchToggle(!toggle);
+      onDismiss();
+    };
 
   return (
     toggle && (
@@ -63,9 +65,14 @@ const Trigger = forwardRef(({
               data-testid="icon-cancel-modal"
             />
           </Styled.Button.Container>
-          <Styled.Title weight="bold" color="light">
+          <Styled.Title tag="H2" weight="bold" color="light">
             {title}
           </Styled.Title>
+          {itemName &&
+            <Styled.ItemName icon='token'>
+              <Text tag="H4" color="light" data-testid='token-name'>{itemName}</Text>
+            </Styled.ItemName>
+          }
           <Styled.Description>
             {children}
           </Styled.Description>
@@ -75,7 +82,7 @@ const Trigger = forwardRef(({
               className="modal-button-dismiss"
               onClick={() => handleDismiss()}
             >
-              <Text.h5 color="dark">{dismissLabel}</Text.h5>
+              <Text tag="H5" color="dark">{dismissLabel}</Text>
             </Styled.Button.Dismiss>
             {onContinue && (
               <Styled.Button.Continue
@@ -85,14 +92,17 @@ const Trigger = forwardRef(({
                 isDisabled={isDisabled}
                 onClick={() => onContinue()}
               >
-                <Text.h5 color="light">{continueLabel}</Text.h5>
+                <Text tag="H5" color="light">
+                  {continueLabel}
+                </Text>
               </Styled.Button.Continue>
             )}
-          </Styled.Buttons>
-        </Styled.Content>
-      </Styled.Wrapper>
-    )
-  );
-});
+            </Styled.Buttons>
+          </Styled.Content>
+        </Styled.Wrapper>
+      )
+    );
+  }
+);
 
 export default Trigger;
