@@ -19,9 +19,7 @@ import { render, screen } from 'unit-test/testUtils';
 import CardRelease from '../';
 
 test('render CardRelease component with nodes', () => {
-  render(
-    <CardRelease status="deployed" description="tag-rc-1" />
-  );
+  render(<CardRelease status="DEPLOYED" description="tag-rc-1" />);
 
   expect(screen.getByText('Deployed')).toBeInTheDocument();
   expect(screen.getByText('tag-rc-1')).toBeInTheDocument();

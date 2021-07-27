@@ -15,7 +15,7 @@
  */
 
 import styled from 'styled-components';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 import ComponentContentIcon from 'core/components/ContentIcon';
 import ComponentLayer from 'core/components/Layer';
 import { slideInLeft } from 'core/assets/style/animate';
@@ -38,7 +38,7 @@ const Form = styled.form`
   width: 271px;
 `;
 
-const Title = styled(TextComponent.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -48,7 +48,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h5)`
+const Subtitle = styled(Text)`
   margin-bottom: 10px;
 `;
 

@@ -20,7 +20,7 @@ import React, {
   useImperativeHandle,
   MutableRefObject,
   forwardRef,
-  ReactNode
+  ReactNode,
 } from 'react';
 import Styled from './styled';
 
@@ -28,30 +28,28 @@ export interface Props {
   children: ReactNode;
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  color?: string;
 }
 
-const Card = forwardRef(
-  (
-    { children, className, onClick, ...rest }: Props,
-    ref: Ref<HTMLDivElement>
-  ) => {
-    const cardRef = useRef<HTMLDivElement>(null) as MutableRefObject<
-      HTMLDivElement
-    >;
+const Base = forwardRef((props: Props, ref: Ref<HTMLDivElement>) => {
+  const { children, className, onClick, color, ...rest } = props;
+  const cardRef = useRef<HTMLDivElement>(
+    null
+  ) as MutableRefObject<HTMLDivElement>;
 
-    useImperativeHandle(ref, () => cardRef.current);
+  useImperativeHandle(ref, () => cardRef.current);
 
-    return (
-      <Styled.Card
-        ref={cardRef}
-        className={className}
-        onClick={onClick}
-        {...rest}
-      >
-        {children}
-      </Styled.Card>
-    );
-  }
-);
+  return (
+    <Styled.Card
+      ref={cardRef}
+      className={className}
+      onClick={onClick}
+      color={color}
+      {...rest}
+    >
+      {children}
+    </Styled.Card>
+  );
+});
 
-export default Card;
+export default Base;

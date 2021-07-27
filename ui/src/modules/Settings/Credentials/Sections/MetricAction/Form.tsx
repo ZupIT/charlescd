@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import Card from 'core/components/Card';
+import CardConfig from 'core/components/Card/Config';
 import { normalizeSelectOptions } from 'core/utils/select';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { usePlugins, useCreateAction } from './hooks';
 import { Props } from '../interfaces';
 import Styled from './styled';
 import { ActionForm, ActionPayload } from './types';
 import { buildActionPayload } from './helpers';
-import DocumentationLink from 'core/components/DocumentationLink';
-import { 
+import Link from 'core/components/Link';
+import {
   isRequired,
   urlPattern,
   isRequiredAndNotBlank,
   isNotBlank,
-  trimValue
+  trimValue,
 } from 'core/utils/validations';
+import { CHARLES_DOC } from 'core/components/Popover';
 
 const actionPlaceholder = 'charlescd-custom-path-example';
 
@@ -44,8 +45,8 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const formMethods = useForm<ActionForm>({
     mode: 'onChange',
     defaultValues: {
-      configuration: 'https://'
-    }
+      configuration: 'https://',
+    },
   });
   const {
     handleSubmit,
@@ -53,7 +54,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     control,
     watch,
     errors,
-    formState: { isValid }
+    formState: { isValid },
   } = formMethods;
   const nickname = watch('nickname') as string;
   const configuration = watch('configuration') as string;
@@ -68,7 +69,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   useEffect(() => {
     setLoadingPlugins(true);
     getPlugins('action')
-      .then(pluginsResponse => {
+      .then((pluginsResponse) => {
         const normalizedOptions = normalizeSelectOptions(pluginsResponse);
         setPluginsOptions(normalizedOptions);
       })
@@ -79,24 +80,24 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
     const payload = buildActionPayload(data, isDefault) as ActionPayload;
 
     createAction(payload)
-      .then(response => {
+      .then((response) => {
         if (response) {
           onFinish();
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
   const renderActionConfig = () => (
     <>
-      <Card.Config
+      <CardConfig
         icon="action"
         description={nickname}
         onClose={() => setShowConfigAction(false)}
       />
-      <Styled.OptionText color="dark">
+      <Styled.OptionText tag="H5" color="dark">
         You select an action configuration in a basic way or fill an advanced
         one.
       </Styled.OptionText>
@@ -123,29 +124,29 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
             ref={register({
               required: isRequired(),
               validate: {
-                notBlank: isNotBlank
+                notBlank: isNotBlank,
               },
               setValueAs: trimValue,
-              pattern: urlPattern()
+              pattern: urlPattern(),
             })}
             error={errors?.configuration?.message}
             label="Enter a action configuration"
           />
           {showPlaceholder && (
-            <Styled.Placeholder color="light">
+            <Styled.Placeholder tag="H4" color="light">
               {actionPlaceholder}
             </Styled.Placeholder>
           )}
         </Styled.Wrapper>
       )}
-      <Button.Default
+      <ButtonDefault
         id="save"
         type="submit"
         isDisabled={!isValid}
         isLoading={status.isPending}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </>
   );
 
@@ -171,26 +172,25 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
         options={pluginsOptions}
         rules={{ required: true }}
       />
-      <Button.Default
+      <ButtonDefault
         id="next"
         isDisabled={!isValid}
         onClick={() => setShowConfigAction(true)}
       >
         Next
-      </Button.Default>
+      </ButtonDefault>
     </Styled.FormContent>
   );
 
   return (
     <Styled.Content data-testid="add-action-form">
-      <Styled.Title color="light">Add Metric Action</Styled.Title>
-      <Styled.Info color="dark" data-testid="text-metric-action">
+      <Styled.Title tag="H2" color="light">Add Metric Action</Styled.Title>
+      <Styled.Info tag="H5" color="dark" data-testid="text-metric-action">
         You can create an action and add a trigger to perform an automatic task.
         See our{' '}
-        <DocumentationLink
-          documentationLink="https://docs.charlescd.io/reference/metrics/action"
-          text="documentation"
-        />
+        <Link href={`${CHARLES_DOC}/reference/metrics/action`}>
+          documentation
+        </Link>{' '}
         for further details.
       </Styled.Info>
       <FormProvider {...formMethods}>

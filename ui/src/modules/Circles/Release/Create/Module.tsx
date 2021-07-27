@@ -136,7 +136,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
           rules={{ required: true }}
           control={control}
         />
-        <Styled.Error color="error">
+        <Styled.Error tag="H6" color="error">
           {getErrorMessage('component')}
         </Styled.Error>
       </Styled.SelectWrapper>
@@ -156,7 +156,7 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
           label="Version name"
         />
         {isEmptyTag && (
-          <Styled.Error color="error">
+          <Styled.Error tag="H6" color="error">
             This version is not in the configured registry.
           </Styled.Error>
         )}
