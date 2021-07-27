@@ -53,12 +53,13 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   };
 
   const renderButton = () => (
-    <Can I="write" a="deploy" isDisabled={checkIfButtonIsDisabled()} passThrough>
+    <Can I="write" a="deploy" passThrough>
         <ButtonRounded
           icon="add"
           name="add"
           color="dark"
           onClick={onClickCreate}
+          isDisabled={checkIfButtonIsDisabled()}
         >
           Insert release
         </ButtonRounded>
