@@ -24,6 +24,8 @@
     ".vscode",
     "dist/",
     "coverage/",
-    "upgrades/"
+    "upgrades/",
+    ".storybook",
+    ".svg"
   ]
 }
