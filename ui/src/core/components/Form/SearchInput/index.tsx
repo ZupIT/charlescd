@@ -19,7 +19,7 @@ import debounce from 'lodash/debounce';
 import { Props as InputProps } from '../Input';
 import Styled from './styled';
 
-interface Props extends InputProps {
+export interface Props extends InputProps {
   onSearch: (value: string) => void;
 }
 

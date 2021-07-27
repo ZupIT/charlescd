@@ -17,10 +17,10 @@
 import React from 'react';
 import { render, screen, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
-import Modal from 'core/components/Modal';
+import ModalWizard from 'core/components/Modal/Wizard';
 
 test('render Trigger', () => {
-  render(<Modal.Wizard onClose={jest.fn} />);
+  render(<ModalWizard onClose={jest.fn} />);
 
   const modal = screen.getByTestId('modal-wizard');
   const nextButton = screen.getByTestId('button-iconRounded-next');
@@ -30,7 +30,7 @@ test('render Trigger', () => {
 });
 
 test('Next button click', async () => {
-  render(<Modal.Wizard onClose={jest.fn} />);
+  render(<ModalWizard onClose={jest.fn} />);
 
   const welcome = screen.getByTestId('modal-wizard-info-welcome');
   const button = screen.getByTestId('button-iconRounded-next');
@@ -39,7 +39,9 @@ test('Next button click', async () => {
   expect(button).toBeInTheDocument();
 
   userEvent.click(button);
-  await waitFor(() => expect(screen.getByTestId('modal-wizard-info-user-group')).toBeInTheDocument());
+  await waitFor(() =>
+    expect(
+      screen.getByTestId('modal-wizard-info-user-group')
+    ).toBeInTheDocument()
+  );
 });
-
-

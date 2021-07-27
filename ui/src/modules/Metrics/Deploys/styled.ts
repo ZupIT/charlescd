@@ -8,15 +8,15 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an "AS IS" BwASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
 import styled from 'styled-components';
-import { MixedChart as MixedChartComponent } from 'core/components/Charts';
-import ComponentButton from 'core/components/Button';
+import ComponentButtonDefault from 'core/components/Button/ButtonDefault';
+import Chart from 'core/components/Chart';
 import SelectComponent from 'core/components/Form/Select';
 
 const Content = styled.div`
@@ -60,7 +60,7 @@ const Card = styled.div<CardProps>`
   position: relative;
 `;
 
-const MixedChart = styled(MixedChartComponent)`
+const MixedChart = styled(Chart)`
   .apexcharts-gridlines-horizontal > .apexcharts-gridline {
     opacity: 0.2;
   }
@@ -82,7 +82,7 @@ const MultiSelect = styled(SelectComponent.MultiCheck)`
   ${StyledSelect}
 `;
 
-const Button = styled(ComponentButton.Default)`
+const Button = styled(ComponentButtonDefault)`
   border-radius: 30px;
   margin-top: 10px;
 `;

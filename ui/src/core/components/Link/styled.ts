@@ -18,9 +18,11 @@ import styled, { css } from 'styled-components';
 import { Props } from '.';
 
 const Link = styled.a<Partial<Props>>`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
+  text-decoration: underline;
+  color: ${({ theme }) => theme.text.link};
 
   ${({ isDisabled }) =>
     isDisabled &&
