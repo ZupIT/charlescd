@@ -1,0 +1,15 @@
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Apache Software Foundation
+
+  paths-ignore:
+    - 'dist'
+    - 'licenses'
+    - '**/*.md'
+    - '*.txt'
+    - '**/*.json'
+    - 'LICENSE'
+    - 'NOTICE'
+
+  comment: on-failure
