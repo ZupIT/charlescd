@@ -311,7 +311,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     const newDeployment =
             await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
 
-      expect(newDeployment.components.length).toEqual(1)
-      expect(newDeployment.components[0].componentId).toEqual(expectedDeploymentComponent.componentId)
+    expect(newDeployment.components.length).toEqual(1)
+    expect(newDeployment.components[0].componentId).toEqual(expectedDeploymentComponent.componentId)
   })
 })
