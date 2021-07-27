@@ -35,6 +35,9 @@ jobs:
       with:
         timezone: America/Sao_Paulo
 
+    - name: Check License Header
+      uses: kt3k/license_checker@v1.0.6
+
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
@@ -65,7 +68,3 @@ jobs:
       run: |
         curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
         horusec start -p ./
-    - name: Check License Header
-      uses: apache/skywalking-eyes@main      # always prefer to use a revision instead of `main`.
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # needed only when you want License-Eye to comment on the pull request.
