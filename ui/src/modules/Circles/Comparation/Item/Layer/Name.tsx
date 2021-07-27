@@ -48,8 +48,7 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
       <ContentIcon icon="circles">
         <form onSubmit={handleSubmit(onSubmit)}>
           <Styled.InputTitle
-            name="name"
-            ref={register({
+            {...register('name', {
               required: isRequired(),
               maxLength: maxLength()
             })}

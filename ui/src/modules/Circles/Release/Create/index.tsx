@@ -121,8 +121,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           Type a name for release:
         </Text>
         <Styled.Input
-          name="releaseName"
-          ref={register(isRequiredAndNotBlank)}
+          {...register('releaseName', isRequiredAndNotBlank)}
           label="Release name"
         />
         {fields.map((module, index) => (

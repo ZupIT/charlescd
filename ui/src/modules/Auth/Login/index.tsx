@@ -58,9 +58,8 @@ const Login = () => {
         {error && <Styled.Error tag="H6" color="error">{errorMessage}</Styled.Error>}
         <Styled.Field>
           <Form.Input
+            {...register('email', { required: true })}
             type="email"
-            ref={register({ required: true })}
-            name="email"
             label="Email address"
           />
           {errors.email && (
@@ -69,8 +68,7 @@ const Login = () => {
         </Styled.Field>
         <Styled.Field>
           <Form.Password
-            ref={register({ required: true })}
-            name="password"
+            {...register('password', { required: true })}
             label="Enter your password"
           />
           {errors.password && (

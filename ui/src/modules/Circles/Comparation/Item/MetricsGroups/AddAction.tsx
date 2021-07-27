@@ -177,8 +177,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
       >
         <Styled.Layer>
           <Styled.Input
-            name="nickname"
-            ref={register({ required: true })}
+            {...register('nickname', { required: true })}
             label="Type a nickname for action"
             maxLength={100}
           />

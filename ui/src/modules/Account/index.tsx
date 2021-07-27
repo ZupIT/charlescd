@@ -110,13 +110,12 @@ const Account = () => {
           {isRoot() ? (
             <>
               <InputTitle
-                key={currentUser.name}
-                name="name"
-                resume
-                ref={register({
+                {...register('name', {
                   required: isRequired(),
                   maxLength: maxLength()
                 })}
+                key={currentUser.name}
+                resume
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}
                 isDisabled={!isValid}

@@ -125,10 +125,9 @@ const Segments = ({ rules, viewMode = true, onSubmit, isSaving }: Props) => {
           {!viewMode && (
             <Styled.Operator top={group.operator} hasGroup={hasGroup}>
               <Styled.InputOperator
+                {...register('logicalOperator')}
                 readOnly
                 type="text"
-                ref={register()}
-                name="logicalOperator"
                 onClick={() => changeOperatorValue('logicalOperator', form)}
                 defaultValue={rules?.logicalOperator}
               />

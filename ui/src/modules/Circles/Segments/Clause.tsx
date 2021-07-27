@@ -61,19 +61,17 @@ const Clause = ({
       {!viewMode && (
         <Styled.Operator top={operatorPosition} isClause hasGroup>
           <Styled.InputOperator
+            {...register(logicalOperatorName)}
             readOnly
             type="text"
-            ref={register()}
-            name={logicalOperatorName}
             onClick={() => changeOperatorValue(logicalOperatorName, form)}
             defaultValue={clauses?.logicalOperator?.toString()}
           />
         </Styled.Operator>
       )}
       <Styled.Input
+        {...register(`${prefixName}.type`)}
         type="hidden"
-        ref={register()}
-        name={`${prefixName}.type`}
         defaultValue="CLAUSE"
       />
       {map(clauses?.clauses, (rule, index) => (

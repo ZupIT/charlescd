@@ -63,15 +63,14 @@ const ImportCSV = ({ id, name, onSaveCircle }: Props) => {
         Type the name in cell A1 of your file (this will be your key):
       </Styled.HelpText>
       <Styled.Input
+        {...register('keyName', { required: true })}
         label="Type a key"
-        ref={register({ required: true })}
-        name="keyName"
       />
       <Styled.InputWrapper>
         <Styled.HelpText tag="H5" color="dark">
           Select the .CSV to upload:
         </Styled.HelpText>
-        <InputFile ref={register({ required: true })} />
+        <InputFile {...register({ required: true })} />
       </Styled.InputWrapper>
       {isSaving && <Loader />}
       <Styled.ButtonDefault

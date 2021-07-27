@@ -140,8 +140,7 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         >
           <Styled.Layer>
             <Styled.Input
-              name="nickname"
-              ref={register(isRequiredAndNotBlank)}
+              {...register('nickname', isRequiredAndNotBlank)}
               label="Type a nickname for the metric"
               maxLength={100}
             />
@@ -207,10 +206,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   <>
                     <Styled.AdvancedQueryWrapper>
                       <Input
-                        name="query"
-                        ref={register(isRequiredAndNotBlank)}
-                        hasError={!!errors?.query}
+                        {...register('query', isRequiredAndNotBlank)}
                         label="Type a query"
+                        hasError={!!errors?.query}
                       />
                     </Styled.AdvancedQueryWrapper>
                   </>
@@ -253,9 +251,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                       />
 
                       <Styled.InputNumber
-                        name="threshold"
+                        {...register('threshold', isRequiredAndNotBlank)}
                         label="Threshold"
-                        ref={register(isRequiredAndNotBlank)}
                         maxLength={100}
                       />
                     </StyledRule.Rule>
