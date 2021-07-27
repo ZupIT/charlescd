@@ -14,8 +14,16 @@
   ],
   "ignore": [
     "node_modules/",
-    "*.md",
-    "*.json",
-    "*.png"
+    ".md",
+    ".json",
+    ".png",
+    ".idea",
+    ".github",
+    ".git",
+    ".gitignore",
+    ".vscode",
+    "dist/",
+    "coverage/",
+    "upgrades/"
   ]
 }
