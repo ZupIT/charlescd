@@ -1,0 +1,10 @@
+name: Check License Header
+on: [pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+      - name: Check License Header
+        uses: kt3k/license_checker@v1.0.6
