@@ -664,7 +664,7 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
   word-wrap: break-word;
 }
 
-.c5 {
+.c4 {
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
@@ -672,22 +672,16 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
   margin-top: 10px;
 }
 
-.c5:only-child {
+.c4:only-child {
   margin-top: 0;
 }
 
-.c6 {
+.c5 {
   margin-top: 10px;
 }
 
 .c1 {
   background-color: #5C37CC;
-}
-
-.c1:hover .sc-iemWCZ,
-.c1:hover .c4 {
-  white-space: normal;
-  overflow: auto;
 }
 
 <div
@@ -703,14 +697,14 @@ exports[`Storyshots Components/Cards/Main Main 1`] = `
         class="c2"
       >
         <span
-          class="c3 c4 c5"
+          class="c3 c4"
           color="light"
           font-size="12px"
           font-style="normal"
           role=""
         />
         <div
-          class="c6"
+          class="c5"
         >
           ...
         </div>
@@ -733,7 +727,7 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
   line-height: 10px;
 }
 
-.c9 {
+.c8 {
   -webkit-animation: 0.3s iHfShZ linear;
   animation: 0.3s iHfShZ linear;
   display: block;
@@ -852,18 +846,6 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
   background-color: #10AA80;
 }
 
-.c1:hover .{
-  white-space: normal;
-  overflow: visible;
-}
-
-.c8 .{
-  width: 235px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 <div
   style="display: flex; align-items: center; justify-content: center;"
 >
@@ -907,17 +889,17 @@ exports[`Storyshots Components/Cards/Release Release 1`] = `
         </div>
       </div>
       <div
-        class="c7 c8"
+        class="c7 "
       >
         <span
-          class="c9 "
+          class="c8 "
           color="light"
           data-testid="release-card-description"
           font-size="14px"
           font-style="normal"
           role=""
         >
-          ...
+          This is a text example.
         </span>
       </div>
     </div>
@@ -1695,17 +1677,9 @@ exports[`Storyshots Components/Form/Input Action Input Action 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c4:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c4:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c4:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -1846,17 +1820,9 @@ exports[`Storyshots Components/Form/Input File Input File 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c7:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c7:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c7:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -2287,17 +2253,9 @@ exports[`Storyshots Components/Form/Input Link Input Link 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c3:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c3:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c3:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -2541,17 +2499,9 @@ exports[`Storyshots Components/Form/Input Photo Input Photo 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c3:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c3:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c3:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -2669,17 +2619,9 @@ exports[`Storyshots Components/Form/Input Title Input Title 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c4:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c4:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c4:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -3070,17 +3012,9 @@ exports[`Storyshots Components/Form/Search Input Search Input 1`] = `
   border-bottom-color: #4E5FFF;
 }
 
-.c6:focus + .sc-khIgEk {
-  top: 0px;
-}
-
 .c6:disabled {
   color: #98989E;
   border-bottom-color: #98989E;
-}
-
-.c6:-webkit-autofill + .sc-khIgEk {
-  top: 0px;
 }
 
 .c0 {
@@ -4028,7 +3962,19 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
   line-height: 18px;
 }
 
-.c10 {
+.c7 {
+  -webkit-animation: 0.3s iHfShZ linear;
+  animation: 0.3s iHfShZ linear;
+  display: block;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: normal;
+  color: rgb(244,244,250);
+  text-align: left;
+  line-height: 14px;
+}
+
+.c11 {
   -webkit-animation: 0.3s iHfShZ linear;
   animation: 0.3s iHfShZ linear;
   display: block;
@@ -4068,7 +4014,7 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
   height: 22px;
 }
 
-.c8 {
+.c9 {
   position: relative;
   background-color: #5C37CC;
   border: none;
@@ -4087,13 +4033,13 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
   width: fit-content;
 }
 
-.c8:hover {
+.c9:hover {
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
   transform: scale(1.1);
 }
 
-.c7 {
+.c8 {
   width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -4153,10 +4099,14 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
 }
 
 .c6 {
-  margin: 20px 0 20px 0;
+  margin: 16px 0 24px 0;
 }
 
-.c9 {
+.c6 span {
+  line-height: 1.3;
+}
+
+.c10 {
   cursor: pointer;
   padding: 5px;
   margin-top: 0;
@@ -4179,7 +4129,7 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
   background-color: transparent;
 }
 
-.c9 span {
+.c10 span {
   color: #FFF;
 }
 
@@ -4225,21 +4175,31 @@ exports[`Storyshots Components/Modal/Trigger Trigger 1`] = `
           font-style="normal"
           role=""
         >
-          Confirm?
+          Would you like to delete this item?
         </span>
         <div
           class="c6"
-        />
+        >
+          <span
+            class="c7"
+            color="light"
+            font-size="14px"
+            font-style="normal"
+            role=""
+          >
+            This is a text example, this is a text example.
+          </span>
+        </div>
         <div
-          class="c7 modal-buttons"
+          class="c8 modal-buttons"
         >
           <button
-            class="c8 c9 modal-button-dismiss"
+            class="c9 c10 modal-button-dismiss"
             data-testid="button-default-dismiss"
             type="button"
           >
             <span
-              class="c10"
+              class="c11"
               color="dark"
               font-size="12px"
               font-style="normal"
@@ -5625,7 +5585,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
   font-style: normal;
   font-size: 10px;
   font-weight: normal;
-  color: #98989E;
+  color: rgb(244,244,250);
   text-align: left;
   line-height: 10px;
 }
@@ -5635,7 +5595,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  color: #98989E;
+  color: rgb(244,244,250);
 }
 
 .c4 > div > div {
@@ -5701,11 +5661,6 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
   transform: scale(1.1);
 }
 
-.c1:checked + .c2 .,
-.c1:checked + .c2 .sc-bA-DTon {
-  color: #FFF;
-}
-
 .c1:not(:checked) + .c2 {
   background-color: rgb(44,44,46);
   -webkit-transition: 0.2s;
@@ -5716,11 +5671,6 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
   transform: scale(1.1);
-}
-
-.c1:not(:checked) + .c2 .,
-.c1:not(:checked) + .c2 .sc-bA-DTon {
-  color: #98989E;
 }
 
 <div
@@ -5749,7 +5699,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
         >
           <i
             class="c4 "
-            color="dark"
+            color="light"
             data-testid="icon-edit"
           >
             <div>
@@ -5762,7 +5712,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
           </i>
           <span
             class="c5"
-            color="dark"
+            color="light"
             font-size="10px"
             font-style="normal"
             role=""
@@ -5789,7 +5739,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
         >
           <i
             class="c4 "
-            color="dark"
+            color="light"
             data-testid="icon-search"
           >
             <div>
@@ -5802,7 +5752,7 @@ exports[`Storyshots Components/RadioButtons RadioButtons 1`] = `
           </i>
           <span
             class="c5"
-            color="dark"
+            color="light"
             font-size="10px"
             font-style="normal"
             role=""

@@ -52,8 +52,8 @@ const RadioButtons = ({ name, items, onChange, className }: Props) => (
             onChange={onChange}
           />
           <Styled.Label icon={item.icon} value={item.value} htmlFor={id}>
-            {item.icon && <Styled.Icon name={item.icon} color="dark" />}
-            <Text tag="H6" color="dark">
+            {item.icon && <Styled.Icon name={item.icon} color="light" />}
+            <Text tag="H6" color="light">
               {item.name ? item.name : item.value}
             </Text>
           </Styled.Label>

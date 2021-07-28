@@ -16,16 +16,26 @@
 
 import { Story } from '@storybook/react';
 import Trigger, { Props } from 'core/components/Modal/Trigger';
+import Text from 'core/components/Text';
 
 export default {
   title: 'Components/Modal/Trigger',
   component: Trigger,
 };
 
-const Template: Story<Props> = (props: Props) => <Trigger {...props} />;
+const Template: Story<Props> = (props: Props) => {
+  return (
+    <Trigger {...props}>
+      <Text tag="H4" color="light">
+        This is a text example, this is a text example.
+      </Text>
+    </Trigger>
+  )
+};
 export const trigger = Template.bind({});
 trigger.args = {
-  title: 'Confirm?',
+  title: 'Would you like to delete this item?',
   dismissLabel: 'cancel',
   continueLabel: 'ok',
+  children: 'This is a text example, this is a text example.'
 };

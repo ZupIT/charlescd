@@ -45,13 +45,6 @@ const Content = styled.div`
 const Card = styled(CardBase)<Partial<Props>>`
   background-color: ${({ theme, color }) => theme.card.main[color]};
   width: ${({ width }) => width && width};
-
-  :hover {
-    ${Title}, ${Description} {
-      white-space: normal;
-      overflow: auto;
-    }
-  }
 `;
 
 export default {

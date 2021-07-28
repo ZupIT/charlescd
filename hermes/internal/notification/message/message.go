@@ -39,7 +39,9 @@ type Message struct {
 	EventType      string    `json:"eventType"`
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
-
+const (
+	messageResponseSizeLimit = 50
+)
 func (main Main) Validate(message payloads.PayloadRequest) errors.ErrorList {
 	ers := errors.NewErrorList()
 
@@ -77,20 +79,34 @@ func (main Main) ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, e
 	return *payload, nil
 }
 
-func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.MessageResponse, errors.Error) {
+func (main Main) Publish(messagesRequest []payloads.Request) ([]payloads.FullMessageResponse, errors.Error) {
 	var msgList []Message
-	var response []payloads.MessageResponse
+	var msgsIds []string
 	for _, r := range messagesRequest {
 		msg := requestToEntity(r)
 		msgList = append(msgList, msg)
+		msgsIds = append(msgsIds, msg.ID.String())
 	}
 
-	result := main.db.Model(&Message{}).Create(&msgList).Scan(&response)
+	result := main.db.Model(&Message{}).Create(&msgList)
 	if result.Error != nil {
-		return []payloads.MessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
+		return []payloads.FullMessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
 			WithOperations("Publish.Result")
 	}
 
+	return main.findByMessagesIds(msgsIds)
+}
+
+func (main Main) findByMessagesIds(messagesIds []string) ([]payloads.FullMessageResponse, errors.Error) {
+	var response []payloads.FullMessageResponse
+
+	result := main.db.Model(&Message{}).
+		Where("id IN ?", messagesIds).Limit(messageResponseSizeLimit).
+		Scan(&response)
+	if result.Error != nil {
+		return []payloads.FullMessageResponse{}, errors.NewError("Save Message error", result.Error.Error()).
+			WithOperations("Publish.Result")
+	}
 	return response, nil
 }
 
