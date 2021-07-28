@@ -105,7 +105,7 @@ const Loading = styled(ComponentIcon)`
   bottom: 5px;
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   position: absolute;
   top: 43px;
 `;

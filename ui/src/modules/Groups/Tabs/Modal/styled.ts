@@ -16,8 +16,8 @@
 
 import styled from 'styled-components';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
-import AvatarName from 'core/components/AvatarName';
-import ComponentText from 'core/components/Text';
+import Avatar from 'core/components/Avatar';
+import Text from 'core/components/Text';
 import { Input } from 'core/components/Form';
 
 interface WrapperProps {
@@ -132,21 +132,21 @@ const ItemProfile = styled.div`
   flex-direction: row;
 `;
 
-const ItemPhoto = styled(AvatarName)`
+const ItemPhoto = styled(Avatar)`
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
 `;
 
-const ItemName = styled(ComponentText.h4)`
+const ItemName = styled(Text)`
   font-size: 14px;
   font-weight: 900;
   text-overflow: ellipsis;
   overflow: hidden;
 `;
 
-const ItemEmail = styled(ComponentText.h4)`
+const ItemEmail = styled(Text)`
   font-weight: 300;
   text-overflow: ellipsis;
   overflow: hidden;

@@ -16,7 +16,7 @@
 
 import styled from 'styled-components';
 import Text from 'core/components/Text';
-import ButtonComponent from 'core/components/Button/Rounded';
+import ButtonComponent from 'core/components/Button/ButtonRounded';
 import IconComponent from 'core/components/Icon';
 import SwitchComponet from 'core/components/Switch';
 
@@ -111,9 +111,9 @@ const Info = styled.div`
   text-align: left;
 `;
 
-const Title = styled(Text.h3)``;
+const Title = styled(Text)``;
 
-const Subtitle = styled(Text.h4)`
+const Subtitle = styled(Text)`
   margin-top: 15px;
 `;
 
@@ -134,7 +134,7 @@ interface ItemProps {
   status: 'read' | 'unread' | 'active';
 }
 
-const ItemText = styled(Text.h4)<ItemProps>`
+const ItemText = styled(Text)<ItemProps>`
   color: ${({ status, theme }) =>
     status === 'unread'
       ? theme.modal.wizard.text.inactive

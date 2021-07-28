@@ -18,7 +18,7 @@ import React from 'react';
 import Icon from 'core/components/Icon';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   children: React.ReactNode;
   className?: string;
   isOpen?: boolean;
@@ -26,26 +26,26 @@ interface Props {
   onCopy: (event?: React.MouseEvent<unknown, MouseEvent>) => void;
 }
 
-const ModalFullScreen = ({
+const FullScreen = ({
   children,
   className,
   isOpen = true,
   onClose,
-  onCopy
+  onCopy,
 }: Props) => (
-    <Styled.Wrapper
-      data-testid="modal-default"
-      className={className}
-      isOpen={isOpen}
-    >
-        <Styled.Container className="modal-container">
-            <Styled.Header>
-              <Icon name="collapse" color="light" size="18px" onClick={onClose} />
-              <Icon name="copy" color="light" size="18px" onClick={onCopy} />
-            </Styled.Header>
-            <Styled.Content className="modal-content">{children}</Styled.Content>
-        </Styled.Container>
-    </Styled.Wrapper>
-  );
+  <Styled.Wrapper
+    data-testid="modal-default"
+    className={className}
+    isOpen={isOpen}
+  >
+    <Styled.Container className="modal-container">
+      <Styled.Header>
+        <Icon name="collapse" color="light" size="18px" onClick={onClose} />
+        <Icon name="copy" color="light" size="18px" onClick={onCopy} />
+      </Styled.Header>
+      <Styled.Content className="modal-content">{children}</Styled.Content>
+    </Styled.Container>
+  </Styled.Wrapper>
+);
 
-export default ModalFullScreen;
+export default FullScreen;

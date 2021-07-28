@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RadioButtonProps } from 'core/components/Radio/Buttons';
+import { RadioButtonProps } from 'core/components/RadioButtons';
 
 export const DEFAULT_BRANCH = 'main';
 

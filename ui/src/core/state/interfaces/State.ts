@@ -20,7 +20,6 @@ import { UserState } from 'modules/Users/interfaces/UserState';
 import { NotificationState } from 'core/components/Notification/interfaces/NotificationState';
 import { UserGroupState } from 'modules/Groups/interfaces/UserGroupState';
 import { ModuleState } from 'modules/Modules/interfaces/ModuleState';
-import { HypothesesState } from 'modules/Hypotheses/interfaces';
 import { TokensState } from 'modules/Tokens/state/reducer';
 
 export interface State {
@@ -30,6 +29,5 @@ export interface State {
   notification: NotificationState;
   userGroups: UserGroupState;
   modules: ModuleState;
-  hypothesis: HypothesesState;
   tokens: TokensState;
 }

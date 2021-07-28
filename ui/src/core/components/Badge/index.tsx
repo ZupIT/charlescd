@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
@@ -24,9 +23,9 @@ export interface Props {
 
 const Badge = ({ label }: Props) => (
   <Styled.Badge>
-    <Text.h6 color="light" align="center" data-testid={`badge-${label}`}>
+    <Text tag="H6" color="light" align="center" data-testid={`badge-${label}`}>
       {label}
-    </Text.h6>
+    </Text>
   </Styled.Badge>
 );
 

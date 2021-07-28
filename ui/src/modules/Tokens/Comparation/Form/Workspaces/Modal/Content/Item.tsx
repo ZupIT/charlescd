@@ -38,12 +38,12 @@ const Item = ({ workspace, selected, onChange }: Props) => {
   return (
     <Styled.Item data-testid={`item-${workspace?.id}`}>
       <Styled.Description>
-        <Text.h4 color="light">{workspace?.name}</Text.h4>
+        <Text tag="H4" color="light">{workspace?.name}</Text>
         <Styled.Subtitle>
-          <Text.h4 fontStyle="italic" color="dark">
+          <Text tag="H4" fontStyle="italic" color="dark">
             Owned by:⠀
-          </Text.h4>
-          <Text.h4 color="light">{workspace?.author?.email}</Text.h4>
+          </Text>
+          <Text tag="H4" color="light">{workspace?.author?.email}</Text>
         </Styled.Subtitle>
       </Styled.Description>
       <Icon {...checkProps(isChecked)} size="22px" onClick={onClick} />

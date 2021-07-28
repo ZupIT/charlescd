@@ -31,6 +31,11 @@ import (
 	"strconv"
 )
 
+const (
+	defaultPageValue = 0
+	defaultSizeValue = 50
+)
+
 func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		request, err := subscriptionMain.ParseSubscription(r.Body)
@@ -162,14 +167,12 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 
 		page, atoiErr := strconv.Atoi(r.URL.Query().Get("page"))
 		if atoiErr != nil {
-			restutil.NewResponse(w, http.StatusInternalServerError, atoiErr)
-			return
+			page = defaultPageValue
 		}
 
 		size, atoiErr := strconv.Atoi(r.URL.Query().Get("size"))
 		if atoiErr != nil {
-			restutil.NewResponse(w, http.StatusInternalServerError, atoiErr)
-			return
+			size = defaultSizeValue
 		}
 
 		result, err := messageMain.FindAllBySubscriptionIdAndFilter(subscriptionId, qp, page, size)
