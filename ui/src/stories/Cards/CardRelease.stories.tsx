@@ -26,5 +26,5 @@ const Template: Story<Props> = (props: Props) => <CardRelease {...props} />;
 export const release = Template.bind({});
 release.args = {
   status: 'DEPLOYED',
-  description: '...',
+  description: 'This is a text example.',
 };
