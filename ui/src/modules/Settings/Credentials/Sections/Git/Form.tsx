@@ -97,21 +97,18 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
       </Text>
       <Styled.Fields>
         <Form.Input
-          ref={register({ required: true })}
-          name="name"
+          {...register('name', { required: true })}
           label={`Type a name for ${gitType}`}
         />
         {gitType !== 'GitHub' && (
           <Form.Input
-            ref={register({ required: true })}
-            name="credentials.address"
+            {...register('credentials.address', { required: true })}
             label={`Enter the ${gitType} url`}
           />
         )}
 
         <Form.Input
-          ref={register({ required: true })}
-          name="credentials.accessToken"
+          {...register('credentials.accessToken', { required: true })}
           label={`Enter the token ${gitType}`}
         />
         <Message

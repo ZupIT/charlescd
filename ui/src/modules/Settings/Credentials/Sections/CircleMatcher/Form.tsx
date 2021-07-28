@@ -70,8 +70,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Input
-        ref={register({ required: true })}
-        name="url"
+        {...register('url', { required: true })}
         label="Insert URL Circle Matcher"
       />
       <ButtonDefault type="submit" isDisabled={!isValid} isLoading={loadingAdd}>

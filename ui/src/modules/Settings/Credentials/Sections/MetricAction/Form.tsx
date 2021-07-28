@@ -120,8 +120,7 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
       {!isDefault && (
         <Styled.Wrapper>
           <Styled.Input
-            name="configuration"
-            ref={register({
+            {...register('configuration', {
               required: isRequired(),
               validate: {
                 notBlank: isNotBlank,
@@ -153,14 +152,12 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
   const renderForm = () => (
     <Styled.FormContent showForm={!showConfigAction}>
       <Styled.Input
-        name="nickname"
-        ref={register(isRequiredAndNotBlank)}
+        {...register('nickname', isRequiredAndNotBlank)}
         label="Type a nickname"
         maxLength={100}
       />
       <Styled.Input
-        name="description"
-        ref={register(isRequiredAndNotBlank)}
+        {...register('description', isRequiredAndNotBlank)}
         label="Type a description"
         maxLength={100}
       />

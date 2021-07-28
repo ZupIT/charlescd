@@ -69,30 +69,27 @@ const FormUser = ({ onFinish }: Props) => {
     >
       <Styled.Fields>
         <Form.Input
-          ref={register({
+          {...register('name', {
             required: isRequired(),
             maxLength: maxLength(64)
           })}
-          name="name"
           label="User name"
           error={errors?.name?.message}
         />
         <Form.Input
-          ref={register({
+          {...register('email', {
             required: isRequired(),
             maxLength: maxLength(64),
             pattern: emailPattern()
           })}
-          name="email"
           label="E-mail"
           error={errors?.email?.message}
         />
         <Form.Password
-          ref={register({
+          {...register('pwd', {
             required: isRequired(),
             maxLength: maxLength(100)
           })}
-          name="pwd"
           label="Create password"
           error={errors?.pwd?.message}
         />

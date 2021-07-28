@@ -82,8 +82,7 @@ const Credentials = ({ onChangeWorkspace, onClickHelp }: Props) => {
     <Layer>
       <ContentIcon icon="workspace">
         <Form.InputTitle
-          name="name"
-          ref={register({ required: true })}
+          {...register('name', { required: true })}
           resume={true}
           defaultValue={workspace?.name}
           onClickSave={handleSubmit(handleSaveClick)}

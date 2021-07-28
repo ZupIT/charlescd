@@ -97,8 +97,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
   const renderFields = () => (
     <>
       <Styled.Input
-        ref={register({ required: true })}
-        name="name"
+        {...register('name', { required: true })}
         label="Datasource name"
       />
       {map(
@@ -106,8 +105,7 @@ const FormMetricProvider = ({ onFinish }: Props<Datasource>) => {
         (input) => (
           <Styled.Wrapper key={input.name}>
             <Styled.Input
-              ref={register({ required: input.required })}
-              name={`data.${input.name}`}
+              {...register(`data.${input.name}`, { required: input.required })}
               label={input.label}
             />
             {input.name === 'url' && showPlaceholder && (

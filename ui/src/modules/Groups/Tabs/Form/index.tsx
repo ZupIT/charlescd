@@ -72,12 +72,11 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
       <Styled.Layer.Title data-testid={userGroup?.name}>
         <ContentIcon icon="user-groups">
           <InputTitle
-            resume
-            name="name"
-            ref={register({
+            {...register('name', {
               required: isRequired(),
               maxLength: maxLength()
             })}
+            resume
             isDisabled={!!errors.name}
             defaultValue={userGroup?.name}
             onClickSave={handleSubmit(handleSaveClick)}

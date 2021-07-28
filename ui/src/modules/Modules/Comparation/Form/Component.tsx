@@ -109,16 +109,14 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
   const renderMoreOptions = () => (
     <Styled.Components.AdvancedOptions>
       <Styled.Input
+        {...register('hostValue')}
         label="Enter host value"
-        name="hostValue"
         defaultValue={component?.hostValue}
-        ref={register()}
       />
       <Styled.Input
+        {...register('gatewayName')}
         label="Enter gateway name"
-        name="gatewayName"
         defaultValue={component?.gatewayName}
-        ref={register()}
       />
     </Styled.Components.AdvancedOptions>
   )
@@ -134,27 +132,24 @@ const Component = ({ component, module, onClose, onUpdate }: Props) => {
       </Styled.Subtitle>
       <Styled.Form onSubmit={handleSubmit(onSubmit)}>
         <Styled.Input
-          label="Enter name component"
-          name="name"
-          defaultValue={component?.name}
-          ref={register({ 
+          {...register('name', { 
             required: true,
             maxLength: maxLength(50) 
           })}
+          label="Enter name component"
+          defaultValue={component?.name}
           error={errors?.name?.message}
         />
         <Styled.Number
+          {...register('latencyThreshold', { required: true })}
           label="Latency Threshold (ms)"
-          name="latencyThreshold"
           defaultValue={component?.latencyThreshold}
-          ref={register({ required: true })}
         />
         <Styled.FieldPopover>
           <Styled.Number
+            {...register('errorThreshold', { required: true })}
             label="Http Error Threshold (%)"
-            name="errorThreshold"
             defaultValue={component?.errorThreshold}
-            ref={register({ required: true })}
           />
         </Styled.FieldPopover>
         <Styled.Subtitle

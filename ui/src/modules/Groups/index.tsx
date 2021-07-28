@@ -68,13 +68,12 @@ const UserGroups = () => {
           New user group
         </Styled.Modal.Title>
         <Styled.Modal.Input
-          name="name"
-          label="Type a name"
-          error={errors?.name?.message}
-          ref={register({
+          {...register('name', {
             required: isRequired(),
             maxLength: maxLength(),
           })}
+          label="Type a name"
+          error={errors?.name?.message}
         />
         <Styled.Modal.Button
           id="user-group"

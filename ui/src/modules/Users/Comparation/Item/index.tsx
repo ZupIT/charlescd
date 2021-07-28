@@ -177,13 +177,12 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
           {isRoot() && !isIDMEnabled() ? (
             <>
               <InputTitle
-                key={currentUser.name}
-                name="name"
-                resume
-                ref={register({
+                {...register('name', {
                   required: isRequired(),
                   maxLength: maxLength(),
                 })}
+                key={currentUser.name}
+                resume
                 isDisabled={!!errors.name}
                 defaultValue={currentUser.name}
                 onClickSave={handleSubmit(onSubmit)}

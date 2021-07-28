@@ -217,20 +217,18 @@ const FormModule = ({ module, onChange }: Props) => {
       <FormProvider {...form}>
         <Styled.Form onSubmit={handleSubmit(onSubmit)}>
           <Styled.Input
+            {...register('name', { required: true })}
             label="Name the module"
-            name="name"
             defaultValue={module?.name}
-            ref={register({ required: true })}
           />
           <Styled.Input
-            label="URL git"
-            name="gitRepositoryAddress"
-            defaultValue={module?.gitRepositoryAddress}
-            ref={register({
+            {...register('gitRepositoryAddress', {
               required: isRequired(),
               maxLength: maxLength(1048),
               pattern: urlPattern(),
             })}
+            label="URL git"
+            defaultValue={module?.gitRepositoryAddress}
             error={errors?.gitRepositoryAddress?.message}
           />
           {!isEditing && <Components key="components" fieldArray={fieldArray} />}

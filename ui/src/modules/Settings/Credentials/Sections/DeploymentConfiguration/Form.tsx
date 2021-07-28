@@ -46,18 +46,15 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Input
-        ref={register({ required: true })}
-        name="name"
+        {...register('name', { required: true })}
         label="Type a name for the configuration"
       />
       <Form.Input
-        ref={register({ required: true })}
-        name="butlerUrl"
+        {...register('butlerUrl', { required: true })}
         label="Enter butler URL"
       />
       <Form.Input
-        ref={register({ required: true })}
-        name="namespace"
+        {...register('namespace', { required: true })}
         label="Enter the namespace"
       />
       <Select.Single
@@ -68,8 +65,7 @@ const FormDeploymentConfiguration = ({ onFinish }: Props<DeploymentConfiguration
         rules={{ required: true }}
       />
       <Form.Input
-        ref={register({ required: true })}
-        name="gitToken"
+        {...register('gitToken', { required: true })}
         label="Enter the Git token"
       />
       <ButtonDefault
