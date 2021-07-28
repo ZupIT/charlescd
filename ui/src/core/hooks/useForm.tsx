@@ -36,11 +36,11 @@ function useForm<
   function customRegisterFieldRef(registerOptions?: RegisterOptions) {
     const customRules: RegisterOptions = {
       ...registerOptions,
+      setValueAs: trimValue,
       validate: {
         ...registerOptions?.validate,
         notBlank: isNotBlank
       },
-      setValueAs: trimValue
     };
 
     return formMethods.register(customRules);

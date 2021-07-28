@@ -174,10 +174,10 @@ export const validateSlash = (input: string, name: string) => {
 
 export const getHelmFieldsValidations = (name: string, required = true) => ({
   required: required ? isRequired() : null,
+  setValueAs: trimValue,
   validate: {
     validSlash: (value: string) => validateSlash(value, name),
     notBlank: isNotBlank
   },
-  setValueAs: trimValue
 })
 

@@ -122,10 +122,10 @@ const FormAddAction = ({ onFinish }: Props<ActionForm>) => {
           <Styled.Input
             {...register('configuration', {
               required: isRequired(),
+              setValueAs: trimValue,
               validate: {
                 notBlank: isNotBlank,
               },
-              setValueAs: trimValue,
               pattern: urlPattern(),
             })}
             error={errors?.configuration?.message}

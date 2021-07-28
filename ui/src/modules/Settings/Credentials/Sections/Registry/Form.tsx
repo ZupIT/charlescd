@@ -222,10 +222,10 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
               error={errors?.address?.message}
               {...register('address', {
                 required: isRequired(),
+                setValueAs: trimValue,
                 validate: {
                   notBlank: isNotBlank,
                 },
-                setValueAs: trimValue,
                 pattern: urlPattern(),
               })}
               label="Enter the registry url" />

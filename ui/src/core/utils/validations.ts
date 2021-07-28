@@ -40,10 +40,10 @@ export const trimValue = (value: unknown) => isString(value) ? value?.trim() : v
 
 export const isRequiredAndNotBlank = {
   required: true,
+  setValueAs: trimValue,
   validate: {
     notBlank: isNotBlank
   },
-  setValueAs: trimValue
 } as const;
 
 export const maxLength = (value = 64, message?: string) => ({
