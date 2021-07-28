@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import { render, screen, act } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { circleData, newCircleData } from './fixtures';
