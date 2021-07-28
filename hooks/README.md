@@ -1,23 +1,24 @@
 # GitHooks
 
-Hooks are programs you can place in a git hooks directory to trigger actions at certain points in git's execution. 
+Hooks are programs you can place in a Git Hooks directory to trigger actions at certain points in the Git's execution
 
-In CharlesCD we have two githooks:
+In CharlesCD we have two Githooks, see them below:
 
 ## Pre-Commit
 
-This hook runs during ```git commit```, before you even type in a commit message. In CharlesCD is used
-to verify if the changed files in commit have license header appropriately.
+This hook runs during ```git commit``` before you type a commit message. 
+CharlesCD uses this to verify if the changed files in a commit have a proper license header.
 
 
 ## Pre-Push
 
-This hook runs during ```git push```, after the remote refs have been updated but before any objects have been transferred. In CharlesCD is used
-to verify if the commits to push have DCO Sign Off.
+This hook runs during ```git push``` after the remote refs have been updated but before any objects have been transferred. 
+CharlesCD uses this to verify if the commits to push have DCO Sign Off.
 
 
 # Configuration
 
-The hooks are all stored in the hooks subdirectory of the Git directory. 
-In most projects, that’s ```.git/hooks```.
-To config the CharlesCD hooks copy the files ```pre-commit``` and ```pre-push``` to ```charlescd/.git/hooks``` directory in your local CharlesCD project.
+The hooks are stored inside the hooks subdirectory of Git's directory. 
+In most projects, you will see it as: ```**.git/hooks**```.
+To configure CharlesCD's hooks:
+- Copy the files ```pre-commit``` and ```pre-push``` to ```charlescd/.git/hooks``` directory in your local CharlesCD project.
