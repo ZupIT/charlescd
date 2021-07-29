@@ -45,7 +45,7 @@ const BasicQueryForm = () => {
           </StyledRule.RuleTrash>
           <StyledRule.Input type="hidden" name={`filters[${index}].id`} defaultValue={field.id} />
           <StyledRule.Input
-            {...register(`filters[${index}].field`, {
+            {...register(`filters[${index}].field` as const, {
               required: true
             })}
             label="Filter"
@@ -60,7 +60,7 @@ const BasicQueryForm = () => {
             defaultValue={getOperator(field.operator)}
           />
           <StyledRule.Input
-            {...register(`filters[${index}].value`, {
+            {...register(`filters[${index}].value` as const, {
               required: true
             })}
             label="Value"

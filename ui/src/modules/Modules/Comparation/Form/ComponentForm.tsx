@@ -54,7 +54,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           />
         )}
         <Styled.Components.Input
-          {...register(`components[${index}].name`, {
+          {...register(`components[${index}].name` as const, {
             ...isRequiredAndNotBlank,
             maxLength: maxLength(50),
             validate: {
@@ -66,11 +66,11 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           error={errors?.components?.[index]?.name.message}
           defaultValue={field.name} />
         <Styled.Components.Number
-          {...register(`components[${index}].latencyThreshold`, isRequiredAndNotBlank)}
+          {...register(`components[${index}].latencyThreshold` as const, isRequiredAndNotBlank)}
           label="Latency Threshold (ms)"
           defaultValue={field.latencyThreshold} />
         <Styled.Components.Number
-          {...register(`components[${index}].errorThreshold`, isRequiredAndNotBlank)}
+          {...register(`components[${index}].errorThreshold` as const, isRequiredAndNotBlank)}
           label="Http Error Threshold (%)"
           defaultValue={field.errorThreshold} />
       </Styled.Components.Wrapper>
@@ -83,7 +83,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
         <>
           <Styled.FieldPopover>
             <Styled.Input
-              {...register(`components[${index}].hostValue`, isRequiredAndNotBlank)}
+              {...register(`components[${index}].hostValue` as const, isRequiredAndNotBlank)}
               label="Insert a host for virtual service use"
               defaultValue={field.hostValue} />
             <Styled.Popover
@@ -97,7 +97,7 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
           </Styled.FieldPopover>{' '}
           <Styled.FieldPopover>
             <Styled.Input
-              {...register(`components[${index}].gatewayName`, isRequiredAndNotBlank)}
+              {...register(`components[${index}].gatewayName` as const, isRequiredAndNotBlank)}
               label="Insert a ingress name if necessary"
               defaultValue={field.gatewayName} />
             <Styled.Popover
