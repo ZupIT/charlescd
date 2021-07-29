@@ -48,12 +48,14 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
   const {
-    errors,
     register,
     control,
     getValues,
     setValue,
     clearErrors,
+    formState: {
+      errors,
+    },
   } = useFormContext();
 
   useEffect(() => {

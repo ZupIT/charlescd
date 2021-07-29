@@ -38,13 +38,13 @@ const ChangePassword = ({ onSubmit }: Props) => {
     register,
     handleSubmit,
     watch,
-    errors,
-    formState,
-    getValues
+    formState: {errors},
+    getValues,
   } = useForm<FormState>({
     mode: 'onChange',
     resolver: validationResolver
   });
+
   const newPassword = watch('newPassword') as string;
   const confirmPass = watch('confirmPassword') as string;
   const { updatePassword, status } = useChangePassword();

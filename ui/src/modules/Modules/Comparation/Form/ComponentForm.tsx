@@ -13,7 +13,14 @@ interface Props {
 }
 
 const ComponentForm = ({ field, fields, index, remove }: Props) => {
-  const { register, unregister, getValues, errors } = useFormContext();
+  const {
+    register,
+    unregister,
+    getValues,
+    formState: {
+      errors,
+    },
+  } = useFormContext();
   const [editMoreOptions, setEditMoreOptions] = useState(false);
   const one = 1;
 

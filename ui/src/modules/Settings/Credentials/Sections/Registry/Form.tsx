@@ -71,9 +71,11 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
     getValues,
     setValue,
     watch,
-    errors,
     trigger,
-    formState: { isValid },
+    formState: {
+      isValid,
+      errors,
+    },
   } = useForm<Registry>({
     mode: 'onChange',
     defaultValues: {

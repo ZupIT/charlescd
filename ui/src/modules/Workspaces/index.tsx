@@ -42,8 +42,10 @@ const Workspaces = () => {
   const {
     register,
     handleSubmit,
-    errors,
-    formState: { isValid },
+    formState: {
+      isValid,
+      errors,
+    },
   } = useForm({ mode: 'onChange' });
 
   useEffect(() => {

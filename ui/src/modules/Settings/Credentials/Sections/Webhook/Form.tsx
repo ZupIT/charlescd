@@ -38,8 +38,10 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
     register,
     handleSubmit,
     watch,
-    errors,
-    formState: { isValid }
+    formState: {
+      isValid,
+      errors,
+    },
   } = useForm<Webhook>({ mode: 'onChange' });
 
   const isAllEventsChecked = data?.events?.length === EVENTS.length;
