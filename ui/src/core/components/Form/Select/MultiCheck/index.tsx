@@ -20,6 +20,7 @@ import { OptionTypeBase } from 'react-select';
 import { Option } from '../interfaces';
 import Select from './Select';
 
+// TODO resolve onchange
 export interface Props {
   name: string;
   control: Control<any>;
@@ -50,19 +51,23 @@ const MultiCheck = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      as={<Select />}
-      options={options}
-      name={name}
-      control={control}
-      customOption={customOption}
-      className={className}
       defaultValue={defaultValue}
-      label={label}
-      isLoading={isLoading}
-      onChange={([selectedOptions]: [OptionTypeBase[]]) => {
-        onChange && onChange(selectedOptions);
-        return selectedOptions;
-      }}
+      control={control}
+      name={name}
+      render={({ onChange: onControllerChange }) => {
+        return (
+          <Select
+            options={options}
+            customOption={customOption}
+            className={className}
+            label={label}
+            isLoading={isLoading}
+            onChange={([selectedOptions]: [OptionTypeBase[]]) => {
+              onChange && onChange(selectedOptions);
+              return selectedOptions;
+            }}
+          />
+      )}}
     />
   </div>
 );
