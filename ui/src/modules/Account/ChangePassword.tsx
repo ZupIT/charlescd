@@ -38,7 +38,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
     register,
     handleSubmit,
     watch,
-    formState: {errors},
+    formState: {errors, isValid},
     getValues,
   } = useForm<FormState>({
     mode: 'onChange',
@@ -94,7 +94,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         type="submit"
         size="EXTRA_SMALL"
         isLoading={status.isPending}
-        isDisabled={!formState.isValid}
+        isDisabled={!isValid}
       >
         Save
       </ButtonDefault>

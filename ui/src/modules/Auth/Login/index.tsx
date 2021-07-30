@@ -27,7 +27,7 @@ import { useLogin } from './hook';
 
 const Login = () => {
   const [isDisabled, setIsDisabled] = useState(true);
-  const { register, errors, getValues, watch, handleSubmit } = useForm({
+  const { register, getValues, watch, handleSubmit, formState: {errors} } = useForm({
     mode: 'onChange'
   });
   const { doLogin, status, error } = useLogin();
