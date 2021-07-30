@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check License and license year on prs
-        uses: thalleslmF/actions-license@0.0.22
+        uses: thalleslmF/actions-license@0.0.23
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
