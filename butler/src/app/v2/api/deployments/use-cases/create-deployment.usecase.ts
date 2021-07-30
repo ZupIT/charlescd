@@ -47,7 +47,6 @@ export class CreateDeploymentUseCase {
   ) { }
 
   public async execute(createDeploymentDto: CreateDeploymentRequestDto, incomingCircleId: string | null): Promise<ReadDeploymentDto> {
-    console.log('teste-1')
     this.consoleLoggerService.log('START:EXECUTE_V2_CREATE_DEPLOYMENT_USECASE', { deployment: createDeploymentDto.deploymentId, incomingCircleId })
     const { deployment, execution } = await getConnection().transaction(async transactionManager => {
       const deploymentEntity = await this.newDeployment(createDeploymentDto)
