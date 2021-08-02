@@ -15,7 +15,6 @@
  */
 
 import styled from 'styled-components';
-import { HEADINGS } from './enums';
 import { fadeIn } from 'core/assets/style/animate';
 
 interface Props {
@@ -24,7 +23,7 @@ interface Props {
   fontStyle?: string;
   weight?: string;
   align?: string;
-  type?: HEADINGS;
+  tag: string;
 }
 
 const Text = styled.span<Props>`

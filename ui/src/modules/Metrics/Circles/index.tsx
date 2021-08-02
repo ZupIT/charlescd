@@ -39,30 +39,30 @@ const Circles = () => {
             <Loader.CircleCard />
           ) : (
             <>
-              <Styled.CirclesData color="light">
+              <Styled.CirclesData tag="H1" color="light">
                 {`${totalCircles}`}
               </Styled.CirclesData>
               <Styled.CirclesDataDetail>
-                <Text.h4 color="light">
+                <Text tag="H4" color="light">
                   Actives: {response?.circleStats?.active}
-                </Text.h4>
-                <Text.h4 color="light">
+                </Text>
+                <Text tag="H4" color="light">
                   Inactives: {response?.circleStats?.inactive}
-                </Text.h4>
+                </Text>
               </Styled.CirclesDataDetail>
             </>
           )}
         </Styled.MiniCard>
         <Styled.MiniCard>
-          <Styled.CirclesData>
-            <Text.h4 color="light">Average life time</Text.h4>
-            <Text.h1 color="light">
+          <Styled.CirclesData tag="H1">
+            <Text tag="H4" color="light">Average life time</Text>
+            <Text tag="H1" color="light">
               {loading ? (
                 <Loader.CircleAverageTime />
               ) : (
                 `${humanizeDurationFromSeconds(response?.averageLifeTime)}`
               )}
-            </Text.h1>
+            </Text>
           </Styled.CirclesData>
         </Styled.MiniCard>
       </Styled.Content>

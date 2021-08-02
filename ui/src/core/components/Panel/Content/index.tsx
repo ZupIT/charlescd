@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Styled from './styled';
 
 export interface Props {
@@ -23,10 +23,10 @@ export interface Props {
   className?: string;
 }
 
-const PanelContent = ({ size = '316px', children, className }: Props) => (
+const Content = ({ size = '316px', children, className }: Props) => (
   <Styled.Content className={className} size={size}>
     {children}
   </Styled.Content>
 );
 
-export default PanelContent;
+export default Content;

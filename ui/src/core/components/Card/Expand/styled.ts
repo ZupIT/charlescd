@@ -16,6 +16,10 @@
 
 import styled from 'styled-components';
 
+const WrapperAction = styled.div`
+  display: flex;
+`;
+
 const Expand = styled.div`
   max-height: 145px;
   overflow-y: auto;
@@ -37,6 +41,7 @@ const Action = styled.button`
 `;
 
 export default {
+  WrapperAction,
   Action,
   Expand
 };

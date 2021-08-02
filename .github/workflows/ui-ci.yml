@@ -1,4 +1,4 @@
-name: build and test new ui
+name: build and test ui
 
 on:
   push:
@@ -21,18 +21,18 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn-lock.json') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - run: yarn install
+    - run: npm ci
       working-directory: ./ui
-    - run: yarn build
+    - run: npm run build
       working-directory: ./ui
-    - run: yarn test:coverage
+    - run: npm run test:coverage
       working-directory: ./ui
       env:
         CI: true

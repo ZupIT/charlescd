@@ -35,11 +35,10 @@ const usersCreate = `/users/create`;
 
 const workspace = `/workspace`;
 const circles = `/circles`;
-const hypotheses = `/hypotheses`;
-const hypothesesEdit = `/hypotheses/:hypothesisId`;
-const hypothesesCard = `/hypotheses/:hypothesisId/card/:cardId`;
+
 const modules = `/modules`;
 const modulesComparation = `${modules}/compare`;
+
 const metrics = `/metrics`;
 const metricsDeploys = `${metrics}/deploys`;
 const metricsCircles = `${metrics}/circles`;
@@ -94,9 +93,6 @@ export default {
   settings,
   credentials,
   workspacesComparation,
-  hypotheses,
-  hypothesesEdit,
-  hypothesesCard,
   metrics,
   metricsDeploys,
   metricsCircles
