@@ -64,10 +64,11 @@ const AsyncSelect = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      render={({ onChange: onControllerChange }) => {
+      render={({ field: {onChange: onControllerChange} }) => {
         return (
           <Select
             defaultOptions={defaultOptions}
+            options={options}
             placeholder={label}
             className={className}
             isDisabled={isDisabled}
@@ -91,7 +92,6 @@ const AsyncSelect = ({
       defaultValue={defaultValue?.value}
       rules={rules}
       control={control}
-      options={options}
       name={name}
     />
   </div>
