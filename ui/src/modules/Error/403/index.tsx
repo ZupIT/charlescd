@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { useRouter } from 'core/utils/routes';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import routes from 'core/constants/routes';
 import Placeholder from 'core/components/Placeholder';
 import Styled from '../styled';
@@ -31,13 +31,13 @@ const Forbidden403 = () => {
         subtitle="You don't have permission to access."
         icon="error-403"
       >
-        <Button.Rounded
+        <ButtonRounded
           name="error-403"
           color="dark"
           onClick={() => router.push(routes.workspaces)}
         >
           Go to home
-        </Button.Rounded>
+        </ButtonRounded>
       </Placeholder>
     </Styled.Error>
   );

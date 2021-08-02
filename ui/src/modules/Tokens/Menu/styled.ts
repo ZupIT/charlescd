@@ -17,7 +17,7 @@
 import styled, { css } from 'styled-components';
 import LabeledIcon from 'core/components/LabeledIcon';
 import SearchInputComponent from 'core/components/Form/SearchInput';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { COLOR_BLACK_MARLIN } from 'core/assets/colors';
@@ -66,7 +66,7 @@ const Link = styled('button')<LinkProps>`
     isActive ? COLOR_BLACK_MARLIN : 'transparent'};
 `;
 
-const Button = styled(ButtonComponent.Default)`
+const Button = styled(ButtonComponentDefault)`
   border: none;
   background-color: transparent;
   padding: 0;
@@ -93,11 +93,11 @@ const ModalInput = styled(Form.Input)`
   }
 `;
 
-const ModalTitle = styled(Text.h2)`
+const ModalTitle = styled(Text)`
   margin-bottom: 20px;
 `;
 
-const ButtonModal = styled(ButtonComponent.Default)`
+const ButtonModal = styled(ButtonComponentDefault)`
   height: 40px;
   margin-top: 20px;
 `;

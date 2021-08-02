@@ -33,7 +33,7 @@ const Footer = () => {
           onDismiss={() => dispatch(dismissNotification())}
         />
       )}
-      {charlesVersion && <Styled.Version color='light' align='right'>Version   {charlesVersion}</Styled.Version>}
+      {charlesVersion && <Styled.Version tag="H3" color='light' align='right'>Version   {charlesVersion}</Styled.Version>}
     </Styled.Footer>
   );
 };

@@ -28,7 +28,7 @@ const ModalView = ({ onClose, tokenWorkspaces, allWorkspaces }: Props) => {
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        <Text.h2 color="light">View workspaces</Text.h2>
+        <Text tag="H2" color="light">View workspaces</Text>
       </Styled.Header>
       <List tokenWorkspaces={tokenWorkspaces} allWorkspaces={allWorkspaces} />
     </Styled.Modal>

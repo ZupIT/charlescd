@@ -47,8 +47,8 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
   }, [getValues]);
 
   useEffect(() => {
-    register({ name: "allWorkspaces" });
-    register({ name: "workspaces" }, { validate: validateWorkspaces });
+    register({ name: 'allWorkspaces' });
+    register({ name: 'workspaces' }, { validate: validateWorkspaces });
   }, [register, validateWorkspaces]);
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
@@ -90,13 +90,13 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
       {renderModalAddWorkspaces()}
       {renderModalViewWorkspaces()}
       <ContentIcon icon="workspaces">
-        <Text.h2 color="light">Associated Workspaces</Text.h2>
-        <Styled.Caption color="dark">
-          {
-            watchAllWorkspaces
-              ? 'Your token has access to all workspaces (including new ones)'
-              : 'Your token have access only on these workspaces'
-          }
+        <Text tag="H2" color="light">
+          Associated Workspaces
+        </Text>
+        <Styled.Caption tag="H5" color="dark">
+          {watchAllWorkspaces
+            ? 'Your token has access to all workspaces (including new ones)'
+            : 'Your token have access only on these workspaces'}
         </Styled.Caption>
         {mode === 'create' && 
           <Styled.Button
@@ -118,7 +118,7 @@ const Workspaces = ({ mode, tokenWorkspaces, allWorkspaces }: Props) => {
           </Styled.Button>}
       </ContentIcon>
     </Fragment>
-  )
-}
+  );
+};
 
 export default Workspaces;

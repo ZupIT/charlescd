@@ -24,7 +24,7 @@ const Footer = styled.footer`
   z-index: ${({ theme }) => theme.zIndex.OVER_3};
 `;
  
-const Version = styled(Text.h3)`
+const Version = styled(Text)`
   margin-right: 18px;
   margin-top: 8px;
 `;

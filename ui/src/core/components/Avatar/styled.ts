@@ -14,68 +14,30 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
-import IconComponent from 'core/components/Icon';
+import styled, { css } from 'styled-components';
 import { Props } from '.';
 
-const Wrapper = styled.div`
+const Avatar = styled.div`
   display: flex;
   align-items: flex-end;
 `;
 
-const AvatarWithPhoto = styled.img<Partial<Props>>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  border-radius: 50%;
-`;
-
-const AvatarWithoutPhoto = styled.div<Partial<Props>>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
+const Initials = styled.div<Partial<Props>>`
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
   border-radius: 50%;
   background: ${({ theme }) => theme.avatar.background};
   color: ${({ theme }) => theme.avatar.color};
-  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-`;
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const EditAvatar = styled(IconComponent)`
-  position: relative;
-  margin-left: -20px;
-`;
-
-const LoaderContainer = styled.div<Partial<Props>>`
-  position: relative;
-  margin-left: 20px;
-  border: none;
-  border-radius: 50%;
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-`;
-
-const Loader = styled(IconComponent)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  ${({ size }) => size && css`
+    font-size: ${size / 2}px;
+  `};
 `;
 
 export default {
-  Wrapper,
-  Avatar: {
-    Edit: EditAvatar,
-    WithPhoto: AvatarWithPhoto,
-    WithoutPhoto: AvatarWithoutPhoto
-  },
-  Loader,
-  LoaderContainer,
-  Form
+  Avatar,
+  Initials,
 };

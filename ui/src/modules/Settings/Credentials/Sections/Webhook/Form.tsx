@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useEffect, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import omit from 'lodash/omit';
 import size from 'lodash/size';
 import isEmpty from 'lodash/isEmpty';
 import includes from 'lodash/includes';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { Webhook } from './interfaces';
@@ -29,7 +29,7 @@ import { EVENTS } from './constants';
 import { useWebhook } from './hooks';
 import Styled from './styled';
 import { CHARLES_DOC } from 'core/components/Popover';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { isRequired, maxLength, minLength, urlPattern } from 'core/utils/validations';
 
 const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
@@ -65,8 +65,8 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
   const renderTitle = () => (
     isEditMode
-      ? <Text.h2 color="light">Edit Webhook</Text.h2>
-      : <Text.h2 color="light">Add Webhook</Text.h2>
+      ? <Text tag="H2" color="light">Edit Webhook</Text>
+      : <Text tag="H2" color="light">Add Webhook</Text>
   )
 
   const renderOptions = () => (
@@ -92,19 +92,18 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
+      <Text tag="H5" color="dark">
         Webhooks allow external services to be notified when certain events
         happen. When the specified events happen, we’ll send a POST request to
         each of the URLs you provide.
-      </Text.h5>
-      <Text.h5 color="dark">
+      </Text>
+      <Text tag="H5" color="dark">
         See our {' '}
-          <DocumentationLink
-            text="documentation"
-            documentationLink={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}
-          />{' '}
+        <Link href={`${CHARLES_DOC}/get-started/defining-a-workspace/web`}>
+          documentation
+        </Link>{' '}
         for further details.
-      </Text.h5>
+      </Text>
       <Styled.Fields>
         <Form.Input
           ref={register({
@@ -138,9 +137,9 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           autoComplete="new-password"
           defaultValue={data?.apiKey}
         />
-        <Text.h5 color="dark">
+        <Text tag="H5" color="dark">
           Which events would you like to trigger this webhook?
-        </Text.h5>
+        </Text>
         <Form.Radio
           ref={register({ required: true })}
           name="eventType"
@@ -156,13 +155,13 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
           defaultChecked={size(data?.events) < size(EVENTS) && isEditMode}
         />
         {watchEventType === 'individual' && renderOptions()}
-        <Button.Default
+        <ButtonDefault
           type="submit"
           isDisabled={!isValid}
           isLoading={status === 'pending'}
         >
           Save
-        </Button.Default>
+        </ButtonDefault>
       </Styled.Fields>
     </Styled.Form>
   );
