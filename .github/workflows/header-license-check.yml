@@ -1,0 +1,21 @@
+
+name: Header license check
+
+on:
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check License and license year on prs
+        uses: thalleslmF/actions-license@0.0.31
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          FORCE_COLOR: 3
