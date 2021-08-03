@@ -56,7 +56,7 @@ const Single = ({
 }: Props) => (
   <div data-testid={`select-${name}`}>
     <Controller
-      render={({ onChange: onControllerChange }) => {
+      render={({ field: {onChange: onControllerChange} }) => {
         return (
           <Select
             placeholder={label}
