@@ -43,14 +43,16 @@ function useForm<
       setValueAs: trimValue
     };
 
-    return formMethods.register(customRules);
+    // TODO
+    // return formMethods.register(customRules);
   }
 
   function customRegisterManual(
     fieldName?: FieldName<TFieldValues>,
     options?: RegisterOptions
   ) {
-    return formMethods.register(fieldName, options);
+    // TODO
+    // return formMethods.register(fieldName, options);
   }
 
   return {
