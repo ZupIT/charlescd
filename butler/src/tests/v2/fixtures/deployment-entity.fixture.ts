@@ -185,7 +185,7 @@ export const getDeploymentWithManifestAndPreviousFixture = (manifestType: Manife
   return deployment
 }
 
-export const executionFixture = () => {
+export const executionFixture = (): Execution => {
   const execution = new Execution(
     deploymentFixture,
     ExecutionTypeEnum.DEPLOYMENT,
