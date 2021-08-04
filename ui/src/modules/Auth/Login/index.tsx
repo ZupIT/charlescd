@@ -27,7 +27,7 @@ import { useLogin } from './hook';
 
 const Login = () => {
   const [isDisabled, setIsDisabled] = useState(true);
-  const { register, errors, getValues, watch, handleSubmit } = useForm({
+  const { register, getValues, watch, handleSubmit, formState: {errors} } = useForm({
     mode: 'onChange'
   });
   const { doLogin, status, error } = useLogin();
@@ -58,9 +58,9 @@ const Login = () => {
         {error && <Styled.Error tag="H6" color="error">{errorMessage}</Styled.Error>}
         <Styled.Field>
           <Form.Input
+            name='email'
             type="email"
-            ref={register({ required: true })}
-            name="email"
+            {...register({ required: true })}
             label="Email address"
           />
           {errors.email && (
@@ -69,8 +69,8 @@ const Login = () => {
         </Styled.Field>
         <Styled.Field>
           <Form.Password
-            ref={register({ required: true })}
-            name="password"
+            {...register({ required: true })}
+            name='password'
             label="Enter your password"
           />
           {errors.password && (
