@@ -3,6 +3,10 @@ import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deplo
 import { getComplexManifests, getNoLabelsManifests, getSimpleManifests } from './manifests.fixture'
 import { UrlConstants } from '../integration/test-constants'
 import { KubernetesManifest } from '../../../app/v2/core/integrations/interfaces/k8s-manifest.interface'
+import { Execution } from '../../../app/v2/api/deployments/entity/execution.entity'
+import { ExecutionTypeEnum } from '../../../app/v2/api/deployments/enums'
+import { DeploymentStatusEnum } from '../../../app/v2/api/deployments/enums/deployment-status.enum'
+import { NotificationStatusEnum } from '../../../app/v2/core/enums/notification-status.enum'
 
 export const deploymentFixture = new DeploymentEntityV2(
   'b7d08a07-f29d-452e-a667-7a39820f3262',
@@ -179,4 +183,15 @@ export const getDeploymentWithManifestAndPreviousFixture = (manifestType: Manife
   const previousDeployment = getDeploymentWithManifestFixture(manifestType)
   deployment.previousDeploymentId = previousDeployment.id
   return deployment
+}
+
+export const executionFixture = () => {
+  const execution = new Execution(
+    deploymentFixture,
+    ExecutionTypeEnum.DEPLOYMENT,
+    null,
+    DeploymentStatusEnum.CREATED,
+  )
+  execution.notificationStatus = NotificationStatusEnum.NOT_SENT
+  return execution
 }

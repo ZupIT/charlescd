@@ -21,7 +21,7 @@ import { ConsoleLoggerService } from '../../../../app/v2/core/logs/console'
 import { RouteHookParams } from '../../../../app/v2/operator/interfaces/params.interface'
 import { PartialRouteHookParams, SpecsUnion } from '../../../../app/v2/operator/interfaces/partial-params.interface'
 import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
-import { createDeployComponent, deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { createDeployComponent, deploymentFixture, executionFixture } from '../../fixtures/deployment-entity.fixture'
 import {
   routesManifests2ComponentsOneCircle,
   routesManifestsDiffNamespace,
@@ -29,6 +29,13 @@ import {
   routesManifestsSameNamespaceWithService,
   routesManifestsSameNamespaceWithServiceAndNoLabels
 } from '../../fixtures/manifests.fixture'
+import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
+import { MooveService } from '../../../../app/v2/core/integrations/moove'
+import { HttpService } from '@nestjs/common'
+import { exec } from 'child_process'
+import { createDeploymentAndExecution } from '../../integration/controllers/execution.controller.integration-spec'
+import { UrlConstants } from '../../integration/test-constants'
+import { UpdateResult } from 'typeorm'
 
 describe('Hook Routes Manifest Creation', () => {
 
@@ -39,12 +46,14 @@ describe('Hook Routes Manifest Creation', () => {
   let hookParamsWith2Components: RouteHookParams
   let hookParamsWith2Components1Observed: RouteHookParams
   let hookParamsWith2Components2Observed: RouteHookParams
-
+  let executionRepository: ExecutionRepository
+  let mooveService: MooveService
   beforeEach(() => {
     deploymentRepository = new DeploymentRepositoryV2()
     componentsRepository = new ComponentsRepositoryV2()
     consoleLoggerService = new ConsoleLoggerService()
-
+    executionRepository = new ExecutionRepository(consoleLoggerService)
+    mooveService = new MooveService(new HttpService(), consoleLoggerService)
     hookParamsWithNoCircle = {
       controller: {},
       parent: {
@@ -61,6 +70,9 @@ describe('Hook Routes Manifest Creation', () => {
       },
       finalizing: false
     }
+
+
+
     hookParamsWith2Components = {
       controller: {},
       parent: {
@@ -166,6 +178,7 @@ describe('Hook Routes Manifest Creation', () => {
       },
       finalizing: false
     }
+
     hookParamsWith2Components2Observed = {
       controller: {},
       parent: {
@@ -283,7 +296,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -301,7 +316,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = routeUseCase.execute(hookParamsWith2Components)
@@ -329,7 +346,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -357,7 +376,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -373,7 +394,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWithNoCircle)
@@ -405,7 +428,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -430,7 +455,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components1Observed)
@@ -456,7 +483,9 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     await routeUseCase.execute(hookParamsWith2Components1Observed)
@@ -464,7 +493,7 @@ describe('Hook Routes Manifest Creation', () => {
     expect(updateSpy).toHaveBeenCalledWith('circle-2', false)
   })
 
-  it('should set routes health status true when all of the desired components have been observed', async() => {
+  it('should notifiy moove and  set routes health status true when all of the desired components have been observed', async() => {
     const componentsCircle2 = [
       createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
       createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
@@ -475,6 +504,14 @@ describe('Hook Routes Manifest Creation', () => {
     )
     jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
       .mockImplementation(async() => [])
+    jest.spyOn(deploymentRepository, 'findByCircleId')
+      .mockImplementation(async() => deploymentFixture)
+    jest.spyOn(executionRepository, 'findOneOrFail')
+      .mockImplementation(async() => executionFixture() )
+
+    jest.spyOn(executionRepository, 'update')
+      .mockImplementation(async() => Promise.resolve({} as UpdateResult))
+    const mooveSpy = jest.spyOn(mooveService, 'notifyDeploymentStatusV2')
 
     const updateSpy =
       jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
@@ -482,35 +519,36 @@ describe('Hook Routes Manifest Creation', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     await routeUseCase.execute(hookParamsWith2Components2Observed)
-
+    expect(mooveSpy).toHaveBeenCalledTimes(1)
     expect(updateSpy).toHaveBeenCalledWith('circle-2', true)
   })
 
-  it('should create correct routes manifests when current deployment is not healthy a previous one exists on the same circle', async() => {
-    const previousComponentsCircle1 = [
-      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
-    ]
-    const componentsCircle2 = [
-      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
-      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
-    ]
 
+
+  it('should create correct routes manifests when current deployment is not healthy a previous one exists on the same circle', async() => {
+    const componentsCircle = [
+      createDeployComponent('A', 'v1', 'circle-2', false, 'simple', 'namespace', true),
+      createDeployComponent('B', 'v1', 'circle-2', false, 'simple', 'namespace', true)
+    ]
+    console.log(componentsCircle)
     jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
-      async(circleId) => circleId === 'circle-1'? [] : componentsCircle2
+      async() =>   componentsCircle
     )
-    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
-      .mockImplementation(async(circleId) => circleId === 'circle-1'? previousComponentsCircle1 : [])
 
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -525,7 +563,8 @@ describe('Compare observed routes state with desired routes state', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
     const consoleLoggerService = new ConsoleLoggerService()
-
+    const executionRepository = new ExecutionRepository(consoleLoggerService)
+    const mooveService = new MooveService(new HttpService(), consoleLoggerService)
     const observed : PartialRouteHookParams = {
       parent: {
         spec: {
@@ -556,7 +595,9 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([])
@@ -566,7 +607,8 @@ describe('Compare observed routes state with desired routes state', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
     const consoleLoggerService = new ConsoleLoggerService()
-
+    const executionRepository = new ExecutionRepository(consoleLoggerService)
+    const mooveService = new MooveService(new HttpService(), consoleLoggerService)
     const observed : PartialRouteHookParams = {
       parent: {
         spec: {
@@ -682,7 +724,9 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([
@@ -717,8 +761,8 @@ describe('Compare observed routes state with desired routes state', () => {
     const deploymentRepository = new DeploymentRepositoryV2()
     const componentsRepository = new ComponentsRepositoryV2()
     const consoleLoggerService = new ConsoleLoggerService()
-
-
+    const executionRepository = new ExecutionRepository(consoleLoggerService)
+    const mooveService = new MooveService(new HttpService(), consoleLoggerService)
     const observed : PartialRouteHookParams = {
       parent: {
         spec: {
@@ -791,7 +835,9 @@ describe('Compare observed routes state with desired routes state', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     expect(routeUseCase.getRoutesStatus(observed, desired)).toEqual([
@@ -821,4 +867,5 @@ describe('Compare observed routes state with desired routes state', () => {
       }
     ])
   })
+
 })
