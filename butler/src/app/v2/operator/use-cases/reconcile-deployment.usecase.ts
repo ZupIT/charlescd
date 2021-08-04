@@ -77,22 +77,10 @@ export class ReconcileDeploymentUsecase {
     }
 
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
-    await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
     return { children: desiredManifests }
   }
 
-  private async notifyCallback(deployment: DeploymentEntityV2, status: DeploymentStatusEnum) {
-    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
-    if (execution.notificationStatus === NotificationStatusEnum.NOT_SENT) {
-      const notificationResponse = await this.mooveService.notifyDeploymentStatusV2(
-        execution.deploymentId,
-        status,
-        deployment.callbackUrl,
-        deployment.circleId
-      )
-      await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
-    }
-  }
+
 
   private getDesiredManifests(deployment: DeploymentEntityV2): KubernetesManifest[] {
     return deployment.components.flatMap(component => {

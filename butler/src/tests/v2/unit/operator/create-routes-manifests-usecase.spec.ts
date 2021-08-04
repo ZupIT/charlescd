@@ -32,9 +32,6 @@ import {
 import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
 import { MooveService } from '../../../../app/v2/core/integrations/moove'
 import { HttpService } from '@nestjs/common'
-import { exec } from 'child_process'
-import { createDeploymentAndExecution } from '../../integration/controllers/execution.controller.integration-spec'
-import { UrlConstants } from '../../integration/test-constants'
 import { UpdateResult } from 'typeorm'
 
 describe('Hook Routes Manifest Creation', () => {
@@ -70,9 +67,6 @@ describe('Hook Routes Manifest Creation', () => {
       },
       finalizing: false
     }
-
-
-
     hookParamsWith2Components = {
       controller: {},
       parent: {
@@ -493,7 +487,7 @@ describe('Hook Routes Manifest Creation', () => {
     expect(updateSpy).toHaveBeenCalledWith('circle-2', false)
   })
 
-  it('should notifiy moove and  set routes health status true when all of the desired components have been observed', async() => {
+  it('should notify moove and  set routes health status true when all of the desired components have been observed', async() => {
     const componentsCircle2 = [
       createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
       createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
@@ -529,17 +523,20 @@ describe('Hook Routes Manifest Creation', () => {
     expect(updateSpy).toHaveBeenCalledWith('circle-2', true)
   })
 
-
-
   it('should create correct routes manifests when current deployment is not healthy a previous one exists on the same circle', async() => {
-    const componentsCircle = [
-      createDeployComponent('A', 'v1', 'circle-2', false, 'simple', 'namespace', true),
-      createDeployComponent('B', 'v1', 'circle-2', false, 'simple', 'namespace', true)
+    const previousComponentsCircle1 = [
+      createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
     ]
-    console.log(componentsCircle)
+    const componentsCircle2 = [
+      createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
+      createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
+    ]
     jest.spyOn(componentsRepository, 'findCurrentHealthyComponentsByCircleId').mockImplementation(
-      async() =>   componentsCircle
+      async(circleId) =>   circleId === 'circle-1'? [] : componentsCircle2
     )
+
+    jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
+      .mockImplementation(async(circleId) => circleId === 'circle-1'? previousComponentsCircle1 : [])
 
     jest.spyOn(deploymentRepository, 'updateRouteStatus').mockImplementation(async() => deploymentFixture)
 
