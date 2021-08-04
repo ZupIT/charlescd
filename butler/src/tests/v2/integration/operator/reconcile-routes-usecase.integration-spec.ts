@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
-import {deploymentFixture, executionFixture} from '../../fixtures/deployment-entity.fixture'
+import { deploymentFixture, executionFixture } from '../../fixtures/deployment-entity.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import {
