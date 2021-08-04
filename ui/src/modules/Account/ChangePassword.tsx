@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Text from 'core/components/Text';
 import ButtonDefault from 'core/components/Button/ButtonDefault';
 import { useForm } from 'react-hook-form';
@@ -38,8 +38,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
     register,
     handleSubmit,
     watch,
-    errors,
-    formState,
+    formState: { errors, isValid }, 
     getValues
   } = useForm<FormState>({
     mode: 'onChange',
@@ -68,9 +67,8 @@ const ChangePassword = ({ onSubmit }: Props) => {
       </Styled.Modal.Info>
       <Styled.Password
         label="Enter your current password"
-        name="oldPassword"
         error={errors?.oldPassword?.message}
-        ref={register({
+        {...register('oldPassword', {
           required: isRequired()
         })}
       />
@@ -80,17 +78,15 @@ const ChangePassword = ({ onSubmit }: Props) => {
       </Styled.Modal.Info>
       <Styled.Password
         label="New password"
-        name="newPassword"
         error={errors?.newPassword?.message}
-        ref={register({
+        {...register('newPassword', {
           required: isRequired()
         })}
       />
       <Styled.Password
         label="Confirm new password"
-        name="confirmPassword"
         error={errors?.confirmPassword?.message}
-        ref={register({
+        {...register('confirmPassword', {
           required: isRequired()
         })}
       />
@@ -100,7 +96,7 @@ const ChangePassword = ({ onSubmit }: Props) => {
         type="submit"
         size="EXTRA_SMALL"
         isLoading={status.isPending}
-        isDisabled={!formState.isValid}
+        isDisabled={!isValid}
       >
         Save
       </ButtonDefault>
