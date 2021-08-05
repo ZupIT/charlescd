@@ -14,9 +14,13 @@ All contributions are subject to the [Developer Certificate of Origin (DCO)](htt
 When you commit, use the ```**-s** ``` option to include the Signed-off-by line at the end of the commit log message. At the root of this repository, you will find the DCO text verbatim in the [**dco.txt**](https://github.com/ZupIT/charlescd/blob/main/dco.txt) file.
 You should config a pre-push Githook in your local machine to help you not push without DCO Sign Off. For more information, [check out GitHooks](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
 
+All contributions should use [**GPG commit signature verification**](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification). 
+When you commit use the ```**-S** ``` option to include the signing. 
+To sign commits using GPG and have them verified on GitHub, follow the steps described [in the commit signature verification section](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification).
+
 ### Tests aren’t optional
-We strongly encourage you write tests before the implementation:
-* Any bugfix that doesn’t include a test proving the existence of the bug being fixed, will be returned to sender.
+We strongly encourage you to write tests before the implementation.
+* Any bugfix that doesn’t include a test proving the existence of the bug and why it is being fixed, it will return to the sender.
 * Any new feature that doesn’t include a test that can’t prove they actually work, will be returned to sender.
 
 ### Be aware with documentation changes
@@ -59,7 +63,7 @@ CharlesCD has many modules. The environment settings are different between them.
 4. Configure the environment(s) for module(s) that you are collaborating
 5. Create a branch: ```git checkout -b your_branch source_branch ```
 6. Test, code, test again and repeat.
-7. Commit your changes: ```git commit -s -m "My wonderful new evolution" ``` (don’t forget the ```-s ``` flag)
+7. Commit your changes: ```git commit -s -S -m "My wonderful new evolution" ``` (don’t forget the ```-s ``` and  ```-S ``` flags)
 9. Rebase from original repo: ```git pull --rebase upstream source_branch ```
 8. Push your commit to get it back up to your fork: ```git push origin your_branch ```
 
