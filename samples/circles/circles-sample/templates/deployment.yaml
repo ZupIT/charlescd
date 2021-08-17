@@ -4,22 +4,24 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    component: {{ .Values.component}}
+    component: {{ .Values.component }}
     tag: {{ .Values.tag }}
     circleId: {{ .Values.circleId }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
-      version: {{ .Release.Name }}
+      component: { { .Values.component } }
+      tag: { { .Values.tag } }
+      circleId: { { .Values.circleId } }
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
       labels:
-        app: {{ .Values.name }}
-        version: {{ .Release.Name }}
+        component: {{ .Values.component }}
+        tag: {{ .Values.tag }}
+        circleId: {{ .Values.circleId }}
     spec:
       containers:
         - name: {{ .Values.name }}
