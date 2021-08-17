@@ -11,9 +11,9 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      component: { { .Values.component } }
-      tag: { { .Values.tag } }
-      circleId: { { .Values.circleId } }
+      component: {{ .Values.component }}
+      tag: {{ .Values.tag }}
+      circleId: {{ .Values.circleId }}
   template:
     metadata:
       annotations:
