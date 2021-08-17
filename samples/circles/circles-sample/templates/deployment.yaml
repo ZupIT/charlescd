@@ -4,8 +4,9 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Values.name }}
-    version: {{ .Values.name }}
+    component: {{ .Values.component}}
+    tag: {{ .Values.tag }}
+    circleId: {{ .Values.circleId }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -22,7 +23,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: {{ .Values.image.tag }}
+          image: {{ .Values.image.url }}
           livenessProbe:
             failureThreshold: 3
             httpGet:
