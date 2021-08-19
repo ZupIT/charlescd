@@ -1,0 +1,3292 @@
+{
+	"info": {
+		"_postman_id": "a670d716-615d-4c44-936c-6f7df5c90d2f",
+		"name": "CharlesCD-MOOVE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"userId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Teste\",\n\t\"email\": \"teste@gmail.com\",\n\t\"password\": \"tete\",\n\t\"isRoot\": \"false\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/users",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find user by email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/users/{{base64Email}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"users",
+										"{{base64Email}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all Users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/users?page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"users"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "test",
+											"description": "Optional",
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": "test@test.com",
+											"description": "Optional",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reset User Password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/users/{{userId}}/reset-password",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"users",
+										"{{userId}}",
+										"reset-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change User password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"oldPassword\": \"old\",\n    \"newPassword\": \"new\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/users/password",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"users",
+										"password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Workspaces",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create workspace",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"workspaceId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update workspace",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"gitConfigurationId\": {{gitConfigId}},\n    \"registryConfigurationId\": {{registryConfigId}},\n    \"cdConfigurationId\": {{cdConfigId}},\n    \"circleMatcherUrl\": \"http://circle-mathecher:8080\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces/{{workspaceId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										"{{workspaceId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all workspaces",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{ownerWorkspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{ownerToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces/",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find workspace by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{ownerWorkspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "{{ownerToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}/v2/workspaces/{{workspaceId}}",
+									"host": [
+										"{{moove-host}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										"{{workspaceId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Associate a user group to a Workspace",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userGroupId\": {{userGroupId}},\n    \"roleId\": {{roleId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces/{{workspaceId}}/groups",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										"{{workspaceId}}",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all Users associated to the given Workspace",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces/users?name=name&email=email&page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										"users"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "name",
+											"description": "Optional"
+										},
+										{
+											"key": "email",
+											"value": "email",
+											"description": "Optional"
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Disassociate a user group to a Workspace",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/workspaces/{{workspaceId}}/groups/{{user-groupId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"workspaces",
+										"{{workspaceId}}",
+										"groups",
+										"{{user-groupId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create Module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"moduleId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"gitRepositoryAddress\": \"httpps://github.com/ZupIt/CharlesCD\",\n    \"helmRepository\": \"https://github.com/ZupIt/CharlesCD-helm\",\n    \"authorId\": {{userId}},\n    \"components\": [\n        {\n            \"name\": \"name\",\n            \"errorThreshold\": 10,\n            \"latencyThreshold\": 10,\n            \"hostValue\": \"host\", //Optional\n            \"gatewayName\": \"gateway\" //Optional\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/modules",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Module By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"gitRepositoryAddress\": \"httpps://github.com/ZupIt/CharlesCD\",\n    \"helmRepository\": \"https://github.com/ZupIt/CharlesCD-helm\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add component to a module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"componentId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n            \"name\": \"name\",\n            \"errorThreshold\": 10,\n            \"latencyThreshold\": 10,\n            \"hostValue\": \"host\", //Optional\n            \"gatewayName\": \"gateway\" //Optional\n        }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}/components",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}",
+										"components"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update component from module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"errorThreshold\": 10,\n    \"latencyThreshold\": 10,\n    \"hostValue\": \"host\", //Optional\n    \"gatewayName\": \"gateway\" //Optional\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}/components/{{componentId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}",
+										"components",
+										"{{componentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find module by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find component tags",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}/components/{{componentId}}/tags?name=name",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}",
+										"components",
+										"{{componentId}}",
+										"tags"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "name"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all modules",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules?name=name&page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "name",
+											"description": "Optional"
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find deployed components at circle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/components/by-circle/{{circleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"components",
+										"by-circle",
+										"{{circleId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove component from module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}/components/{{componentId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}",
+										"components",
+										"{{componentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete module",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/modules/{{moduleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"modules",
+										"{{moduleId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Builds",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Compose Build",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"buildId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"releaseName\": \"name\",\n    \"modules\": [\n        {\n            \"id\": {{moduleId}},\n            \"components\": [\n                {\n                    \"id\": {{componentId}},\n                    \"version\": \"abc-123\",\n                    \"artifact\": \"abc\"\n                }\n            ]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/builds/compose",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds",
+										"compose"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Build By Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/builds/{{buildId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds",
+										"{{buildId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all builds",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/builds?page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds"
+									],
+									"query": [
+										{
+											"key": "tagName",
+											"value": "tag",
+											"description": "Optional",
+											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "BUILT",
+											"description": "Optional [BUILDING,\n    BUILT,\n    BUILD_FAILED,\n    VALIDATED,\n    ARCHIVED]",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete build by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/builds/{{buildId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds",
+										"{{buildId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Archive Build",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/builds/{{buildId}}/archive",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds",
+										"{{buildId}}",
+										"archive"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Build Callback",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"SUCCESS\",\n    \"modules\": [\n        {\n            \"moduleId\": {{moduleId}},\n            \"status\": \"SUCCESS\",\n            \"components\": [\n                {\n                    \"name\": \"name\",\n                    \"tagName\": \"tag\"\n                }\n            ]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/builds/{{buildId}}/callback",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"builds",
+										"{{buildId}}",
+										"callback"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Circles",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create circle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"circleId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"rules\": {\n        \"type\": \"CLAUSE\",\n        \"logicalOperator\": \"AND\",\n        \"clauses\": [\n            {\n                \"type\": \"CLAUSE\",\n                \"logicalOperator\": \"AND\",\n                \"content\": {\n                    \"key\": \"username\",\n                    \"condition\": \"EQUAL\",\n                    \"value\": [\n                        \"1234\",\n                        \"abc\"\n                    ]\n                }\n            }\n        ],\n        \"content\": {\n            \"key\": \"username\",\n            \"condition\": \"EQUAL\",\n            \"value\": [\n                \"1234\",\n                \"abc\"\n            ]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{mooveHost}}/v2/circles",
+									"host": [
+										"{{mooveHost}}"
+									],
+									"path": [
+										"v2",
+										"circles"
+									]
+								},
+								"description": "Possible types [ CLAUSE, RULE]\nPossible operators [AND, OR]\nPossible conditions [ EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, LOWER_THAN, LESS_THAN_OR_EQUAL, STARTS_WITH, NOT_EQUAL, ENDS_WITH, MATCHES, CONTAINS]"
+							},
+							"response": []
+						},
+						{
+							"name": "Create circle from csv",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"circleId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "name",
+											"type": "text"
+										},
+										{
+											"key": "authorId",
+											"value": "{{userId}}",
+											"type": "text"
+										},
+										{
+											"key": "keynName",
+											"value": "username",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/csv",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"csv"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Identify circles",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"key1\": \"value\",\n    \"key2\": \"value\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/identify",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"identify"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all circles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"value": "{{workspaceId}}",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/circles?page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Deafult 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Deafult 20"
+										},
+										{
+											"key": "name",
+											"value": "name",
+											"description": "Optional",
+											"disabled": true
+										},
+										{
+											"key": "active",
+											"value": "true",
+											"description": "Optional",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find circle by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/{{circleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"{{circleId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find Circle current deployed Components by Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/{{circleId}}/components",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"{{circleId}}",
+										"components"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find circle history",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/history?name=name&page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"history"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "name",
+											"description": "Optional"
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Deafult 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Circle",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"rules\": {\n        \"type\": \"CLAUSE\",\n        \"logicalOperator\": \"AND\",\n        \"clauses\": [\n            {\n                \"type\": \"CLAUSE\",\n                \"logicalOperator\": \"AND\",\n                \"content\": {\n                    \"key\": \"username\",\n                    \"condition\": \"EQUAL\",\n                    \"value\": [\n                        \"1234\",\n                        \"abc\"\n                    ]\n                }\n            }\n        ],\n        \"content\": {\n            \"key\": \"username\",\n            \"condition\": \"EQUAL\",\n            \"value\": [\n                \"1234\",\n                \"abc\"\n            ]\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/{{circleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"{{circleId}}"
+									]
+								},
+								"description": "Possible types [ CLAUSE, RULE]\nPossible operators [AND, OR]\nPossible conditions [ EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, LOWER_THAN, LESS_THAN_OR_EQUAL, STARTS_WITH, NOT_EQUAL, ENDS_WITH, MATCHES, CONTAINS]"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Circle From Csv",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "name",
+											"type": "text"
+										},
+										{
+											"key": "keyName",
+											"value": "username",
+											"type": "text"
+										},
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									],
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/{{circleId}}/csv",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"{{circleId}}",
+										"csv"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete circle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/circles/{{circleId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"circles",
+										"{{circleId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Configurations",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create git configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"gitConfigId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"authorId\": {{userId}},\n    \"credentials\": {\n        \"address\": \"http://github.com/ZupIT\",\n        //\"username\": \"username\", \n        //\"password\": \"password\",\n        \"accessToken\": \"tokenabc\",\n        \"serviceProvider\": \"GITHUB\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/configurations/git",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"configurations",
+										"git"
+									]
+								},
+								"description": "Use only, username/password OR accessToken\nPossible providers [GITHUB, GITLAB]"
+							},
+							"response": []
+						},
+						{
+							"name": "Find git configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/configurations/git?page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"configurations",
+										"git"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Deafult 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Deafult 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Git configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"credentials\": {\n        \"address\": \"http://github.com/ZupIT\",\n        //\"username\": \"username\", \n        //\"password\": \"password\",\n        \"accessToken\": \"tokenabc\",\n        \"serviceProvider\": \"GITHUB\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/configurations/git/{{gitConfigId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"configurations",
+										"git",
+										"{{gitConfigId}}"
+									]
+								},
+								"description": "Use only, username/password OR accessToken\nPossible providers [GITHUB, GITLAB]"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Git configuration",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/configurations/git/{{gitConfigId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"configurations",
+										"git",
+										"{{gitConfigId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Deployments",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create deployment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"authorId\": {{userId}},\n    \"circleId\": {{circleId}},\n    \"buildId\": {{buildId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/deployments",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"deployments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deployment callback",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"deploymentStatus\": \"FAILED\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/deployments/{{deploymentId}}/callback",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"deployments",
+										"{{deploymentId}}",
+										"callback"
+									]
+								},
+								"description": "Possible statuses [SUCCEEDED, FAILED, UNDEPLOYED, UNDEPLOY_FAILED, TIMED_OUT]"
+							},
+							"response": []
+						},
+						{
+							"name": "Deployment History for circle",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "792c69c4-9f58-4236-9936-ffcb04bda011"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://charles-dev.continuousplatform.com/v2/deployments/circle/{{circleId}}/history",
+									"protocol": "https",
+									"host": [
+										"charles-dev",
+										"continuousplatform",
+										"com"
+									],
+									"path": [
+										"v2",
+										"deployments",
+										"circle",
+										"{{circleId}}",
+										"history"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deployment History",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/deployments/history",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"deployments",
+										"history"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Find all roles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/roles?page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"roles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Default 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "UserGroups",
+			"item": [
+				{
+					"name": "V2",
+					"item": [
+						{
+							"name": "Create user group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})",
+											"",
+											"pm.collectionVariables.set(\"user-groupId\", response[\"id\"]);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\",\n    \"authorId\": {{userId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user group",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups/{{user-groupId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups",
+										"{{user-groupId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find user group by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function() {",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups/{{user-groupId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups",
+										"{{user-groupId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Find all user groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status success\", function () {",
+											"pm.environment.set(\"variable_key\", \"variable_value\");",
+											"    pm.response.to.have.status(200)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups?name=name&page=0&size=10",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "name",
+											"description": "Optional"
+										},
+										{
+											"key": "page",
+											"value": "0",
+											"description": "Deafult 0"
+										},
+										{
+											"key": "size",
+											"value": "10",
+											"description": "Default 20"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add member to an user group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"Status created\", function() {",
+											"    pm.response.to.have.status(201)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"memberId\": {{userId}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups/{{user-groupId}}/members",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups",
+										"{{user-groupId}}",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete member from user group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups/{{user-groupId}}/members/{{userId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups",
+										"{{user-groupId}}",
+										"members",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"No content\", function() {",
+											"    pm.response.to.have.status(204)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-workspace-id",
+										"type": "text",
+										"value": "{{workspaceId}}"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"name\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{moove-host}}/v2/user-groups/{{user-groupId}}",
+									"host": [
+										"{{moove-host}}"
+									],
+									"path": [
+										"v2",
+										"user-groups",
+										"{{user-groupId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Webhooks",
+			"item": [
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status created\", function() {",
+									"    pm.response.to.have.status(201)",
+									"})",
+									"",
+									"pm.collectionVariables.set(\"webhookId\", response[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var uuid = require('uuid');",
+									"",
+									"pm.collectionVariables.set('externalId', uuid.v4());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"description\": \"Teste\",\n\t\"url\": \"http://localhost.com\",\n\t\"apiKey\": \"t\",\n\t\"events\": [\"DEPLOY\", \"UNDEPLOY\"],\n    \"externalId\" : \"{{externalId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{moove-host}}/v1/webhooks",
+							"host": [
+								"{{moove-host}}"
+							],
+							"path": [
+								"v1",
+								"webhooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patches\": [\n    {\n      \"op\": \"replace\",\n      \"path\": \"/events\",\n      \"value\":[\"UNDEPLOY\"]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{moove-host}}/v1/webhooks/{{webhookId}}",
+							"host": [
+								"{{moove-host}}"
+							],
+							"path": [
+								"v1",
+								"webhooks",
+								"{{webhookId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"No content\", function() {",
+									"    pm.response.to.have.status(204)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{moove-host}}/v1/webhooks/{{webhookId}}",
+							"host": [
+								"{{moove-host}}"
+							],
+							"path": [
+								"v1",
+								"webhooks",
+								"{{webhookId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"Status success\", function() {",
+									"    pm.response.to.have.status(200)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "x-workspace-id",
+								"value": "{{workspaceId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{moove-host}}/v1/webhooks/{{webhookId}}",
+							"host": [
+								"{{moove-host}}"
+							],
+							"path": [
+								"v1",
+								"webhooks",
+								"{{webhookId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"pm.collectionVariables(\"token\", response[\"access_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "charlescd-client",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{userEmail}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{userPassword}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloack-host}}/auth/realms/charlescd/protocol/openid-connect/token",
+					"host": [
+						"{{keycloack-host}}"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"charlescd",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "moove-host",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcXkydE1XY2E1VVhaYjdONXZNSEE0b25NRkZqNkVLandSV0tnaTJvQkhNIn0.eyJleHAiOjE2MjY3NzQ5MDEsI..."
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "componentId",
+			"value": ""
+		},
+		{
+			"key": "moduleId",
+			"value": "moduleId"
+		},
+		{
+			"key": "buildId",
+			"value": "buildId"
+		},
+		{
+			"key": "workspaceId",
+			"value": ""
+		},
+		{
+			"key": "circleId",
+			"value": "circleId"
+		},
+		{
+			"key": "gitConfigId",
+			"value": "gitConfigId"
+		},
+		{
+			"key": "user-groupId",
+			"value": "user-groupId"
+		},
+		{
+			"key": "webhookId",
+			"value": "webhookId"
+		},
+		{
+			"key": "externalId",
+			"value": ""
+		}
+	]
+}
