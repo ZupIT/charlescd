@@ -25,4 +25,10 @@ export const MODULE = {
   version: ''
 };
 
+export const METADATA = {
+  key: '',
+  value: '',
+  cluster: false
+};
+
 export const ONE = 1;

@@ -23,14 +23,16 @@ import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
-import { ONE, MODULE } from '../constants';
+import { ONE, MODULE, METADATA } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
 import Module from './Module';
+import Metadata from './Metadata';
 import Styled from '../styled';
 import Message from 'core/components/Message';
 
 const defaultValues = {
   modules: [MODULE],
+  metadata: [METADATA],
   releaseName: '',
 };
 
@@ -135,9 +137,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             isNotUnique={isNotUnique}
           />
         ))}
-
-            {/* Fix layout and start */}
-
         <Styled.Module.Info tag="H5" color="dark">
           You can add other modules:
         </Styled.Module.Info>
@@ -148,6 +147,31 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
+        </Styled.Module.Button>
+        <Text tag="H5" color="dark">
+        You can add metadata for this release that must have the necessary key to start and end 
+        with an alphanumeric character a-z or 9-0 with dashes, underscores, dots or alphanumeric
+        between them. then select whether they go to the cluster (metadata added to the cluster is not editable).
+        </Text>
+        {fields.map((metadata, index) => (
+          <Metadata
+            key={metadata.id}
+            index={index}
+            metadata={metadata}
+            onClose={() => remove(index)}
+            isNotUnique={isNotUnique}
+          />
+        ))}
+        <Styled.Module.Info tag="H5" color="dark">
+          You can add other metadata:
+        </Styled.Module.Info>
+        <Styled.Module.Button
+          type="button"
+          id="add-metadata"
+          // isDisabled={isEmptyFields}
+          onClick={() => append(METADATA)}
+        >
+          <Icon name="add" color="dark" size="15px" /> Add metadata
         </Styled.Module.Button>
         {error && <Message errorMessage={error} status={'error'} />}
         <Styled.Submit
