@@ -168,7 +168,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Styled.Module.Button
           type="button"
           id="add-metadata"
-          // isDisabled={isEmptyFields}
+          isDisabled={isEmptyFields}
           onClick={() => append(METADATA)}
         >
           <Icon name="add" color="dark" size="15px" /> Add metadata

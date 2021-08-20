@@ -30,11 +30,6 @@ const Metadata = ({ index, onClose, isNotUnique }: Props) => {
   const prefixName = `metadata[${index}]`;
   const {
     register,
-    // errors,
-    // control,
-    // getValues,
-    // setValue,
-    // clearErrors,
   } = useFormContext();
 
   return (
