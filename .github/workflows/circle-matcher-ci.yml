@@ -42,6 +42,8 @@ jobs:
         working-directory: ./circle-matcher
       - name: Horusec Security
         working-directory: ./circle-matcher
-        run: |
-          curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-          horusec start -p ./
+      env: 
+        HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+      run: |
+        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+        horusec start -p . -n="Charles/circle-matcher"

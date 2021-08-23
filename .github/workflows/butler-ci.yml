@@ -16,6 +16,8 @@ on:
     paths:
       - 'butler/**'
 
+
+
 jobs:
   build:
 
@@ -62,6 +64,8 @@ jobs:
         path: ./butler/coverage/lcov-report/
     - name: Horusec Security
       working-directory: ./butler
+      env: 
+        HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
       run: |
-        curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-        horusec start -p ./
+        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+        horusec start -p . -n="Charles/butler"
