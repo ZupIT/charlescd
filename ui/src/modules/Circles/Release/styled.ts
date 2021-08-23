@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020,2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,16 @@ const Input = styled(FormComponent.Input)`
 const ModuleInput = styled(FormComponent.Input)`
   width: 150px;
   margin: 0 0 20px;
+`;
+
+const Checkbox = styled(FormComponent.Checkbox)``;
+
+const CheckboxWrapper = styled.div`
+  margin-bottom: 20px;
+`;
+
+const CheckboxLabel = styled(Text)`
+  margin-left: 30px;
 `;
 
 const Trash = styled(IconComponent)`
@@ -135,6 +145,9 @@ export default {
   SearchWrapper,
   Error,
   Submit,
+  Checkbox,
+  CheckboxWrapper,
+  CheckboxLabel,
   Module: {
     Trash: WrapperTrash,
     Icon: Trash,

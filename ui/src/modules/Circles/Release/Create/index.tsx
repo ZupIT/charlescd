@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ interface Props {
 
 const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const [isEmptyFields, setIsEmptyFields] = useState(true);
+  const [overrideCircle, setoverrideCircle] = useState<boolean>(true);
   const {
     composeBuild,
     response: build,
@@ -99,6 +100,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
+      overrideCircle,
       releaseName: data.releaseName,
     });
   };
@@ -146,6 +148,16 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
+        <Styled.CheckboxWrapper>
+          <Styled.Checkbox
+            value="overrideCircle"
+            defaultChecked={true}
+            onChange={() => setoverrideCircle(!overrideCircle)}
+          />
+          <Styled.CheckboxLabel tag="H5" color="dark">
+              Deploy incremental.
+          </Styled.CheckboxLabel>
+        </Styled.CheckboxWrapper>
         {error && <Message errorMessage={error} status={'error'} />}
         <Styled.Submit
           id="submit"
