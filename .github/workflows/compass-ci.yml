@@ -57,8 +57,8 @@ jobs:
 
       - name: Horusec Security
         working-directory: ./compass
-      env: 
-        HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
-      run: |
-        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-        horusec start -p . -n="Charles/compass"
+        env: 
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -n="Charles/compass" -u="https://api-horusec.zup.com.br"
