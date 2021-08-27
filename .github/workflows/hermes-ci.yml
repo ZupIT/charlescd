@@ -2,7 +2,7 @@ name: build hermes
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix-unpinned-dependencies]
     paths:
       - "hermes/**"
     tags:
