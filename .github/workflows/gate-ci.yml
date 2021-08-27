@@ -45,7 +45,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: docker://morphy/revive-action:6f5858cbba3682bc78f7a5c96aad7d400e9e4477
+        uses: docker://morphy/revive-action@sha256:a59182c8da300ca49b40d877a22bcdbc64aa6c9bd405c6cd0674f56b59e34202
         with:
           config: ./gate/revive.toml
           path: "./gate/..."
