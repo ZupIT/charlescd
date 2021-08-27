@@ -22,8 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/cache@v1
+    - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
+    - uses: actions/cache@70655ec8323daeeaa7ef06d7c56e1b9191396cbe
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -36,7 +36,7 @@ jobs:
         timezone: America/Sao_Paulo
 
     - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
       with:
         node-version: 12.x
     - run: npm ci
@@ -56,7 +56,7 @@ jobs:
         fail_ci_if_error: true
         file: ./butler/coverage/coverage-final.json
         flags: butler
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
       with:
         name: unit-test-coverage
         path: ./butler/coverage/lcov-report/
