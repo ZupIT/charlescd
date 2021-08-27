@@ -22,8 +22,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
-    - uses: actions/cache@70655ec8323daeeaa7ef06d7c56e1b9191396cbe
+    - name: Actions checkout
+      uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
+    - name: Actions cache
+      uses: actions/cache@70655ec8323daeeaa7ef06d7c56e1b9191396cbe
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -31,7 +33,7 @@ jobs:
           ${{ runner.os }}-node-
 
     - name: Setup timezone
-      uses: zcong1993/setup-timezone@master
+      uses: zcong1993/setup-timezone@f28e5fb1ca95077c81b67be53bcd1923de2175ed
       with:
         timezone: America/Sao_Paulo
 
@@ -51,7 +53,7 @@ jobs:
       working-directory: ./butler
     - run: docker cp butler_app_1:/opt/darwin-deploy/coverage/ ./coverage/
       working-directory: ./butler
-    - uses: codecov/codecov-action@v1
+    - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192
       with:
         fail_ci_if_error: true
         file: ./butler/coverage/coverage-final.json

@@ -17,12 +17,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@50fbc622fc4ef5163becd7fab6573eac35f8462e
       - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@master
+        uses: DeLaGuardo/setup-graalvm@a766aa7b5fcc0a801fa3d4fd521ca299c03c9c00
         with:
           graalvm-version: '21.0.0.java11'
-      - uses: actions/cache@v1
+      - uses: actions/cache@70655ec8323daeeaa7ef06d7c56e1b9191396cbe
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
@@ -32,7 +32,7 @@ jobs:
         run: mvn -B clean install -Djfr.unsupported.vm=true
         working-directory: ./circle-matcher
       - name: Tests coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192
         with:
           file: ./circle-matcher/target/site/jacoco/jacoco.xml
           flags: circlematcher
