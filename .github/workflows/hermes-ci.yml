@@ -45,7 +45,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: docker://morphy/revive-action@sha256:a59182c8da300ca49b40d877a22bcdbc64aa6c9bd405c6cd0674f56b59e34202
+        uses: docker://morphy/revive-action@sha256:5642ac5a33b9add49139db42fa12014294c3c783c241056a4e46b1a2e059cc7c
         with:
           config: ./hermes/revive.toml
           path: "./hermes/..."
