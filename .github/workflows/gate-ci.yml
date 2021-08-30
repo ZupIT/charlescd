@@ -2,7 +2,7 @@ name: build gate
 
 on:
   push:
-    branches: [main, fix-unpinned-dependencies]
+    branches: [main]
     paths:
       - "gate/**"
     tags:

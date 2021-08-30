@@ -2,7 +2,7 @@ name: build compass
 
 on:
   push:
-    branches: [main, fix-unpinned-dependencies]
+    branches: [main]
     paths:
       - "compass/**"
     tags:

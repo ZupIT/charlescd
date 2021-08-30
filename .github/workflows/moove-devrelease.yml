@@ -2,7 +2,7 @@ name: moove dev-release
 
 on:
   push:
-    branches: [ release-darwin-*, fix-unpinned-dependencies]
+    branches: [ release-darwin-* ]
 
 jobs:
   build_and_push_prerelease:
