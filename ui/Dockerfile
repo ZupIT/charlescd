@@ -1,4 +1,4 @@
-FROM nginx@sha256:d85914d547a6c92faa39ce7058bd7529baacab7e0cd4255442b04577c4d1f424
+FROM nginx@sha256:23e4dacbc60479fa7f23b3b8e18aad41bd8445706d0538b25ba1d575a6e2410b
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
