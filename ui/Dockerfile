@@ -1,4 +1,4 @@
-FROM nginx:1.15.2-alpine
+FROM nginx@sha256:36f3464a21975e5779d081a9e8a78a024c549d1895fc9981d6bd8b67075ebd7b
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
