@@ -1,3 +1,4 @@
+create extension IF NOT EXISTS pgcrypto ;
 ALTER TABLE system_tokens
 	ADD token_hash VARCHAR(64);
 	
