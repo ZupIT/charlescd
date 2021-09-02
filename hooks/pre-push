@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# This hook prevent push of commits where not have DCO Signed Off
+
+DUMMY_BASH=0000000000000000000000000000000000000000
+
+echo "Running pre-push check;"
+AUTHOR=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/\1/p')
+
+while read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA
+do
+  if [ "$LOCAL_SHA" = $DUMMY_BASH ]
+  then
+    # Branch deleted. Do nothing.
+    exit 0
+  else
+    if [ "$REMOTE_SHA" = $DUMMY_BASH ]
+    then
+      # New branch. Verify only the 10 last commits. In the extremely uncommon case in which someone
+      # pushes more than 10 new commit to a new branch, DCO Bot will enforce full checking.
+      RANGE="$LOCAL_SHA~10..$LOCAL_SHA"
+    else
+      # Updating branch. Verify new commits.
+      RANGE="$REMOTE_SHA..$LOCAL_SHA"
+    fi
+
+		echo "Verifying DCO Signed-off in commits;'"
+		SIGNED_OFF=$(git rev-list --no-merges --author "$AUTHOR" --grep "^Signed-off-by: " "$RANGE")
+    NOT_SIGNED_OFF=$(git rev-list --no-merges --author "$AUTHOR" "$RANGE" | grep -Fxv "$SIGNED_OFF")
+
+		if [ -n "$NOT_SIGNED_OFF" ]
+		then
+			echo >&2 "ERROR: Found commits do not have DCO Sign Off in $LOCAL_REF, not pushing."
+			exit 1
+		fi
+	fi
+done
+exit 0
