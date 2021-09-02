@@ -16,7 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
@@ -24,15 +24,19 @@ import { CircleMatcher } from './interfaces';
 import { Props } from '../interfaces';
 import { useCircleMatcher } from './hooks';
 import Styled from './styled';
-import Modal from 'core/components/Modal';
-import { isEmpty } from 'lodash';
+import ModalTrigger from 'core/components/Modal/Trigger';
+import isEmpty from 'lodash/isEmpty';
 
 const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   const [circleMatcher, setCircleMatcher] = useState<string>();
   const isConfimation = !isEmpty(circleMatcher);
   const { responseAdd, save, loadingAdd } = useCircleMatcher();
-  const { register, handleSubmit, formState: { isValid } } = useForm<CircleMatcher>({
-    mode: 'onChange'
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<CircleMatcher>({
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -48,7 +52,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
   };
 
   const renderConfirmation = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Add Circle Matcher"
       dismissLabel="Cancel"
       continueLabel="Yes, save"
@@ -56,10 +60,11 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
       onContinue={() => save(circleMatcher)}
       onDismiss={() => setCircleMatcher(null)}
     >
-      <Text.h4 color="light">
-        This operation will syncronize all data from this workspace to the Circle Matcher.
-      </Text.h4>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        This operation will syncronize all data from this workspace to the
+        Circle Matcher.
+      </Text>
+    </ModalTrigger>
   );
 
   const renderForm = () => (
@@ -69,13 +74,9 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
         name="url"
         label="Insert URL Circle Matcher"
       />
-      <Button.Default
-        type="submit"
-        isDisabled={!isValid}
-        isLoading={loadingAdd}
-      >
+      <ButtonDefault type="submit" isDisabled={!isValid} isLoading={loadingAdd}>
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 
@@ -83,7 +84,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
     <Fragment>
       {isConfimation && renderConfirmation()}
       <Styled.Content>
-        <Text.h2 color="light">
+        <Text tag="H2" color="light">
           Add Circle Matcher
           <Popover
             title="Why we ask for Circle Matcher?"
@@ -92,7 +93,7 @@ const FormCircleMatcher = ({ onFinish }: Props<CircleMatcher>) => {
             linkLabel="View documentation"
             description="Adding URL of our tool helps Charles to identify the user since this can vary from workspace to another. See our documentation for further details."
           />
-        </Text.h2>
+        </Text>
         {renderForm()}
       </Styled.Content>
     </Fragment>

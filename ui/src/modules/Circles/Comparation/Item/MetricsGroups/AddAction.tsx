@@ -18,8 +18,9 @@ import React, { useEffect, useState } from 'react';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import useForm from 'core/hooks/useForm';
-import Button from 'core/components/Button/Default';
+import Button from 'core/components/Button/ButtonDefault';
 import isUndefined from 'lodash/isUndefined';
+import partition from 'lodash/partition';
 import Styled from './styled';
 import CustomOption from 'core/components/Form/Select/CustomOptions';
 import debounce from 'debounce-promise';
@@ -61,6 +62,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
   const [selectedAction, setSelectedAction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [currentCircleOptions, setCurrentCircleOptions] = useState([]);
+  const [optionsExcludeDefault, setOptionsExcludeDefault] = useState([]);
   const { getCirclesSimple } = useCircleSimple();
   const {
     getActionGroup,
@@ -115,7 +117,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
     );
 
     saveAction(newPayload)
-      .then(response => {
+      .then(response => { 
         if (response) {
           onGoBack();
         }
@@ -137,6 +139,17 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
     500
   );
 
+  const loadCirclesExclude = debounce(
+    (name) =>
+      getCirclesSimple({ name, active: true }).then(response => {
+        const options = partition(normalizeSelectOptions(response.content), { 'label': 'Default' })?.[1];
+        setOptionsExcludeDefault(options);
+        return options;
+      }
+      ),
+    500
+  );
+
   return (
     <div data-testid="metric-group-action-form">
       <Styled.Layer>
@@ -147,16 +160,16 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">
+        <Text tag="H2" color="light">
           {action?.id ? 'Update action' : 'Add action'}
-        </Text.h2>
+        </Text>
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h5 color="dark">
+        <Text tag="H5" color="dark">
           {`Fill in the information below to ${
             action?.id ? 'update' : 'create'
           } an action.`}
-        </Text.h5>
+        </Text>
       </Styled.Layer>
       <Styled.Form
         onSubmit={handleSubmit(onSubmit)}
@@ -172,15 +185,16 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           {!!errors.nickname && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">
+              <Text tag="H6" color="error">
                 {errors.nickname.message || 'Type a valid nickname'}
-              </Text.h6>
+              </Text>
             </Styled.FieldErrorWrapper>
           )}
           {!loadingActionsData && !isLoadingActionData && (
             <Styled.Select
               control={control}
               name="actionId"
+              rules={{ required: true }}
               customOption={CustomOption.Description}
               options={actionsTypeResponse}
               onChange={e => setSelectedAction(e?.type)}
@@ -194,6 +208,7 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
           )}
           {selectedAction === 'circledeployment' && !loading && (
             <Styled.SelectAsync
+              rules={{ required: true }}
               control={control}
               name="circleId"
               label="Select a circle to deploy"
@@ -203,6 +218,21 @@ const AddAction = ({ onGoBack, metricsGroup, circleId, action }: Props) => {
               defaultValue={getSelectDefaultValue(
                 actionData?.executionParameters.destinationCircleId,
                 currentCircleOptions
+              )}
+            />
+          )}
+          {selectedAction === 'circleundeployment' && !loading && (
+            <Styled.SelectAsync
+              rules={{ required: true }}
+              control={control}
+              name="circleId"
+              label="Select a circle to undeploy"
+              isDisabled={false}
+              loadOptions={loadCirclesExclude}
+              defaultOptions={optionsExcludeDefault}
+              defaultValue={getSelectDefaultValue(
+                actionData?.executionParameters.destinationCircleId,
+                optionsExcludeDefault
               )}
             />
           )}

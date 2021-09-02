@@ -16,9 +16,9 @@
 
 import styled from 'styled-components';
 import { fadeIn } from 'core/assets/style/animate';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 
-const Title = styled(TextComponent.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -28,7 +28,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h5)`
+const Subtitle = styled(Text)`
   margin-bottom: 10px;
 `;
 

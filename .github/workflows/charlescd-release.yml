@@ -121,38 +121,6 @@ jobs:
           tag_with_ref: false
           tag_with_sha: false
 
-  build_and_push_release_octopipe:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '^1.14.2'
-
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
-        with:
-          path: ./octopipe
-          username: ${{secrets.DOCKERHUB_USERNAME}}
-          password: ${{secrets.DOCKERHUB_PASSWORD}}
-          repository: zupcharles/charlescd-octopipe
-          dockerfile: ./octopipe/Dockerfile
-          tags: latest,${{ steps.get_version.outputs.VERSION }}
-          tag_with_ref: false
-          tag_with_sha: false
-
   build_and_push_release_ui:
     runs-on: ubuntu-latest
     steps:
@@ -174,9 +142,9 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: yarn install
+      - run: npm ci
         working-directory: ./ui
-      - run: yarn build
+      - run: npm run build
         working-directory: ./ui
         env:
           CI: true
@@ -443,8 +411,8 @@ jobs:
           ${{ secrets.NGINX_CERT }}
           EOF
 
-      - name: Deploy dev
-        uses: WyriHaximus/github-action-helm3@v2.1.3
-        with:
-          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml
-          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+#      - name: Deploy dev
+#        uses: WyriHaximus/github-action-helm3@v2.1.3
+#        with:
+#          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml
+#          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'

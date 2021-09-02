@@ -13,62 +13,91 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React, { ReactNode, useState, useRef, MouseEvent } from 'react';
-import Icon from 'core/components/Icon';
+import { useState, useRef, MouseEvent, ReactNode } from 'react';
+import { usePopper } from 'react-popper';
 import useOutsideClick from 'core/hooks/useClickOutside';
-import Item from './Item';
+import Icon from 'core/components/Icon';
+import Item from './DropdownItem';
 import Styled from './styled';
 
-interface Props {
+export type Props = {
   children: ReactNode;
   icon?: string;
   color?: 'primary' | 'dark' | 'error' | 'light' | 'medium' | 'success';
   className?: string;
   size?: string;
-}
+};
 
 const Dropdown = ({
   children,
   icon = 'vertical-dots',
   color = 'dark',
   size = '15px',
-  className
+  className,
 }: Props) => {
-  const [toggle, switchToggle] = useState(false);
-  const ref = useRef<HTMLDivElement>();
+  const [showPopper, setShowPopper] = useState(false);
 
-  useOutsideClick(ref, () => {
-    switchToggle(false);
+  const buttonRef = useRef(null);
+  const popperRef = useRef(null);
+  const [arrowRef, setArrowRef] = useState(null);
+
+  useOutsideClick(buttonRef, () => {
+    setShowPopper(false);
   });
 
-  const handleClick = (event: MouseEvent) => {
-    event.stopPropagation();
-    switchToggle(!toggle);
-  };
+  const { styles, attributes } = usePopper(
+    buttonRef.current,
+    popperRef.current,
+    {
+      strategy: 'fixed',
+      modifiers: [
+        {
+          name: 'arrow',
+          options: {
+            element: arrowRef,
+          },
+        },
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 10],
+          },
+        },
+      ],
+    }
+  );
 
   const renderItems = () => (
-    <Styled.Dropdown
-      isBase
-      data-testid="dropdown-actions"
-      className={className}
-      onClick={() => switchToggle(false)}
-    >
+    <Styled.Dropdown data-testid="dropdown-actions" className={className}>
       {children}
     </Styled.Dropdown>
   );
 
+  const handleClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    setShowPopper(!showPopper);
+  };
+
   return (
     <Styled.Wrapper data-testid="dropdown">
       <Icon
-        ref={ref}
+        ref={buttonRef}
         name={icon}
         color={color}
         size={size}
         className="dropdown-icon"
         onClick={(event: MouseEvent) => handleClick(event)}
       />
-      {toggle && renderItems()}
+      {showPopper ? (
+        <Styled.PopperContainer
+          ref={popperRef}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div ref={setArrowRef} style={styles.arrow} id="arrow" />
+          {renderItems()}
+        </Styled.PopperContainer>
+      ) : null}
     </Styled.Wrapper>
   );
 };

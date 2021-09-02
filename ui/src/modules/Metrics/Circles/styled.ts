@@ -33,7 +33,7 @@ const MiniCard = styled.div`
   box-sizing: border-box;
 `;
 
-const CirclesData = styled(Text.h1)`
+const CirclesData = styled(Text)`
   margin: auto;
   > * + * {
     margin-top: 5px;

@@ -22,7 +22,7 @@ import Summary from './Summary';
 import { pageInitialCount } from './constants';
 import Loader from '../../Loaders/index';
 import { useReleaseHistory } from '../hooks';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'core/components/InfiniteScroll';
 import { ReleaseHistory, ReleaseHistoryRequest } from '../interfaces';
 
 type Props = {
@@ -64,30 +64,29 @@ const ReleasesHistoryComponent = ({ filter }: Props) => {
       <Styled.Table>
         <Styled.TableHead>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Release Name</Text.h5>
+            <Text tag="H5" color="dark">Release Name</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Circles</Text.h5>
+            <Text tag="H5" color="dark">Circles</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Deploy data</Text.h5>
+            <Text tag="H5" color="dark">Deploy data</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Deploy duration</Text.h5>
+            <Text tag="H5" color="dark">Deploy duration</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Undeploy data</Text.h5>
+            <Text tag="H5" color="dark">Undeploy data</Text>
           </Styled.TableColumn>
           <Styled.TableColumn>
-            <Text.h5 color="dark">Responsible</Text.h5>
+            <Text tag="H5" color="dark">Responsible</Text>
           </Styled.TableColumn>
         </Styled.TableHead>
         <InfiniteScroll
-          dataLength={releases.length}
-          next={loadMore}
           hasMore={hasMoreData}
+          loadMore={loadMore}
+          isLoading={loading}
           loader={<Loader.Releases />}
-          height={540}
         >
           {releases?.map((release, index) => (
             <ReleaseRow release={release} key={index} />

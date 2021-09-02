@@ -54,6 +54,8 @@ jobs:
 
       - name: Horusec Security
         working-directory: ./gate
+        env: 
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
         run: |
-          curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-          horusec start -p ./
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -n="Charles/gate" -u="https://api-horusec.zup.com.br"

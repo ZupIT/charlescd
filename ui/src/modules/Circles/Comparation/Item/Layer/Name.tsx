@@ -21,6 +21,7 @@ import useForm from 'core/hooks/useForm';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import { isRequired, maxLength } from 'core/utils/validations';
+import { hasPermission } from 'core/utils/auth';
 
 interface Props {
   name: string;
@@ -57,12 +58,12 @@ const LayerName = ({ name, onSave, isDefault }: Props) => {
             defaultValue={name}
             isDisabled={!!errors.name}
             resume
-            readOnly={isDefault}
+            readOnly={isDefault || !hasPermission('circles_write')}
           />
           {errors.name && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.name.message}</Text.h6>
+              <Text tag="H6" color="error">{errors.name.message}</Text>
             </Styled.FieldErrorWrapper>
           )}
         </form>

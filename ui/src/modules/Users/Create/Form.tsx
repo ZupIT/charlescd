@@ -17,7 +17,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import routes from 'core/constants/routes';
 import Popover, { CHARLES_DOC } from 'core/components/Popover';
 import { maxLength, isRequired, emailPattern } from 'core/utils/validations';
@@ -56,9 +56,9 @@ const FormUser = ({ onFinish }: Props) => {
     }
   }, [newUser, history, onFinish]);
 
-  const onSubmit = async (user: NewUser) => {
+  const onSubmit = async ({pwd, ...user}: NewUser) => {
     setStatus('idle');
-    await create({ ...user, isRoot: false });
+    await create({ ...user, root: false, password: pwd });
     setStatus('completed');
   };
 
@@ -92,12 +92,12 @@ const FormUser = ({ onFinish }: Props) => {
             required: isRequired(),
             maxLength: maxLength(100)
           })}
-          name="password"
+          name="pwd"
           label="Create password"
-          error={errors?.password?.message}
+          error={errors?.pwd?.message}
         />
       </Styled.Fields>
-      <Button.Default
+      <ButtonDefault
         data-testid="button-create-user"
         size="EXTRA_SMALL"
         type="submit"
@@ -105,16 +105,16 @@ const FormUser = ({ onFinish }: Props) => {
         isLoading={status === 'idle'}
       >
         Create User
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 
   return (
     <Styled.Content data-testid="content-create-user">
-      <Styled.Title>
-        <Text.h2 weight="bold" color="light">
+      <Styled.Title tag="H2">
+        <Text tag="H2" weight="bold" color="light">
           Create User
-        </Text.h2>
+        </Text>
         <Popover
           title="Creating a new user"
           icon="info"
@@ -123,7 +123,7 @@ const FormUser = ({ onFinish }: Props) => {
           description="In order to create a new user, you must fill the following fields."
         />
       </Styled.Title>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle tag="H5" color="dark">
         Enter the requested information bellow:
       </Styled.Subtitle>
       {renderForm()}

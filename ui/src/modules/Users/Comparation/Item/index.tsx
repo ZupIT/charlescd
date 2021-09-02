@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import map from 'lodash/map';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useUser, useDeleteUser, useUpdateName } from 'modules/Users/hooks';
 import { delParam } from 'core/utils/path';
@@ -26,7 +27,7 @@ import ContentIcon from 'core/components/ContentIcon';
 import Dropdown from 'core/components/Dropdown';
 import LabeledIcon from 'core/components/LabeledIcon';
 import Text from 'core/components/Text';
-import Modal from 'core/components/Modal';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Icon from 'core/components/Icon';
 import InputTitle from 'core/components/Form/InputTitle';
 import { User } from 'modules/Users/interfaces/User';
@@ -38,6 +39,7 @@ import Loader from './Loaders';
 import ModalResetPassword from './Modals/ResetPassword';
 import Styled from './styled';
 import useForm from 'core/hooks/useForm';
+import CardConfig from 'core/components/Card/Config';
 
 interface Props {
   email: string;
@@ -93,18 +95,18 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
   };
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Do you want to delete this user?"
       dismissLabel="Cancel, keep user"
       continueLabel="Yes, delete user"
       onContinue={() => handleDelete(currentUser.id, currentUser.name)}
       onDismiss={() => setAction('Cancel')}
     >
-      <Text.h4 color="light">
-        By deleting this user, all related information will also be deleted. Do you wish to
-        continue?
-      </Text.h4>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        By deleting this user, all related information will also be deleted. Do
+        you wish to continue?
+      </Text>
+    </ModalTrigger>
   );
 
   const renderDropdown = () => (
@@ -115,15 +117,25 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
         onClick={() => copyToClipboard(getUserPathByEmail(currentUser.email))}
       />
       {!isIDMEnabled() && (
-        <Dropdown.Item icon="delete" name="Delete" onClick={() => setAction('Delete')} />
+        <Dropdown.Item
+          icon="delete"
+          name="Delete"
+          onClick={() => setAction('Delete')}
+        />
       )}
     </Dropdown>
   );
 
   const renderResetPassword = () =>
     isAbleToReset && (
-      <LabeledIcon icon="shield" marginContent="5px" onClick={() => toggleModalPassword(true)}>
-        <Text.h5 color="dark">Reset password</Text.h5>
+      <LabeledIcon
+        icon="shield"
+        marginContent="5px"
+        onClick={() => toggleModalPassword(true)}
+      >
+        <Text tag="H5" color="dark">
+          Reset password
+        </Text>
       </LabeledIcon>
     );
 
@@ -133,6 +145,18 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       {renderDropdown()}
     </Styled.Actions>
   );
+
+  const Groups = () =>
+    <Styled.Groups>
+      {map(currentUser.userGroups, (userGroup) => (
+        <CardConfig
+          id={`user-group-${userGroup.id}`}
+          key={userGroup.name}
+          icon="users"
+          description={userGroup.name}
+        />
+      ))}
+    </Styled.Groups>
 
   const renderPanel = () => (
     <TabPanel
@@ -145,7 +169,7 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
       {action === 'Delete' && renderWarning()}
       <Styled.Layer>
         <Styled.ContentIcon icon="picture">
-          <Avatar key={currentUser.id} size="68px" profile={currentUser} />
+          <Avatar key={currentUser.id} size={68} name={currentUser?.name} />
         </Styled.ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
@@ -167,24 +191,35 @@ const UsersComparationItem = ({ email, onChange }: Props) => {
               {errors.name && (
                 <Styled.FieldErrorWrapper>
                   <Icon name="error" color="error" />
-                  <Text.h6 color="error">{errors.name.message}</Text.h6>
+                  <Text tag="H6" color="error">
+                    {errors.name.message}
+                  </Text>
                 </Styled.FieldErrorWrapper>
               )}
             </>
           ) : (
-            <Text.h2 color="light">{currentUser.name}</Text.h2>
+            <Text tag="H2" color="light">
+              {currentUser.name}
+            </Text>
           )}
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="email">
-          <Text.h2 color="light">Email</Text.h2>
-          <Text.h4 color="dark">{currentUser.email}</Text.h4>
+          <Text tag="H2" color="light">
+            Email
+          </Text>
+          <Text tag="H4" color="dark">
+            {currentUser.email}
+          </Text>
         </ContentIcon>
       </Styled.Layer>
       <Styled.Layer>
         <ContentIcon icon="users">
-          <Text.h2 color="light">User groups</Text.h2>
+          <Text tag="H2" color="light">User groups</Text>
+          <Styled.Groups>
+            <Groups />
+          </Styled.Groups>
         </ContentIcon>
       </Styled.Layer>
     </TabPanel>

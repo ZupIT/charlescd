@@ -31,7 +31,7 @@ import {
 } from './helpers';
 import BasicQueryForm from './BasicQueryForm';
 import Styled from './styled';
-import Button from 'core/components/Button/Default';
+import Button from 'core/components/Button/ButtonDefault';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 
 type Props = {
@@ -129,9 +129,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
         />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 color="light">
+        <Text tag="H2" color="light">
           {metric?.id ? 'Update metric' : 'Add metric'}
-        </Text.h2>
+        </Text>
       </Styled.Layer>
       <FormProvider {...formMethods}>
         <Styled.Form
@@ -161,9 +161,9 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
 
             {canShowForm && (
               <>
-                <Text.h5 color="dark">
+                <Text tag="H5" color="dark">
                   You can fill your query in a basic or advanced way:
-                </Text.h5>
+                </Text>
                 <Styled.Actions>
                   <Styled.ButtonIconRounded
                     color="dark"
@@ -216,8 +216,8 @@ const AddMetric = ({ onGoBack, id, metric }: Props) => {
                   </>
                 )}
 
-                <Styled.Title color="light">Threshold</Styled.Title>
-                <Styled.Subtitle color="dark">
+                <Styled.Title tag="H2" color="light">Threshold</Styled.Title>
+                <Styled.Subtitle tag="H5" color="dark">
                   Set the threshold for this metric:
                 </Styled.Subtitle>
 

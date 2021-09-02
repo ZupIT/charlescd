@@ -100,6 +100,7 @@ func NewValidationError(validationError error, uniTranslator *ut.UniversalTransl
 		ID:        uuid.New(),
 		Message:   "Invalid Inputs",
 		Meta:      meta,
+		Detail:    errors.Error(),
 		Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
 	}
 }

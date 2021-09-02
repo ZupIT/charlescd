@@ -23,7 +23,7 @@ import Text from 'core/components/Text';
 import { ability, Actions, Subjects } from 'core/utils/abilities';
 import { WORKSPACE_STATUS } from 'modules/Workspaces/enums';
 import { hasPermission } from 'core/utils/auth';
-import { includes } from 'lodash';
+import includes from 'lodash/includes';
 import { useGlobalState } from 'core/state/hooks';
 
 interface Props {
@@ -50,7 +50,7 @@ const Element = ({
 
   const renderTooltip = () => (
     <ReactTooltip id={id} place="right" effect="solid">
-      <Text.h6 color="dark">Not allowed</Text.h6>
+      <Text tag="H6" color="dark">Not allowed</Text>
     </ReactTooltip>
   );
 
@@ -63,7 +63,7 @@ const Element = ({
         isDisabled: !allowed,
         style: {
           cursor: 'default',
-          opacity: '0.3',
+          opacity: '0.4',
           transform: 'scale(1)'
         },
         'data-tip': true,

@@ -15,13 +15,14 @@
  */
 
 import React from 'react';
-import Card from 'core/components/Card';
+import CardRelease from 'core/components/Card/Release';
 import ContentIcon from 'core/components/ContentIcon';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
 import Icon from 'core/components/Icon';
+import Can from 'containers/Can';
 
 interface Props {
   onClickCreate: (
@@ -34,7 +35,7 @@ interface Props {
 const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
-      <Card.Release
+      <CardRelease
         status={circle?.deployment?.status}
         description={tag}
         expandItems={artifacts}
@@ -52,29 +53,31 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   };
 
   const renderButton = () => (
-    <Button.Rounded
-      icon="add"
-      name="add"
-      color="dark"
-      onClick={onClickCreate}
-      isDisabled={checkIfButtonIsDisabled()}
-    >
-      Insert release
-    </Button.Rounded>
+    <Can I="write" a="deploy" isDisabled={checkIfButtonIsDisabled()} passThrough>
+        <ButtonRounded
+          icon="add"
+          name="add"
+          color="dark"
+          onClick={onClickCreate}
+        >
+          Insert release
+        </ButtonRounded>
+    </Can>
   );
 
   return (
     <Styled.Layer>
       <ContentIcon icon="release">
-        <Text.h2 color="light">
+        <Text tag="H2" color="light">
           {circle?.deployment ? 'Last release deployed' : 'Release'}
-        </Text.h2>
+        </Text>
         {!releaseEnabled && (
           <Styled.WarningPercentageContainer>
             <Icon name="alert" color="warning" />
-            <Text.h4 color="warning">
-              The configured percentage is bigger than the available in open sea.
-            </Text.h4>
+            <Text tag="H4" color="warning">
+              The configured percentage is bigger than the available in open
+              sea.
+            </Text>
           </Styled.WarningPercentageContainer>
         )}
       </ContentIcon>

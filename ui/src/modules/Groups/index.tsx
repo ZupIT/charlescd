@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router-dom';
 import useForm from 'core/hooks/useForm';
 import Page from 'core/components/Page';
-import Modal from 'core/components/Modal';
+import ModalDefault from 'core/components/Modal/ModalDefault';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
 import { isRequired, maxLength } from 'core/utils/validations';
@@ -30,7 +30,7 @@ import Styled from './styled';
 
 export enum FormAction {
   view = 'view',
-  edit = 'edit'
+  edit = 'edit',
 }
 
 const UserGroups = () => {
@@ -41,14 +41,14 @@ const UserGroups = () => {
     register,
     handleSubmit,
     errors,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm({
-    mode: 'onChange'
+    mode: 'onChange',
   });
   const {
     createUserGroup,
     response: userGroupResponse,
-    loading: loadingCreate
+    loading: loadingCreate,
   } = useCreateUserGroup();
 
   useEffect(() => {
@@ -62,16 +62,18 @@ const UserGroups = () => {
   };
 
   const renderModal = () => (
-    <Modal.Default onClose={() => setToggleModal(false)}>
+    <ModalDefault onClose={() => setToggleModal(false)}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Styled.Modal.Title color="light">New user group</Styled.Modal.Title>
+        <Styled.Modal.Title tag="H2" color="light">
+          New user group
+        </Styled.Modal.Title>
         <Styled.Modal.Input
           name="name"
           label="Type a name"
           error={errors?.name?.message}
           ref={register({
             required: isRequired(),
-            maxLength: maxLength()
+            maxLength: maxLength(),
           })}
         />
         <Styled.Modal.Button
@@ -83,7 +85,7 @@ const UserGroups = () => {
           Create user group
         </Styled.Modal.Button>
       </form>
-    </Modal.Default>
+    </ModalDefault>
   );
 
   return (
@@ -91,7 +93,7 @@ const UserGroups = () => {
       {toggleModal && renderModal()}
       <Page.Menu>
         <Menu
-          onSelect={id =>
+          onSelect={(id) =>
             addParamUserGroup(history, `${id}~${FormAction.view}`)
           }
           onCreate={() => setToggleModal(true)}

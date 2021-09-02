@@ -18,7 +18,7 @@ import { lazy, useEffect, useState, useCallback } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Page from 'core/components/Page';
 import Placeholder from 'core/components/Placeholder';
-import Modal from 'core/components/Modal';
+import ModalWizard from 'core/components/Modal/Wizard';
 import PrivateRoute from 'containers/PrivateRoute';
 import routes from 'core/constants/routes';
 import { getProfileByKey } from 'core/utils/profile';
@@ -37,7 +37,10 @@ const Settings = () => {
   const [showWizard, setShowWizard] = useState(false);
   const hasWizard = !isEmpty(getWizardByUser().email);
   const [isVeteranUser, setIsVeteranUser] = useState<boolean>(hasWizard);
-  const { getWorkspace, data: { workspace, status } } = useWorkspace();
+  const {
+    getWorkspace,
+    data: { workspace, status },
+  } = useWorkspace();
 
   useEffect(() => {
     if (status === 'idle') {
@@ -61,7 +64,7 @@ const Settings = () => {
 
   return (
     <Page>
-      {showWizardModal && <Modal.Wizard onClose={onCloseWizard} />}
+      {showWizardModal && <ModalWizard onClose={onCloseWizard} />}
       <Page.Menu>
         <Menu items={SettingsMenu} />
       </Page.Menu>
