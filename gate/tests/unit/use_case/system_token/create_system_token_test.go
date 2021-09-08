@@ -186,7 +186,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
 
 	require.Zero(st.T(), result)
 	require.NotNil(st.T(), err)
-	require.Equal(st.T(), "permissions were not found", err.Error())
+	require.Equal(st.T(), "Invalid permissions.", err.Error())
 
 	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
