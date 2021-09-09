@@ -61,10 +61,11 @@ const Item = styled.div`
 `;
 
 const WorkspaceItem = styled(Item)`
-  >span{
+  > span {
     width: 90px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -92,9 +93,9 @@ interface LinkIconProps {
   isActive?: boolean;
 }
 
-const LinkIcon = styled((props: IconProps) => <IconComponent {...props} />)<
-  LinkIconProps
->`
+const LinkIcon = styled((props: IconProps) => (
+  <IconComponent {...props} />
+))<LinkIconProps>`
   margin-right: 10px;
   color: ${({ isActive, theme }) =>
     isActive ? theme.sidebar.menuIconActive : theme.sidebar.menuIcon};
@@ -199,7 +200,7 @@ export default {
   Logo,
   Expand: {
     Button: ExpandButton,
-    Icon: ExpandIcon
+    Icon: ExpandIcon,
   },
   Dropdown,
   DropdownItem,
@@ -209,5 +210,5 @@ export default {
   Bottom,
   Footer,
   Item,
-  WorkspaceItem
+  WorkspaceItem,
 };
