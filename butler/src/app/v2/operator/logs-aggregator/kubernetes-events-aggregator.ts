@@ -27,7 +27,8 @@ import { AppConstants } from '../../core/constants'
 import { plainToClass } from 'class-transformer'
 import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
-import {DeploymentRepositoryV2} from "../../api/deployments/repository/deployment.repository";
+import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
+import { CharlesCircle } from '../../core/integrations/k8s/interfaces/charles-routes.interface'
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
@@ -96,16 +97,17 @@ export class EventsLogsAggregator {
 
     if (this.isCharlesRoutingResource(resource)) {
       const  spec = this.getResourceSpec(resource)
-      const circlesIds = spec ? spec.circles as string[] : null
+      const circles = spec ? spec.circles as CharlesCircle[] : null
+      const circlesIds = circles?.map(it => it.id)
       if(circlesIds?.length){
         const currentDeployments = await this.deploymentsRepository
           .findCurrentsByCirclesIds(circlesIds)
         const currentDeploymentsIds = currentDeployments
           .map(it => it.id)
         const log = this.createLogFromEvent(event)
-        currentDeploymentsIds.map(
+        await Promise.all(currentDeploymentsIds.map(
           deploymentId => this.saveLogs(deploymentId, log)
-        )
+        ))
       }
     }
 

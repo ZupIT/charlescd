@@ -195,3 +195,28 @@ export const executionFixture = (): Execution => {
   execution.notificationStatus = NotificationStatusEnum.NOT_SENT
   return execution
 }
+export const deploymentWithoutComponentFixture = (): DeploymentEntityV2=> {
+  return new DeploymentEntityV2(
+    'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [],
+    true,
+    'namespace',
+    60
+  )
+}
+
+export const otherDeploymentWithoutComponentFixture= (): DeploymentEntityV2 => {
+  return new DeploymentEntityV2(
+    'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [],
+    true,
+    'namespace',
+    60
+  )
+}
