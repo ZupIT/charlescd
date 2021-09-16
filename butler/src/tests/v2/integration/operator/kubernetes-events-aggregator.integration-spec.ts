@@ -37,6 +37,7 @@ import {
 import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { AppConstants } from '../../../../app/v2/core/constants'
+import { UrlConstants } from '../test-constants'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -63,14 +64,13 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     app =  await TestSetupUtils.createApplication(module)
     deploymentsRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
     logRepository = app.get<LogRepository>(LogRepository)
-    k8sClient = app.get<K8sClient>(K8sClient)
+    k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     manager = fixtureUtilsService.connection.manager
   })
 
-  beforeEach(() => {
-    k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
-    fixtureUtilsService.clearDatabase()
+  beforeEach(async() => {
+    await fixtureUtilsService.clearDatabase()
   })
 
   afterAll(async() => {
@@ -82,15 +82,17 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   it('should aggregate CharlesRoutes events from current deployment', async() => {
     //create current deployment
     const deployment: DeploymentEntityV2 = deploymentWithoutComponentFixture()
-    deployment.circleId = 'circle-id'
     deployment.current = true
-    deployment.id = 'ba04da76-23a6-4f6b-9fc1-2bca917a3d41'
+    deployment.circleId = 'circle-id-2'
+    await deploymentsRepository.save(deployment)
+
     const oldDeployment: DeploymentEntityV2 = otherDeploymentWithoutComponentFixture()
-    oldDeployment.circleId = 'circle-id-2'
+    oldDeployment.circleId = 'circle-id'
     oldDeployment.current = false
     oldDeployment.id = '03699ca6-7262-4369-a403-fdfae1b6c04d'
-    await manager.save(deployment)
     await manager.save(oldDeployment)
+
+    await manager.findOneOrFail(DeploymentEntityV2, oldDeployment.id)
     jest.spyOn(k8sClient, 'readResource')
       .mockImplementation(() => Promise.resolve({
         body: {
