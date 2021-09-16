@@ -19,16 +19,17 @@
 package representation
 
 import (
+	"time"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
-	"time"
 )
 
 type SystemTokenRequest struct {
 	Name          string   `json:"name" validate:"required,notblank"`
-	Permissions   []string `json:"permissions" validate:"min=1,dive,notblank"`
+	Permissions   []string `json:"permissions" validate:"dive,notblank"`
 	Workspaces    []string `json:"workspaces" validate:"required",notblank,validate:"min=1"`
 	AllWorkspaces bool     `json:"allWorkspaces"`
 }
