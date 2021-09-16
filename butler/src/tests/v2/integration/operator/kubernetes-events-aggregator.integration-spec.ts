@@ -37,7 +37,6 @@ import {
 import { EntityManager } from 'typeorm'
 import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { AppConstants } from '../../../../app/v2/core/constants'
-import { UrlConstants } from '../test-constants'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
