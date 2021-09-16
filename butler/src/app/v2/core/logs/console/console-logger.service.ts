@@ -45,7 +45,6 @@ export class ConsoleLoggerService {
 
   private static jsonFormat() {
     return winston.format.printf(({ timestamp, level, message, ...data }) => {
-
       return JSON.stringify({
         requestId: rTracer.id(),
         timestamp,

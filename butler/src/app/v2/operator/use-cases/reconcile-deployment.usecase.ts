@@ -41,9 +41,10 @@ export class ReconcileDeploymentUsecase {
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
+    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
-
+    this.consoleLoggerService.log('GET_DESIRED_MANIFESTS', desiredManifests)
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
     // TODO check if this is necessary
     if (!resourcesCreated) {
@@ -52,6 +53,7 @@ export class ReconcileDeploymentUsecase {
 
     const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
     if (!isDeploymentReady) {
+      // if is not ready it must not remove old deployment until current is healthy
       const previousDeploymentId = deployment.previousDeploymentId
       if (previousDeploymentId === null) {
         await this.deploymentRepository.updateHealthStatus(deployment.id, false)

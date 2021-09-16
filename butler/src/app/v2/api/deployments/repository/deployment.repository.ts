@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EntityRepository, Repository, UpdateResult } from 'typeorm'
+import {EntityRepository, In, Repository, UpdateResult} from 'typeorm'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 @EntityRepository(DeploymentEntityV2)
@@ -57,7 +57,13 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
 
   public async findByCircleId(circleId: string): Promise<DeploymentEntityV2> {
     return await this.createQueryBuilder('v2deployments')
-      .where({ circleId: circleId, current: true })
+      .where({circleId: circleId, current: true})
       .getOneOrFail()
+  }
+  public async findCurrentsByCirclesIds(circlesIds: string[]) {
+    return await this.createQueryBuilder('v2deployments')
+      .where('v2deployments.current = true')
+      .where( { circleId: In(circlesIds) })
+      .getMany()
   }
 }

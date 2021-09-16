@@ -27,6 +27,7 @@ import { AppConstants } from '../../core/constants'
 import { plainToClass } from 'class-transformer'
 import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
+import {DeploymentRepositoryV2} from "../../api/deployments/repository/deployment.repository";
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
@@ -38,9 +39,11 @@ export class EventsLogsAggregator {
 
   private readonly cache: LRUCache<string, KubernetesObject>
 
+
   constructor(private k8sClient: K8sClient,
     private logsRepository: LogRepository,
-    private consoleLoggerService: ConsoleLoggerService) {
+    private consoleLoggerService: ConsoleLoggerService,
+    private deploymentsRepository: DeploymentRepositoryV2) {
     this.cache = new LRUCache({
       max: this.MAX_CACHE_SIZE,
       maxAge: this.MAX_CACHE_AGE_ONE_HOUR
@@ -69,17 +72,15 @@ export class EventsLogsAggregator {
 
     const deploymentId = this.getDeploymentIdLabel(resource)
 
+
     if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
+      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name}  does not have deploymentId label`, event)
+      await this.checkResourceAnnotation(resource, event)
       return
     }
 
-    const log = {
-      type: event.type,
-      title: event.title,
-      timestamp: moment(event.timestamp).format(),
-      details: event.details
-    }
+
+    const log = this.createLogFromEvent(event)
 
     if (await this.alreadyLogged(log, deploymentId)) {
       this.consoleLoggerService.log('Log Already saved... discarding event', log)
@@ -88,7 +89,37 @@ export class EventsLogsAggregator {
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
   }
+  private isCharlesRoutingResource(resource: KubernetesObject) {
+    return resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_ROUTES_KIND
+  }
+  private async checkResourceAnnotation(resource: KubernetesObject, event: Event) {
 
+    if (this.isCharlesRoutingResource(resource)) {
+      const  spec = this.getResourceSpec(resource)
+      const circlesIds = spec ? spec.circles as string[] : null
+      if(circlesIds?.length){
+        const currentDeployments = await this.deploymentsRepository
+          .findCurrentsByCirclesIds(circlesIds)
+        const currentDeploymentsIds = currentDeployments
+          .map(it => it.id)
+        const log = this.createLogFromEvent(event)
+        currentDeploymentsIds.map(
+          deploymentId => this.saveLogs(deploymentId, log)
+        )
+      }
+    }
+
+  }
+
+
+  private createLogFromEvent(event: Event) {
+    return {
+      type: event.type,
+      title: event.title,
+      timestamp: moment(event.timestamp).format(),
+      details: event.details
+    }
+  }
 
   private async saveLogs(deploymentId: string, log: Log): Promise<LogEntity> {
     try {
@@ -179,14 +210,16 @@ export class EventsLogsAggregator {
     const deploymentIdResource = resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
     if (!deploymentIdResource) {
       if (this.isCharlesCustomResource(resource)) {
-        const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
-        if (!resourceWithSpec || !resourceWithSpec.spec) {
-          return
-        }
-        return resourceWithSpec.spec.deploymentId as string  
+        const resourceSpec = this.getResourceSpec(resource)
+        return resourceSpec ? resourceSpec.deploymentId as string : null
       }
     }
     return deploymentIdResource
+  }
+
+  private getResourceSpec(resource: KubernetesObject) {
+    const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
+    return resourceWithSpec.spec
   }
 
   private isCharlesCustomResource(resource: k8s.KubernetesObject) {
