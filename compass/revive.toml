@@ -1,6 +1,6 @@
 # config for https://github.com/zupit/charles
 ignoreGeneratedHeader = false
-severity = "warning"
+severity = "error"
 confidence = 0.8
 errorCode = 0
 warningCode = 0
