@@ -68,6 +68,7 @@ jobs:
     container: golangci/golangci-lint:v1.42.1
     steps:
       - name: golangci-lint
-        working-directory: compass
+      - uses: golangci/golangci-lint-action@v2
         run:
           golangci-lint run -v
+        working-directory: ./compass
