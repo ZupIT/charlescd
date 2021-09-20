@@ -70,5 +70,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: golangci-lint
         run:
-          docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.42.1 golangci-lint run -v
+          golangci-lint run -v
         working-directory: ./compass
