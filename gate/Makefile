@@ -7,7 +7,11 @@ GOGET=$(GOCMD) get
 GOTOOL=$(GOCMD) tool
 GOMOD=$(GOCMD) mod
 
-CMD_PATH=cmd/*.go
+ifneq ($(OS),Windows_NT)
+	CMD_PATH=cmd/*.go
+else
+	CMD_PATH= cmd/http.go cmd/main.go cmd/db.go cmd/service.go
+endif
 VEND_PATH=./vendor
 BINARY_NAME=gate
 

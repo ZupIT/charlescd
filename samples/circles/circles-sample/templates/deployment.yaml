@@ -4,25 +4,28 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Values.name }}
-    version: {{ .Values.name }}
+    component: {{ .Values.component }}
+    tag: {{ .Values.tag }}
+    circleId: {{ .Values.circleId }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
-      version: {{ .Release.Name }}
+      component: {{ .Values.component }}
+      tag: {{ .Values.tag }}
+      circleId: {{ .Values.circleId }}
   template:
     metadata:
       annotations:
         sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}' 
       labels:
-        app: {{ .Values.name }}
-        version: {{ .Release.Name }}
+        component: {{ .Values.component }}
+        tag: {{ .Values.tag }}
+        circleId: {{ .Values.circleId }}
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: {{ .Values.image.tag }}
+          image: {{ .Values.image.url }}
           livenessProbe:
             failureThreshold: 3
             httpGet:
