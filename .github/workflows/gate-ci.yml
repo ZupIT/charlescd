@@ -45,12 +45,10 @@ jobs:
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: morphy2k/revive-action@v2
+        uses: docker://morphy/revive-action:v2
         with:
           config: ./gate/revive.toml
           path: "./gate/..."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Horusec Security
         working-directory: ./gate
