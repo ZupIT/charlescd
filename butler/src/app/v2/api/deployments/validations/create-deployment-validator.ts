@@ -89,7 +89,8 @@ export class CreateDeploymentValidator {
       components,
       value.namespace,
       new CreateGitDeploymentDto(value.git.token, value.git.provider),
-      value.timeoutInSeconds
+      value.timeoutInSeconds,
+      value.overrideCircle
     )
     return dto
   }
@@ -109,7 +110,8 @@ export class CreateDeploymentValidator {
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255),
-      timeoutInSeconds: Joi.number().integer().min(5).optional()
+      timeoutInSeconds: Joi.number().integer().min(5).optional(),
+      overrideCircle: Joi.bool().required()
     })
   }
 

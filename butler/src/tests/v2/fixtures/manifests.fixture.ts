@@ -24,6 +24,41 @@ import { AppConstants } from '../../../app/v2/core/constants'
 const basePath = path.join(__dirname, '../../../', 'resources/helm-test-chart')
 
 export const simpleManifests: KubernetesManifest[] = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
+export const getSimpleManifestsWithAllLabels = (
+  appName: string,
+  namespace: string,
+  image: string,
+  tag: string,
+  circleId: string): KubernetesManifest[] => {
+  const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))
+  const service = manifests[0]
+  service.metadata.labels.app = appName
+  service.metadata.labels.service = appName
+  service.metadata.labels.component = appName
+  service.metadata.labels.tag = tag
+  service.metadata.labels.circleId = circleId
+  service.metadata.name = appName
+  service.metadata.namespace = namespace
+  
+  service.spec.selector.app = appName
+
+  const deployment = manifests[1]
+  deployment.metadata.labels.app = appName
+  deployment.metadata.labels.version = appName
+  deployment.metadata.labels.component = appName
+  deployment.metadata.labels.tag = tag
+  deployment.metadata.labels.circleId = circleId
+  deployment.metadata.name = appName
+  deployment.metadata.namespace = namespace
+  deployment.spec.selector.matchLabels.app = appName
+  deployment.spec.selector.matchLabels.version = appName
+  deployment.spec.template.metadata.labels.app = appName
+  deployment.spec.template.metadata.labels.version = appName
+  deployment.spec.template.spec.containers[0].image = image
+  deployment.spec.template.spec.containers[0].name = appName
+
+  return [service, deployment]
+}
 
 export const getSimpleManifests = (appName: string, namespace: string, image: string): KubernetesManifest[] => {
   const manifests = yaml.safeLoadAll(fs.readFileSync(`${basePath}/simple-manifests.yaml`, 'utf-8'))

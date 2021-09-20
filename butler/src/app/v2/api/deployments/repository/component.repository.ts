@@ -34,7 +34,7 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }
-
+  
   public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
     // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
@@ -42,6 +42,15 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .where('deployment.current = true')
       .andWhere('deployment.default_circle is true')
       .andWhere('deployment.circle_id = :defaultCircleId', { defaultCircleId })
+      .getMany()
+  }
+  public async findHealthyActiveComponents(): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
+    // TODO: we may have to save the workspace_id now in case the user is using the same butler for multiple workspaces
+    return this.createQueryBuilder('v2components')
+      .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .where('deployment.current = true')
+      .andWhere('deployment.healthy = true')
       .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }
@@ -82,6 +91,16 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
           .getQuery()
         return `deployment.id IN ${subQuery}`
       })
+      .orderBy('deployment.created_at', 'DESC')
+      .getMany()
+  }
+
+  public async findActiveComponentsByCircleId(circleId: string): Promise<ComponentEntityV2[]> {
+    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
+    return this.createQueryBuilder('v2components')
+      .leftJoinAndSelect('v2components.deployment', 'deployment')
+      .where('deployment.current = true')
+      .andWhere('deployment.circle_id = :circleId', { circleId })
       .orderBy('deployment.created_at', 'DESC')
       .getMany()
   }

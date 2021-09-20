@@ -138,6 +138,17 @@ describe('DeploymentController v2', () => {
             pointer: 'callbackUrl'
           },
           status: 400
+        },
+        {
+          title: '"overrideCircle" is required',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'overrideCircle'
+          },
+          status: 400
         }
       ]
     }
@@ -183,6 +194,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -232,6 +244,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
     const expectedError = {
       errors: [
@@ -280,6 +293,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
 
     const expectedError = {
@@ -358,7 +372,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
     const errorResponse = {
       errors: [
@@ -487,7 +502,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       },
       components: [],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
     const errorResponse = {
       errors: [
@@ -549,7 +565,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      timeoutInSeconds: 10
+      timeoutInSeconds: 10,
+      overrideCircle: false
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -588,6 +605,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
 
     const errorResponse = {
@@ -650,7 +668,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: false
     }
 
     const errorResponse = {
@@ -710,7 +729,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const sameNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -804,7 +824,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -879,7 +900,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -947,7 +969,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      overrideCircle: true
     }
 
     const errorResponse = {
