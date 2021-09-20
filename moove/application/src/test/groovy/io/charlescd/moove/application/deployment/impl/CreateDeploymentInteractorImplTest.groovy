@@ -65,7 +65,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def buildId = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -89,8 +89,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
-        def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def build = getDummyBuild( BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -120,7 +120,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -147,7 +147,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -177,7 +177,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -186,19 +186,21 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentResponse = createDeploymentInteractor.execute(createDeploymentRequest, workspaceId, authorization, null)
 
         then:
+
         1 * buildRepository.find(build.id, workspaceId) >> Optional.of(build)
+        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
-        1 * buildRepository.findById(build.id) >> Optional.of(build)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, _) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
-            def configArgument = arguments[3]
+            def configArgument = arguments[2]
+            def override = arguments[3]
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
@@ -207,8 +209,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
             configArgument.id == deploymentConfig.id
+            assert !override
         }
-
         notThrown()
         deploymentResponse.id != null
         deploymentResponse.author.createdAt != null
@@ -229,6 +231,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         deploymentResponse.circle.rules == build.deployments[0].circle.rules
         deploymentResponse.buildId == build.id
         deploymentResponse.deployedAt == null
+
     }
 
     def 'when all arguments are correct for a default deployment, should return the correct response'() {
@@ -238,7 +241,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id, null)
         def authorization = TestUtils.authorization
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -257,10 +260,11 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * hermesService.notifySubscriptionEvent(_)
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, true, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, _) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
-            def configArgument = arguments[3]
+            def configArgument = arguments[2]
+            def override = arguments[3]
 
             assert deploymentArgument instanceof Deployment
             assert buildArgument instanceof Build
@@ -269,6 +273,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
             deploymentArgument.status == DeploymentStatusEnum.DEPLOYING
             buildArgument.id == build.id
             configArgument.id == deploymentConfig.id
+            assert !override
         }
 
         notThrown()
@@ -301,7 +306,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id, false)
         def authorization = TestUtils.authorization
 
         def workspace = TestUtils.workspace
@@ -319,7 +324,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findById(circle.id) >> Optional.of(circle)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, true, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, false) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
 
@@ -358,7 +363,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
 
@@ -381,7 +386,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, false) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
 
@@ -421,7 +426,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, false)
         def deploymentConfigurationId = TestUtils.deploymentConfigId
         def deploymentConfiguration = TestUtils.deploymentConfig
 
@@ -440,7 +445,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> { arguments ->
+        1 * deployService.deploy(_, _, _, false) >> { arguments ->
             def deploymentArgument = arguments[0]
             def buildArgument = arguments[1]
 
@@ -481,7 +486,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -497,7 +502,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findById(circleId) >> Optional.of(build.deployments[0].circle)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> {
+        1 * deployService.deploy(_, _, _, null) >> {
             throw new RuntimeException("Error")
         }
 
@@ -510,7 +515,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
@@ -544,12 +549,14 @@ class CreateDeploymentInteractorImplTest extends Specification {
         ex.message == 'limit.of.percentage.circles.exceeded'
     }
 
+
+
     def 'when the deploy is in a percentage circle that was already deployed before and the limit of percentage reached, should allow the deploy'() {
         given:
         def author = getDummyUser()
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
@@ -577,7 +584,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         1 * circleRepository.findCirclesPercentage(workspaceId, null, true, null) >> deployedPercentagesCirclePage
         0 * deployService.undeploy(_, _)
         1 * deploymentRepository.save(_) >> _
-        1 * deployService.deploy(_, _, false, _) >> {}
+        1 * deployService.deploy(_, _, _, null) >> {}
 
         notThrown()
     }

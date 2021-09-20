@@ -32,7 +32,9 @@ data class CreateDeploymentRequest(
     val circleId: String,
 
     @field:NotBlank
-    val buildId: String
+    val buildId: String,
+
+    val override: Boolean?
 ) {
     fun toDeployment(workspaceId: String, user: User, circle: Circle): Deployment {
         return Deployment(
