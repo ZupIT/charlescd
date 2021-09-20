@@ -20,4 +20,4 @@ package io.charlescd.moove.domain.exceptions
 
 class UnauthorizedException(
     val details: String
-): RuntimeException("Unauthorized!!")
+) : RuntimeException("Unauthorized!!")

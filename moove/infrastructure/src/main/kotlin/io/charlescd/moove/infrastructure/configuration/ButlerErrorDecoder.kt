@@ -25,8 +25,8 @@ import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
 import io.charlescd.moove.domain.exceptions.NotFoundException
 import io.charlescd.moove.domain.exceptions.UnauthorizedException
-import org.slf4j.LoggerFactory
 import java.io.IOException
+import org.slf4j.LoggerFactory
 
 class ButlerErrorDecoder : ErrorDecoder {
 
@@ -49,7 +49,7 @@ class ButlerErrorDecoder : ErrorDecoder {
     }
 
     private fun extractMessageFromResponse(response: Response?): String? {
-        return response?.let{
+        return response?.let {
             it -> readBody(it)
         }
     }
@@ -68,11 +68,11 @@ class ButlerErrorDecoder : ErrorDecoder {
     }
 
     private fun extractErrorMessages(errorAggregator: ErrorAggregator): String {
-       return errorAggregator.let {
-           it.errors.joinToString("\n") { error ->
-               String.format("${error.title} [${error.detail}]")
-           }
-       }
+        return errorAggregator.let {
+            it.errors.joinToString("\n") { error ->
+                String.format("${error.title} [${error.detail}]")
+            }
+        }
     }
 }
 
@@ -83,7 +83,7 @@ data class ErrorAggregator(
 data class Error(
     val title: String,
     val detail: String,
-    val meta:Map<String, Any>,
+    val meta: Map<String, Any>,
     val status: Int,
-    val source:Map<String, Any>
+    val source: Map<String, Any>
 )
