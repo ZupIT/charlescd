@@ -59,13 +59,14 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           horusec start -p . -n="Charles/gate" -u="https://api-horusec.zup.com.br"
-#      - name: runner / staticcheck
-#        uses: reviewdog/action-staticcheck@v1
-#        with:
-#          github_token: ${{ secrets.github_token }}
-#          # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
-#          reporter: github-pr-review
-#          # Report all results.
-#          filter_mode: nofilter
-#          # Exit with 1 when it find at least one finding.
-#          fail_on_error: true
+      - name: runner / staticcheck
+        uses: reviewdog/action-staticcheck@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          # Change reviewdog reporter if you need [github-pr-check,github-check,github-pr-review].
+          reporter: github-pr-review
+          workdir: ./gate
+          # Report all results.
+          filter_mode: nofilter
+          # Exit with 1 when it find at least one finding.
+          fail_on_error: true
