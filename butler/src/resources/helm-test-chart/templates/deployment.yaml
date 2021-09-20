@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: {{ .Values.name }}
-          image: {{ .Values.image.tag }}
+          image: {{ .Values.image.url }}
           livenessProbe:
             failureThreshold: 3
             httpGet:
