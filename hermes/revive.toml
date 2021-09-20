@@ -1,9 +1,9 @@
 # config for https://github.com/zupit/charles
 ignoreGeneratedHeader = false
-severity = "error"
+severity = "warning"
 confidence = 0.8
 errorCode = 0
-warningCode = 0
+warningCode = 1
 
 #### roughly what golint does.  probably only disable noisy ones.
 
