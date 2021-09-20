@@ -48,7 +48,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: docker://morphy/revive-action:v1
+        uses:  morphy2k/revive-action@v2
         with:
           config: ./compass/revive.toml
           path: "./compass/..."
