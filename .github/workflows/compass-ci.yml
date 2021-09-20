@@ -68,4 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        container: golangci/golangci-lint:v1.42.1
+        working-directory: ./compass
+        run:
+          golangci-lint run -v
