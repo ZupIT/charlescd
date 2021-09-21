@@ -55,4 +55,15 @@ export class LogRepository extends Repository<LogEntity> {
     }
     return 0
   }
+
+  public async saveCurrentDeployments(currentDeploymentsIds: string[], log: Log) {
+    return this.manager.transaction(async manager => {
+      await Promise.all(currentDeploymentsIds.map(
+        deploymentId => {
+          const logEntity = new LogEntity(deploymentId, [log])
+          manager.save(LogEntity, logEntity)
+        }
+      ))
+    })
+  }
 }

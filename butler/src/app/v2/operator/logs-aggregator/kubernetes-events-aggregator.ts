@@ -29,6 +29,8 @@ import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-mani
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { CharlesCircle } from '../../core/integrations/k8s/interfaces/charles-routes.interface'
+import { ResourceWrapper } from './resource-wrapper'
+
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 @Injectable()
 export class EventsLogsAggregator {
@@ -38,7 +40,7 @@ export class EventsLogsAggregator {
   private readonly MAX_CACHE_SIZE = 100
   private readonly MAX_CACHE_AGE_ONE_HOUR = 1000 * 60 * 60
 
-  private readonly cache: LRUCache<string, KubernetesObject>
+  private readonly cache: LRUCache<string, ResourceWrapper>
 
 
   constructor(private k8sClient: K8sClient,
@@ -71,15 +73,13 @@ export class EventsLogsAggregator {
       return
     }
 
-    const deploymentId = this.getDeploymentIdLabel(resource)
-
+    const deploymentId = resource.deploymentId
 
     if (!deploymentId) {
       this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
       await this.checkResourceAnnotation(resource, event)
       return
     }
-
 
     const log = this.createLogFromEvent(event)
 
@@ -90,27 +90,18 @@ export class EventsLogsAggregator {
     this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
     this.saveLogs(deploymentId, log)
   }
-  private isCharlesRoutingResource(resource: KubernetesObject) {
-    return resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_ROUTES_KIND
-  }
-  private async checkResourceAnnotation(resource: KubernetesObject, event: Event) {
 
-    if (this.isCharlesRoutingResource(resource)) {
-      const  spec = this.getResourceSpec(resource)
-      const circles = spec ? spec.circles as CharlesCircle[] : null
-      const circlesIds = circles?.map(it => it.id)
-      if(circlesIds?.length){
-        const currentDeployments = await this.deploymentsRepository
-          .findCurrentsByCirclesIds(circlesIds)
-        const currentDeploymentsIds = currentDeployments
-          .map(it => it.id)
-        const log = this.createLogFromEvent(event)
-        await Promise.all(currentDeploymentsIds.map(
-          deploymentId => this.saveLogs(deploymentId, log)
-        ))
-      }
+  private async checkResourceAnnotation(resource: ResourceWrapper, event: Event) {
+    const circles = resource.circles
+    const circlesIds = circles?.map(it => it.id)
+    if (circlesIds?.length){
+      const currentDeployments = await this.deploymentsRepository
+        .findCurrentsByCirclesIds(circlesIds)
+      const currentDeploymentsIds = currentDeployments
+        .map(it => it.id)
+      const log = this.createLogFromEvent(event)
+      return await this.logsRepository.saveCurrentDeployments(currentDeploymentsIds, log)
     }
-
   }
 
 
@@ -140,7 +131,7 @@ export class EventsLogsAggregator {
     return !event.isAfter(since)
   }
 
-  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,): Promise<KubernetesObject | undefined>{
+  private async cachedResourceFor(kind: string, apiVersion: string, name: string, namespace?: string,): Promise<ResourceWrapper | undefined>{
     
     const cacheKey = this.createCacheKey(kind, name, namespace)
 
@@ -160,8 +151,9 @@ export class EventsLogsAggregator {
 
     try {
       const response = await this.k8sClient.readResource(spec)
-      this.cache.set(cacheKey, response.body)
-      return response.body
+      const resource = new ResourceWrapper(response.body)
+      this.cache.set(cacheKey, resource)
+      return resource
     } catch (exception) {
       this.consoleLoggerService.error(`Error while trying to get resource event ${apiVersion}/${namespace}/${kind}/${name}`, exception.body)
       return undefined
@@ -208,26 +200,6 @@ export class EventsLogsAggregator {
     return event
   }
 
-  private getDeploymentIdLabel(resource: k8s.KubernetesObject) {
-    const deploymentIdResource = resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
-    if (!deploymentIdResource) {
-      if (this.isCharlesCustomResource(resource)) {
-        const resourceSpec = this.getResourceSpec(resource)
-        return resourceSpec ? resourceSpec.deploymentId as string : null
-      }
-    }
-    return deploymentIdResource
-  }
-
-  private getResourceSpec(resource: KubernetesObject) {
-    const resourceWithSpec = plainToClass(K8sManifestWithSpec, resource)
-    return resourceWithSpec.spec
-  }
-
-  private isCharlesCustomResource(resource: k8s.KubernetesObject) {
-    return resource.kind === AppConstants.CHARLES_CUSTOM_RESOURCE_DEPLOYMENT_KIND
-  }
-  
 }
 
 class Event {
