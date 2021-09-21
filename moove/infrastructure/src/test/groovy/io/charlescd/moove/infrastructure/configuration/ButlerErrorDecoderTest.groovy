@@ -29,7 +29,6 @@ import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
 class ButlerErrorDecoderTest extends Specification {
-    ButlerEncoderConfiguration ButlerEncoderConfiguration
     ErrorDecoder errorDecoder
 
     void setup() {
@@ -52,7 +51,7 @@ class ButlerErrorDecoderTest extends Specification {
         then:
         body.asReader() >> this.getReturnAsReader()
         assert exception instanceof BusinessException
-        assert exception.message.contains( "Unable to fetch resource from github url: https://api.github.com/repos/zupit/charlescd-automation-releases/contents/dragonboarding?ref=release-dev-v-21")
+        assert exception.parameters[0].contains( "Unable to fetch resource from github url: https://api.github.com/repos/zupit/charlescd-automation-releases/contents/dragonboarding?ref=release-dev-v-21")
         assert exception.errorCode == MooveErrorCode.UNAUTHORIZED
 
     }

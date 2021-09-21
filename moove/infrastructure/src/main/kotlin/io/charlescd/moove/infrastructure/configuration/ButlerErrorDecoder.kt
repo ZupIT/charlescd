@@ -37,7 +37,7 @@ class ButlerErrorDecoder : ErrorDecoder {
             400 -> IllegalArgumentException(responseMessage)
             404 -> NotFoundException(responseMessage, null)
             422 -> BusinessException.of(MooveErrorCode.INVALID_PAYLOAD, responseMessage)
-            401 -> BusinessException.of(MooveErrorCode.UNAUTHORIZED, responseMessage)
+            401 -> BusinessException.of(MooveErrorCode.UNAUTHORIZED).withParameters(responseMessage)
             else -> RuntimeException(responseMessage)
         }
     }
