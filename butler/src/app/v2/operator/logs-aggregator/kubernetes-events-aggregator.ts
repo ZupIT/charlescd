@@ -24,11 +24,7 @@ import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
 import { AppConstants } from '../../core/constants'
-import { plainToClass } from 'class-transformer'
-import { K8sManifestWithSpec } from '../../core/integrations/interfaces/k8s-manifest.interface'
-import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
-import { CharlesCircle } from '../../core/integrations/k8s/interfaces/charles-routes.interface'
 import { ResourceWrapper } from './resource-wrapper'
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
