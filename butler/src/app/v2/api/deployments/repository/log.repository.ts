@@ -56,7 +56,7 @@ export class LogRepository extends Repository<LogEntity> {
     return 0
   }
 
-  public async saveCurrentDeployments(currentDeploymentsIds: string[], log: Log): Promise<void[]> {
+  public async saveDeploymentsLogs(currentDeploymentsIds: string[], log: Log): Promise<void[]> {
     return this.manager.transaction( manager => {
       return Promise.all(currentDeploymentsIds.map(
         async deploymentId => {

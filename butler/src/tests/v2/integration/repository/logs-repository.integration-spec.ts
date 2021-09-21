@@ -88,7 +88,7 @@ describe('save logs  to log repository', () => {
       details: 'log-details',
       timestamp: Date.now().toString()
     }
-    await expect(logRepository.saveCurrentDeployments(deploymentsId, log)).rejects.toThrow()
+    await expect(logRepository.saveDeploymentsLogs(deploymentsId, log)).rejects.toThrow()
     const logs = await logRepository.find()
     expect(logs.length).toBe(0)
   })
@@ -105,7 +105,7 @@ describe('save logs  to log repository', () => {
       details: 'log-details',
       timestamp: Date.now().toString()
     }
-    await logRepository.saveCurrentDeployments(deploymentsId, log)
+    await logRepository.saveDeploymentsLogs(deploymentsId, log)
     const logs = await logRepository.find()
     expect(logs.length).toBe(2)
   })

@@ -96,7 +96,7 @@ export class EventsLogsAggregator {
       const currentDeploymentsIds = currentDeployments
         .map(it => it.id)
       const log = this.createLogFromEvent(event)
-      return await this.logsRepository.saveCurrentDeployments(currentDeploymentsIds, log)
+      return await this.logsRepository.saveDeploymentsLogs(currentDeploymentsIds, log)
     }
   }
 
