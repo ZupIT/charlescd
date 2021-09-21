@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ export class ReconcileDeploymentUsecase {
     this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
-    this.consoleLoggerService.log('GET_DESIRED_MANIFESTS', desiredManifests)
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
     // TODO check if this is necessary
     if (!resourcesCreated) {
