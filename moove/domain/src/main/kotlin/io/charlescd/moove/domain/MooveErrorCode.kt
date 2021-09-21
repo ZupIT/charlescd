@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ enum class MooveErrorCode(val key: String) {
     INVALID_BUILD_STATUS("invalid.build.status"),
     INVALID_PAYLOAD("invalid.payload"),
     CONFLICT("conflict"),
-    UNAUTHORIZED("unauthorized"),
     MISSING_PARAMETER("missing.parameter"),
     MOVE_BUILD_INVALID_COLUMN("move.build.invalid.column"),
     FORBIDDEN("forbidden"),
