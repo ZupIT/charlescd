@@ -19,8 +19,8 @@ package io.charlescd.moove.infrastructure.configuration
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
+import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import io.charlescd.moove.domain.exceptions.UnauthorizedException
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.http.converter.HttpMessageConverter
@@ -51,8 +51,9 @@ class ButlerErrorDecoderTest extends Specification {
 
         then:
         body.asReader() >> this.getReturnAsReader()
-        assert exception instanceof UnauthorizedException
-        assert exception.details.contains( "Unable to fetch resource from github url: https://api.github.com/repos/zupit/charlescd-automation-releases/contents/dragonboarding?ref=release-dev-v-21")
+        assert exception instanceof BusinessException
+        assert exception.message.contains( "Unable to fetch resource from github url: https://api.github.com/repos/zupit/charlescd-automation-releases/contents/dragonboarding?ref=release-dev-v-21")
+        assert exception.errorCode == MooveErrorCode.UNAUTHORIZED
 
     }
     private Reader getReturnAsReader() {
