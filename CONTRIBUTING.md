@@ -62,7 +62,7 @@ All your submissions needs a review before being merged.
 
 ### **Continuous Integration**
 To ensure CharlesCD is always stable, **all submissions must go through our CI pipeline.** This is part of the process of making changes and includes everyone, even CharlesCD core team members. 
-- **CharlesCD CI is based on GitHub Actions:** you are able to execute it on your own fork too and all pushes or pull requests to the main branch will be checked. 
+- **CharlesCD CI is based on GitHub Actions** so you are able to execute it on your own fork too and all pushes or pull requests to the main branch will be checked. 
 It is a good way to get some feedback before get back your changes to original CharlesCD repo.
 
 #### How to enable GitHub Actions on your repo? 
