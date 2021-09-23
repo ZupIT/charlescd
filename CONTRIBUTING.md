@@ -89,7 +89,7 @@ $ git commit -s -m "This is my commit message"
 ```
 **2. GitHub website**
 
-**Step 1:** When the commit changes box opens, add 
+**Step 1:** When the commit changes box opens, add the following command:
 ```
 $ git commit -m “My signed commit” Signed-off-by: username <email address>
 ```
