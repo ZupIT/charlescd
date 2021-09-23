@@ -55,7 +55,7 @@ We encourage you to write tests before the implementation, see below:
 2. New features need to include a test that proves it actually works. If it doesn't include, it will return to the sender.
 
 ### **Be aware of documentation changes**
-If your collaboration changes the way we use any CharlesCD functionality, you should  also update the documentation.
+If your collaboration changes the way we use any CharlesCD functionality, you should also update the documentation.
 
 ### **Code reviews**
 All your submissions needs a review before being merged.
