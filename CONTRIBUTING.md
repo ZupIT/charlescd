@@ -126,7 +126,7 @@ You can suggest a change in CharlesCD's developer discussion [**mailing list**](
 5. Ensure the PR description clearly describes the new feature, including the issue number.
 
 ###  **Before open an issue**
-1. Check out if you’re on the latest version. If you’re not your problem may have been solved already.
+1. Check out if you are on the latest version. If you’re not, your problem may have been solved already.
 
 2. Search under the project's [**issues**](https://github.com/ZupIT/charlescd/issues?q=is%3Aopen+is%3Aissue+label%3Abug) and make sure it’s not a known bug. 
 
