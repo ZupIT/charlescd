@@ -66,7 +66,7 @@ To ensure CharlesCD is always stable, **all submissions must go through our CI p
 It is a good way to get some feedback before get back your changes to original CharlesCD repo.
 
 #### How to enable GitHub Actions on your repo? 
-After forking CharlesCD repo: Go to ’Actions’ tab (on your own fork) and push the big green button. That’s it!
+After forking CharlesCD repo, you must go to ’Actions’ tab (on your own fork) and push the big green button. That’s it!
 
 ### **Developer Certificate of Origin - DCO**
 
