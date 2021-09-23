@@ -52,7 +52,7 @@ Check out the requisites before contributing to CharlesCD:
 We encourage you to write tests before the implementation, see below:
 
 1. Bugfixes need to include a test proving the existence of the bug and why you are fixing it. If it doesn't include, it will return to the sender.
-2. New features need to include a test that proves it actually works, if it doesn't include, it will return to the sender.
+2. New features need to include a test that proves it actually works. If it doesn't include, it will return to the sender.
 
 ### **Be aware of documentation changes**
 If your collaboration changes the way we use any CharlesCD functionality, you should  also update the documentation.
