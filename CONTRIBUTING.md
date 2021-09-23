@@ -1,7 +1,7 @@
 
 # **Contributing Guide**
 
-This is CharlesCD contributing guide, please read the following sections to learn how to ask questions and how to work on something.
+This is CharlesCD contributing guide. Please read the following sections to learn how to ask questions and how to work on something in order to improve our project.
 
 ## **Welcome**
 :wave:Welcome! 
