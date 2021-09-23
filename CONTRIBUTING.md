@@ -41,7 +41,7 @@ When you commit, use the ```**-s** ``` option to include the Signed-off-by line 
 You should config a pre-push Githook in your local machine to help you not push without DCO Sign Off. For more information, [check out GitHooks](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
 
 - All contributions should use [**GPG commit signature verification**](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification). 
-When you commit use the ```**-S** ``` option to include the signing. 
+When you commit, use the ```**-S** ``` option to include the signing. 
 To sign commits using GPG and have them verified on GitHub, follow the steps described [**in the commit signature verification section**](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/about-commit-signature-verification#gpg-commit-signature-verification).
 
 ## **Prerequisites** 
