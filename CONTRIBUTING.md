@@ -102,7 +102,7 @@ See the guidelines to submit evolutions:
 
 ### **Prepare your development environment**
 
-CharlesCD has many modules. The environment settings are different between them. Check the configuration documentation for each module.
+CharlesCD has many modules and the environment settings are different between them. So, you should check the configuration documentation for each module.
 Each module’s folders have their own README file, please check them: 
 
 - [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler)
