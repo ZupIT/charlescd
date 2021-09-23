@@ -20,11 +20,14 @@ import { ComponentEntityV2 } from '../entity/component.entity'
 import { DeploymentEntityV2 } from '../entity/deployment.entity'
 
 @EntityRepository(ComponentEntityV2)
+/**
+ *WARNING: In some methods it's assumed that the component entity will have the deployment associated. So always
+ *return the component with its deployment
+ */
 export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
 
   // TODO review this method's usage. Is it ok to not query with healthy = true?
   public async findActiveComponents(): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     // TODO: we may have to save the workspace_id now in case the user is using the same butler for multiple workspaces
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
@@ -36,7 +39,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   }
   
   public async findDefaultActiveComponents(defaultCircleId: string): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.current = true')
@@ -45,7 +47,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
       .getMany()
   }
   public async findHealthyActiveComponents(): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     // TODO: we may have to save the workspace_id now in case the user is using the same butler for multiple workspaces
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
@@ -66,7 +67,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   }
 
   public async findCurrentHealthyComponentsByCircleId(circleId: string): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.current = true')
@@ -77,7 +77,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   }
 
   public async findPreviousComponentsFromCurrentUnhealthyByCircleId(circleId: string): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where(qb => {
@@ -96,7 +95,6 @@ export class ComponentsRepositoryV2 extends Repository<ComponentEntityV2> {
   }
 
   public async findActiveComponentsByCircleId(circleId: string): Promise<ComponentEntityV2[]> {
-    // WARNING: ALWAYS RETURN COMPONENT WITH ITS DEPLOYMENT
     return this.createQueryBuilder('v2components')
       .leftJoinAndSelect('v2components.deployment', 'deployment')
       .where('deployment.current = true')
