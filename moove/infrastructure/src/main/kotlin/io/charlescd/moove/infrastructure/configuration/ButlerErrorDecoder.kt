@@ -54,15 +54,15 @@ class ButlerErrorDecoder : ErrorDecoder {
     }
 
     private fun readBody(response: Response): String {
-        try {
+        return try {
             val bodyReader = response.body().asReader()
-            return bodyReader.use {
+            bodyReader.use {
                 val responseBody: String = Util.toString(bodyReader)
                 extractErrorMessages(jacksonObjectMapper().readValue(responseBody, ErrorAggregator::class.java))
             }
         } catch (ex: IOException) {
             logger.error(ex.message, ex)
-            return "Error reading response of request"
+            "Error reading response of request"
         }
     }
 
@@ -77,7 +77,7 @@ class ButlerErrorDecoder : ErrorDecoder {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ErrorAggregator(
-    val errors: Array<Error>
+    val errors: List<Error>
 )
 data class Error(
     val title: String,

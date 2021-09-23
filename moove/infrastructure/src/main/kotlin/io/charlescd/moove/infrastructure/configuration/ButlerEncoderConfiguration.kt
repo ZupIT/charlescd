@@ -18,15 +18,11 @@ package io.charlescd.moove.infrastructure.configuration
 
 import feign.Client
 import feign.okhttp.OkHttpClient
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class ButlerEncoderConfiguration(
-    val messageConverters: ObjectFactory<HttpMessageConverters>
-) {
+class ButlerEncoderConfiguration {
 
     @Bean
     fun butlerErrorDecoder(): ButlerErrorDecoder {

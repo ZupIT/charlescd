@@ -16,15 +16,10 @@
 
 package io.charlescd.moove.infrastructure.configuration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Response
 import feign.codec.ErrorDecoder
 import io.charlescd.moove.domain.MooveErrorCode
 import io.charlescd.moove.domain.exceptions.BusinessException
-import org.springframework.beans.factory.ObjectFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
 
@@ -32,13 +27,11 @@ class ButlerErrorDecoderTest extends Specification {
     ErrorDecoder errorDecoder
 
     void setup() {
-        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper())
-        ObjectFactory<HttpMessageConverters> objectFactory = { -> new HttpMessageConverters(jacksonConverter) }
-        ButlerEncoderConfiguration butlerEncoderConfiguration = new ButlerEncoderConfiguration(objectFactory)
+        ButlerEncoderConfiguration butlerEncoderConfiguration = new ButlerEncoderConfiguration()
         errorDecoder = butlerEncoderConfiguration.butlerErrorDecoder()
     }
 
-    def "should return unauthorized when status is 401"() {
+    def "should throw business exception when status is 401"() {
         given:
         def response = GroovyMock(Response)
         def body = Mock(Response.Body)
