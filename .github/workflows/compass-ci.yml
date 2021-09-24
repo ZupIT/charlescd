@@ -67,4 +67,4 @@ jobs:
       - name: lint files
         working-directory: ./compass
         run: |
-          /go/bin/golangci-lint run --issues-exit-code=1 --timeout=5m -v ./...
+          /go/bin/golangci-lint run
