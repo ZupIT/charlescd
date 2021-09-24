@@ -14,15 +14,49 @@ linters-settings:
   errcheck:
     check-type-assertions: false
     check-blank: false
-    exclude: ./errcheck_excludes.txt
   golint:
     min-confidence: 0.8
   maligned:
     suggest-new: true
+  revive:
+    ignore-generated-header: true
+    severity: warning
+    rules:
+      - name: atomic
+      - name: line-length-limit
+        severity: error
+        arguments: [ 80 ]
+      - name: unhandled-error
+        arguments: [ "fmt.Printf", "myFunction" ]
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
 
 linters:
   disable-all: true
   enable:
+    - revive
     - deadcode
     - errcheck
     - gosimple
