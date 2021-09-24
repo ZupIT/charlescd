@@ -23,11 +23,7 @@ linters-settings:
     severity: error
     rules:
       - name: atomic
-      - name: line-length-limit
-        severity: error
-        arguments: [ 80 ]
       - name: unhandled-error
-        arguments: [ "fmt.Printf", "myFunction" ]
       - name: blank-imports
       - name: context-as-argument
       - name: context-keys-type
