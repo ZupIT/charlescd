@@ -1,18 +1,24 @@
-# CharlesCD Butler
+# **CharlesCD Butler**
 
-Butler is a Kubernetes deployment tool that abstracts the routing feature of Istio service mesh in order to enable access to different application versions based on a custom header value.
+Butler is a Kubernetes deployment tool that abstracts the routing feature of Istio's service mesh. It enables access to different applications versions based on a custom header value.
 
-## How Butler works
+## **How does Butler work?** 
 
-* Butler has a pluggable architecture that enables the usage of different Continuous Deployment (CD) tools that communicate with the Kubernetes cluster.
+* Butler has a pluggable architecture and enables different Continuous Deployment (CD) tools that communicate with the Kubernetes cluster.
 * It abstracts the state of the cluster inside its database, diminishing the coupling with Continuous Deployment (CD) tools, therefore allowing them to be changed without a problem.
-* It has an easy to use API that enables the deployment of various applications at the same time in parallel.
+* It has an easy-to-use API that enables the deployment of various applications at the same time.
 
-## How to use
+## **Usage**
 
-The pre-requisite for running Butler is that you have a working [Node environment] and [Docker] installed.
+### **Requirements**
+See below the requirements to run Butler: 
+- A working [**Node environment**](https://nodejs.org/en/);
+- [**Docker**](https://docs.docker.com/get-docker/) installed.
 
-After that, clone this project and run the following commands inside the root folder:
+
+### **Configuration**
+
+1. Clone this project and run the following commands inside the root folder:
 
 ```
 npm install
@@ -20,17 +26,19 @@ docker-compose up
 npm start
 ```
 
-These commands will install all project dependencies, run two containers with a PostgreSQL database and a stub server and finally, start the application on port 3000.
+2. These commands will install all project dependencies:
+    - Run two containers with a PostgreSQL database and a stub server;
+    - Start the application on port 3000.
 
-A [Swagger API Documentation] is provided on application startup. We also provided a up to date [Postman Collection].
+A **Swagger API Documentation** is provided on application startup. We also provided a up to date [**Postman Collection**](https://www.postman.com/).
 
-## Documentation
+## **Documentation**
 
-Please check the [Charles Documentation].
+For more information about CharlesCD, please check out the [**documentation**](https://docs.charlescd.io/).
 
-## Contributing
+## **Contributing**
 
-Please check our [Contributing Guide].
+If you want to contribute to this module, access our [**Contributing Guide**](https://github.com/ZupIT/charlescd/blob/main/CONTRIBUTING.md).
 
 [Charles Documentation]: https://docs.charlescd.io/
 [Node environment]: https://nodejs.org/en/

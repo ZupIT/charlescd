@@ -1,16 +1,15 @@
-# CharlesCD Circle Matcher
-
-This repository is part of [CharlesCD](https://github.com/ZupIT/charlescd) project.
+# **CharlesCD Circle Matcher** 
 
 Circle Matcher is an HTTP service that allows us to identify which segmentation (managed by CharlesCD) the application user belongs to, based on logical rules previously defined.
 
-## How Circle Matcher works
-Through CharlesCD, it is possible to deploy different versions of your applications and define which user segmentation (Circle) is going to access it. Routing takes place at the service mesh level, so every request that happens in the cluster - managed by CharlesCD - needs a segment identification (Circle's id) to work properly.
+## **How does Circle Matcher work?**
+CharlesCD deploys different versions of your applications and it defines which user segmentation (Circle) is going to access it. The routing takes place at the service mesh level, so every request that happens in the cluster - managed by CharlesCD - needs a segment identification (Circle's id) to work properly.
 
-## How to use
+## **Usage**
+
 Circle Matcher has a service that receives a JSON (without a specific contract) with the user's attributes (any attribute that matters) and returns the identifier of the circle to which it belongs.
 
-See an sample request:
+See a request sample:
 
 ```
 POST /identify HTTP/1.1
@@ -28,7 +27,7 @@ Content-Type: application/json
 
 ```
 
-The response could be:
+And the response could be:
 
 ```
 {
@@ -41,34 +40,39 @@ The response could be:
 }
 
 ```
-Then, simply use the circle identification information for any service call in your cluster. To do this, use the HTTP header **X-Circle-Id** with the value of **circles.id**.
+Then, use the circle identification information for any service call in your cluster. To do this, use the HTTP header **X-Circle-Id** with the value of **circles.id**.
 
-## Running locally
+## **Running locally**
 
-### Requirements
-- [GraalVM 20.3.0 with JDK 1.8+]
-- [Docker]
-- [Docker Compose]
-- [Maven]
+### **Requirements**
+See below the requirements to run locally: 
 
+- **GraalVM 20.3.0 with JDK 1.8+**
+- [**Docker**](https://docs.docker.com/get-docker/)
+- [**Docker Compose**](https://docs.docker.com/compose/install/)
+- [**Maven**](https://maven.apache.org/download.cgi)
 
-First up the Redis container:
+### **How to do it?**
+Follow the steps below:
+
+**Step 1:** First up the Redis container:
 ```
 docker-compose -f docker-compose.xml up
 ```
 
-Then run the application (if you want to run with another Redis flavors, use the appropriate profile):
+**Step 2:** Run the application (if you want to run with another Redis flavors, use the appropriate profile):
 ```
 ./run-local.sh
 ```
 
-## Documentation
+## **Documentation**
 
-Please check the [Charles Documentation].
+For more information about CharlesCD, please check out the [**documentation**](https://docs.charlescd.io/).
 
-## Contributing
+## **Contributing**
 
-Please check our [Contributing Guide].
+If you want to contribute to this module, access our [**Contributing Guide**](https://github.com/ZupIT/charlescd/blob/main/CONTRIBUTING.md).
+
 
 [Postman Collection]: data/postman/CharlesCD_Villager.postman_collection.json
 [Contributing Guide]: https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md
