@@ -65,5 +65,6 @@ jobs:
           download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
           wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.31.0
       - name: lint files
+        working-directory: ./compass
         run: |
           /go/bin/golangci-lint run --issues-exit-code=1 --timeout=5m -v ./...
