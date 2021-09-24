@@ -1,0 +1,56 @@
+run:
+  timeout: 10m
+  issues-exit-code: 1
+  tests: true
+  skip-dirs:
+    - vendor
+  modules-download-mode: vendor
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: false
+    exclude: ./errcheck_excludes.txt
+  golint:
+    min-confidence: 0.8
+  maligned:
+    suggest-new: true
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - exhaustive
+    - exportloopref
+    - gocyclo
+    - gofmt
+    - goheader
+    - goimports
+    - gomodguard
+    - goprintffuncname
+    - misspell
+    - nakedret
+    - nolintlint
+    - prealloc
+    - rowserrcheck
+    - sqlclosecheck
+    - unconvert
+    - unparam
