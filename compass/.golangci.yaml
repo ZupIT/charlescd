@@ -20,7 +20,7 @@ linters-settings:
     suggest-new: true
   revive:
     ignore-generated-header: true
-    severity: warning
+    severity: error
     rules:
       - name: atomic
       - name: line-length-limit
