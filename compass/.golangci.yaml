@@ -53,10 +53,10 @@ linters-settings:
       - name: unreachable-code
       - name: redefines-builtin-id
 
-#linters:
+linters:
 #  disable-all: true
-#  enable:
-#    - revive
+  enable:
+  - revive
 #    - deadcode
 #    - errcheck
 #    - gosimple
