@@ -4,7 +4,7 @@ run:
   tests: true
   skip-dirs:
     - vendor
-  modules-download-mode: vendor
+#  modules-download-mode: readonly
 output:
   format: colored-line-number
   print-issued-lines: true
