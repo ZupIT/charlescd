@@ -35,8 +35,8 @@ func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy str
 		"ApiKey": clause.Expr{
 			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
 			Vars: []interface{}{
-				fmt.Sprintf("%s", apiKey),
-				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
+				apiKey,
+				configuration.GetConfiguration("ENCRYPTION_KEY"),
 			},
 		},
 		"Events":    events,

@@ -21,9 +21,9 @@ package subscription
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/util"
@@ -209,6 +209,10 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 	}
 	reqBody, err := json.Marshal(eventBody{Content: string(msgEvent)})
 
+	if err != nil {
+		return errors.NewError("Error marshalling event: ", err.Error())
+	}
+
 	req, err := http.NewRequest("POST", sub.Url, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return errors.NewError("Error creating http request: ", err.Error()).
@@ -236,7 +240,11 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 
 	defer res.Body.Close()
 	resBody, err := ioutil.ReadAll(res.Body)
-	fmt.Printf("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
+
+	if err != nil {
+		httpErrorHandler(http.StatusInternalServerError, sub.Url, err.Error())
+	}
+	logrus.Infof("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
 
 	return nil
 }

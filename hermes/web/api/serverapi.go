@@ -64,8 +64,11 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 
 func (api *Api) health(r *mux.Router) {
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(":)"))
-		return
+		_, err := w.Write([]byte(":)"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }
 
@@ -87,8 +90,11 @@ func (api *Api) readiness(r *mux.Router, db *sql.DB) {
 			}).Warnln()
 		}
 
-		w.Write(response)
-		return
+		_ ,err = w.Write(response)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }
 

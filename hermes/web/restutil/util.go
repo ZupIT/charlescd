@@ -20,11 +20,16 @@ package restutil
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func NewResponse(w http.ResponseWriter, status int, data interface{}) {
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logrus.Println(err)
+	}
 }

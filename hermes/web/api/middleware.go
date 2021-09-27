@@ -26,19 +26,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var whitelistPaths = []string{
-	"/health",
-}
-
-func getWhiteList(path string) string {
-	for _, p := range whitelistPaths {
-		if p == path {
-			return p
-		}
-	}
-
-	return ""
-}
 
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +46,10 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		w.WriteHeader(recorderWrite.Code)
-		recorderWrite.Body.WriteTo(w)
+		_, err := recorderWrite.Body.WriteTo(w)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }

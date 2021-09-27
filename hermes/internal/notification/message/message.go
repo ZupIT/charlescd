@@ -123,7 +123,7 @@ func (main Main) FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
 }
 
 func (main Main) FindAllBySubscriptionIdAndFilter(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error) {
-	var cond interface{} = ""
+	var cond interface{}
 
 	eventValue := parameters["EventValue"]
 	eventField := parameters["EventField"]

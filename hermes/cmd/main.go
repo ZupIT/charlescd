@@ -66,10 +66,13 @@ func main() {
 
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.DefaultLogger)))
-	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
+	_,err = c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
+	if err != nil {
+		log.Fatal(err)
+	}
 	go c.Start()
 
-	stopChan := make(chan bool, 0)
+	stopChan := make(chan bool)
 	go messagePubSubMain.Consume(stopChan)
 
 	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)

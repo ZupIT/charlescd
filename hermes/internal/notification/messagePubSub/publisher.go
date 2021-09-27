@@ -20,7 +20,6 @@ package messagePubSub
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -31,7 +30,7 @@ import (
 )
 
 func (main *Main) Publish() {
-	fmt.Println("[Publisher] Time: " + time.Now().String())
+	logrus.Info("[Publisher] Time: " + time.Now().String())
 
 	messages, err := main.messageMain.FindAllNotEnqueued()
 	if err != nil {
@@ -95,7 +94,7 @@ func (main *Main) sendMessageWithExpiration(message payloads.MessageResponse) er
 	return nil
 }
 
-func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, log string, httpStatus int) {
+func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, log string, httpStatus int) error {
 	data := messageexecutionhistory.MessagesExecutionsHistory{
 		ID:           uuid.New(),
 		ExecutionId:  message.Id,
@@ -105,7 +104,7 @@ func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, lo
 		LoggedAt:     time.Now(),
 	}
 
-	main.db.Transaction(func(tx *gorm.DB) error {
+	return main.db.Transaction(func(tx *gorm.DB) error {
 		retryExec := tx.Table("messages_executions_histories").Create(&data)
 		if retryExec.Error != nil {
 			logrus.WithFields(logrus.Fields{
@@ -131,5 +130,11 @@ func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, lo
 }
 
 func (main *Main) updateMessageStatus(message payloads.MessageResponse, status, log string) {
-	main.updateMessageInfo(message, status, log, 0)
+	updateMessageErr := main.updateMessageInfo(message, status, log, 0)
+	if updateMessageErr != nil {
+		logrus.WithFields(logrus.Fields{
+			"err": errors.NewError("Cannot update message", updateMessageErr.Error()).
+				WithOperations("SendWebhookEvent"),
+		}).Errorln(updateMessageErr)
+	}
 }

@@ -53,11 +53,12 @@ linters:
   disable-all: true
   enable:
   - revive
-#    - deadcode
-#    - errcheck
-#    - gosimple
-#    - govet
-#    - ineffassign
+  - govet
+  - nolintlint
+  - gosimple
+    #    - deadcode
+    #    - ineffassign
+    #    - errcheck
 #    - staticcheck
 #    - structcheck
 #    - typecheck
@@ -78,7 +79,6 @@ linters:
 #    - goprintffuncname
 #    - misspell
 #    - nakedret
-#    - nolintlint
 #    - prealloc
 #    - rowserrcheck
 #    - sqlclosecheck

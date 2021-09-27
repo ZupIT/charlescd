@@ -51,6 +51,10 @@ func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 
 	driver, err := postgresmigrate.WithInstance(dbInstance, &postgresmigrate.Config{})
 
+	if err != nil {
+		return nil, err
+	}
+
 	m, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", migrationsPath),
 		GetConfiguration("DB_NAME"), driver)
