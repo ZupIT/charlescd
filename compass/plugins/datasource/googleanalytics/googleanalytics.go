@@ -106,7 +106,7 @@ func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsRe
 	if request.RangePeriod.Value != 0 && request.RangePeriod.Unit != "" {
 		currentPeriod, ok := Periods[request.RangePeriod.Unit]
 		if !ok {
-			return analyticsreporting.GetReportsResponse{}, errors.New("This period not supported...")
+			return analyticsreporting.GetReportsResponse{}, errors.New("this period not supported")
 		}
 
 		analyticsPeriod := currentPeriod(request.RangePeriod)

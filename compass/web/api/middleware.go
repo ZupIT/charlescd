@@ -173,6 +173,10 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		w.WriteHeader(recorderWrite.Code)
-		recorderWrite.Body.WriteTo(w)
+		_, err := recorderWrite.Body.WriteTo(w)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Warn(err)
+		}
 	})
 }

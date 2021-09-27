@@ -59,3 +59,16 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           horusec start -p . -n="Charles/hermes" -u="https://api-horusec.zup.com.br"
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint install
+        run: |
+          download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+          wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.37.0
+      - name: lint files
+        working-directory: ./compass
+        run: |
+          /go/bin/golangci-lint run

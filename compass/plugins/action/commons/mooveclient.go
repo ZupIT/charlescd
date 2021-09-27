@@ -3,7 +3,6 @@ package commons
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/ZupIT/charlescd/compass/pkg/logger"
 	"io/ioutil"
@@ -57,7 +56,7 @@ func GetCurrentDeploymentAtCircle(circleID, workspaceId, url string) (Deployment
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("error finding circle with http error: %s", strconv.Itoa(response.StatusCode)))
+		err = fmt.Errorf("error finding circle with http error: %s", strconv.Itoa(response.StatusCode))
 		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, string(responseBody))
 		return DeploymentResponse{}, err
 	}
@@ -94,7 +93,7 @@ func GetUserByEmail(email, url string) (UserResponse, error) {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("error finding user with http error: %s and message %s", strconv.Itoa(response.StatusCode), string(responseBody)))
+		err = fmt.Errorf("error finding user with http error: %s and message %s", strconv.Itoa(response.StatusCode), string(responseBody))
 		logger.Error("GET_USER_BY_EMAIL", "getUserByEmail", err, string(responseBody))
 		return UserResponse{}, err
 	}
@@ -139,7 +138,7 @@ func DeployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId, url s
 	}
 
 	if response.StatusCode != http.StatusCreated {
-		err = errors.New(fmt.Sprintf("error deploying at circle with http error: %s", strconv.Itoa(response.StatusCode)))
+		err = fmt.Errorf("error deploying at circle with http error: %s", strconv.Itoa(response.StatusCode))
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, string(responseBody))
 		return err
 	}
@@ -171,7 +170,7 @@ func UndeployBuildAtCircle(deploymentId, workspaceId, url string) error {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		err = errors.New(fmt.Sprintf("error undeploying at circle with http error: %s", strconv.Itoa(response.StatusCode)))
+		err = fmt.Errorf("error undeploying at circle with http error: %s", strconv.Itoa(response.StatusCode))
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, string(responseBody))
 		return err
 	}
