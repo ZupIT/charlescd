@@ -17,17 +17,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
+      - name: Run actions checkout
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+      - name: Run Actions cache
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
         with:
           go-version: "^1.14.2"
 
@@ -41,14 +41,14 @@ jobs:
           go test -v -coverpkg ./internal/action,./internal/datasource,./internal/dispatcher,./internal/metric,./internal/metricsgroup,./internal/metricsgroupaction,./internal/moove,./internal/plugin ./internal/tests/ -coverprofile=coverage.cov
 
       - name: Tests coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192
         with:
           file: ./compass/coverage.cov
           flags: compass
           fail_ci_if_error: true
 
       - name: Code Style
-        uses: docker://morphy/revive-action:v1
+        uses: docker://morphy/revive-action@sha256:5642ac5a33b9add49139db42fa12014294c3c783c241056a4e46b1a2e059cc7c
         with:
           config: ./compass/revive.toml
           path: "./compass/..."

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/stale@v3
+    - uses: actions/stale@98ed4cb500039dbcccf4bd9bedada4d0187f2757
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-issue-message: 'This issue is considered stale, please check if it will still be considered. If nothing is done, it will be closed in 7 days.'
