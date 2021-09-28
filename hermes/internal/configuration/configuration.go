@@ -115,4 +115,3 @@ func GetConfigurationAsInt(configuration string) int {
 	}
 	return envAsInt
 }
-

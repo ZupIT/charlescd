@@ -43,15 +43,15 @@ type MessageResponse struct {
 	LastStatus     string          `json:"lastStatus"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
-	RetryCount int  `json:"retryCount"ss`
+	RetryCount     int             `json:"retryCount"`
 }
 
 type FullMessageResponse struct {
-	Id             uuid.UUID       `json:"id"`
-	EventType      string          `json:"eventType"`
-	Event          string          `json:"event"`
-	LastStatus     string          `json:"lastStatus"`
-	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	Id             uuid.UUID `json:"id"`
+	EventType      string    `json:"eventType"`
+	Event          string    `json:"event"`
+	LastStatus     string    `json:"lastStatus"`
+	SubscriptionId uuid.UUID `json:"subscriptionId"`
 }
 
 type StatusResponse struct {

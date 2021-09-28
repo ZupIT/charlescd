@@ -90,7 +90,7 @@ func (api *Api) readiness(r *mux.Router, db *sql.DB) {
 			}).Warnln()
 		}
 
-		_ ,err = w.Write(response)
+		_, err = w.Write(response)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			logrus.Error(err)

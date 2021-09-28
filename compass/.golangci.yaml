@@ -53,6 +53,20 @@ linters:
   disable-all: true
   enable:
   - revive
+  - govet
+  - nolintlint
+  - gosimple
+  - deadcode
+  - bodyclose
+  - nakedret
+  - nolintlint
+  - rowserrcheck
+  - sqlclosecheck
+  - unconvert
+  - unparam
+  - errcheck
+  - staticcheck
+  - gofmt
 #    - deadcode
 #    - errcheck
 #    - gosimple
@@ -71,7 +85,7 @@ linters:
 #    - exhaustive
 #    - exportloopref
 #    - gocyclo
-#    - gofmt
+
 #    - goheader
 #    - goimports
 #    - gomodguard

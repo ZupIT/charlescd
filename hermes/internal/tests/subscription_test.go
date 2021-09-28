@@ -40,12 +40,12 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate without error", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId: uuid.New(),
-			Url: "localhost:8080",
+			ExternalId:  uuid.New(),
+			Url:         "localhost:8080",
 			Description: "My Webhook",
-			ApiKey: "",
-			Events: []string{"DEPLOY"},
-			CreatedBy: "charles@email.com",
+			ApiKey:      "",
+			Events:      []string{"DEPLOY"},
+			CreatedBy:   "charles@email.com",
 		}
 
 		expected := 0
@@ -58,12 +58,12 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate with empty url", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId: uuid.New(),
-			Url: "",
+			ExternalId:  uuid.New(),
+			Url:         "",
 			Description: "My Webhook",
-			ApiKey: "",
-			Events: []string{"DEPLOY"},
-			CreatedBy: "charles@email.com",
+			ApiKey:      "",
+			Events:      []string{"DEPLOY"},
+			CreatedBy:   "charles@email.com",
 		}
 
 		err := main.Validate(request)
@@ -73,12 +73,12 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate with empty description", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId: uuid.New(),
-			Url: "localhost:8080",
+			ExternalId:  uuid.New(),
+			Url:         "localhost:8080",
 			Description: "",
-			ApiKey: "",
-			Events: []string{"DEPLOY"},
-			CreatedBy: "charles@email.com",
+			ApiKey:      "",
+			Events:      []string{"DEPLOY"},
+			CreatedBy:   "charles@email.com",
 		}
 
 		err := main.Validate(request)
@@ -88,12 +88,12 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate with empty events", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId: uuid.New(),
-			Url: "localhost:8080",
+			ExternalId:  uuid.New(),
+			Url:         "localhost:8080",
 			Description: "My Webhook",
-			ApiKey: "",
-			Events: nil,
-			CreatedBy: "charles@email.com",
+			ApiKey:      "",
+			Events:      nil,
+			CreatedBy:   "charles@email.com",
 		}
 
 		err := main.Validate(request)
@@ -102,7 +102,6 @@ func TestSubscriptionValidate(t *testing.T) {
 	})
 
 }
-
 
 func TestUpdateParseUpdate(t *testing.T) {
 
@@ -124,7 +123,6 @@ func TestUpdateParseUpdate(t *testing.T) {
 		}
 	})
 
-
 	t.Run("Parse error unexpected EOF", func(t *testing.T) {
 		request := []byte(`{ "events": ["DEPLOY", "UNDEPLOY"]`)
 		rCloser := ioutil.NopCloser(bytes.NewReader(request))
@@ -142,7 +140,7 @@ func TestUpdateParseUpdate(t *testing.T) {
 	})
 }
 
-func TestUpdateParseSubscription (t *testing.T) {
+func TestUpdateParseSubscription(t *testing.T) {
 
 	main := subscription.NewMain(nil)
 
@@ -162,7 +160,6 @@ func TestUpdateParseSubscription (t *testing.T) {
 		}
 	})
 
-
 	t.Run("Parse error unexpected EOF", func(t *testing.T) {
 		request := []byte(`{"externalId":"06666a99-7800-4c83-af2c-a1a1d5e1bb2e","url":"localhost:080","description":"My Webhook", "events": ["DEPLOY", "UNDEPLOY"]`)
 		rCloser := ioutil.NopCloser(bytes.NewReader(request))
@@ -170,7 +167,6 @@ func TestUpdateParseSubscription (t *testing.T) {
 		_, err := main.ParseSubscription(rCloser)
 		verifyResult(t, err.Error().Detail, "unexpected EOF")
 	})
-
 
 	t.Run("Parse error to Request", func(t *testing.T) {
 		request := []byte(`"externalId":"06666a99-7800-4c83-af2c-a1a1d5e1bb2e","url":"localhost:080","description":"My Webhook", "events": ["DEPLOY", "UNDEPLOY"]`)

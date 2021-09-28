@@ -66,10 +66,7 @@ func main() {
 
 	c := cron.New(cron.WithChain(
 		cron.SkipIfStillRunning(cron.DefaultLogger)))
-	_,err = c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
-	if err != nil {
-		log.Fatal(err)
-	}
+	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
 	go c.Start()
 
 	stopChan := make(chan bool)

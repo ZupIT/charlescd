@@ -42,8 +42,8 @@ func TestMessageValidate(t *testing.T) {
 	t.Run("Validate without error", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
 			ExternalId: uuid.New(),
-			EventType: "DEPLOY",
-			Event: event,
+			EventType:  "DEPLOY",
+			Event:      event,
 		}
 
 		expected := 0
@@ -54,12 +54,11 @@ func TestMessageValidate(t *testing.T) {
 
 	})
 
-
 	t.Run("Validate with invalid uuid", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
 			ExternalId: uuid.Nil,
-			EventType: "DEPLOY",
-			Event: event,
+			EventType:  "DEPLOY",
+			Event:      event,
 		}
 
 		err := main.Validate(eventMessage)
@@ -69,8 +68,8 @@ func TestMessageValidate(t *testing.T) {
 	t.Run("Validate with empty event type", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
 			ExternalId: uuid.New(),
-			EventType: "",
-			Event: event,
+			EventType:  "",
+			Event:      event,
 		}
 
 		err := main.Validate(eventMessage)
@@ -80,8 +79,8 @@ func TestMessageValidate(t *testing.T) {
 	t.Run("Validate with empty event", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
 			ExternalId: uuid.New(),
-			EventType: "DEPLOY",
-			Event: nil,
+			EventType:  "DEPLOY",
+			Event:      nil,
 		}
 
 		err := main.Validate(eventMessage)
@@ -89,7 +88,6 @@ func TestMessageValidate(t *testing.T) {
 	})
 
 }
-
 
 func TestMessageParsePayload(t *testing.T) {
 

@@ -67,7 +67,7 @@ jobs:
       - name: golangci-lint install
         run: |
           download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
-          wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.37.0
+          wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.42.0
       - name: lint files
         working-directory: ./gate
         run: |

@@ -39,9 +39,11 @@ type Message struct {
 	EventType      string    `json:"eventType"`
 	Event          string    `json:"event" gorm:"type:jsonb"`
 }
+
 const (
 	messageResponseSizeLimit = 50
 )
+
 func (main Main) Validate(message payloads.PayloadRequest) errors.ErrorList {
 	ers := errors.NewErrorList()
 
@@ -148,25 +150,25 @@ func (main Main) buildQuery(subscriptionId uuid.UUID, cond interface{}, params m
 	if params["EventType"] != "" && params["Status"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND event_type = ? AND last_status =?", subscriptionId, params["EventType"], params["Status"]).
-			Offset(page * size).Limit(size).
+			Offset(page*size).Limit(size).
 			Find(&response, cond), response
 	}
 
 	if params["EventType"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND event_type = ?", subscriptionId, params["EventType"]).
-			Offset(page * size).Limit(size).
+			Offset(page*size).Limit(size).
 			Find(&response, cond), response
 	}
 
 	if params["Status"] != "" {
 		return main.db.Model(&Message{}).
 			Where("subscription_id = ? AND last_status = ?", subscriptionId, params["Status"]).
-			Offset(page * size).Limit(size).
+			Offset(page*size).Limit(size).
 			Find(&response, cond), response
 	}
 
-	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Offset(page * size).Limit(size).Find(&response, cond), response
+	return main.db.Model(&Message{}).Where("subscription_id = ?", subscriptionId).Offset(page*size).Limit(size).Find(&response, cond), response
 }
 
 func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error) {
@@ -177,7 +179,6 @@ func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusRespon
 		return payloads.StatusResponse{}, errors.NewError("FindAllNotEnqueued Message error", q.Error.Error()).
 			WithOperations("FindAllNotEnqueued.Query")
 	}
-
 
 	if r.LastStatus == "DELIVERED" {
 		return payloads.StatusResponse{Status: 200, Details: "Webhook available, last message was successfully sent"}, nil
@@ -193,7 +194,6 @@ func (main Main) FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusRespon
 			return payloads.StatusResponse{Status: lastExecution.HttpStatus, Details: lastExecution.ExecutionLog}, nil
 		}
 	}
-
 
 	if r.LastStatus == "NOT_ENQUEUED" || r.LastStatus == "ENQUEUED" {
 		lastExecution, err := main.executionMain.FindLastByExecutionId(r.Id)

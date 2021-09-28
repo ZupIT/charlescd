@@ -164,7 +164,6 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
 
-
 		page, atoiErr := strconv.Atoi(r.URL.Query().Get("page"))
 		if atoiErr != nil {
 			page = defaultPageValue
@@ -217,10 +216,10 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-        if len(subscriptions) <= 0 {
-            restutil.NewResponse(w, http.StatusOK, "No subscription founded to this event")
-            return
-        }
+		if len(subscriptions) <= 0 {
+			restutil.NewResponse(w, http.StatusOK, "No subscription founded to this event")
+			return
+		}
 
 		requestMessages, eventErr := restutil.SubscriptionToMessageRequest(subscriptions, request)
 		if eventErr != nil {
@@ -257,7 +256,6 @@ func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.Respon
 		restutil.NewResponse(w, http.StatusOK, result)
 	}
 }
-
 
 func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

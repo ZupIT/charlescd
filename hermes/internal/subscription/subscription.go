@@ -252,5 +252,5 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 func httpErrorHandler(httpStatus int, url, error string) *errors.AdvancedError {
 	return errors.NewError("Error calling http request: ", error).
 		WithOperations(url).
-		WithMeta("http-status",  strconv.Itoa(httpStatus))
+		WithMeta("http-status", strconv.Itoa(httpStatus))
 }
