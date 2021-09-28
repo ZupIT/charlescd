@@ -108,7 +108,10 @@ Each module’s folders have their own README file, please check them:
 - [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler)
 - [**Circle-Matcher**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher)
 - [**Compass**](https://github.com/ZupIT/charlescd/tree/main/compass)
+- [**Gate**](https://github.com/ZupIT/charlescd/tree/main/gate)
+- [**Hermes**](https://github.com/ZupIT/charlescd/tree/main/hermes)
 - [**Moove**](https://github.com/ZupIT/charlescd/tree/main/moove)
+- [**UI**](https://github.com/ZupIT/charlescd/tree/main/ui)
 - [**Villager**](https://github.com/ZupIT/charlescd/tree/main/villager)
 
 ### **First contribution**
@@ -116,7 +119,7 @@ Each module’s folders have their own README file, please check them:
 Contributing to a new feature is only allowed in the [**main repository**](https://github.com/ZupIT/charlescd).
 
 ### Do you want to add a new feature or change an existing one?
-You can suggest a change in CharlesCD's developer discussion [**mailing list**](https://groups.google.com/forum/#!forum/charlescd-dev) or in our [**chat**](https://spectrum.chat/charlescd?tab=posts). Share your ideas and collect positive feedback about the change before open an issue on GitHub. Finally, start writing code!
+You can suggest changes for CharlesCD's in our [**forum**](https://forum.zup.com.br/). Share your ideas and collect positive feedback about the change before open an issue on GitHub. Finally, start writing code!
 
 ### **Adding a new feature**
 1. Make sure your branch is based on main;
@@ -130,7 +133,7 @@ You can suggest a change in CharlesCD's developer discussion [**mailing list**](
 
 2. Search under the project's [**issues**](https://github.com/ZupIT/charlescd/issues?q=is%3Aopen+is%3Aissue+label%3Abug) and make sure it’s not a known bug. 
 
-3. If you didn't find a pre-existing issue, consider checking with the [**mailing list**](https://groups.google.com/forum/#!forum/charlescd-dev) if the problem is non-bug-related.
+3. If you didn't find a pre-existing issue, consider checking our [**forum**](https://forum.zup.com.br/c/en/charles/13) if the problem is non-bug-related.
 
 ### **Opening a new issue**
 If you can't find an open issue for your bug/problem, please [**open a new one**](https://github.com/ZupIT/charlescd/issues/new). 
@@ -165,8 +168,7 @@ Follow the steps to write a bugfix:
 
 ## **Community**
 
-- Ask any question about CharlesCD in our [**mailing list**](https://groups.google.com/forum/#!forum/charlescd-dev) 
-- Let's chat in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
+- You can ask question and chat with us in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
 
 Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
