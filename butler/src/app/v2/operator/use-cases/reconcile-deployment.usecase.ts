@@ -17,11 +17,9 @@
 import { Injectable } from '@nestjs/common'
 import { isEmpty, uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
-import { DeploymentStatusEnum } from '../../api/deployments/enums/deployment-status.enum'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
-import { NotificationStatusEnum } from '../../core/enums/notification-status.enum'
 import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { MooveService } from '../../core/integrations/moove'
@@ -77,22 +75,10 @@ export class ReconcileDeploymentUsecase {
     }
 
     await this.deploymentRepository.updateHealthStatus(deployment.id, true)
-    await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
     return { children: desiredManifests }
   }
 
-  private async notifyCallback(deployment: DeploymentEntityV2, status: DeploymentStatusEnum) {
-    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
-    if (execution.notificationStatus === NotificationStatusEnum.NOT_SENT) {
-      const notificationResponse = await this.mooveService.notifyDeploymentStatusV2(
-        execution.deploymentId,
-        status,
-        deployment.callbackUrl,
-        deployment.circleId
-      )
-      await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
-    }
-  }
+
 
   private getDesiredManifests(deployment: DeploymentEntityV2): KubernetesManifest[] {
     return deployment.components.flatMap(component => {

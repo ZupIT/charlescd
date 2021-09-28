@@ -54,4 +54,10 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
   public async updateCurrent(id: string, current: boolean): Promise<UpdateResult> {
     return this.update({ id: id }, { current: current })
   }
+
+  public async findByCircleId(circleId: string): Promise<DeploymentEntityV2> {
+    return await this.createQueryBuilder('v2deployments')
+      .where({ circleId: circleId, current: true })
+      .getOneOrFail()
+  }
 }
