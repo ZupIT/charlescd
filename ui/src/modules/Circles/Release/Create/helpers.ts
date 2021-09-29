@@ -171,7 +171,7 @@ export const searchResolver = ({ metadata, buildId }: SearchModuleForm) => {
   };
 };
 
-export const validationResolver = ({ modules, metadata }: ModuleForm) => {
+export const validationResolver = ({ modules, metadata, releaseName }: ModuleForm) => {
   const error = checkIfComponentConflict(modules);
   const errorMetadata = checkMetadata(metadata);
 

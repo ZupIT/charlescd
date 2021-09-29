@@ -19,7 +19,7 @@ import Text from 'core/components/Text';
 
 const Metadata = styled.div``;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 10px 0px;
 `;
 
