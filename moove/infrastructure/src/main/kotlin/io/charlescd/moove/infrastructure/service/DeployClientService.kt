@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service
 @Service
 class DeployClientService(private val deployClient: DeployClient) : DeployService {
 
-    @Value("\${application.base.path}")
-    lateinit var APPLICATION_BASE_PATH: String
+    @Value("\${deploy.callback.base.path}")
+    lateinit var DEPLOY_CALLBACK_BASE_PATH: String
 
     companion object {
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
@@ -95,7 +95,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         }
 
     private fun createCallbackUrl(deployment: Deployment): String {
-        return "$APPLICATION_BASE_PATH/$DEPLOY_CALLBACK_API_PATH/${deployment.id}/callback"
+        return "$DEPLOY_CALLBACK_BASE_PATH/$DEPLOY_CALLBACK_API_PATH/${deployment.id}/callback"
     }
 
     private fun getModulesFromBuild(build: Build): List<ModuleSnapshot> {
