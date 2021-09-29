@@ -14,23 +14,16 @@
   # limitations under the License.
 #
 
-name: Header license check
+name: DCOCheck
 
 on:
   pull_request:
     branches: [ main ]
 
-  workflow_dispatch:
-
 jobs:
-  build:
+  dco-gpg-validator:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Check License and license year on prs
-        uses: ZupIT/header-license-checker@37c8ae54d54581f1bef0bdf1efefaaf854bda857
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: ZupIT/zup-dco-validator@8124cb5ceb457f1c063fcf67711a4134050a10c6 #v.1.0
         env:
-          FORCE_COLOR: 3
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
