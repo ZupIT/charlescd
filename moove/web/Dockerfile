@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.4_11-alpine-slim
+FROM adoptopenjdk/openjdk11@sha256:03c0a9b113677ee32f6927bd877d8705ef62c2ecd8e49ba680e17a449da5ccf3
 
 ENV APP_TARGET target
 ENV APP web.jar
