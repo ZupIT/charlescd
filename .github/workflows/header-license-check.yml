@@ -1,0 +1,21 @@
+
+name: Header license check
+
+on:
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check License and license year on prs
+        uses: ZupIT/header-license-checker@37c8ae54d54581f1bef0bdf1efefaaf854bda857
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          FORCE_COLOR: 3
