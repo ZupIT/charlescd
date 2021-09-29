@@ -25,6 +25,7 @@ data class SimpleWorkspaceResponse(
     val name: String,
     val permissions: List<String>,
     val status: String,
+    val author: SimpleAuthorResponse,
     val deploymentConfiguration: DeploymentConfigurationResponse? = null
 ) {
     companion object {
@@ -44,7 +45,8 @@ data class SimpleWorkspaceResponse(
                         name = it.name,
                         gitProvider = it.gitProvider
                     )
-                }
+                },
+                author = SimpleAuthorResponse(workspace.author.email)
             )
         }
     }

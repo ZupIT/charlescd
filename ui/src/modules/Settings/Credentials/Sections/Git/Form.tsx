@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useForm from 'core/hooks/useForm';
 import { testGitConnection } from 'core/providers/workspace';
 import { useTestConnection } from 'core/hooks/useTestConnection';
-import ConnectionStatus from 'core/components/ConnectionStatus';
-import Button from 'core/components/Button';
-import Radio from 'core/components/Radio';
+import Message from 'core/components/Message';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
+import RadioButtons from 'core/components/RadioButtons';
 import Form from 'core/components/Form';
 import Text from 'core/components/Text';
 import { useGit } from './hooks';
@@ -39,23 +39,23 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
     response: testConnectionResponse,
     loading: loadingConnectionResponse,
     save: testConnection,
-    reset: resetTestConnection
+    reset: resetTestConnection,
   } = useTestConnection(testGitConnection);
   const {
     register,
     handleSubmit,
     getValues,
     formState: { isValid },
-    watch
+    watch,
   } = useForm<GitFormData>({
     mode: 'onChange',
     defaultValues: {
       credentials: {
         address: '.',
         accessToken: '',
-        serviceProvider: ''
-      }
-    }
+        serviceProvider: '',
+      },
+    },
   });
 
   const form = watch();
@@ -78,8 +78,8 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
     save({
       ...git,
       credentials: {
-        ...buildConnectionPayload(git, gitType).credentials
-      }
+        ...buildConnectionPayload(git, gitType).credentials,
+      },
     });
   };
 
@@ -92,9 +92,9 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
 
   const renderForm = () => (
     <Styled.Form onSubmit={handleSubmit(onSubmit)}>
-      <Text.h5 color="dark">
+      <Text tag="H5" color="dark">
         Fill in the fields below with your information:
-      </Text.h5>
+      </Text>
       <Styled.Fields>
         <Form.Input
           ref={register({ required: true })}
@@ -114,7 +114,7 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
           name="credentials.accessToken"
           label={`Enter the token ${gitType}`}
         />
-        <ConnectionStatus
+        <Message
           successMessage="Successful connection with git."
           errorMessage={testConnectionResponse?.message}
           status={testConnectionResponse?.status}
@@ -129,20 +129,22 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
           Test connection
         </Styled.TestConnectionButton>
       </Styled.Fields>
-      <Button.Default
+      <ButtonDefault
         type="submit"
         isDisabled={!isValid}
         isLoading={loadingSave || loadingAdd}
       >
         Save
-      </Button.Default>
+      </ButtonDefault>
     </Styled.Form>
   );
 
   return (
     <Styled.Content>
-      <Styled.Title color="light">Add Git</Styled.Title>
-      <Styled.Info color="dark" data-testid="git-help-text">
+      <Styled.Title tag="H2" color="light">
+        Add Git
+      </Styled.Title>
+      <Styled.Info tag="H5" color="dark" data-testid="git-help-text">
         Adding a Git allows Charles to create, delete and merge branches, as
         well as view repositories and generate releases. See our{' '}
         <Styled.Link
@@ -153,10 +155,10 @@ const FormGit = ({ onFinish }: Props<GitFormData>) => {
         </Styled.Link>{' '}
         for further details.
       </Styled.Info>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle tag="H5" color="dark">
         Choose which one you want to add:
       </Styled.Subtitle>
-      <Radio.Buttons
+      <RadioButtons
         name="git"
         items={radios}
         onChange={({ currentTarget }) => setGitType(currentTarget.value)}

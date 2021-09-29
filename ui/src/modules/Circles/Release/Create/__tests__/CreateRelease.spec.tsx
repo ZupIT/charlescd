@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ test('should validate form when max lenght is greater than the limit', async () 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
-  expect(await screen.findByText(errorMessage)).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText(errorMessage)).toBeInTheDocument());
 
   const versionNameLabel = screen.getByTestId('label-text-modules[0].version');
   expect(versionNameLabel).toHaveStyle(`color: ${inputTheme.error.color};`);
@@ -173,4 +173,13 @@ test('should disable button on deploy', async () => {
   );
 
   expect(screen.getByTestId('button-default-submit')).toBeDisabled();
+});
+
+test('should check button deploy', async () => {
+  render(
+    <CreateRelease circleId="123" onDeployed={() => { }} />
+  );
+
+  await waitFor(() => 
+    expect(screen.getByTestId('button-default-submit')).toHaveTextContent('Deploy'));
 });

@@ -21,12 +21,13 @@ import first from 'lodash/first';
 import last from 'lodash/last';
 import { WorkspacePaginationItem } from 'modules/Workspaces/interfaces/WorkspacePagination';
 import Select from 'core/components/Form/Select/Single/Select';
-import Button from 'core/components/Button';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
 import Text from 'core/components/Text';
+import Link from 'core/components/Link';
+import { CHARLES_DOC } from 'core/components/Popover';
 import List from './Content/List';
 import { options, Option } from './constants';
 import Styled from './styled';
-import DocumentationLink from 'core/components/DocumentationLink';
 
 export interface Props {
   workspaces: WorkspacePaginationItem[];
@@ -53,7 +54,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
   return (
     <Styled.Modal onClose={onClose}>
       <Styled.Header>
-        <Text.h2 color="light">Add workspaces</Text.h2>
+        <Text tag="H2" color="light">Add workspaces</Text>
         <Select
           options={options}
           defaultValue={type}
@@ -62,19 +63,18 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         />
       </Styled.Header>
       <Styled.Caption>
-        <Text.h5 color="dark" data-testid="add-workspace-modal-doc">
+        <Text tag="H5" color="dark" data-testid="add-workspace-modal-doc">
           {renderDescription()}
           Read our 
-          <DocumentationLink
-            documentationLink="https://docs.charlescd.io"
-            text="documentation"
-          />
+          <Link href={CHARLES_DOC}>
+            documentation
+          </Link>{' '}
           for further details.
-        </Text.h5>
+        </Text>
       </Styled.Caption>
       {isManual && <List draft={draft} onSelect={toggleWorkspace} />}
       <Styled.Item>
-        <Button.Default
+        <ButtonDefault
           id="continue"
           type="button"
           size="SMALL"
@@ -82,7 +82,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
           onClick={() => onContinue(draft, type)}
         >
           Next
-        </Button.Default>
+        </ButtonDefault>
       </Styled.Item>
     </Styled.Modal>
   )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { copyToClipboard } from 'core/utils/clipboard';
 import { useCircleDeployLogs } from './hooks';
 import Styled from './styled';
@@ -22,31 +22,24 @@ import Styled from './styled';
 type Props = {
   deploymentId: string;
   onGoBack: Function;
-}
-
-const SPACER = 2;
+};
 
 const LogsModal = ({ onGoBack, deploymentId }: Props) => {
   const { getLogsData } = useCircleDeployLogs();
   const [logsData, setLogsData] = useState([]);
 
   useEffect(() => {
-    getLogsData(deploymentId).then(logsResponse => {
+    getLogsData(deploymentId).then((logsResponse) => {
       setLogsData(logsResponse);
     });
   }, [deploymentId, getLogsData]);
 
   return (
-    <Styled.ModalFull 
+    <Styled.ModalFull
       onClose={() => onGoBack()}
       onCopy={() => copyToClipboard(JSON.stringify(logsData))}
     >
-      <Styled.AceEditor
-        mode="json"
-        height="100%"
-        width="100%"
-        value={JSON.stringify(logsData, null, SPACER)}
-      />
+      <Styled.Editor height="100%" width="100%" data={logsData} mode="view" />
     </Styled.ModalFull>
   );
 };

@@ -20,7 +20,7 @@ import FormComponent from 'core/components/Form';
 import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 
@@ -32,7 +32,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 20px 0 10px;
 `;
 
@@ -95,17 +95,17 @@ const SearchWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   position: absolute;
   top: 47px;
 `;
 
-const Info = styled(Text.h5)`
+const Info = styled(Text)`
   margin-top: 40px;
   margin-bottom: 10px;
 `;
 
-const Submit = styled(ButtonComponent.Default)`
+const Submit = styled(ButtonComponentDefault)`
   margin-top: 20px;
 `;
 

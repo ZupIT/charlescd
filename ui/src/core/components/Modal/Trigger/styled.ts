@@ -16,7 +16,8 @@
 
 import styled from 'styled-components';
 import Text from 'core/components/Text';
-import DefaultButton from 'core/components/Button/Default';
+import DefaultButton from 'core/components/Button/ButtonDefault';
+import LabeledIcon from 'core/components/LabeledIcon';
 
 const Wrapper = styled.div``;
 
@@ -46,8 +47,8 @@ const Content = styled.div`
   display: flex-inline;
   flex-direction: column;
   z-index: ${({ theme }) => theme.zIndex.OVER_4};
-  top: 245px;
-  left: 650px;
+  top: 25%;
+  left: calc(50% - 204px);
   padding: 11px 41px 28px 40px;
   text-align: left;
   background: ${({ theme }) => theme.modal.trigger.background};
@@ -58,13 +59,17 @@ const Content = styled.div`
   opacity: 1.2;
 `;
 
-const Title = styled(Text.h2)`
+const Title = styled(Text)`
   text-align: left;
   margin-bottom: 0;
 `;
 
 const Description = styled.div`
-  margin: 20px 0 20px 0;
+  margin: 16px 0 24px 0;
+
+  span {
+    line-height: 1.3;
+  }
 `;
 
 const ContinueButton = styled(DefaultButton)`
@@ -102,7 +107,12 @@ const CloseButtonContainer = styled.div`
   margin-left: 324px;
 `;
 
+const ItemName = styled(LabeledIcon)`
+  padding: 16px 0 0 0;
+`;
+
 export default {
+  ItemName,
   Buttons,
   Button: {
     Continue: ContinueButton,

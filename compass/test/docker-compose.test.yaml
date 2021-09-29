@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: postgres:11.8-alpine
+    image: postgres@sha256:1569303291c427fc827381c3474c9eb54c604c00fad0488cdc3aeb6d8e59a62d
     ports:
       - 5432:5432
     environment:
@@ -14,7 +14,7 @@ services:
       - development
 
   provider:
-    image: prom/prometheus:latest
+    image: prom/prometheus@sha256:e0cff5958c9e65898bed9dd230d689ec1263181b57bfe18cf027b56317550df2
     container_name: prometheus
     ports:
       - 9090:9090

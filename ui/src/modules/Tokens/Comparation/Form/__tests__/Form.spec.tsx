@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-import { render, screen, act } from 'unit-test/testUtils';
+import { render, screen, act, waitFor } from 'unit-test/testUtils';
 import userEvent from '@testing-library/user-event';
 import { FetchMock } from 'jest-fetch-mock/types';
 import { Token } from 'modules/Tokens/interfaces';
-import Form  from '..';
-
+import Form from '..';
 
 const token: Token = {
-  id: "f18b25e1-02e1-4c2f-9d5e-eef42f0fd83b",
-  name: "New Token",
-  permissions: ["modules_read"], 
+  id: 'f18b25e1-02e1-4c2f-9d5e-eef42f0fd83b',
+  name: 'New Token',
+  permissions: ['modules_read'],
   workspaces: [],
   allWorkspaces: true,
   revoked: false,
-  created_at: "2021-04-12T22:16:26.359112Z",
+  created_at: '2021-04-12T22:16:26.359112Z',
   revoked_at: null,
   last_used_at: null,
-  author: "charlesadmin@admin"
+  author: 'charlesadmin@admin',
 };
 
 test('Render Token Form in view mode and show Author', async () => {
@@ -44,7 +43,9 @@ test('Render Token Form in view mode and show Author', async () => {
 test('Render Token Form in view mode and token never used', async () => {
   render(<Form mode="view" data={token} />);
 
-  const MessageTokenNotUsedYet = await screen.findByText('This token has not been used yet.');
+  const MessageTokenNotUsedYet = await screen.findByText(
+    'This token has not been used yet.'
+  );
   expect(MessageTokenNotUsedYet).toBeInTheDocument();
 });
 
@@ -68,7 +69,9 @@ test('Render Token Form in create mode: Defining name', async () => {
   expect(ContentToken).toBeInTheDocument();
 
   const InputName = await screen.findByTestId('input-text-name');
-  const ButtonSubmitName = await screen.findByTestId('button-default-submit');
+  const ButtonSubmitName = await screen.findByTestId(
+    'button-default-input-title'
+  );
   expect(InputName).toBeInTheDocument();
   expect(ButtonSubmitName).toBeInTheDocument();
 
@@ -87,4 +90,27 @@ test('should show button next when creating a new token', () => {
 
   expect(screen.getByPlaceholderText('Type a name')).toBeInTheDocument();
   expect(screen.getByText('Next')).toBeInTheDocument();
+});
+
+test('should show edit workspaces button', async () => {
+  render(<Form mode="create" />);
+
+  const inputName = await screen.findByTestId('input-text-name');
+  userEvent.type(inputName, 'Token 001');
+
+  userEvent.click(screen.getByRole('button'));
+  userEvent.click(await screen.findByText('Add workspaces'));
+
+  await waitFor(() => expect(screen.getByTestId('modal-default')).toBeInTheDocument());
+
+  expect(screen.getByText('Allow access for all workspaces')).toBeInTheDocument();
+
+  expect(screen.getByText('Next')).toBeInTheDocument();
+  userEvent.click(screen.getByTestId('button-default-continue'));
+
+  await waitFor(() => 
+    expect(screen.getByTestId('button-iconRounded-edit')).toHaveTextContent('Edit workspaces')
+  );
+
+  expect(screen.queryByText('Add workspaces')).not.toBeInTheDocument();
 });

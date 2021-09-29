@@ -85,11 +85,11 @@ const Checkbox = styled.label`
   }
 `;
 
-const Label = styled(Text.h4)`
+const Label = styled(Text)`
   margin-top: 5px;
 `;
 
-const Description = styled(Text.h5)`
+const Description = styled(Text)`
   margin-left: 35px;
 `;
 

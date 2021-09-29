@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   children: ReactNode;
   className?: string;
 }

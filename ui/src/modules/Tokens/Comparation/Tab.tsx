@@ -99,14 +99,14 @@ const Tab = ({ param }: Props) => {
             marginContent="5px"
             onClick={toggleRevoke}
           >
-            <Text.h5 color="dark">Revoke token</Text.h5>
+            <Text tag="H5" color="dark">Revoke token</Text>
           </LabeledIcon>
           <LabeledIcon
             icon="regenerate"
             marginContent="5px"
             onClick={() => setIsRegenerate(true)}
           >
-            <Text.h5 color="dark">Regenerate token</Text.h5>
+            <Text tag="H5" color="dark">Regenerate token</Text>
           </LabeledIcon>
         </Fragment>
       )}
@@ -116,6 +116,7 @@ const Tab = ({ param }: Props) => {
   const ModalNewToken = () => (
     <ModalCopy
       title="Your token has been regenerated!"
+      tokenName={token?.name}
       description="You can now use the token according to the settings you have created."
       token={regenerated?.token}
       onClose={() => setIsNewToken(false)}
@@ -129,12 +130,14 @@ const Tab = ({ param }: Props) => {
           onClose={toggleRevoke}
           onContinue={handleRevoke}
           isLoading={revokeStatus === 'pending'}
+          tokenName={token?.name}
         />)}
       {isRegenerate && (
         <ModalRegenerate
           onClose={() => setIsRegenerate(false)}
           onContinue={handleRegenerate}
           isLoading={status === 'pending'}
+          tokenName={token?.name}
         />
       )}
       {isNewToken && <ModalNewToken />}

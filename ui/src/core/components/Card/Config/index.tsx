@@ -15,7 +15,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import Card from 'core/components/Card';
+import CardHeader from 'core/components/Card/Header';
 import Icon from 'core/components/Icon';
 import Text from 'core/components/Text';
 import Styled from './styled';
@@ -34,7 +34,7 @@ export interface Props {
   className?: string;
 }
 
-const CardConfig = ({
+const Config = ({
   id,
   icon,
   description,
@@ -64,12 +64,12 @@ const CardConfig = ({
   );
 
   const renderHeader = () => (
-    <Card.Header icon={headerIcon} action={actions || headerAction} />
+    <CardHeader icon={headerIcon} action={actions || headerAction} />
   );
 
   const renderBody = () => (
     <Styled.Body onClick={onClick}>
-      <Text.h4 color="light">{description}</Text.h4>
+      <Text tag="H4" color="light">{description}</Text>
       {children}
     </Styled.Body>
   );
@@ -86,4 +86,4 @@ const CardConfig = ({
   );
 };
 
-export default CardConfig;
+export default Config;

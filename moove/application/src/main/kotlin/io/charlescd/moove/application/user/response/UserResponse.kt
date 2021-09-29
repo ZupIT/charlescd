@@ -20,6 +20,7 @@ package io.charlescd.moove.application.user.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.charlescd.moove.application.workspace.response.SimpleAuthorResponse
 import io.charlescd.moove.application.workspace.response.SimpleWorkspaceResponse
 import io.charlescd.moove.domain.User
 import java.time.LocalDateTime
@@ -47,7 +48,8 @@ data class UserResponse(
                     workspace.id,
                     workspace.name,
                     workspace.permissions.map { permission -> permission.name },
-                    workspace.status.name)
+                    workspace.status.name,
+                    SimpleAuthorResponse(workspace.author.email))
             },
             isRoot = user.root
         )

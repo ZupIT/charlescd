@@ -28,15 +28,12 @@ test('should render revoke modal', () => {
       onClose={onClose} 
       onContinue={onContinue} 
       isLoading={loading}
+      tokenName="token test 1"
     />);
 
-    const title = screen.getByText(revokeTitle);
-    const description = screen.getByText(revokeDescription);
-    const cancelButton = screen.getByText('Cancel, keep token');
-    const confirmButton = screen.getByText('Yes, revoke token');
-
-    expect(title).toBeInTheDocument();
-    expect(description).toBeInTheDocument();
-    expect(cancelButton).toBeInTheDocument();
-    expect(confirmButton).toBeInTheDocument();
+    expect(screen.getByText(revokeTitle)).toBeInTheDocument();
+    expect(screen.getByText(revokeDescription)).toBeInTheDocument();
+    expect(screen.getByText('Cancel, keep token')).toBeInTheDocument();
+    expect(screen.getByText('Yes, revoke token')).toBeInTheDocument();
+    expect(screen.getByText('token test 1')).toBeInTheDocument();
 });
