@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk@sha256:a3562aa0b991a80cfe8172847c8be6dbf6e46340b759c2b782f8b8be45342717
 
 RUN apk add --no-cache curl tar bash procps git
 
