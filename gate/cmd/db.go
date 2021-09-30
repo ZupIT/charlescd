@@ -88,6 +88,9 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 
 func runMigrations(sqlDb *sql.DB) error {
 	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
+	if err != nil {
+		return err
+	}
 	dbMigrated, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", "resources/migrations"),
 		configuration.Get("DB_NAME"), driver)

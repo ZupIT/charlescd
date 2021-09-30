@@ -17,7 +17,7 @@
  */
 
 package hack
-
+//nolint
 import (
 	_ "github.com/vektra/mockery/v2"
 )

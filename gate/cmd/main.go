@@ -36,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server, err := newServer(persistenceManager, serviceManager)
+	server := newServer(persistenceManager, serviceManager)
 	if err != nil {
 		log.Fatal(err)
 	}

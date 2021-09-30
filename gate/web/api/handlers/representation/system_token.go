@@ -30,7 +30,7 @@ import (
 type SystemTokenRequest struct {
 	Name          string   `json:"name" validate:"required,notblank"`
 	Permissions   []string `json:"permissions" validate:"dive,notblank"`
-	Workspaces    []string `json:"workspaces" validate:"required",notblank,validate:"min=1"`
+	Workspaces    []string `json:"workspaces" validate:"required, notblank, min=1" `
 	AllWorkspaces bool     `json:"allWorkspaces"`
 }
 

@@ -14,6 +14,9 @@ linters-settings:
   errcheck:
     check-type-assertions: false
     check-blank: false
+    exclude-functions:
+      - github.com/ZupIT/charlescd/gate/internal/logging.ContextLogger
+      - github.com/joho/godotenv.Load
   golint:
     min-confidence: 0.8
   maligned:
@@ -25,7 +28,7 @@ linters-settings:
       - name: atomic
       - name: unhandled-error
 #      - name: blank-imports
-      - name: context-as-argument
+#      - name: context-as-argument
       - name: context-keys-type
       - name: dot-imports
       - name: error-return
@@ -40,7 +43,7 @@ linters-settings:
       - name: range
       - name: receiver-naming
       - name: time-naming
-      - name: unexported-return
+#      - name: unexported-return
 #      - name: indent-error-flow
       - name: errorf
       - name: empty-block
@@ -57,12 +60,10 @@ linters:
   - nolintlint
   - gosimple
   - govet
-  - nolintlint
   - gosimple
   - deadcode
   - bodyclose
   - nakedret
-  - nolintlint
   - rowserrcheck
   - sqlclosecheck
   - unconvert
@@ -70,13 +71,13 @@ linters:
   - errcheck
   - staticcheck
   - gofmt
+#  - typecheck
+    #    - unused
     #    - deadcode
     #    - ineffassign
     #    - errcheck
-#    - staticcheck
-#    - structcheck
-#    - typecheck
-#    - unused
+    #    - staticcheck
+    #    - structcheck
 #    - varcheck
 #    - asciicheck
 #    - bodyclose

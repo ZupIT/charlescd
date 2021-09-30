@@ -51,12 +51,12 @@ type CustomValidator struct {
 	translator *ut.UniversalTranslator
 }
 
-func newServer(pm persistenceManager, sm serviceManager) (server, error) {
+func newServer(pm persistenceManager, sm serviceManager) server {
 	return server{
 		persistenceManager: pm,
 		serviceManager:     sm,
 		httpServer:         createHttpServerInstance(),
-	}, nil
+	}
 }
 
 func (server server) start(port string) error {
