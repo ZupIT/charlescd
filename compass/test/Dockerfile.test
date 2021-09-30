@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine as builder
+FROM golang@sha256:ef409ff24dd3d79ec313efe88153d703fee8b80a522d294bb7908216dc7aa168 as builder
 
 RUN apk update && apk add gcc libc-dev git
 
