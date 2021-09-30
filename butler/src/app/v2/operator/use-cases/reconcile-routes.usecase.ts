@@ -27,6 +27,10 @@ import { DestinationRuleSpec, RouteHookParams, VirtualServiceSpec } from '../int
 import { PartialRouteHookParams, SpecsUnion } from '../interfaces/partial-params.interface'
 import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
 import { ReconcileUtils } from '../utils/reconcile.utils'
+import { DeploymentStatusEnum } from '../../api/deployments/enums/deployment-status.enum'
+import { NotificationStatusEnum } from '../../core/enums/notification-status.enum'
+import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
+import { MooveService } from '../../core/integrations/moove'
 
 @Injectable()
 export class ReconcileRoutesUsecase {
@@ -35,6 +39,8 @@ export class ReconcileRoutesUsecase {
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentsRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
+    private readonly executionRepository: ExecutionRepository,
+    private readonly mooveService: MooveService,
   ) { }
 
   public async execute(hookParams: RouteHookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
@@ -118,9 +124,26 @@ export class ReconcileRoutesUsecase {
       const circleId = c[0]
       const status = c[1]
       const allTrue = status.every(s => s.status === true)
+      if (allTrue) {
+        const deployment = await this.deploymentRepository.findByCircleId(circleId)
+        await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+      }
       return await this.deploymentRepository.updateRouteStatus(circleId, allTrue)
     }))
     return results
+  }
+
+  private async notifyCallback(deployment: DeploymentEntityV2, status: DeploymentStatusEnum) {
+    const execution = await this.executionRepository.findByDeploymentId(deployment.id)
+    if (execution.notificationStatus === NotificationStatusEnum.NOT_SENT) {
+      const notificationResponse = await this.mooveService.notifyDeploymentStatusV2(
+        execution.deploymentId,
+        status,
+        deployment.callbackUrl,
+        deployment.circleId
+      )
+      await this.executionRepository.updateNotificationStatus(execution.id, notificationResponse.status)
+    }
   }
 
   // TODO check for services too, right now we only check for DR + VS

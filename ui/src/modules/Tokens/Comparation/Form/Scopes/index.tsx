@@ -30,7 +30,7 @@ import { actionTemplate, displayAction, getScopes, subjectTemplate } from './hel
 import { useFormContext } from 'react-hook-form';
 import { Mode } from '../../helpers';
 import Icon from 'core/components/Icon';
-import DocumentationLink from 'core/components/DocumentationLink';
+import Link from 'core/components/Link';
 import { atLeastOne } from 'core/utils/validations';
 
 interface Props {
@@ -106,16 +106,16 @@ const Scopes = ({ mode }: Props) => {
     return (
       <Styled.View>
         <Styled.ViewHead>
-          <Text.h5 color="dark">Scopes</Text.h5>
-          <Text.h5 color="dark">Permissions</Text.h5>
+          <Text tag="H5" color="dark">Scopes</Text>
+          <Text tag="H5" color="dark">Permissions</Text>
         </Styled.ViewHead>
         {map(scopes, ({ subject, permission }, index)=> (
           <Styled.ViewItem key={index} data-testid={subject}>
             <Styled.ViewScope>
               <Icon name="checkmark" size="12px" color="light" />
-              <Text.h4 color="light">{capitalize(subject)}</Text.h4>
+              <Text tag="H4" color="light">{capitalize(subject)}</Text>
             </Styled.ViewScope>
-            <Text.h4 color="light">{capitalize(permission)}</Text.h4>
+            <Text tag="H4" color="light">{capitalize(permission)}</Text>
           </Styled.ViewItem>
         ))}
       </Styled.View>
@@ -124,18 +124,17 @@ const Scopes = ({ mode }: Props) => {
 
   return (
     <ContentIcon icon="scopes">
-      <Text.h2 color="light">Scopes</Text.h2>
+      <Text tag="H2" color="light">Scopes</Text>
       <Styled.Content>
         <Styled.Description>
-          <Text.h5 color="dark" data-testid="scope-doc">
+          <Text tag="H5" color="dark" data-testid="scope-doc">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
-            <DocumentationLink
-              documentationLink={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}
-              text="documentation"
-            />
+            <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
+              documentation
+            </Link>{' '}
             for further details.
-          </Text.h5>
+          </Text>
         </Styled.Description>
         {mode === 'create' ? renderSubjects() : renderView()}
       </Styled.Content>

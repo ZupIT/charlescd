@@ -24,6 +24,7 @@ interface FindAllCirclesSimpleInteractor {
     fun execute(
         name: String?,
         except: String?,
+        status: Boolean?,
         workspaceId: String,
         pageRequest: PageRequest
     ): ResourcePageResponse<SimpleCircleResponse>

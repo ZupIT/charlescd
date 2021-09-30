@@ -85,14 +85,14 @@ const Form = ({ userGroup, onAddUser, onEdit }: Props) => {
           {errors.name && (
             <Styled.FieldErrorWrapper>
               <Icon name="error" color="error" />
-              <Text.h6 color="error">{errors.name.message}</Text.h6>
+              <Text tag="H6" color="error">{errors.name.message}</Text>
             </Styled.FieldErrorWrapper>
           )}
         </ContentIcon>
       </Styled.Layer.Title>
       <Styled.Layer.Users>
         <ContentIcon icon="user">
-          <Text.h2 color="light">Users</Text.h2>
+          <Text tag="H2" color="light">Users</Text>
           <Styled.ButtonAdd
             name="plus-circle"
             icon="plus-circle"

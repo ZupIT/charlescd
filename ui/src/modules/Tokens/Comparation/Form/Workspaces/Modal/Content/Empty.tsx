@@ -21,8 +21,8 @@ import Styled from './styled';
 const Empty = () => (
   <Styled.Empty>
     <Icon name="workspace-not-found" />
-    <Text.h3 color="light">Workspace not found</Text.h3>
-    <Text.h3 color="dark">If you want to register one, go to the Workspaces page.</Text.h3>
+    <Text tag="H3" color="light">Workspace not found</Text>
+    <Text tag="H3" color="dark">If you want to register one, go to the Workspaces page.</Text>
   </Styled.Empty>
 );
 

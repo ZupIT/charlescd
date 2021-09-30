@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
-import Button from 'core/components/Button';
-import ConnectionStatus from 'core/components/ConnectionStatus';
+import Button from 'core/components/Button/ButtonDefault';
 import Module from './Module';
 import Metadata from '../Metadata';
 import { ModuleForm } from '../interfaces/Module';
@@ -32,6 +31,7 @@ import { Scope } from '../Metadata/interfaces';
 import { toKeyValue } from '../Search/helpers';
 import Styled from '../styled';
 import { isEmpty } from 'lodash';
+import Message from 'core/components/Message';
 
 const defaultValues = {
   modules: [MODULE],
@@ -48,19 +48,19 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const {
     composeBuild,
     response: build,
-    loading: savingBuild
+    loading: savingBuild,
   } = useComposeBuild();
   const { createDeployment, response: deploy } = useCreateDeployment();
   const form = useForm<ModuleForm>({
     defaultValues,
     mode: 'onChange',
-    resolver: validationResolver
+    resolver: validationResolver,
   });
   const { register, control, handleSubmit, watch, getValues, formState } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'modules'
+    name: 'modules',
   });
   const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const isNotUnique = fields.length > ONE;
@@ -102,16 +102,17 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      releaseName: data.releaseName
+      releaseName: data.releaseName,
     });
   };
 
   const checkMaxLengthError = (hasError?: boolean) => {
-    if(hasError)
-      setError('Sum of component name and version name cannot be greater than 63 characters.');
-    else
-      setError('');
-  }
+    if (hasError)
+      setError(
+        'Sum of component name and version name cannot be greater than 63 characters.'
+      );
+    else setError('');
+  };
 
   return (
     <FormProvider {...form}>
@@ -119,7 +120,9 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         onSubmit={handleSubmit(onSubmit)}
         data-testid="create-release"
       >
-        <Text.h5 color="dark">Type a name for release:</Text.h5>
+        <Text tag="H5" color="dark">
+          Type a name for release:
+        </Text>
         <Styled.Input
           name="releaseName"
           ref={register(isRequiredAndNotBlank)}
@@ -135,10 +138,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
             isNotUnique={isNotUnique}
           />
         ))}
-        <Styled.Module.Info color="dark">
+        <Styled.Module.Info tag="H5" color="dark">
           You can add other modules:
         </Styled.Module.Info>
-        <Button.Default
+        <Button
           type="button"
           size="EXTRA_SMALL"
           id="add-module"
@@ -146,9 +149,9 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
-        </Button.Default>
+        </Button>
         {error &&
-          <ConnectionStatus
+          <Message
             errorMessage={error}
             status={"error"} />
         }

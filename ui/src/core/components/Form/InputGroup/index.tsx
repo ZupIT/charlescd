@@ -18,7 +18,7 @@ import React, { Ref, useRef, useImperativeHandle } from 'react';
 import Text from 'core/components/Text';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   maxLength?: number;
   prepend?: string;
   append?: string;
@@ -45,13 +45,13 @@ const InputGroup = React.forwardRef(
 
     const renderPrepend = () => (
       <Styled.Prepend data-testid={`input-group-${defaultValue}-prepend`}>
-        <Text.h5 color="light">{prepend}</Text.h5>
+        <Text tag="H5" color="light">{prepend}</Text>
       </Styled.Prepend>
     );
 
     const renderAppend = () => (
       <Styled.Append data-testid={`input-group-${defaultValue}-append`}>
-        <Text.h5 color="light">{append}</Text.h5>
+        <Text tag="H5" color="light">{append}</Text>
       </Styled.Append>
     );
 

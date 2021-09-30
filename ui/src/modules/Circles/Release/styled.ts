@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import FormComponent from 'core/components/Form';
 import SelectComponent from 'core/components/Form/Select';
 import IconComponent from 'core/components/Icon';
 import ComponentIcon from 'core/components/Icon';
-import ButtonComponent from 'core/components/Button';
+import ButtonComponentDefault from 'core/components/Button/ButtonDefault';
 import { slideInRight } from 'core/assets/style/animate';
 import LayerComponent from 'core/components/Layer';
 
@@ -32,7 +32,7 @@ const Layer = styled(LayerComponent)`
   margin-left: 40px;
 `;
 
-const Subtitle = styled(Text.h5)`
+const Subtitle = styled(Text)`
   margin: 20px 0 10px;
 `;
 
@@ -95,18 +95,33 @@ const SearchWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   position: absolute;
   top: 47px;
 `;
 
-const Info = styled(Text.h5)`
+const Info = styled(Text)`
   margin-top: 40px;
   margin-bottom: 10px;
 `;
 
-const Submit = styled(ButtonComponent.Default)`
-  margin-top: 20px;
+const AddModule = styled(ButtonComponentDefault)`
+  display: flex;
+  background-color: transparent;
+  border: 2px solid ${({ theme }) => theme.button.default.outline.border};
+  margin-bottom: 40px;
+  padding: 0 20px;
+  border-radius: 4px;
+  align-items: center;
+  color: ${({ theme }) => theme.button.default.outline.color};
+
+  > i {
+    margin-right: 5px;
+  }
+`;
+
+const Submit = styled(ButtonComponentDefault)`
+  width: 80px;
 `;
 
 export default {
@@ -120,6 +135,7 @@ export default {
   SearchWrapper,
   Error,
   Submit,
+  AddModule,
   Module: {
     Trash: WrapperTrash,
     Icon: Trash,

@@ -33,7 +33,7 @@ class DeployClientServiceTest extends Specification {
 
     void setup() {
         this.deployClientService = new DeployClientService(deployClient)
-        ReflectionTestUtils.setField(deployClientService, 'APPLICATION_BASE_PATH', 'http://localhost:8080')
+        ReflectionTestUtils.setField(deployClientService, 'DEPLOY_CALLBACK_BASE_PATH', 'http://localhost:8080')
     }
 
     def 'when circle is default, should call method to deploy into default circle'() {

@@ -15,10 +15,10 @@
  */
 
 import useInfiniteScroll from 'core/hooks/useInfiniteScroll';
-import React, { useEffect, ReactNode, Children } from 'react';
+import { useEffect, ReactNode, Children } from 'react';
 import Styled from './styled';
 
-type Props = {
+export type Props = {
   children: ReactNode;
   loader: ReactNode;
   hasMore: boolean;
@@ -33,7 +33,7 @@ const InfiniteScroll = ({
   isLoading,
   hasMore,
   loadMore,
-  rootMargin = '1px'
+  rootMargin = '1px',
 }: Props) => {
   const childrenLength = Children.count(children);
   const showSentinelLoader = !isLoading && childrenLength && hasMore;

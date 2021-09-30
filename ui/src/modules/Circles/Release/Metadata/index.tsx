@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import Button from 'core/components/Button';
+import Button from 'core/components/Button/ButtonDefault';
 import Icon from 'core/components/Icon';
 import { ArrayField } from 'react-hook-form';
 import Fields from './Fields';
@@ -33,7 +33,7 @@ const Metadata = ({ fieldArray }: Props) => {
 
   return (
     <Styled.Metadata>
-      <Styled.Subtitle color="dark">
+      <Styled.Subtitle color="dark" tag='H5'>
         You can add metadata for this release:
       </Styled.Subtitle>
       {fields.map((field: any, index: number) => (
@@ -44,13 +44,13 @@ const Metadata = ({ fieldArray }: Props) => {
           index={index}
         />
       ))}
-      <Button.Default
+      <Button
         size="EXTRA_SMALL"
         id="add-component"
         onClick={() => append({ content: { '': '' } })}
       >
         <Icon name="add" size="15px" /> Add metadata
-      </Button.Default>
+      </Button>
     </Styled.Metadata>
   );
 }

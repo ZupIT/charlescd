@@ -15,11 +15,11 @@
  */
 
 import styled from 'styled-components';
-import TextComponent from 'core/components/Text';
+import Text from 'core/components/Text';
 import { dark as darkTheme } from 'core/assets/themes/registry';
 import SelectSingle from 'core/components/Form/Select/Single/Select';
 
-const Title = styled(TextComponent.h2)`
+const Title = styled(Text)`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -29,7 +29,7 @@ const Title = styled(TextComponent.h2)`
   }
 `;
 
-const Subtitle = styled(TextComponent.h4)`
+const Subtitle = styled(Text)`
   margin-bottom: 10px;
 `;
 
@@ -76,7 +76,7 @@ const Select = styled(SelectSingle)`
   margin-top: 20px;
 `;
 
-const Placeholder = styled(TextComponent.h4)`
+const Placeholder = styled(Text)`
   pointer-events: none;
   margin-top: -21px;
   margin-left: 45px;

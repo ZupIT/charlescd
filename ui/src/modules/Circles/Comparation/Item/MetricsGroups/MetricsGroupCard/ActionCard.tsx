@@ -15,7 +15,6 @@
  */
 
 import React, { useState } from 'react';
-import NewDropDown from 'core/components/Dropdown/NewDropDown';
 import Dropdown from 'core/components/Dropdown';
 import { newDateTimeFormatter } from 'core/utils/date';
 import isEmpty from 'lodash/isEmpty';
@@ -34,23 +33,27 @@ const ActionCard = ({
   action,
   metricGroup,
   handleDeleteAction,
-  handleEditAction
+  handleEditAction,
 }: Props) => {
   const [deleteView, setDeleteView] = useState(false);
 
   const deleteBody = () => (
     <Styled.ActionCardBodyDelete>
-      <Styled.ActionNicknameDeleteCard color="light">
+      <Styled.ActionNicknameDeleteCard tag="H5" color="light">
         {action.nickname}
       </Styled.ActionNicknameDeleteCard>
-      <Styled.ActionType color="light">Are you sure?</Styled.ActionType>
+      <Styled.ActionType tag="H5" color="light">
+        Are you sure?
+      </Styled.ActionType>
       <Styled.ActionDeleteCardText
+        tag="H5"
         color="light"
         onClick={() => handleDeleteAction(action.id, action.nickname)}
       >
         <u>Yes, delete</u>
       </Styled.ActionDeleteCardText>
       <Styled.ActionDeleteCardText
+        tag="H5"
         color="light"
         onClick={() => setDeleteView(false)}
       >
@@ -71,6 +74,7 @@ const ActionCard = ({
         data-testid={`action-status-${camelCase(action.status)}`}
       />
       <Styled.ActionNickname
+        tag="H5"
         color="light"
         title={action.nickname}
         data-testid={`${action.nickname}-action-nickname`}
@@ -78,6 +82,7 @@ const ActionCard = ({
         {action.nickname}
       </Styled.ActionNickname>
       <Styled.ActionType
+        tag="H5"
         color="light"
         title={action.actionType}
         data-testid={`${action.actionType}-action-type`}
@@ -85,6 +90,7 @@ const ActionCard = ({
         {action.actionType}
       </Styled.ActionType>
       <Styled.ActionTypeTriggeredAt
+        tag="H5"
         color="light"
         title={action.triggeredAt}
         data-testid={`${action.triggeredAt}-action-triggered`}
@@ -94,7 +100,7 @@ const ActionCard = ({
           : newDateTimeFormatter(action.triggeredAt)}
       </Styled.ActionTypeTriggeredAt>
       <Styled.MetricDropdown>
-        <NewDropDown icon="vertical-dots" size="16px">
+        <Dropdown icon="vertical-dots" size="16px">
           <Dropdown.Item
             icon="edit"
             name="Edit action"
@@ -105,7 +111,7 @@ const ActionCard = ({
             name="Delete action"
             onClick={() => setDeleteView(true)}
           />
-        </NewDropDown>
+        </Dropdown>
       </Styled.MetricDropdown>
     </Styled.ActionCardBody>
   );

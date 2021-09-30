@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,9 +157,16 @@ export const searchResolver = ({ metadata, buildId }: SearchModuleForm) => {
   };
 };
 
-export const validationResolver = ({ modules, metadata }: ModuleForm) => {
+export const validationResolver = ({ modules, metadata, releaseName }: ModuleForm) => {
   const error = checkIfComponentConflict(modules);
   const errorMetadata = checkMetadata(metadata);
+
+  if (isEmpty(releaseName)) {
+    error['releaseName'] = {
+      type: `releaseName.required`,
+      message: 'This field is required'
+    }
+  }
 
   return {
     values: {},

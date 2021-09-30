@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 
 import React from 'react';
-import Card from 'core/components/Card';
+import CardRelease, { Props as cardReleaseProps} from 'core/components/Card/Release';
 import ContentIcon from 'core/components/ContentIcon';
-import Button from 'core/components/Button';
+import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
 import { Deployment, Circle } from 'modules/Circles/interfaces/Circle';
 import Styled from '../styled';
@@ -35,8 +35,8 @@ interface Props {
 const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
-      <Card.Release
-        status={circle?.deployment?.status}
+      <CardRelease
+        status={circle?.deployment?.status as cardReleaseProps['status']}
         description={tag}
         expandItems={artifacts}
       />
@@ -53,31 +53,31 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   };
 
   const renderButton = () => (
-    <Can I="write" a="deploy" passThrough>
-        <Button.Rounded
+    <Can I="write" a="deploy" isDisabled={checkIfButtonIsDisabled()} passThrough>
+        <ButtonRounded
           icon="add"
           name="add"
           color="dark"
           onClick={onClickCreate}
-          isDisabled={checkIfButtonIsDisabled()}
         >
           Insert release
-        </Button.Rounded>
+        </ButtonRounded>
     </Can>
   );
 
   return (
     <Styled.Layer>
       <ContentIcon icon="release">
-        <Text.h2 color="light">
+        <Text tag="H2" color="light">
           {circle?.deployment ? 'Last release deployed' : 'Release'}
-        </Text.h2>
+        </Text>
         {!releaseEnabled && (
           <Styled.WarningPercentageContainer>
             <Icon name="alert" color="warning" />
-            <Text.h4 color="warning">
-              The configured percentage is bigger than the available in open sea.
-            </Text.h4>
+            <Text tag="H4" color="warning">
+              The configured percentage is bigger than the available in open
+              sea.
+            </Text>
           </Styled.WarningPercentageContainer>
         )}
       </ContentIcon>

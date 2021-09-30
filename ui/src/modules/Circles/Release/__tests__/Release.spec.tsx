@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ test('should render the CreateRelease component', async () => {
   expect(CreateContent).toBeInTheDocument();
 
   const SubmitCreate = await screen.findByTestId('button-default-submit');
-  expect(SubmitCreate).toHaveStyle('margin-top: 20px;');
+  
   expect(SubmitCreate).toBeInTheDocument();
 });
 
@@ -46,7 +46,7 @@ test('should render the SearchRelease component', async () => {
   expect(SearchContent).toBeInTheDocument();
 
   const SubmitSearch = await screen.findByTestId('button-default-submit');
-  expect(SubmitSearch).toHaveStyle('margin-top: 20px;');
+  
   expect(SubmitSearch).toBeInTheDocument();
 });
 

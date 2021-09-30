@@ -31,7 +31,7 @@ const Auth = () => {
             </Switch>
           </Suspense>
         </Styled.Content>
-        <Styled.Copyright color="light">
+        <Styled.Copyright tag="H5" color="light">
           Developed with
           <Styled.Heart name="heart" size="12px" />
           by
