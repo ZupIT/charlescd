@@ -80,7 +80,7 @@ func (createSystemToken createSystemToken) Execute(authorization string, input C
 	}
 
 	if len(permissions) != len(input.Permissions) {
-		return domain.SystemToken{}, logging.NewError("Invalid permissions.", errors.New("Invalid permissions."), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
+		return domain.SystemToken{}, logging.NewError("invalid permissions", errors.New("invalid permissions"), logging.IllegalParamError, nil, "CreateSystemToken.Execute")
 	}
 
 	workspaces, err := createSystemToken.workspaceRepository.FindByIds(input.Workspaces)

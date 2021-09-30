@@ -84,6 +84,10 @@ func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, 
 	}
 
 	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
+
+	if err != nil {
+		return logging.WithOperation(err, "authorize.userToken")
+	}
 	for _, ps := range userPermission {
 		for _, p := range ps {
 			allowed, err = authorizeUserToken.securityFilterService.Authorize(p.Name, authorization.Path, authorization.Method)

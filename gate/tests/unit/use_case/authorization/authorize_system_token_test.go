@@ -87,7 +87,6 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
 	as.systemTokenRepository.On("UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
-
 	err := as.authorizeSystemToken.Execute(systemToken.Token, workspaces[0].ID.String(), utils.GetDummyAuthorizationAuthorization(path, method))
 
 	require.Nil(as.T(), err)

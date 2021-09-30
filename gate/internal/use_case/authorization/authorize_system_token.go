@@ -64,7 +64,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 	if allowed {
 		systemToken.SetLastUsed()
-		authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+		err := authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+		if err != nil {
+			return logging.WithOperation(err, "authorize.systemToken")
+		}
 		return nil
 	}
 
@@ -96,7 +99,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 		if allowed {
 			systemToken.SetLastUsed()
-			authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+			err := authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+			if err != nil {
+				return logging.NewError(err.Error(), err, logging.InternalError, nil, "authorize.systemToken")
+			}
 			return nil
 		}
 	}

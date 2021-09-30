@@ -25,7 +25,7 @@ import (
 	"net/http"
 )
 
-func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
+func HandleError(echoCtx echo.Context, ctx context.Context, err error) error {
 	logging.LogErrorFromCtx(ctx, err)
 	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
 }

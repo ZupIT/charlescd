@@ -29,7 +29,7 @@ type AuthTokenService interface {
 	ParseAuthorizationToken(authorization string) (AuthToken, error)
 }
 
-type authTokenService struct {}
+type authTokenService struct{}
 
 func NewAuthTokenService() AuthTokenService {
 	return authTokenService{}

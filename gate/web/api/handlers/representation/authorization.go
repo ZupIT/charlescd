@@ -29,7 +29,7 @@ type AuthorizationRequest struct {
 
 func (authorizationRequest AuthorizationRequest) RequestToDomain() domain.Authorization {
 	return domain.Authorization{
-		Path: authorizationRequest.Path,
+		Path:   authorizationRequest.Path,
 		Method: authorizationRequest.Method,
 	}
 }

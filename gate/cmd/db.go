@@ -20,7 +20,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
@@ -117,22 +116,22 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate system token repository with error: %s", err.Error())
 	}
 
 	permissionRepo, err := repository.NewPermissionRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate permission repository with error: %s", err.Error())
 	}
 
 	userRepo, err := repository.NewUserRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate user repository with error: %s", err.Error())
 	}
 
 	workspaceRepo, err := repository.NewWorkspaceRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate workspace repository with error: %s", err.Error())
 	}
 
 	return persistenceManager{

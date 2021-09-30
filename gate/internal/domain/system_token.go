@@ -49,7 +49,7 @@ func (systemToken SystemToken) CreateUserFromSystemToken() User {
 	}
 }
 
-func(systemToken *SystemToken) SetLastUsed ()  {
+func (systemToken *SystemToken) SetLastUsed() {
 	lastUsedAt := time.Now()
-	systemToken.LastUsedAt =  &lastUsedAt
+	systemToken.LastUsedAt = &lastUsedAt
 }
