@@ -18,6 +18,7 @@
 
 //nolint
 package tests
+
 import (
 	"encoding/json"
 	"fmt"
@@ -40,7 +41,7 @@ const dbLog = false
 const bigString = `That's is a big Field-Value, probably with more than 100 characters. We are testing the validate method. Now, we have fields that can be filled with more than 300 characters. So, we need more characters here...                                                                                                                                                                          . `
 
 func setupEnv() {
-		os.Setenv("ENV", "TEST")
+	os.Setenv("ENV", "TEST")
 	os.Setenv("PLUGINS_DIR", "../../dist")
 }
 

@@ -89,15 +89,16 @@ func NewApi(
 
 func (api *Api) health(router *mux.Router) {
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(":)"))
-		return
+		_, err := w.Write([]byte(":)"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	})
 }
 
 func (api *Api) metrics(router *mux.Router) {
 	router.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
-		return
 	})
 }
 

@@ -56,17 +56,16 @@ linters:
   - govet
   - nolintlint
   - gosimple
-  - deadcode
   - bodyclose
   - nakedret
   - nolintlint
   - rowserrcheck
   - sqlclosecheck
   - unconvert
-  - unparam
   - errcheck
   - staticcheck
   - gofmt
+  #  - unparam
 #    - deadcode
 #    - errcheck
 #    - gosimple

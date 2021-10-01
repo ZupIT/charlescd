@@ -179,11 +179,11 @@ func UndeployBuildAtCircle(deploymentId, workspaceId, url string) error {
 }
 
 func TestConnection(url string) error {
-	_, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		logger.Error("Connection Filed", "testConnection", err, url)
 		return err
 	}
-
+	defer resp.Body.Close()
 	return nil
 }

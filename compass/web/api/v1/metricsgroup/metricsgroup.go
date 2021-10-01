@@ -178,6 +178,10 @@ func UpdateName(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWrit
 		id := mux.Vars(r)["metricGroupID"]
 		metricsGroupAux, err := metricsgroupMain.Parse(r.Body)
 
+		if err != nil {
+			util.NewResponse(w, http.StatusInternalServerError, err)
+			return
+		}
 		metricsGroup, err := metricsgroupMain.FindById(id)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)

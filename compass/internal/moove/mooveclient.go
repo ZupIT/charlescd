@@ -53,6 +53,9 @@ func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspa
 	}
 
 	resultBody, err := ioutil.ReadAll(response.Body)
-
+	if err != nil {
+		return nil, errors.NewError("Read response body error", err.Error()).
+			WithOperations("GetMooveComponents.NewRequest")
+	}
 	return resultBody, nil
 }

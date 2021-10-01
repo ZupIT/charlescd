@@ -31,6 +31,9 @@ type BaseModel struct {
 }
 
 func (BaseModel *BaseModel) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("ID", uuid.New())
+	err := scope.SetColumn("ID", uuid.New())
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -27,8 +27,8 @@ import (
 func NewResponse(w http.ResponseWriter, status int, data interface{}) {
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(data)
-	 if err != nil {
-		 w.WriteHeader(http.StatusInternalServerError)
-		 logrus.Warn(err)
-	 }
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logrus.Warn(err)
+	}
 }

@@ -25,11 +25,11 @@ const (
 )
 
 const (
-	DatasourceSaveError           = "DATASOURCE_SAVE_ERROR"
-	FindDatasourceError           = "FIND_DATASOURCE_ERROR"
-	DeleteDatasourceError         = "DELETE_ERROR"
-	OpenPluginGetMetricsError     = "OPEN_PLUGIN_GET_METRICS_ERROR"
-	PluginListError               = "PLUGIN_LIST_ERROR"
+	DatasourceSaveError       = "DATASOURCE_SAVE_ERROR"
+	FindDatasourceError       = "FIND_DATASOURCE_ERROR"
+	DeleteDatasourceError     = "DELETE_ERROR"
+	OpenPluginGetMetricsError = "OPEN_PLUGIN_GET_METRICS_ERROR"
+	PluginListError           = "PLUGIN_LIST_ERROR"
 )
 
 const (

@@ -19,6 +19,7 @@
 package main
 
 import (
+	"golang.org/x/sync/errgroup"
 	"log"
 	"time"
 
@@ -46,6 +47,7 @@ import (
 )
 
 func main() {
+	var group errgroup.Group
 	godotenv.Load()
 
 	logrus.SetFormatter(&logrus.JSONFormatter{})
@@ -84,10 +86,18 @@ func main() {
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
-	stopChan := make(chan bool, 0)
-	go metricDispatcher.Start(stopChan)
-	go actionDispatcher.Start(stopChan)
+	stopChan := make(chan bool)
 
+	group.Go(func() error {
+		return metricDispatcher.Start(stopChan)
+	})
+	group.Go(func() error {
+		return actionDispatcher.Start(stopChan)
+	})
+
+	if err := group.Wait(); err != nil {
+		logrus.Fatal(err)
+	}
 	router := api.NewApi(
 		enforcer,
 		lmt,

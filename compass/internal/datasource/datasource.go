@@ -114,9 +114,14 @@ func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.E
 	dataSources := make([]Response, 0)
 
 	rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
+
+	if rows.Err() != nil {
+		return []Response{}, errors.NewError("Find all error", rows.Err().Error()).
+			WithOperations("FindAllByWorkspace.Raw")
+	}
 	if err != nil {
-        return []Response{}, errors.NewError("Find all error", err.Error()).
-		WithOperations("FindAllByWorkspace.Raw")
+		return []Response{}, errors.NewError("Find all error", err.Error()).
+			WithOperations("FindAllByWorkspace.Raw")
 	}
 
 	for rows.Next() {
@@ -212,7 +217,7 @@ func (main Main) Save(dataSource Request) (Response, errors.Error) {
 	id := uuid.New().String()
 	entity := DataSource{}
 
-	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data,  dataSource.WorkspaceID)).
+	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data, dataSource.WorkspaceID)).
 		Raw(datasourceSaveQuery, id).
 		Row()
 

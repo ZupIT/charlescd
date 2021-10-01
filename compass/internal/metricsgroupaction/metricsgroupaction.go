@@ -151,7 +151,7 @@ func (main Main) validateJobConfiguration(configuration ActionsConfiguration) er
 		ers.Append(err)
 	}
 
-	if configuration.Repeatable == false && configuration.NumberOfCycles == 0 {
+	if !configuration.Repeatable && configuration.NumberOfCycles == 0 {
 		err := errors.NewError("Validate error", "a not repeatable action needs a defined number of cycles").
 			WithMeta("field", "configuration.Repeatable").
 			WithOperations("validateJobConfiguration.RepeatableLen")
