@@ -15,7 +15,6 @@ linters-settings:
     check-type-assertions: false
     check-blank: false
     exclude-functions:
-      - github.com/ZupIT/charlescd/gate/internal/logging.ContextLogger
       - github.com/joho/godotenv.Load
   golint:
     min-confidence: 0.8
