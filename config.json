@@ -25,7 +25,8 @@
     "dist/",
     "coverage/**",
     "upgrades/**",
-    "**.svg"
+    "**.svg",
+    "**/*.xml"
   ],
   "startDateLicense": 2020
 }
