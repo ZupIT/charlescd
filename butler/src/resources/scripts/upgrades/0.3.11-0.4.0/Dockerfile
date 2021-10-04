@@ -1,4 +1,4 @@
-FROM node:13.14.0-alpine3.11
+FROM node@sha256:be1c8c7f0b61e86c4ee94b12d18a810fedfc2a29d4d0ef0ce1ff89c1f2efca11
 
 ENV APP_PATH /opt/0311-040-script
 
