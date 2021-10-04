@@ -115,7 +115,7 @@ func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.E
 
 	rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
 
-	if rows.Err() != nil {
+	if rows != nil && rows.Err() != nil {
 		return []Response{}, errors.NewError("Find all error", rows.Err().Error()).
 			WithOperations("FindAllByWorkspace.Raw")
 	}
