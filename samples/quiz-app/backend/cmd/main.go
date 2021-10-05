@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020-2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@
 package main
 
 import (
+	"quiz_app/internal/api"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"quiz_app/internal/api"
 )
 
 var (
-
 	automationFirstMetrics = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "automation_first_metric",
 		Help: "Metric for automation tests",
@@ -35,7 +35,6 @@ var (
 		Name: "automation_second_metric",
 		Help: "Metric for automation tests",
 	}, []string{"label1", "label2"})
-
 )
 
 func main() {
