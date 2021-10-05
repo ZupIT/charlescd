@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  provider:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - development
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+
+  app:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    image: quiz-app
+    ports:
+      - 8080:8080
+    networks:
+      - development
+    depends_on:
+      - "provider"
+
+networks:
+  development:
+    driver: bridge

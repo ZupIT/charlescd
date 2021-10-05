@@ -1,0 +1,7 @@
+scrape_configs:
+- job_name: local
+  scrape_interval: 5s
+  metrics_path: /v1/metrics
+  static_configs:
+  - targets:
+    - app:8080

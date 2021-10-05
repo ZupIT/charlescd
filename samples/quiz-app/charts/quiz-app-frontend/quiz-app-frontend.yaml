@@ -1,0 +1,55 @@
+replicaCount: 1
+
+appname: quiz-app-frontend
+  
+image:
+  repository: quiz-app-frontend
+  tag: latest
+  blueTag: latest
+service:
+  name: quiz-app-frontend
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 3000
+configmaps:
+  enabled: false
+startcommand: 
+  enabled: false
+ingress:
+  enabled: false
+resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials: []
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /
+    port: 3000
+    scheme: HTTP  
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+istio:
+  enabled: true
