@@ -19,6 +19,8 @@
 import { useState, useCallback } from 'react';
 import { request } from '../api';
 
+const questionsURL = process.env.REACT_APP_QUESTIONS_URL || '/quiz-app-api'
+
 export const useQuestions = () => {
   const [questions, setQuestions] = useState([]);
   const [status, setStatus] = useState('idle');
@@ -26,7 +28,7 @@ export const useQuestions = () => {
   const getQuestions = useCallback(async () => {
     try {
       setStatus('pending');
-      const { data } = await request('/quiz-app-api/v1/questions');
+      const { data } = await request(`${questionsURL}/v1/questions`);
       setQuestions(data);
       setStatus('resolved');
     } catch (e) {
@@ -50,7 +52,7 @@ export const useAnswer = () => {
     try {
       setStatus('pending');
       const { data } = await request(
-        '/quiz-app-api/v1/answers',
+        `${questionsURL}/v1/answers`,
         { method: 'POST', data: payload }
       );
       setStatus('resolved');
