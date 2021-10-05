@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 20212 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ Object.assign(window, {
   CHARLESCD_ENVIRONMENT: {
     REACT_APP_API_URI: DEFAULT_TEST_BASE_URL,
     REACT_APP_AUTH_URI: `${DEFAULT_TEST_BASE_URL}/keycloak`,
-    REACT_APP_CHARLES_VERSION: '0.6.1'
+    REACT_APP_CHARLES_VERSION: '0.6.1',
+    REACT_APP_CIRCLE_MATCHER_URL: `${DEFAULT_TEST_BASE_URL}/circle-matcher`
   }
 });
 

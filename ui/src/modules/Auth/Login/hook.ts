@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import { saveSessionData } from 'core/utils/auth';
 import { saveCircleId } from 'core/utils/circle';
 import { useUser } from 'modules/Users/hooks';
 import { saveProfile } from 'core/utils/profile';
+import { matcherUrl } from 'core/providers/base/index';
 
 interface CircleMatcherResponse {
   circles: {
@@ -76,7 +77,7 @@ export const useLogin = (): {
       try {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);
-        await getCircleId({ username: email });
+        matcherUrl && await getCircleId({ username: email });
         const user = await findByEmail(email);
 
         if (user) {
