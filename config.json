@@ -15,7 +15,7 @@
   "ignore": [
     "node_modules/**",
     "**.md",
-    "**.json",
+    "**/*.json",
     "**.png",
     "**.idea",
     ".github",
@@ -25,7 +25,7 @@
     "dist/",
     "coverage/**",
     "upgrades/**",
-    "**.svg"
+    "**/*.svg"
   ],
   "startDateLicense": 2020
 }
