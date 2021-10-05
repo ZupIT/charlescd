@@ -14,18 +14,18 @@
   ],
   "ignore": [
     "node_modules/**",
-    "**.md",
-    "**.json",
-    "**.png",
-    "**.idea",
+    "**/*.md",
+    "**/*.json",
+    "**/*.png",
+    "**/*.idea",
     ".github",
-    ".git",
-    ".gitignore",
-    ".vscode",
-    "dist/",
-    "coverage/**",
-    "upgrades/**",
-    "**.svg"
+    "**/*.git",
+    "**/*.gitignore",
+    "**/*.vscode",
+    "**/dist/",
+    "**/coverage/**",
+    "**/upgrades/**",
+    "**/*.svg"
   ],
   "startDateLicense": 2020
 }
