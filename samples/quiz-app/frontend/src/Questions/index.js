@@ -54,7 +54,7 @@ function Questions() {
     return answerID === selectedAnswer ? 'selected' : '';
   }
 
-  const onRestart = () => window.location.href = '/quiz-app';
+  const onRestart = () => window.location.href = process.env.PUBLIC_URL;
 
   const selectAnswer = (answer) => {
     setSelectedAnswer(answer.id);
