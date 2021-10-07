@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
@@ -49,10 +49,10 @@ open class UndeployInteractorImpl @Inject constructor(
         val workspace = workspaceService.find(workspaceId)
         validateWorkspace(workspace)
 
+        notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         val deploymentConfiguration = deploymentConfigurationService.find(workspace.deploymentConfigurationId!!)
         undeploy(authorization, token, deployment, deploymentConfiguration)
         setNotDeployedStatus(deployment)
-        updateStatusInCircleMatcher(deployment.circle, workspace)
     }
 
     private fun getAuthorId(authorization: String?, token: String?): String {
@@ -62,7 +62,6 @@ open class UndeployInteractorImpl @Inject constructor(
     private fun undeploy(authorization: String?, token: String?, deployment: Deployment, deploymentConfiguration: DeploymentConfiguration) {
         try {
             deployService.undeploy(deployment.id, getAuthorId(authorization, token), deploymentConfiguration)
-            notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.SUCCESS, deployment)
         } catch (ex: Exception) {
             notifyEvent(deployment.workspaceId, WebhookEventStatusEnum.FAIL, deployment, ex.message!!)
             throw ex
