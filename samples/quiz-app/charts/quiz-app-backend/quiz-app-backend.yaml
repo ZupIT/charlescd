@@ -1,0 +1,71 @@
+#
+  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  #
+  # Licensed under the Apache License, Version 2.0 (the "License");
+  # you may not use this file except in compliance with the License.
+  # You may obtain a copy of the License at
+  #
+  #  http://www.apache.org/licenses/LICENSE-2.0
+  #
+  # Unless required by applicable law or agreed to in writing, software
+  # distributed under the License is distributed on an "AS IS" BASIS,
+  # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  # See the License for the specific language governing permissions and
+  # limitations under the License.
+#
+replicaCount: 1
+image:
+  repository: quiz-app-backend
+  tag: latest
+  blueTag: latest
+  
+appname: quiz-app-backend
+
+service:
+  name: quiz-app-backend
+  type: ClusterIP
+  ports:
+   - name: http
+     port: 8080
+configmaps:
+  enabled: false
+startcommand: 
+  enabled: false
+ingress:
+  enabled: false
+resources:
+   limits:
+    cpu: 1
+    memory: 1536Mi
+   requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imageCredentials: []
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  httpGet:
+    path: /v1/healthcheck
+    port: 8080
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /v1/healthcheck
+    port: 8080
+    scheme: HTTP  
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1   
+
+istio:
+  enabled: true
+
