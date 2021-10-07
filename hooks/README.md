@@ -1,8 +1,8 @@
 # **GitHooks**
 
-Hooks are programs you can place in a Git Hooks directory to trigger actions at certain points in the Git's execution
+Hooks are programs you place in a **Git Hooks directory**, they trigger actions in Git's execution.
 
-In CharlesCD we have two Githooks, see them below:
+In CharlesCD, there are two Githooks, check out below:
 
 ## **1. Pre-Commit**
 
