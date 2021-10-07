@@ -28,7 +28,7 @@ function App() {
       <Charles className="logo" />
       <Suspense fallback="">
         <Switch>
-          <Route exact path={`${process.env.PUBLIC_URL}`} component={Identify} />
+          <Route exact path={`${process.env.PUBLIC_URL}/`} component={Identify} />
           <Route exact path={`${process.env.PUBLIC_URL}/questions`} component={Questions} />
         </Switch>
       </Suspense>
