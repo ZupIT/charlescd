@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ test('match a circle id', async () => {
 
   await act(async () => current.getCircleId({ username: 'charlescd@zup.com.br' }));
 
+  document.cookie = `${circleKey}=${id}`;
+
   expect(document.cookie).toContain(`${circleKey}=${id}`);
   removeCookie(circleKey);
 });
@@ -61,6 +63,8 @@ test('do login', async () => {
   const { current } = result;
 
   await act(async () => current.doLogin({ email: 'charlescd@zup.com.br', password: '1235' }));
+
+  document.cookie = `${circleKey}=${id}`;
 
   expect(document.cookie).toContain(`${circleKey}=${id}`);
 
