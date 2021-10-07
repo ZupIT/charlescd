@@ -23,14 +23,13 @@ const Questions = React.lazy(() => import('./Questions'));
 const Identify = React.lazy(() => import('./Identify'));
 
 function App() {
-  const publicUrl = process.env.PUBLIC_URL
   return (
     <BrowserRouter>
       <Charles className="logo" />
       <Suspense fallback="">
         <Switch>
-          <Route exact path={`${publicUrl}`} component={Identify} />
-          <Route exact path={`${publicUrl}/questions`} component={Questions} />
+          <Route exact path={`${process.env.PUBLIC_URL}`} component={Identify} />
+          <Route exact path={`${process.env.PUBLIC_URL}/questions`} component={Questions} />
         </Switch>
       </Suspense>
     </BrowserRouter>
