@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Modules---Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Modules---0.0---Expand" transform="translate(-470.000000, -264.000000)" fill="currentColor">
+            <g id="Group-9" transform="translate(438.000000, 0.000000)">
+                <g id="Group-11" transform="translate(32.000000, 264.000000)">
+                    <g id="Emma-Copy-2">
+                        <path d="M11,0 C17.065,0 22,4.935 22,11 C22,17.065 17.065,22 11,22 C4.935,22 0,17.065 0,11 C0,4.935 4.935,0 11,0 Z M11,2 C6.038,2 2,6.038 2,11 C2,15.963 6.038,20 11,20 C15.963,20 20,15.963 20,11 C20,6.038 15.963,2 11,2 Z M9.49367088,6 L9.49367088,9.56 L12.5063291,9.56 L12.5063291,6 L15,6 L15,16 L12.5063291,16 L12.5063291,12.1866667 L9.49367088,12.1866667 L9.49367088,16 L7,16 L7,6 L9.49367088,6 Z" id="icon-card-git-copy"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

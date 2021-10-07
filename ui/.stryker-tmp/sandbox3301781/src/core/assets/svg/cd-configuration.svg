@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="25px" viewBox="0 0 24 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M11,0 C17.065,0 22,4.935 22,11 C22,17.065 17.065,22 11,22 C4.935,22 0,17.065 0,11 C0,4.935 4.935,0 11,0 Z M11,2 C6.038,2 2,6.038 2,11 C2,15.963 6.038,20 11,20 C15.963,20 20,15.963 20,11 C20,6.038 15.963,2 11,2 Z M11,6 C13.757,6 16,8.243 16,11 C16,13.757 13.757,16 11,16 C8.243,16 6,13.757 6,11 C6,8.243 8.243,6 11,6 Z M11,8 C9.346,8 8,9.346 8,11 C8,12.654 9.346,14 11,14 C12.654,14 14,12.654 14,11 C14,9.346 12.654,8 11,8 Z" id="path-cd-configuration"></path>
+    </defs>
+    <g id="Workspaces-cd-configuration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---1.0" transform="translate(-469.000000, -407.000000)">
+            <g id="Group-4-Copy-cd-configuration" transform="translate(465.000000, 89.000000)">
+                <g id="Group-Copy-cd-configuration" transform="translate(4.000000, 318.000000)">
+                    <g id="Group-cd-configuration">
+                        <g id="Icon/User/Release" transform="translate(1.000000, 1.000000)">
+                            <mask id="mask-cd-configuration" fill="white">
+                                <use xlink:href="#path-cd-configuration"></use>
+                            </mask>
+                            <use id="Combined-Shape" fill="currentColor" xlink:href="#path-cd-configuration"></use>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

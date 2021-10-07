@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M12,3 C7.038,3 3,7.038 3,12 C3,16.963 7.038,21 12,21 C16.963,21 21,16.963 21,12 C21,7.038 16.963,3 12,3 M12,23 C5.935,23 1,18.065 1,12 C1,5.935 5.935,1 12,1 C18.065,1 23,5.935 23,12 C23,18.065 18.065,23 12,23" id="path-circle"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icon/Miscellaneous/Placeholder">
+            <mask id="mask-circle" fill="white">
+                <use xlink:href="#path-circle"></use>
+            </mask>
+            <use id="Icon-Placeholder" fill="currentColor" xlink:href="#path-circle"></use>
+        </g>
+    </g>
+</svg>

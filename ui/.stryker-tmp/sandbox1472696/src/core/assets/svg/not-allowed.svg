@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>slash</title>
+    <defs>
+        <path d="M2.5,10 C2.5,8.23166667 3.11833333,6.6075 4.14583333,5.32416667 L14.6758333,15.8541667 C13.3925,16.8816667 11.7683333,17.5 10,17.5 C5.865,17.5 2.5,14.1358333 2.5,10 M17.5,10 C17.5,11.7683333 16.8816667,13.3925 15.8541667,14.6758333 L5.32416667,4.14583333 C6.6075,3.11833333 8.23166667,2.5 10,2.5 C14.1358333,2.5 17.5,5.865 17.5,10 M16.4933333,16.4633333 C18.1441667,14.8041667 19.1666667,12.5191667 19.1666667,10 C19.1666667,4.94583333 15.0541667,0.833333333 10,0.833333333 C7.47916667,0.833333333 5.19333333,1.85666667 3.53416667,3.50916667 C3.53,3.51333333 3.52416667,3.515 3.51916667,3.51916667 C3.515,3.52416667 3.51333333,3.53 3.50916667,3.53416667 C1.85666667,5.19333333 0.833333333,7.47916667 0.833333333,10 C0.833333333,15.0541667 4.94583333,19.1666667 10,19.1666667 C12.5191667,19.1666667 14.8041667,18.1441667 16.4633333,16.4933333 C16.4683333,16.4875 16.4758333,16.4866667 16.4808333,16.4808333 C16.4866667,16.4758333 16.4875,16.4683333 16.4933333,16.4633333" id="path-not-allowed"></path>
+    </defs>
+    <g id="Workspace-not-allowed---Normal-user---Em-análise" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Normal-user----Workspace-not-allowed---1.0---Sem-acesso-ao-workspace" transform="translate(-70.000000, -92.000000)">
+            <g id="Icon-not-allowed/Alert/Slash" transform="translate(70.000000, 92.000000)">
+                <mask-not-allowed id="mask-not-allowed-2" fill="white">
+                    <use xlink:href="#path-not-allowed"></use>
+                </mask-not-allowed>
+                <use id="Icon-not-allowed-Slash" fill="currentColor" fill-rule="evenodd" xlink:href="#path-not-allowed"></use>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>Icon/user</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M10,8.75 C11.723125,8.75 13.125,10.151875 13.125,11.875 L13.125,11.875 L13.125,13.125 C13.125,13.470625 12.845625,13.75 12.5,13.75 C12.154375,13.75 11.875,13.470625 11.875,13.125 L11.875,13.125 L11.875,11.875 C11.875,10.84125 11.03375,10 10,10 L10,10 L5,10 C3.96625,10 3.125,10.84125 3.125,11.875 L3.125,11.875 L3.125,13.125 C3.125,13.470625 2.845,13.75 2.5,13.75 C2.155,13.75 1.875,13.470625 1.875,13.125 L1.875,13.125 L1.875,11.875 C1.875,10.151875 3.276875,8.75 5,8.75 L5,8.75 Z M7.5,1.25 C9.223125,1.25 10.625,2.651875 10.625,4.375 C10.625,6.098125 9.223125,7.5 7.5,7.5 C5.776875,7.5 4.375,6.098125 4.375,4.375 C4.375,2.651875 5.776875,1.25 7.5,1.25 Z M7.5,2.5 C6.46625,2.5 5.625,3.34125 5.625,4.375 C5.625,5.40875 6.46625,6.25 7.5,6.25 C8.53375,6.25 9.375,5.40875 9.375,4.375 C9.375,3.34125 8.53375,2.5 7.5,2.5 Z" id="user-path-1"></path>
+    </defs>
+    <g id="Workspaces" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---10.0---Circle-Matcher" transform="translate(-152.000000, -289.000000)">
+            <g id="sidebar/expand/circles/open" transform="translate(135.000000, 0.000000)">
+                <g id="list/circles/unselected-copy-7" transform="translate(0.000000, 88.000000)">
+                    <g id="Group-4">
+                        <g id="list/module/unselected-copy" transform="translate(16.000000, 200.000000)">
+                            <g id="list/module/unselected">
+                                <g id="Icon/User/User">
+                                    <mask id="mask-2" fill="currentColor">
+                                        <use xlink:href="#user-path-1"></use>
+                                    </mask>
+                                    <use id="Icon-User" fill="currentColor" fill-rule="evenodd" xlink:href="#user-path-1"></use>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

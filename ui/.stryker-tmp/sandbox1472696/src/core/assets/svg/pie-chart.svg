@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M6.6,0.9137 C7.108,0.6927 7.696,0.9247 7.917,1.4297 C8.138,1.9367 7.907,2.5257 7.4,2.7467 C5.278,3.6727 3.613,5.3567 2.71,7.4897 C0.778,12.0607 2.924,17.3517 7.495,19.2847 C12.065,21.2137 17.356,19.0717 19.289,14.4997 C19.504,13.9907 20.092,13.7537 20.6,13.9687 C21.109,14.1837 21.346,14.7707 21.131,15.2797 C19.359,19.4717 15.274,21.9947 10.984,21.9947 C9.558,21.9947 8.11,21.7167 6.716,21.1267 C1.129,18.7647 -1.494,12.2977 0.869,6.7107 C1.971,4.1037 4.007,2.0447 6.6,0.9137 Z M11.0004,0 C17.0654,0 22.0004,4.935 22.0004,11 C22.0004,11.552 21.5534,12 21.0004,12 L21.0004,12 L11.0004,12 C10.4484,12 10.0004,11.552 10.0004,11 L10.0004,11 L10.0004,1 C10.0004,0.448 10.4484,0 11.0004,0 Z M12.0004,2.055 L12.0004,10 L19.9444,10 C19.4824,5.835 16.1654,2.518 12.0004,2.055 L12.0004,2.055 Z" id="path-pie-chart"></path>
+    </defs>
+    <g id="Workspaces-chart" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---5.0-chart" transform="translate(-470.000000, -665.000000)">
+            <g id="Icon/User/Release-chart" transform="translate(470.000000, 665.000000)">
+                <mask id="mask-chart" fill="white">
+                    <use xlink:href="#path-pie-chart"></use>
+                </mask>
+                <use id="Icon-Pie-Chart" fill="currentColor" xlink:href="#path-pie-chart"></use>
+            </g>
+        </g>
+    </g>
+</svg>

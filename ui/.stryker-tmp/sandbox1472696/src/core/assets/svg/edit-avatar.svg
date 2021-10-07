@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="26px" viewBox="0 0 26 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>Edit Avatar</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M9.375,1.25 C9.58375,1.25 9.77875,1.354375 9.895,1.528125 L10.959375,3.125 L13.125,3.125 C14.15875,3.125 15,3.96625 15,5 L15,11.875 C15,12.90875 14.15875,13.75 13.125,13.75 L1.875,13.75 C0.84125,13.75 0,12.90875 0,11.875 L0,5 C0,3.96625 0.84125,3.125 1.875,3.125 L4.040625,3.125 L5.105,1.528125 C5.22125,1.354375 5.41625,1.25 5.625,1.25 L9.375,1.25 Z M9.040625,2.5 L5.959375,2.5 L4.895,4.096875 C4.77875,4.270625 4.58375,4.375 4.375,4.375 L1.875,4.375 C1.530625,4.375 1.25,4.655625 1.25,5 L1.25,11.875 C1.25,12.22 1.530625,12.5 1.875,12.5 L13.125,12.5 C13.47,12.5 13.75,12.22 13.75,11.875 L13.75,5 C13.75,4.655625 13.47,4.375 13.125,4.375 L10.625,4.375 C10.41625,4.375 10.22125,4.270625 10.105,4.096875 L9.040625,2.5 Z M7.5,5 C9.223125,5 10.625,6.401875 10.625,8.125 C10.625,9.848125 9.223125,11.25 7.5,11.25 C5.776875,11.25 4.375,9.848125 4.375,8.125 C4.375,6.401875 5.776875,5 7.5,5 Z M7.5,6.25 C6.46625,6.25 5.625,7.09125 5.625,8.125 C5.625,9.15875 6.46625,10 7.5,10 C8.53375,10 9.375,9.15875 9.375,8.125 C9.375,7.09125 8.53375,6.25 7.5,6.25 Z" id="path-edit-avatar"></path>
+    </defs>
+    <g id="Settings" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Settings---Workspace---16.0---Profile" transform="translate(-552.000000, -134.000000)">
+            <g id="Group-13" transform="translate(438.000000, 0.000000)">
+                <g id="Avartar" transform="translate(31.000000, 94.000000)">
+                    <g id="Group-12" transform="translate(40.000000, 0.000000)">
+                        <g id="Group-7" transform="translate(44.000000, 41.000000)">
+                            <circle id="Oval" stroke="#1C1C1E" fill="#F2F2F9" cx="12" cy="12" r="12"></circle>
+                            <g id="Icon/Camera/Camera/Camera" transform="translate(5.000000, 5.000000)">
+                                <mask id="mask-2" fill="white">
+                                    <use xlink:href="#path-edit-avatar"></use>
+                                </mask>
+                                <use id="Icon-Camera" fill="#3A3A3C" fill-rule="evenodd" xlink:href="#path-edit-avatar"></use>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
