@@ -62,7 +62,7 @@ const InputTitle = styled(Input)`
   }
 `;
 
-const Error = styled(Text.h6)`
+const Error = styled(Text)`
   margin-top: 3px;
 `;
 

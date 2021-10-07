@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "f775bf06-7c98-4e23-a81d-1bc2b743dca9",
+		"name": "circle-matcher",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create segment by logical operator",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var uuid = require('uuid');",
+							"",
+							"pm.collectionVariables.set('reference', uuid.v4());",
+							"pm.collectionVariables.set('circleId', uuid.v4());",
+							"pm.collectionVariables.set('workspaceId', uuid.v4());",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "x-workspace-id",
+						"type": "text",
+						"value": "{{workspaceId}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"active\": true,\n  \"name\": \"some-name\",\n  \"reference\": \"{{reference}}\",\n  \"circleId\": \"{{circleId}}\",\n  \"type\": \"REGULAR\",\n  \"workspaceId\": \"{{workspaceId}}\",\n  \"isDefault\": \"false\",\n  \"node\": {\n    \"type\": \"CLAUSE\",\n    \"logicalOperator\": \"OR\",\n    \"clauses\": [\n      {\n        \"active\": true,\n        \"type\": \"CLAUSE\",\n        \"logicalOperator\": \"AND\",\n        \"clauses\": [\n          {\n            \"type\": \"RULE\",\n            \"content\": {\n              \"key\": \"some-key\",\n              \"value\": [\n                \"some-value\"\n              ],\n              \"condition\": \"EQUAL\"\n            }\n          },\n          {\n            \"type\": \"RULE\",\n            \"content\": {\n              \"key\": \"some-key\",\n              \"value\": [\n                \"some-another-value\"\n              ],\n              \"condition\": \"NOT_EQUAL\"\n            }\n          }\n        ]\n      }\n    ]\n  },\n  \"createdAt\": \"2021-07-13T16:40:12.802Z\",\n  \"previousReference\": null\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "identify",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json()",
+							"",
+							"pm.test(\"Identify\", function () {",
+							"    pm.expect(responseJson.circles[0].id).to.eql(pm.collectionVariables.get(\"circleId\"))",
+							"})",
+							"",
+							"pm.test(\"Status success\", function () {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "x-workspace-id",
+						"value": "{{workspaceId}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workspaceId\": \"{{workspaceId}}\",\n    \"requestData\": {\n        \"some-key\" : \"some-value\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/identify",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"identify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete segment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status created\", function () {",
+							"    pm.response.to.have.status(204)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "X-Workspace-Id",
+						"type": "text",
+						"value": "{{workspaceId}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/segmentation/{{reference}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"segmentation",
+						"{{reference}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "circleId",
+			"value": ""
+		},
+		{
+			"key": "reference",
+			"value": ""
+		},
+		{
+			"key": "workspaceId",
+			"value": ""
+		}
+	]
+}

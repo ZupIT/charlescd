@@ -15,7 +15,7 @@
  */
 
 import { Module } from 'modules/Modules/interfaces/Module';
-import { Module as IModule } from '../interfaces/Module';
+import { Module as IModule, ModuleForm } from '../interfaces/Module';
 import { Tag } from '../interfaces/Tag';
 import map from 'lodash/map';
 import find from 'lodash/find';
@@ -86,8 +86,15 @@ export const checkIfComponentConflict = (modules: IModule[]) => {
   return error;
 };
 
-export const validationResolver = ({ modules }: { modules: IModule[] }) => {
+export const validationResolver = ({ releaseName, modules }: ModuleForm) => {
   const error = checkIfComponentConflict(modules);
+
+  if (isEmpty(releaseName)) {
+    error['releaseName'] = {
+      type: `releaseName.required`,
+      message: 'This field is required'
+    }
+  }
 
   return {
     values: {},
@@ -139,12 +146,10 @@ interface Props {
 }
 
 export const checkComponentAndVersionMaxLength = ({tag, onError, setIsError} : Props) => {
-  const componentAndVersion = tag?.artifact.split('/');
-  const componentAndVersionSplited = componentAndVersion[1].split(':');
-  const componentNameLen = componentAndVersionSplited[0].length;
-  const versionNameLen = componentAndVersionSplited[1].length;
+  const componentAndVersion = tag?.artifact.split('/').reverse()?.[0];
 
-  if((componentNameLen + versionNameLen) > MAX_LENGTH) {
+
+  if(componentAndVersion.length > MAX_LENGTH) {
     onError(true);
     setIsError(true);
   } else {

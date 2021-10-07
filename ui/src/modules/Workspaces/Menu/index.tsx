@@ -62,7 +62,7 @@ const WorkspaceMenu = ({ onCreate }: Props) => {
 
   const renderEmpty = () => (
     <Styled.Empty>
-      <Text.h3 color="dark">No workspace was found</Text.h3>
+      <Text tag="H3" color="dark">No workspace was found</Text>
     </Styled.Empty>
   );
 
@@ -86,7 +86,7 @@ const WorkspaceMenu = ({ onCreate }: Props) => {
           isDisabled={!isRoot()}
         >
           <LabeledIcon icon="plus-circle" marginContent="5px">
-            <Text.h5 color="dark">Create workspace</Text.h5>
+            <Text tag="H5" color="dark">Create workspace</Text>
           </LabeledIcon>
         </Styled.Button>
       </Styled.Actions>

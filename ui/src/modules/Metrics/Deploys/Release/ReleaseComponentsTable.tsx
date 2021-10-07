@@ -28,25 +28,25 @@ const ReleaseComponentsTable = ({ components }: Props) => {
     <>
       <Styled.TableHead>
         <Styled.TableColumn width={1}>
-          <Text.h5 color="dark">Modules</Text.h5>
+          <Text tag="H5" color="dark">Modules</Text>
         </Styled.TableColumn>
         <Styled.TableColumn width={1}>
-          <Text.h5 color="dark">Components</Text.h5>
+          <Text tag="H5" color="dark">Components</Text>
         </Styled.TableColumn>
         <Styled.TableColumn width={1}>
-          <Text.h5 color="dark">Version</Text.h5>
+          <Text tag="H5" color="dark">Version</Text>
         </Styled.TableColumn>
       </Styled.TableHead>
       {components.map((component, index) => (
         <Styled.ComponentsRow key={index}>
           <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.moduleName}</Text.h5>
+            <Text tag="H5" color="light">{component.moduleName}</Text>
           </Styled.TableColumn>
           <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.name}</Text.h5>
+            <Text tag="H5" color="light">{component.name}</Text>
           </Styled.TableColumn>
           <Styled.TableColumn width={1}>
-            <Text.h5 color="light">{component.version}</Text.h5>
+            <Text tag="H5" color="light">{component.version}</Text>
           </Styled.TableColumn>
         </Styled.ComponentsRow>
       ))}

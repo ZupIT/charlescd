@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import Modal from 'core/components/Modal';
+import { useState, useEffect } from 'react';
+import ModalTrigger from 'core/components/Modal/Trigger';
 import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { Circle } from 'modules/Circles/interfaces/Circle';
@@ -128,15 +128,17 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
   };
 
   const renderWarning = () => (
-    <Modal.Trigger
+    <ModalTrigger
       title="Attention!"
       dismissLabel="Cancel"
       continueLabel="Continue"
       onContinue={onContinue}
       onDismiss={onDismissWarningMessage}
     >
-      <Text.h4 color="light">{getWarningText(warningMessage)}</Text.h4>
-    </Modal.Trigger>
+      <Text tag="H4" color="light">
+        {getWarningText(warningMessage)}
+      </Text>
+    </ModalTrigger>
   );
   return (
     <>
@@ -145,10 +147,10 @@ const CreateSegments = ({ onGoBack, id, circle, onSaveCircle }: Props) => {
         <Icon name="arrow-left" color="dark" onClick={() => onGoBack()} />
       </Styled.Layer>
       <Styled.Layer>
-        <Text.h2 weight="bold" color="light">
+        <Text tag="H2" weight="bold" color="light">
           {isEditing ? 'Edit' : 'Create'} Segments
-        </Text.h2>
-        <Styled.HelpText color="dark">
+        </Text>
+        <Styled.HelpText tag="H5" color="dark">
           You can create a segment manually or importing a .CSV file to link
           multiple values to a key, or segment by percentage.
         </Styled.HelpText>

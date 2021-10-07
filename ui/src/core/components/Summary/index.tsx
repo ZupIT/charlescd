@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Item from './Item';
 import Styled from './styled';
 
-type Props = {
+export type Props = {
   children: ReactNode;
   className?: string;
 };

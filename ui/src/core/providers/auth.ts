@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ const redirectUri = window.CHARLESCD_ENVIRONMENT?.REACT_APP_IDM_REDIRECT_URI;
 const workspaceId =
   window.CHARLESCD_ENVIRONMENT?.REACT_APP_WORKSPACE_ID || 'UNKNOWN';
 
-const circleMatcherEndpoint = '/charlescd-circle-matcher/identify';
 const endpoint = `/auth/realms/${realm}/protocol/openid-connect/token`;
 const headers = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -42,7 +41,7 @@ export const circleMatcher = (payload: unknown) => {
     workspaceId
   };
 
-  return unauthenticatedRequest(circleMatcherEndpoint, data, {
+  return unauthenticatedRequest( data, {
     method: 'POST'
   });
 };

@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import toString from 'lodash/toString';
-import Card from 'core/components/Card';
+import CardMain from 'core/components/Card/Main';
 import Dropdown from 'core/components/Dropdown';
 import Icon from 'core/components/Icon';
 import { HTTP_STATUS } from 'core/enums/HttpStatus';
@@ -41,7 +41,7 @@ const SectionWebhook = ({ form, setForm, onSave, data }: Props) => {
   const [webhooks, setWebhooks] = useState<Webhook[]>(data);
   const [webhook, setWebhook] = useState<Webhook>();
   const { remove } = useWebhook();
-  
+
   useEffect(() => {
     if (webhooks !== data) {
       setWebhooks(data);
@@ -54,9 +54,8 @@ const SectionWebhook = ({ form, setForm, onSave, data }: Props) => {
     }
   }, [form]);
 
-  const getStatus = (status: number): string => (
-    status === HTTP_STATUS.teapot ? '' : toString(status)
-  )
+  const getStatus = (status: number): string =>
+    status === HTTP_STATUS.teapot ? '' : toString(status);
 
   const onDelete = async (id: string) => {
     await remove(id);
@@ -90,21 +89,21 @@ const SectionWebhook = ({ form, setForm, onSave, data }: Props) => {
       action={() => setForm(FORM_WEBHOOK)}
     >
       {webhooks &&
-        map(webhooks, webhook => (
-          <Card.Main
+        map(webhooks, (webhook) => (
+          <CardMain
             key={webhook.id}
             title={webhook.description}
             description={webhook.url}
             header={renderHeader()}
             action={renderAction(webhook)}
           >
-            <Card.Main
+            <CardMain
               width="237px"
               title={getStatus(webhook.lastDelivery?.status)}
               description={webhook.lastDelivery?.details}
               color={themeByHttpCode(webhook.lastDelivery?.status)}
             />
-          </Card.Main>
+          </CardMain>
         ))}
     </Section>
   );

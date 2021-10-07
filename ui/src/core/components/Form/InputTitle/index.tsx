@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useRef, useState, useImperativeHandle } from 'react';
-import Button from 'core/components/Button';
+import React, {
+  useRef,
+  useState,
+  useImperativeHandle,
+  ChangeEvent,
+} from 'react';
+import ButtonDefault from 'core/components/Button/ButtonDefault';
+import isEmpty from 'lodash/isEmpty';
 import Styled from './styled';
 
-interface Props {
+export interface Props {
   name: string;
   placeholder?: string;
   className?: string;
@@ -29,6 +35,7 @@ interface Props {
   isDisabled?: boolean;
   error?: string;
   buttonText?: string;
+  buttonType?: 'button' | 'submit';
 }
 const InputTitle = React.forwardRef(
   (
@@ -42,15 +49,21 @@ const InputTitle = React.forwardRef(
       readOnly,
       isDisabled,
       error,
-      buttonText = "Save"
+      buttonText = 'Save',
+      buttonType = 'button',
     }: Props,
     ref: React.Ref<HTMLInputElement>
   ) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const wrapperRef = useRef<HTMLDivElement>();
+    const [disabled, setDisabled] = useState(true);
     const [isResumed, setIsResumed] = useState(resume);
 
     useImperativeHandle(ref, () => inputRef.current);
+
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+      setDisabled(isEmpty(event.currentTarget.value));
+    };
 
     const onButtonClick = () => {
       const input = inputRef.current;
@@ -69,22 +82,23 @@ const InputTitle = React.forwardRef(
             resume={isResumed || readOnly}
             className="input-title"
             onClick={() => setIsResumed(false)}
+            onChange={onChange}
             placeholder={placeholder}
             defaultValue={defaultValue}
           />
           {!isResumed && !readOnly && (
-            <Button.Default
-              id="submit"
-              type="submit"
+            <ButtonDefault
+              id="input-title"
+              type={buttonType}
               size="EXTRA_SMALL"
               onClick={onButtonClick}
-              isDisabled={isDisabled}
+              isDisabled={disabled || isDisabled}
             >
               {buttonText}
-            </Button.Default>
+            </ButtonDefault>
           )}
         </Styled.Field>
-        {error && <Styled.Error color="error">{error}</Styled.Error>}
+        {error && <Styled.Error tag="H6" color="error">{error}</Styled.Error>}
       </Styled.Wrapper>
     );
   }

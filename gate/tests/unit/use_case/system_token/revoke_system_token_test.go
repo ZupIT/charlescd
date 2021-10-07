@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020,2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ func (st *SystemTokenSuite) TestRevokeSystemToken() {
 	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
-	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
+	st.systemTokenRepository.On("UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
 	err := st.revokeSystemToken.Execute(systemToken.ID)
 
@@ -39,7 +39,7 @@ func (st *SystemTokenSuite) TestRevokeSystemToken() {
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")))
 
 	updatedSystemToken := st.systemTokenRepository.Calls[1].Parent.Calls[1].Arguments.Get(0).(domain.SystemToken)
 	require.NotNil(st.T(), updatedSystemToken)
@@ -65,7 +65,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 	systemToken := utils.GetDummySystemToken()
 
 	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
-	st.systemTokenRepository.On("Update", mock.AnythingOfType("domain.SystemToken")).
+	st.systemTokenRepository.On("UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")).
 		Return(logging.NewError("Not found error", logging.CustomError{}, logging.NotFoundError, nil)).Once()
 
 	err := st.revokeSystemToken.Execute(systemToken.ID)
@@ -75,7 +75,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "Update", mock.AnythingOfType("domain.SystemToken")))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")))
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {

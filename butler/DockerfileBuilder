@@ -1,4 +1,4 @@
-FROM docker:dind
+FROM docker:dind@sha256:5a0822246a7ba7596160e5ebde39840d7631be4a30cd4133aec47625e87a69bf
 
 ENV NODE_VERSION 8.16.0
 
