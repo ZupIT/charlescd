@@ -32,7 +32,7 @@ import (
 type UseCases interface {
 	Parse(dataSource io.ReadCloser) (Request, errors.Error)
 	FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
-	FindById(id string) (Response, errors.Error)
+	FindByID(id string) (Response, errors.Error)
 	Save(dataSource Request) (Response, errors.Error)
 	Delete(id string) errors.Error
 	GetMetrics(dataSourceID string) (datasource.MetricList, errors.Error)

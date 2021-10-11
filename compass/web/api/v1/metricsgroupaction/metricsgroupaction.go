@@ -101,7 +101,7 @@ func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricgroupactionID"]
 
-		act, err := metricsgroupactionMain.FindGroupActionById(id)
+		act, err := metricsgroupactionMain.FindGroupActionByID(id)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return

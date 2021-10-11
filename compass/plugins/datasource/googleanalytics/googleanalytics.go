@@ -33,7 +33,7 @@ import (
 )
 
 type Configuration struct {
-	ViewId         string `json:"viewId"`
+	ViewID         string `json:"viewId"`
 	ServiceAccount string `json:"serviceAccount"`
 }
 
@@ -93,7 +93,7 @@ func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsRe
 	reportRequestData := &analyticsreporting.GetReportsRequest{
 		ReportRequests: []*analyticsreporting.ReportRequest{
 			{
-				ViewId: configuration.ViewId,
+				ViewId: configuration.ViewID,
 				Metrics: []*analyticsreporting.Metric{
 					{
 						Expression: request.Query,

@@ -58,12 +58,12 @@ func getWhiteList(path string) string {
 	return ""
 }
 
-func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
+func (api API) ValidatorMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-type", "application/json")
 		workspaceID := r.Header.Get("x-workspace-id")
 
-		ers := NewApiErrors()
+		ers := NewAPIErrors()
 
 		reqErr := tollbooth.LimitByRequest(api.limiter, w, r)
 		if reqErr != nil {
@@ -75,36 +75,34 @@ func (api Api) ValidatorMiddleware(next http.Handler) http.Handler {
 
 		if getWhiteList(r.RequestURI) == "" {
 			if workspaceID == "" {
-				ers.ToApiErrors(
+				ers.ToAPIErrors(
 					strconv.Itoa(http.StatusForbidden),
 					"https://docs.charlescd.io/v/v0.3.x-pt/primeiros-passos/definindo-workspace",
-					errors.NewError("Invalid request", "WorkspaceId is required").WithOperations("ValidatorMiddleware"),
+					errors.NewError("Invalid request", "WorkspaceID is required").WithOperations("ValidatorMiddleware"),
 				)
 
 				util.NewResponse(w, http.StatusForbidden, ers)
 				return
-			} else {
-				workspaceUUID := uuid.MustParse(workspaceID)
-
-				authToken, err := extractToken(r.Header.Get("Authorization"))
-				if err != nil {
-					util.NewResponse(w, http.StatusUnauthorized, err)
-					return
-				}
-
-				allowed, err := api.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
-				if err != nil {
-					util.NewResponse(w, http.StatusForbidden, err)
-					return
-				}
-
-				if !allowed {
-					util.NewResponse(w, http.StatusForbidden, errors.NewError("Forbidden", "Access denied"))
-					return
-				}
-
-				next.ServeHTTP(w, r)
 			}
+			workspaceUUID := uuid.MustParse(workspaceID)
+
+			authToken, err := extractToken(r.Header.Get("Authorization"))
+			if err != nil {
+				util.NewResponse(w, http.StatusUnauthorized, err)
+				return
+			}
+
+			allowed, err := api.authorizeUser(r.Method, r.URL.Path, authToken.Email, workspaceUUID)
+			if err != nil {
+				util.NewResponse(w, http.StatusForbidden, err)
+				return
+			}
+
+			if !allowed {
+				util.NewResponse(w, http.StatusForbidden, errors.NewError("Forbidden", "Access denied"))
+				return
+			}
+			next.ServeHTTP(w, r)
 		} else {
 			next.ServeHTTP(w, r)
 		}
@@ -129,7 +127,7 @@ func extractToken(authorization string) (AuthToken, errors.Error) {
 	return *token.Claims.(*AuthToken), nil
 }
 
-func (api Api) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
+func (api API) authorizeUser(method, url, email string, workspaceID uuid.UUID) (bool, errors.Error) {
 	user, err := api.mooveMain.FindUserByEmail(email)
 	if err != nil {
 		return false, err.WithOperations("authorizeUser.FindUserByEmail")

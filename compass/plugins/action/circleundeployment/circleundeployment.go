@@ -53,22 +53,22 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 
 	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.DestinationCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, DestinationCircleID: %s, WorkspaceId: %s", ac.MooveURL, ec.DestinationCircleID, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("MooveUrl: %s, DestinationCircleID: %s, WorkspaceID: %s", ac.MooveURL, ec.DestinationCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
-	if deployment.BuildId == "" {
+	if deployment.BuildID == "" {
 		err = errors.New("circle has no active build")
-		dataErr := fmt.Sprintf("DestinationCircleID: %s, WorkspaceId: %s", ec.DestinationCircleID, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("DestinationCircleID: %s, WorkspaceID: %s", ec.DestinationCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoUndeploymentAction", err, dataErr)
 		return err
 	}
 
-	err = commons.UndeployBuildAtCircle(deployment.Id, ec.WorkspaceID, ac.MooveURL)
+	err = commons.UndeployBuildAtCircle(deployment.ID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleID: %s, BuildId: %s",
-			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId)
+		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceID: %s, DestinationCircleID: %s, BuildID: %s",
+			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildID)
 		logger.Error("DO_CIRCLE_UNDEPLOYMENT", "DoUndeploymentAction", err, dataErr)
 		return err
 	}

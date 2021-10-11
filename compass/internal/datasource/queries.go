@@ -52,8 +52,8 @@ const workspaceDatasourceQuery = `SELECT id,
 	  							deleted_at,
 	  							plugin_src FROM "data_sources" WHERE "workspace_id" = ? AND "deleted_at" IS NULL`
 
-func Insert(id, name, pluginSrc string, data []byte, workspaceId uuid.UUID) string {
+func Insert(id, name, pluginSrc string, data []byte, workspaceID uuid.UUID) string {
 	return fmt.Sprintf(`INSERT INTO data_sources (id, name, data, workspace_id, deleted_at, plugin_src)
 							VALUES ('%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), '%s', null, '%s');`,
-		id, name, data, configuration.GetConfiguration("ENCRYPTION_KEY"), workspaceId, pluginSrc)
+		id, name, data, configuration.GetConfiguration("ENCRYPTION_KEY"), workspaceID, pluginSrc)
 }

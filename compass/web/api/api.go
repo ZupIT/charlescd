@@ -38,7 +38,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Api struct {
+type API struct {
 	// Dependencies
 	enforcer              *casbin.Enforcer
 	limiter               *limiter.Limiter
@@ -51,7 +51,7 @@ type Api struct {
 	mooveMain             moove.UseCases
 }
 
-func NewApi(
+func NewAPI(
 	enforcer *casbin.Enforcer,
 	limiter *limiter.Limiter,
 	pluginMain plugin.UseCases,
@@ -63,7 +63,7 @@ func NewApi(
 	mooveMain moove.UseCases,
 ) *mux.Router {
 
-	api := Api{
+	api := API{
 		enforcer:              enforcer,
 		limiter:               limiter,
 		pluginMain:            pluginMain,
@@ -87,7 +87,7 @@ func NewApi(
 	return router
 }
 
-func (api *Api) health(router *mux.Router) {
+func (api *API) health(router *mux.Router) {
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte(":)"))
 		if err != nil {
@@ -96,7 +96,7 @@ func (api *Api) health(router *mux.Router) {
 	})
 }
 
-func (api *Api) metrics(router *mux.Router) {
+func (api *API) metrics(router *mux.Router) {
 	router.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	})

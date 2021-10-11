@@ -33,7 +33,7 @@ const (
 )
 
 const (
-	FindMetricById    = "FIND_METRIC_BY_ID"
+	FindMetricByID    = "FIND_METRIC_BY_ID"
 	SaveMetricError   = "SAVE_METRIC_ERROR"
 	UpdateMetricError = "UPDATE_METRIC_ERROR"
 	RemoveMetricError = "REMOVE_METRIC_ERROR"
@@ -57,13 +57,13 @@ const (
 	RemoveMetricsGroupError     = "REMOVE_METRICS_GROUP_ERROR"
 	QueryFindDatasourceError    = "QUERY_FIND_DATASOURCE_ERROR"
 	QueryGetPluginError         = "QUERY_GET_PLUGIN_ERROR"
-	QueryByGroupIdError         = "QUERY_BY_GROUP_ID_ERROR"
+	QueryByGroupIDError         = "QUERY_BY_GROUP_ID_ERROR"
 	ListAllByGroupError         = "LIST_ALL_BY_GROUP_ERROR"
 )
 
 const (
 	FindPluginError    = "FIND_PLUGIN_ERROR"
-	GetPluginByIdError = "GET_PLUGIN_BY_ID_ERROR"
+	GetPluginByIDError = "GET_PLUGIN_BY_ID_ERROR"
 )
 
 const (

@@ -58,8 +58,8 @@ func (main Main) UpdateMetricExecution(metricExecution MetricExecution) (MetricE
 	return metricExecution, nil
 }
 
-func (main Main) updateExecutionStatus(tx *gorm.DB, metricId uuid.UUID) errors.Error {
-	db := tx.Model(&MetricExecution{}).Where("metric_id = ?", metricId).Update("status", MetricUpdated)
+func (main Main) updateExecutionStatus(tx *gorm.DB, metricID uuid.UUID) errors.Error {
+	db := tx.Model(&MetricExecution{}).Where("metric_id = ?", metricID).Update("status", MetricUpdated)
 	if db.Error != nil {
 		return errors.NewError("Update error", db.Error.Error()).
 			WithOperations("updateExecutionStatus.Update")

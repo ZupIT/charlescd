@@ -20,7 +20,7 @@ type SuiteMoove struct {
 	DB   *gorm.DB
 	mock sqlmock.Sqlmock
 
-	repository moove.ApiUseCases
+	repository moove.APIUseCases
 	server     *httptest.Server
 }
 

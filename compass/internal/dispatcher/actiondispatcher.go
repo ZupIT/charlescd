@@ -88,7 +88,7 @@ func (dispatcher *ActionDispatcher) executeAction(groupAction metricsgroupaction
 		return
 	}
 
-	act, err := dispatcher.actionRepo.FindActionById(groupAction.ActionID.String())
+	act, err := dispatcher.actionRepo.FindActionByID(groupAction.ActionID.String())
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"err": err.WithOperations("executeAction.FindActionByID"),

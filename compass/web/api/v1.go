@@ -38,7 +38,7 @@ import (
 	"github.com/ZupIT/charlescd/compass/web/api/v1/metricsgroup"
 )
 
-func (api *Api) newV1Api(router *mux.Router) {
+func (api *API) newV1Api(router *mux.Router) {
 	s := router.PathPrefix("/v1").Subrouter()
 	{
 		path := "/actions"

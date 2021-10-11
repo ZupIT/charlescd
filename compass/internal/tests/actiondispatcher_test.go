@@ -125,7 +125,7 @@ func (s *SuiteActionDispatcher) TestStartActionCallingMooveError() {
 	s.DB.Create(&metricExec)
 
 	action := action.Action{
-		WorkspaceId:   workspaceID,
+		WorkspaceID:   workspaceID,
 		Nickname:      "Action 1",
 		Type:          "circledeployment",
 		Description:   "",
@@ -197,7 +197,7 @@ func (s *SuiteActionDispatcher) TestStartActionPluginSrcError() {
 	s.DB.Create(&metricExec)
 
 	action := action.Action{
-		WorkspaceId:   workspaceID,
+		WorkspaceID:   workspaceID,
 		Nickname:      "Action 1",
 		Type:          "circledeployment",
 		Description:   "",

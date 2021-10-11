@@ -24,9 +24,12 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
+	// Only needs init function
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jinzhu/gorm"
+	// Only needs init function
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	// Only needs init function
 	_ "github.com/lib/pq"
 )
 

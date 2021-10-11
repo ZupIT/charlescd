@@ -98,7 +98,7 @@ func main() {
 	if err := group.Wait(); err != nil {
 		logrus.Fatal(err)
 	}
-	router := api.NewApi(
+	router := api.NewAPI(
 		enforcer,
 		lmt,
 		pluginMain,

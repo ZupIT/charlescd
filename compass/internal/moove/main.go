@@ -27,8 +27,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type ApiUseCases interface {
-	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, errors.Error)
+type APIUseCases interface {
+	GetMooveComponents(circleIDHeader, circleID string, workspaceID uuid.UUID) ([]byte, errors.Error)
 }
 
 type APIClient struct {
@@ -36,7 +36,7 @@ type APIClient struct {
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) ApiUseCases {
+func NewAPIClient(url string, timeout time.Duration) APIUseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{

@@ -139,7 +139,7 @@ func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.E
 	return dataSources, nil
 }
 
-func (main Main) FindById(id string) (Response, errors.Error) {
+func (main Main) FindByID(id string) (Response, errors.Error) {
 	dataSource := DataSource{}
 	row := main.db.Raw(datasourceDecryptedQuery, id).Row()
 
@@ -147,7 +147,7 @@ func (main Main) FindById(id string) (Response, errors.Error) {
 		&dataSource.WorkspaceID, &dataSource.DeletedAt, &dataSource.PluginSrc)
 	if dbError != nil {
 		return Response{}, errors.NewError("Find by id error", dbError.Error()).
-			WithOperations("FindById.ScanRows")
+			WithOperations("FindByID.ScanRows")
 	}
 
 	return dataSource.toResponse(), nil
@@ -164,9 +164,9 @@ func (main Main) Delete(id string) errors.Error {
 }
 
 func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, errors.Error) {
-	dataSourceResult, err := main.FindById(dataSourceID)
+	dataSourceResult, err := main.FindByID(dataSourceID)
 	if err != nil {
-		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindById")
+		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindByID")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)

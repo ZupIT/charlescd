@@ -33,7 +33,7 @@ import (
 	"github.com/prometheus/common/model"
 )
 
-func getPrometheusApiClient(datasourceConfiguration []byte) (api.Client, error) {
+func getPrometheusAPIClient(datasourceConfiguration []byte) (api.Client, error) {
 	var prometheusConfig map[string]string
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
@@ -110,7 +110,7 @@ func TestConnection(datasourceConfiguration []byte) error {
 }
 
 func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
-	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
+	apiClient, err := getPrometheusAPIClient(datasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 }
 
 func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
-	apiClient, err := getPrometheusApiClient(request.DatasourceConfiguration)
+	apiClient, err := getPrometheusAPIClient(request.DatasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}

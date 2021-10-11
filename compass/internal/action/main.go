@@ -30,8 +30,8 @@ import (
 type UseCases interface {
 	ValidateAction(action Request) errors.ErrorList
 	ParseAction(action io.ReadCloser) (Request, errors.Error)
-	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
-	FindActionById(id string) (Response, errors.Error)
+	FindActionByIDAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
+	FindActionByID(id string) (Response, errors.Error)
 	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
 	SaveAction(action Request) (Response, errors.Error)
 	DeleteAction(id string) errors.Error

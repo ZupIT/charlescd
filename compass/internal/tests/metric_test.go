@@ -97,7 +97,7 @@ func (s *SuiteMetric) TestParse() {
         {
             "field": "destination",
             "value": "moove",
-            "operator": "EQUAL"
+            "operator": "Equal"
         }
     ],
     "groupBy": [
@@ -105,7 +105,7 @@ func (s *SuiteMetric) TestParse() {
             "field": "app"
         }
     ],
-    "condition": "EQUAL",
+    "condition": "Equal",
     "threshold": 30.0
 }`)
 	stringReadCloser := ioutil.NopCloser(stringReader)
@@ -261,7 +261,7 @@ func (s *SuiteMetric) TestFindMetricById() {
 
 	s.DB.Create(&metricStruct)
 
-	res, err := s.repository.FindMetricById(metricStruct.ID.String())
+	res, err := s.repository.FindMetricByID(metricStruct.ID.String())
 
 	require.Nil(s.T(), err)
 
@@ -310,7 +310,7 @@ func (s *SuiteMetric) TestUpdateMetricError() {
 
 func (s *SuiteMetric) TestFindMetricByIdError() {
 
-	_, err := s.repository.FindMetricById("any-id")
+	_, err := s.repository.FindMetricByID("any-id")
 
 	require.NotNil(s.T(), err)
 }

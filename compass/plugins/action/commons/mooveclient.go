@@ -30,19 +30,19 @@ import (
 )
 
 type DeploymentResponse struct {
-	Id      string `json:"id"`
-	BuildId string `json:"buildId"`
+	ID      string `json:"id"`
+	BuildID string `json:"buildId"`
 }
 
 type CircleResponse struct {
-	Id                 string             `json:"id"`
+	ID                 string             `json:"id"`
 	IsDefault          bool               `json:"default"`
 	DeploymentResponse DeploymentResponse `json:"deployment"`
-	WorkspaceId        string             `json:"workspaceId"`
+	WorkspaceID        string             `json:"workspaceId"`
 }
 
 type UserResponse struct {
-	Id string `json:"id"`
+	ID string `json:"id"`
 }
 
 type DeploymentRequest struct {
@@ -51,13 +51,13 @@ type DeploymentRequest struct {
 	BuildID  string `json:"buildId"`
 }
 
-func GetCurrentDeploymentAtCircle(circleID, workspaceId, url string) (DeploymentResponse, error) {
+func GetCurrentDeploymentAtCircle(circleID, workspaceID, url string) (DeploymentResponse, error) {
 	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/v2/circles/%s", url, circleID), nil)
 	if err != nil {
 		logger.Error("GET_CIRCLE_BY_ID", "getCurrentDeploymentAtCircle", err, nil)
 		return DeploymentResponse{}, err
 	}
-	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("x-workspace-id", workspaceID)
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)
@@ -126,7 +126,7 @@ func GetUserByEmail(email, url string) (UserResponse, error) {
 	return user, nil
 }
 
-func DeployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId, url string) error {
+func DeployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceID, url string) error {
 	requestBody, err := json.Marshal(deploymentRequest)
 	if err != nil {
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
@@ -139,7 +139,7 @@ func DeployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId, url s
 		return err
 	}
 	request.Header.Add("Content-type", "application/json")
-	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("x-workspace-id", workspaceID)
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)
@@ -164,14 +164,14 @@ func DeployBuildAtCircle(deploymentRequest DeploymentRequest, workspaceId, url s
 	return nil
 }
 
-func UndeployBuildAtCircle(deploymentId, workspaceId, url string) error {
-	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v2/deployments/%s/undeploy", url, deploymentId), nil)
+func UndeployBuildAtCircle(deploymentID, workspaceID, url string) error {
+	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v2/deployments/%s/undeploy", url, deploymentID), nil)
 	if err != nil {
 		logger.Error("DEPLOY_CIRCLE", "deployBuildAtCircle", err, nil)
 		return err
 	}
 	request.Header.Add("Content-type", "application/json")
-	request.Header.Add("x-workspace-id", workspaceId)
+	request.Header.Add("x-workspace-id", workspaceID)
 	request.Header.Add("Authorization", os.Getenv("MOOVE_AUTH"))
 
 	response, err := http.DefaultClient.Do(request)

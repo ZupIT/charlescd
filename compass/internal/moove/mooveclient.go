@@ -27,10 +27,10 @@ import (
 	"os"
 )
 
-func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]byte, errors.Error) {
-	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
+func (api APIClient) GetMooveComponents(circleIDHeader, circleID string, workspaceID uuid.UUID) ([]byte, errors.Error) {
+	mooveURL := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleID)
 
-	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
+	request, err := http.NewRequest(http.MethodGet, mooveURL, nil)
 	if err != nil {
 		return nil, errors.NewError("Get error", err.Error()).
 			WithOperations("GetMooveComponents.NewRequest")

@@ -31,7 +31,7 @@ import (
 type UseCases interface {
 	ParseMetric(metric io.ReadCloser) (Metric, errors.Error)
 	CountMetrics(metrics []Metric) (int, int, int)
-	FindMetricById(id string) (Metric, errors.Error)
+	FindMetricByID(id string) (Metric, errors.Error)
 	SaveMetric(metric Metric) (Metric, errors.Error)
 	UpdateMetric(metric Metric) (Metric, errors.Error)
 	RemoveMetric(id string) errors.Error

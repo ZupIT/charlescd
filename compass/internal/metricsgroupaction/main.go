@@ -30,7 +30,7 @@ import (
 type UseCases interface {
 	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) errors.ErrorList
 	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, errors.Error)
-	FindGroupActionById(id string) (MetricsGroupAction, errors.Error)
+	FindGroupActionByID(id string) (MetricsGroupAction, errors.Error)
 	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
 	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error)
 	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)

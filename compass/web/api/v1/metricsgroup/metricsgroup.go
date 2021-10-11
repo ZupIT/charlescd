@@ -33,15 +33,15 @@ import (
 
 func GetAll(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		workspaceId := r.Header.Get("x-workspace-id")
+		workspaceID := r.Header.Get("x-workspace-id")
 
-		parsedWorkspaceId, parseErr := uuid.Parse(workspaceId)
+		parsedWorkspaceID, parseErr := uuid.Parse(workspaceID)
 		if parseErr != nil {
 			util.NewResponse(w, http.StatusInternalServerError, parseErr)
 			return
 		}
 
-		list, err := metricsgroupMain.FindAllByWorkspaceId(parsedWorkspaceId)
+		list, err := metricsgroupMain.FindAllByWorkspaceID(parsedWorkspaceID)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -53,9 +53,9 @@ func GetAll(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, 
 
 func Resume(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		circleId := r.URL.Query().Get("circleId")
+		circleID := r.URL.Query().Get("circleId")
 
-		metricGroups, err := metricsgroupMain.ResumeByCircle(circleId)
+		metricGroups, err := metricsgroupMain.ResumeByCircle(circleID)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -97,7 +97,7 @@ func Create(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, 
 func Show(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricGroupID"]
-		metricsGroup, err := metricsgroupMain.FindById(id)
+		metricsGroup, err := metricsgroupMain.FindByID(id)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -182,7 +182,7 @@ func UpdateName(metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWrit
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
-		metricsGroup, err := metricsgroupMain.FindById(id)
+		metricsGroup, err := metricsgroupMain.FindByID(id)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
