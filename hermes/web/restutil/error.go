@@ -22,24 +22,24 @@ import "hermes/pkg/errors"
 
 type ErrorLink map[string]string
 
-type ApiError struct {
+type APIError struct {
 	errors.SimpleError
 	Links  ErrorLink `json:"links"`
 	Status string    `json:"status"`
 	Code   string    `json:"code"`
 }
 
-type ApiErrors struct {
-	Errors []ApiError `json:"errors"`
+type APIErrors struct {
+	Errors []APIError `json:"errors"`
 }
 
-func NewApiErrors() *ApiErrors {
-	return &ApiErrors{}
+func NewAPIErrors() *APIErrors {
+	return &APIErrors{}
 }
 
-func (apiErrors *ApiErrors) ToApiErrors(status string, link string, ers ...errors.Error) *ApiErrors {
+func (apiErrors *APIErrors) ToAPIErrors(status string, link string, ers ...errors.Error) *APIErrors {
 	for _, err := range ers {
-		apiError := ApiError{
+		apiError := APIError{
 			Links: ErrorLink{
 				"about": link,
 			},

@@ -31,7 +31,7 @@ import (
 	"time"
 )
 
-type Api struct {
+type API struct {
 	// Dependencies
 	subscriptionMain subscription.UseCases
 	messageMain      message.UseCases
@@ -43,8 +43,8 @@ type Readiness struct {
 	MessageQueue string
 }
 
-func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, db *sql.DB) *mux.Router {
-	api := Api{
+func NewAPI(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, db *sql.DB) *mux.Router {
+	api := API{
 		subscriptionMain: subscriptionMain,
 		messageMain:      messageMain,
 		executionMain:    executionMain,
@@ -62,7 +62,7 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 	return router
 }
 
-func (api *Api) health(r *mux.Router) {
+func (api *API) health(r *mux.Router) {
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte(":)"))
 		if err != nil {
@@ -72,7 +72,7 @@ func (api *Api) health(r *mux.Router) {
 	})
 }
 
-func (api *Api) readiness(r *mux.Router, db *sql.DB) {
+func (api *API) readiness(r *mux.Router, db *sql.DB) {
 	r.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
 		ready := Readiness{
 			Database:     "ALIVE",

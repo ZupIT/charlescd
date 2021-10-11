@@ -26,8 +26,8 @@ import (
 )
 
 type UseCases interface {
-	FindAllByExecutionId(executionId []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error)
-	FindLastByExecutionId(executionId uuid.UUID) (payloads.FullMessageExecutionResponse, errors.Error)
+	FindAllByExecutionID(executionID []uuid.UUID) ([]payloads.FullMessageExecutionResponse, errors.Error)
+	FindLastByExecutionID(executionID uuid.UUID) (payloads.FullMessageExecutionResponse, errors.Error)
 }
 
 type Main struct {

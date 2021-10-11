@@ -22,7 +22,9 @@ import (
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	postgresmigrate "github.com/golang-migrate/migrate/v4/database/postgres"
+	// Only needs init function
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	// Only needs init function
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"

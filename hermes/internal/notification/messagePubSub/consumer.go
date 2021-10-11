@@ -69,7 +69,7 @@ func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
 				WithOperations("SendWebhookEvent"),
 		}).Errorln(webhookErr)
 
-		updateMessageErr := main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
+		updateMessageErr := main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHTTPStatus(webhookErr))
 		if updateMessageErr != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": errors.NewError("Cannot update message", updateMessageErr.Error()).
@@ -91,7 +91,7 @@ func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
 	}
 }
 
-func extractHttpStatus(err errors.Error) int {
+func extractHTTPStatus(err errors.Error) int {
 	httpStatus, aErr := strconv.Atoi(err.Error().Meta["http-status"])
 	if aErr != nil {
 		logrus.Error(aErr)

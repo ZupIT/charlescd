@@ -40,10 +40,10 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate without error", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId:  uuid.New(),
-			Url:         "localhost:8080",
+			ExternalID:  uuid.New(),
+			URL:         "localhost:8080",
 			Description: "My Webhook",
-			ApiKey:      "",
+			APIKey:      "",
 			Events:      []string{"DEPLOY"},
 			CreatedBy:   "charles@email.com",
 		}
@@ -58,25 +58,25 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate with empty url", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId:  uuid.New(),
-			Url:         "",
+			ExternalID:  uuid.New(),
+			URL:         "",
 			Description: "My Webhook",
-			ApiKey:      "",
+			APIKey:      "",
 			Events:      []string{"DEPLOY"},
 			CreatedBy:   "charles@email.com",
 		}
 
 		err := main.Validate(request)
-		verifyResult(t, "Url is required", err.GetErrors()[0].Error().Detail)
+		verifyResult(t, "URL is required", err.GetErrors()[0].Error().Detail)
 
 	})
 
 	t.Run("Validate with empty description", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId:  uuid.New(),
-			Url:         "localhost:8080",
+			ExternalID:  uuid.New(),
+			URL:         "localhost:8080",
 			Description: "",
-			ApiKey:      "",
+			APIKey:      "",
 			Events:      []string{"DEPLOY"},
 			CreatedBy:   "charles@email.com",
 		}
@@ -88,10 +88,10 @@ func TestSubscriptionValidate(t *testing.T) {
 
 	t.Run("Validate with empty events", func(t *testing.T) {
 		request := subscription.Request{
-			ExternalId:  uuid.New(),
-			Url:         "localhost:8080",
+			ExternalID:  uuid.New(),
+			URL:         "localhost:8080",
 			Description: "My Webhook",
-			ApiKey:      "",
+			APIKey:      "",
 			Events:      nil,
 			CreatedBy:   "charles@email.com",
 		}

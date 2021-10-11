@@ -97,10 +97,10 @@ func (main *Main) sendMessageWithExpiration(message payloads.MessageResponse) er
 func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, log string, httpStatus int) error {
 	data := messageexecutionhistory.MessagesExecutionsHistory{
 		ID:           uuid.New(),
-		ExecutionId:  message.Id,
+		ExecutionID:  message.ID,
 		ExecutionLog: log,
 		Status:       status,
-		HttpStatus:   httpStatus,
+		HTTPStatus:   httpStatus,
 		LoggedAt:     time.Now(),
 	}
 
@@ -115,7 +115,7 @@ func (main *Main) updateMessageInfo(message payloads.MessageResponse, status, lo
 			return retryExec.Error
 		}
 
-		retryMsg := tx.Table("messages").Where("id = ?", message.Id).Update("last_status", status)
+		retryMsg := tx.Table("messages").Where("id = ?", message.ID).Update("last_status", status)
 		if retryMsg.Error != nil {
 			logrus.WithFields(logrus.Fields{
 				"err": errors.NewError("Push message error", "Could not update not enqueued message").

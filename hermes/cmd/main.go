@@ -72,6 +72,6 @@ func main() {
 	stopChan := make(chan bool)
 	go messagePubSubMain.Consume(stopChan)
 
-	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
+	router := api.NewAPI(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
 }

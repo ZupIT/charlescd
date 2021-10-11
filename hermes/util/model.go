@@ -20,7 +20,6 @@ package util
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -29,7 +28,7 @@ type BaseModel struct {
 	CreatedAt time.Time `json:"-"`
 }
 
-func (baseModel *BaseModel) BeforeCreate(scope *gorm.DB) error {
+func (baseModel *BaseModel) BeforeCreate() error {
 	baseModel.ID = uuid.New()
 	return nil
 }

@@ -27,7 +27,7 @@ linters-settings:
     rules:
       - name: atomic
       - name: unhandled-error
-#      - name: blank-imports
+      - name: blank-imports
       - name: context-as-argument
       - name: context-keys-type
       - name: dot-imports
@@ -37,18 +37,18 @@ linters-settings:
 #      - name: exported
       - name: if-return
       - name: increment-decrement
-#      - name: var-naming
+      - name: var-naming
       - name: var-declaration
       - name: package-comments
       - name: range
       - name: receiver-naming
       - name: time-naming
       - name: unexported-return
-#      - name: indent-error-flow
+      - name: indent-error-flow
       - name: errorf
       - name: empty-block
       - name: superfluous-else
-#      - name: unused-parameter
+      - name: unused-parameter
       - name: unreachable-code
       - name: redefines-builtin-id
 

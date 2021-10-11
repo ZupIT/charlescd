@@ -324,7 +324,7 @@ func (c *Client) LogAndAck(msg amqp.Delivery, response payloads.MessageResponse)
 		})
 	}
 	c.logger.WithFields(logrus.Fields{
-		"Message consumed": response.Id,
+		"Message consumed": response.ID,
 		"Time":             time.Now(),
 	}).Info()
 }

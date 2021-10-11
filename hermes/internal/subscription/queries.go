@@ -26,13 +26,13 @@ import (
 	"hermes/internal/configuration"
 )
 
-func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
+func InsertMap(id, externalID uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
 	return map[string]interface{}{
 		"id":          id,
-		"ExternalId":  externalId,
-		"Url":         url,
+		"ExternalID":  externalID,
+		"URL":         url,
 		"Description": description,
-		"ApiKey": clause.Expr{
+		"APIKey": clause.Expr{
 			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
 			Vars: []interface{}{
 				apiKey,
