@@ -195,10 +195,10 @@ func (c *Client) connect(addr string, messageQueue string, waitQueue string, exc
 func (c *Client) changeConnection(connection *amqp.Connection, channel *amqp.Channel) {
 	c.connection = connection
 	c.channel = channel
-	confirmErr := c.channel.Confirm(false)
-	if confirmErr != nil {
+	err := c.channel.Confirm(false)
+	if err != nil {
 		c.logger.WithFields(logrus.Fields{
-			"err": fmt.Errorf("cannot confirm channel %s", confirmErr.Error()),
+			"err": fmt.Errorf("cannot confirm channel %s", err.Error()),
 		})
 	}
 	c.notifyClose = make(chan *amqp.Error)
