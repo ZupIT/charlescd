@@ -37,9 +37,6 @@ func main() {
 	}
 
 	server := newServer(persistenceManager, serviceManager)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	log.Fatalln(server.start("8080"))
 }
