@@ -80,11 +80,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: golangci-lint install
-        run: |
-          download=https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
-          wget -O- -q $download |sudo sh -s -- -b /go/bin/ v1.42.0
-      - name: lint files
-        working-directory: ./hermes
-        run: |
-          /go/bin/golangci-lint run
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: ./hermes
+          version: v1.42.0
