@@ -16,7 +16,7 @@
  *
  */
 
-package system_token
+package systoken
 
 import (
 	"errors"

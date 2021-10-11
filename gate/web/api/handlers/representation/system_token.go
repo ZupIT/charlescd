@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"github.com/ZupIT/charlescd/gate/internal/domain"
-	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	"github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
 )
@@ -60,8 +60,8 @@ type RegenerateTokenResponse struct {
 	Token string `json:"token"`
 }
 
-func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.CreateSystemTokenInput {
-	return system_token.CreateSystemTokenInput{
+func (systemTokenRequest SystemTokenRequest) RequestToInput() systoken.CreateSystemTokenInput {
+	return systoken.CreateSystemTokenInput{
 		Name:          systemTokenRequest.Name,
 		Permissions:   systemTokenRequest.Permissions,
 		Workspaces:    systemTokenRequest.Workspaces,

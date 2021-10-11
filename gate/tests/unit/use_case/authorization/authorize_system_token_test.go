@@ -49,7 +49,7 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutWorkspacePerm
 	var systemToken = utils.GetDummySystemToken()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.workspaceRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(systemToken.Workspaces, nil).Once()
+	as.workspaceRepository.On("FindBySystemTokenID", systemToken.ID.String()).Return(systemToken.Workspaces, nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspaceId", utils.GetDummyAuthorizationAuthorization(path, method))
 
@@ -83,8 +83,8 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithPermissionToWork
 	var workspaces = utils.GetDummySimpleWorkspaces()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.workspaceRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(workspaces, nil).Once()
-	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
+	as.workspaceRepository.On("FindBySystemTokenID", systemToken.ID.String()).Return(workspaces, nil).Once()
+	as.permissionRepository.On("FindBySystemTokenID", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
 	as.systemTokenRepository.On("UpdateLastUsedAt", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, workspaces[0].ID.String(), utils.GetDummyAuthorizationAuthorization(path, method))
@@ -117,8 +117,8 @@ func (as *AuthorizeSuite) TestAuthorizeSystemTokenClosedPathWithoutPermissionToW
 	var systemToken = utils.GetDummySystemToken()
 
 	as.systemTokenRepository.On("FindByToken", systemToken.Token).Return(systemToken, nil).Once()
-	as.workspaceRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(systemToken.Workspaces, nil).Once()
-	as.permissionRepository.On("FindBySystemTokenId", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
+	as.workspaceRepository.On("FindBySystemTokenID", systemToken.ID.String()).Return(systemToken.Workspaces, nil).Once()
+	as.permissionRepository.On("FindBySystemTokenID", systemToken.ID.String()).Return(utils.GetDummyPermissions(), nil).Once()
 
 	err := as.authorizeSystemToken.Execute(systemToken.Token, "workspace-id", utils.GetDummyAuthorizationAuthorization(path, method))
 

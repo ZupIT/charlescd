@@ -24,7 +24,7 @@ import (
 
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
-	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers/representation"
 	uuidPkg "github.com/google/uuid"
 	"github.com/labstack/echo/v4"

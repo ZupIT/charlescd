@@ -38,10 +38,9 @@ func (pg Page) IsLast() bool {
 func (pg Page) TotalPages() int {
 	if pg.Total == 0 {
 		return 1
-	} else {
-		d := float64(pg.Total) / float64(pg.PageSize)
-		return int(math.Ceil(d))
 	}
+	d := float64(pg.Total) / float64(pg.PageSize)
+	return int(math.Ceil(d))
 }
 
 func (pg *Page) FillDefaults() {

@@ -26,9 +26,9 @@ import (
 type User struct {
 	ID            uuid.UUID
 	Name          string
-	PhotoUrl      string
+	PhotoURL      string
 	Email         string
 	IsRoot        bool
-	SystemTokenId uuid.UUID
+	SystemTokenID uuid.UUID
 	CreatedAt     time.Time
 }

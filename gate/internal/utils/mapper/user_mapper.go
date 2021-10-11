@@ -27,10 +27,10 @@ func UserModelToDomain(user models.User) domain.User {
 	return domain.User{
 		ID:            user.ID,
 		Name:          user.Name,
-		PhotoUrl:      user.PhotoUrl,
+		PhotoURL:      user.PhotoURL,
 		Email:         user.Email,
 		IsRoot:        user.IsRoot,
-		SystemTokenId: user.SystemTokenId,
+		SystemTokenID: user.SystemTokenID,
 		CreatedAt:     user.CreatedAt,
 	}
 }
@@ -39,10 +39,10 @@ func UserDomainToModel(user domain.User) models.User {
 	return models.User{
 		ID:            user.ID,
 		Name:          user.Name,
-		PhotoUrl:      user.PhotoUrl,
+		PhotoURL:      user.PhotoURL,
 		Email:         user.Email,
 		IsRoot:        user.IsRoot,
-		SystemTokenId: user.SystemTokenId,
+		SystemTokenID: user.SystemTokenID,
 		CreatedAt:     user.CreatedAt,
 	}
 }

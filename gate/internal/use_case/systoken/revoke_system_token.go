@@ -16,7 +16,7 @@
  *
  */
 
-package system_token
+package systoken
 
 import (
 	"time"
@@ -41,7 +41,7 @@ func NewRevokeSystemToken(repository repository.SystemTokenRepository) revokeSys
 }
 
 func (r revokeSystemToken) Execute(id uuid.UUID) error {
-	systemToken, err := r.systemTokenRepository.FindById(id)
+	systemToken, err := r.systemTokenRepository.FindByID(id)
 
 	if err != nil {
 		return logging.WithOperation(err, "RevokeSystemToken.Execute")

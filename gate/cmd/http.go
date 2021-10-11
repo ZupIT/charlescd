@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	authorizationInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
-	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/go-playground/locales/en"
@@ -55,7 +55,7 @@ func newServer(pm persistenceManager, sm serviceManager) server {
 	return server{
 		persistenceManager: pm,
 		serviceManager:     sm,
-		httpServer:         createHttpServerInstance(),
+		httpServer:         createHTTPServerInstance(),
 	}
 }
 
@@ -64,7 +64,7 @@ func (server server) start(port string) error {
 	return server.httpServer.Start(fmt.Sprintf(":%s", port))
 }
 
-func createHttpServerInstance() *echo.Echo {
+func createHTTPServerInstance() *echo.Echo {
 	httpServer := echo.New()
 	httpServer.Use(echoMiddleware.RequestID())
 	httpServer.Use(middlewares.ContextLogger)

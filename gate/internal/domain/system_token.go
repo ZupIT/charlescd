@@ -41,10 +41,10 @@ func (systemToken SystemToken) CreateUserFromSystemToken() User {
 	return User{
 		ID:            uuid.New(),
 		Name:          systemToken.Name,
-		PhotoUrl:      "",
+		PhotoURL:      "",
 		Email:         systemToken.ID.String() + "@system.token",
 		IsRoot:        false,
-		SystemTokenId: systemToken.ID,
+		SystemTokenID: systemToken.ID,
 		CreatedAt:     time.Now(),
 	}
 }

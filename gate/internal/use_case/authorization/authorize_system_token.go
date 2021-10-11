@@ -28,7 +28,7 @@ import (
 )
 
 type AuthorizeSystemToken interface {
-	Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error
+	Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error
 }
 
 type authorizeSystemToken struct {
@@ -51,7 +51,7 @@ func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
 	}
 }
 
-func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error {
+func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error {
 	allowed, err := authorizeSystemToken.enforcer.Authorize("public", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
@@ -76,17 +76,17 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	}
 
 	if !systemToken.AllWorkspaces {
-		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenId(systemToken.ID.String())
+		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenID(systemToken.ID.String())
 		if err != nil {
 			return logging.WithOperation(err, "authorize.systemToken")
 		}
 
-		if !contains(workspaces, workspaceId) {
+		if !contains(workspaces, workspaceID) {
 			return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
 		}
 	}
 
-	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.ID.String())
+	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenID(systemToken.ID.String())
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
 	}

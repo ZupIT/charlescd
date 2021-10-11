@@ -16,7 +16,7 @@
  *
  */
 
-package system_token
+package systoken
 
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"

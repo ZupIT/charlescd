@@ -16,33 +16,46 @@
  *
  */
 
-package system_token
+package systoken
 
 import (
-	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/google/uuid"
+	"strings"
 )
 
-type GetSystemToken interface {
-	Execute(id uuid.UUID) (domain.SystemToken, error)
+type RegenerateSystemToken interface {
+	Execute(id uuid.UUID) (string, error)
 }
 
-type getSystemToken struct {
+type regenerateSystemToken struct {
 	systemTokenRepository repository.SystemTokenRepository
 }
 
-func NewGetSystemToken(repository repository.SystemTokenRepository) GetSystemToken {
-	return getSystemToken{
+func NewRegenerateSystemToken(repository repository.SystemTokenRepository) RegenerateSystemToken {
+	return regenerateSystemToken{
 		systemTokenRepository: repository,
 	}
 }
 
-func (s getSystemToken) Execute(id uuid.UUID) (domain.SystemToken, error) {
-	systemToken, err := s.systemTokenRepository.FindById(id)
+func (r regenerateSystemToken) Execute(id uuid.UUID) (string, error) {
+	systemToken, err := r.systemTokenRepository.FindByID(id)
 	if err != nil {
-		return domain.SystemToken{}, logging.WithOperation(err, "GetSystemToken.Execute")
+		return "", logging.WithOperation(err, "RevokeSystemToken.Execute")
 	}
-	return systemToken, nil
+
+	if systemToken.Revoked {
+		return "", logging.NewError("Cannot update revoked tokens", logging.CustomError{}, logging.BusinessError, nil)
+	}
+
+	systemToken.Token = strings.ReplaceAll(uuid.New().String(), "-", "")
+
+	err = r.systemTokenRepository.Update(systemToken)
+
+	if err != nil {
+		return "", logging.WithOperation(err, "RevokeSystemToken.Execute")
+	}
+
+	return systemToken.Token, nil
 }
