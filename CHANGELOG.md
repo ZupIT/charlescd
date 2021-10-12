@@ -237,7 +237,7 @@ Fixes
 ---
 
 ## 0.4.6 (18/12/2020)
-- [#670](https://github.com/ZupIT/charlescd/pull/670) Vulnerabilites fixes
+- [#670](https://github.com/ZupIT/charlescd/pull/670) Vulnerabilities fixes
 - [#623](https://github.com/ZupIT/charlescd/pull/623) removing unused legacy code
 - [#686](https://github.com/ZupIT/charlescd/pull/686) Creating rate limit of APIs access
 - [#706](https://github.com/ZupIT/charlescd/pull/706) The 'delete' button should be inactive when the circle is active

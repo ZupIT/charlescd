@@ -113,7 +113,7 @@ data:
           - headers_raw: A raw string containing the actual headers the server sent back. Will not exist if header_stream_callback is defined above.
           - set_cookies: A dictionary of cookies given by the "Set-Cookie" header from the server. Will not exist if the server did not set any cookies.
 
-        If an error occured, false will be returned along with a curl error code and a message.
+        If an error occurred, false will be returned along with a curl error code and a message.
       ]]
       send = function(url, args)
         local handle = curl.curl_easy_init()
