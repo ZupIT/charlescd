@@ -26,7 +26,6 @@ import (
 )
 
 const (
-	notExecuted      = "NOT_EXECUTED"
 	executionSuccess = "SUCCESS"
 	inExecution      = "IN_EXECUTION"
 	executionFailed  = "FAILED"

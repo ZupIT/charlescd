@@ -57,38 +57,31 @@ linters:
   enable:
   - revive
   - govet
-  - nolintlint
   - gosimple
-  - deadcode
   - bodyclose
   - nakedret
-  - nolintlint
+  - unconvert
+  - errcheck
+  - gofmt
+  - errcheck
+  - ineffassign
+  - staticcheck
+  - structcheck
+  - typecheck
+  - unused
+  - varcheck
+  - asciicheck
+  - bodyclose
+  - depguard
+  - dogsled
+  - dupl
+  - exportloopref
+  - gocyclo
+  - goheader
+  - gomodguard
+  - goprintffuncname
+  - misspell
+  - nakedret
   - rowserrcheck
   - sqlclosecheck
   - unconvert
-  - unparam
-  - errcheck
-  - staticcheck
-  - gofmt
-#  - prealloc
-#    - errcheck
-#    - ineffassign
-#    - staticcheck
-#    - structcheck
-#    - typecheck
-#    - unused
-#    - varcheck
-#    - asciicheck
-#    - bodyclose
-#    - depguard
-#    - dogsled
-#    - dupl
-#    - exhaustive
-#    - exportloopref
-#    - gocyclo
-#    - gofmt
-#    - goheader
-#    - goimports
-#    - gomodguard
-#    - goprintffuncname
-#    - misspell

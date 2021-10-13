@@ -54,7 +54,7 @@ func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, errors.Erro
 		return []Plugin{}, errors.NewError("Get error", err.Error()).
 			WithOperations("getPluginsDirectoriesByCategory.ReadDir")
 	}
-
+	plugins = make([]Plugin, 0, len(ps))
 	for _, p := range ps {
 		readme, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s/readme.json", pluginsDir, categoryName, p.Name()))
 		if err != nil {
