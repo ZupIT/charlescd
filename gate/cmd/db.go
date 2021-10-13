@@ -119,7 +119,7 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
-		return persistenceManager{}, fmt.Errorf("cannot instantiate system token repository with error: %s", err.Error())
+		return persistenceManager{}, fmt.Errorf("cannot instantiate system token repository with error: %w", err)
 	}
 
 	permissionRepo, err := repository.NewPermissionRepository(db, queriesPath)
