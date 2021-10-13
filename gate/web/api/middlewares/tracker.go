@@ -33,6 +33,10 @@ func ContextLogger(next echo.HandlerFunc) echo.HandlerFunc {
 		defer func() {
 			err = logger.Sync()
 		}()
+
+		if err != nil {
+			return err
+		}
 		sugar := logger.Sugar().With("request-id", echoCtx.Response().Header().Get("x-request-id"))
 		ctx := context.WithValue(echoCtx.Request().Context(), logging.LoggerFlag, sugar)
 		echoCtx.SetRequest(echoCtx.Request().Clone(ctx))
