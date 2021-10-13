@@ -23,6 +23,7 @@
     ".gitignore",
     ".vscode",
     "dist/",
+    "**/mocks/**",
     "coverage/**",
     "upgrades/**",
     "**/*.svg",
