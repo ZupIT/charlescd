@@ -27,7 +27,7 @@ export class ExecutionsController {
   ) { }
 
   @Get('/')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  // @UsePipes(new ValidationPipe({ transform: true }))
   public async allExecutions(
     @Query() params: ExecutionQuery,
   ): Promise<PaginatedResponse<Execution>> {

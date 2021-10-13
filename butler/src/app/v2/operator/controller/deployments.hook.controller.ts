@@ -12,7 +12,6 @@ export class DeploymentsHookController {
 
   @Post('/v2/operator/deployment/hook/reconcile')
   @HttpCode(200)
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: HookParams) : Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
     return await this.reconcileDeploymentUsecase.execute(params)
   }

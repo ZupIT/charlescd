@@ -55,7 +55,6 @@ export class DeploymentsController {
   }
 
   @Get('/:id/logs')
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
   ): Promise<ReadLogsDto> {
@@ -64,7 +63,6 @@ export class DeploymentsController {
 
   @Post('/:id/undeploy')
   @UsePipes(UndeploymentValidation)
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async createUndeployment(
     @Param('id') deploymentId: string,
     @Headers('x-circle-id') incomingCircleId: string | undefined

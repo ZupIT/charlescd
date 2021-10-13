@@ -28,7 +28,7 @@ export class RoutesHookController {
 
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
-  @UsePipes(new ValidationPipe({ transform: true }))
+  // @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: RouteHookParams): Promise<HookReconcileResponseDto> {
     return await this.createRoutesUseCase.execute(params)
   }
