@@ -19,7 +19,6 @@ import { ExceptionBuilder } from '../../../core/utils/exception.utils'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
 import * as Joi from 'joi'
 import { ValidationError } from 'joi'
-import { size } from 'lodash'
 
 
 
