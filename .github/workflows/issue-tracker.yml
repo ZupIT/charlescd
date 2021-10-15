@@ -1,12 +1,13 @@
 name: Issue Tracker
 on:
+  issue_comment:
   issues:
     types: [opened, edited, reopened]
     
 jobs:
-  build:
+  issue:
     runs-on: ubuntu-latest
-
+    if: ${{ !github.event.issue.pull_request }}
     steps:
     - name: Git Issue Details
       run: |
