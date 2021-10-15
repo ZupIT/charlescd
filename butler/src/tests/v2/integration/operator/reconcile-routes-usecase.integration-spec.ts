@@ -53,7 +53,7 @@ describe('Reconcile routes usecase', () => {
     executionRepository = app.get<ExecutionRepository>(ExecutionRepository)
     consoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
     routeUseCase = app.get<ReconcileRoutesUsecase>(ReconcileRoutesUsecase)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
 
     hookParamsWith2Components = {
       controller: {},

@@ -105,7 +105,7 @@ export class GitLabRepository implements Repository {
   private async fetch(url: string, config: AxiosRequestConfig):Promise<AxiosResponse<any> | undefined> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
     try {
-      return this.httpService.get(url, config).pipe(
+      return await this.httpService.get(url, config).pipe(
         map(response => response),
         retryWhen(error => this.getRetryFetchCondition(error) )
       ).toPromise()

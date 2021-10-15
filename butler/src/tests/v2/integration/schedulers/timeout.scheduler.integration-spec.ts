@@ -52,7 +52,7 @@ describe('TimeoutScheduler', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     timeoutScheduler = app.get<TimeoutScheduler>(TimeoutScheduler)
     k8sClient = app.get<K8sClient>(K8sClient)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
   })
 
   beforeEach(async() => {

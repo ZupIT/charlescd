@@ -27,8 +27,7 @@ interface DatabaseEntity {
 @Injectable()
 export class FixtureUtilsService {
   constructor(
-    @Inject('Connection') public connection: Connection,
-    private readonly manager: EntityManager
+    public readonly manager: EntityManager
   ) {
   }
 
@@ -36,7 +35,7 @@ export class FixtureUtilsService {
     try {
       const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
       for (const entity of entities) {
-        const repository = await this.connection.getRepository(entity.name)
+        const repository = await this.manager.connection.getRepository(entity.name)
         await repository.query(`TRUNCATE ${entity.tableName} CASCADE;`)
       }
     } catch (error) {

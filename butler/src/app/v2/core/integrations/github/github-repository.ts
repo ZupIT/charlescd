@@ -100,7 +100,7 @@ export class GitHubRepository implements Repository {
   private async fetch(url: URL, config: AxiosRequestConfig) :Promise<AxiosResponse<any, any> | undefined>{
     this.consoleLoggerService.log('START:FETCHING_RESOURCE', url.toString())
     try {
-      return this.httpService.get(url.toString(), config).pipe(
+      return await this.httpService.get(url.toString(), config).pipe(
         map(response => response),
         retryWhen(error => this.getRetryFetchCondition(error) )
       ).toPromise()

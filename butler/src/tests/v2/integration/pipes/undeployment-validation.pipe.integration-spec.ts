@@ -51,7 +51,7 @@ describe('DeploymentCleanupHandler', () => {
     app = await TestSetupUtils.createApplication(module)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<UndeploymentValidation>(UndeploymentValidation)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
     manifests = simpleManifests
     TestSetupUtils.seApplicationConstants()
   })
