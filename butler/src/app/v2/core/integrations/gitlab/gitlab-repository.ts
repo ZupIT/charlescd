@@ -60,7 +60,9 @@ export class GitLabRepository implements Repository {
 
   private async downloadResource(url: URL, resourceName: string, config: AxiosRequestConfig): Promise<Resource> {
     const response = await this.fetch(`${url.origin}${url.pathname}/tree${url.search}`, config)
-
+    if (!response || !response.data){
+      throw new ExceptionBuilder('Error downloading resource', HttpStatus.INTERNAL_SERVER_ERROR).build()
+    }
     if(this.isResourceFile(response.data)) {
       return this.downloadFile(url, resourceName, config)
     }
@@ -86,6 +88,9 @@ export class GitLabRepository implements Repository {
   private async downloadFile(url: URL, path: string, config: AxiosRequestConfig): Promise<Resource> {
     const fileUrl = `${url.origin}${url.pathname}/files/${encodeURIComponent(path)}?ref=${url.searchParams.get('ref')}`
     const fileContent = await this.fetch(fileUrl, config)
+    if (!fileContent) {
+      throw new ExceptionBuilder('Error downloading file', HttpStatus.INTERNAL_SERVER_ERROR).build()
+    }
     return {
       name: fileContent.data.file_name,
       type: ResourceType.FILE,
@@ -97,10 +102,10 @@ export class GitLabRepository implements Repository {
     return !data?.length
   }
 
-  private async fetch(url: string, config: AxiosRequestConfig): Promise<AxiosResponse> {
+  private async fetch(url: string, config: AxiosRequestConfig):Promise<AxiosResponse<any> | undefined> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
     try {
-      return await this.httpService.get(url, config).pipe(
+      return this.httpService.get(url, config).pipe(
         map(response => response),
         retryWhen(error => this.getRetryFetchCondition(error) )
       ).toPromise()

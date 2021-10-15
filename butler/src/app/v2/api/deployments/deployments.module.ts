@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HttpModule, Module } from '@nestjs/common'
+import {HttpModule, Module} from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { MooveService } from '../../core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'

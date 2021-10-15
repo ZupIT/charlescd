@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { HttpService, Inject, Injectable } from '@nestjs/common'
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { HttpService, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { ConfigurationConstants } from '../../constants/application/configuration.constants'
-import { ConsoleLoggerService } from '../../logs/console/console-logger.service'
+import { ConsoleLoggerService } from '../../logs/console'
 import { Repository, RequestConfig, Resource, ResourceType } from '../interfaces/repository.interface'
 import { ExceptionBuilder } from '../../utils/exception.utils'
-import { HttpStatus } from '@nestjs/common/enums/http-status.enum'
 import { concatMap, delay, map, retryWhen, tap } from 'rxjs/operators'
 import { Observable, of, throwError } from 'rxjs'
 import { AppConstants } from '../../constants'
 import * as https from 'https'
 import { IoCTokensConstants } from '../../constants/ioc'
 import IEnvConfiguration from '../../configuration/interfaces/env-configuration.interface'
+import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { URL } from 'url'
 
 @Injectable()
 export class GitHubRepository implements Repository {
@@ -57,7 +57,9 @@ export class GitHubRepository implements Repository {
 
   private async downloadResource(url: URL, resourceName: string, config: AxiosRequestConfig): Promise<Resource> {
     const response = await this.fetch(url, config)
-
+    if (!response || !response.data){
+      throw new ExceptionBuilder('Error downloading chart', HttpStatus.INTERNAL_SERVER_ERROR).build()
+    }
     if(this.isFile(response.data)) {
       return {
         name: response.data.name,
@@ -78,6 +80,9 @@ export class GitHubRepository implements Repository {
         resource.children?.push(await this.downloadResource(url, item.name, config))
       } else {
         const fileContent = await this.fetch(item._links.git, config)
+        if (!fileContent || !fileContent.data){
+          throw new ExceptionBuilder('Error reading file content', HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
         resource.children?.push({
           name: item.name,
           type: ResourceType.FILE,
@@ -92,12 +97,12 @@ export class GitHubRepository implements Repository {
     return !Array.isArray(data)
   }
 
-  private async fetch(url: URL, config: AxiosRequestConfig): Promise<AxiosResponse> {
+  private async fetch(url: URL, config: AxiosRequestConfig) :Promise<AxiosResponse<any, any> | undefined>{
     this.consoleLoggerService.log('START:FETCHING_RESOURCE', url.toString())
     try {
-      return await this.httpService.get(url.toString(), config).pipe(
+      return this.httpService.get(url.toString(), config).pipe(
         map(response => response),
-        retryWhen(error => this.getRetryFetchCondition(error))
+        retryWhen(error => this.getRetryFetchCondition(error) )
       ).toPromise()
     } catch (error) {
       this.consoleLoggerService.error('ERROR:FETCHING_RESOURCE', error)

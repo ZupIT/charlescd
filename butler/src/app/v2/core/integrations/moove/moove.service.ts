@@ -71,10 +71,10 @@ export class MooveService {
         retryWhen(error => this.getNotificationRetryCondition(error))
       ).toPromise()
       this.consoleLoggerService.log('FINISH:NOTIFY_DEPLOYMENT_STATUS', { deploymentId, status, callbackUrl })
-      return response
+      return { status: response?.status || 500, data: response?.data, statusText: response?.statusText || '', headers: {}, config: {} }
     } catch (error) {
       this.consoleLoggerService.error('ERROR:NOTIFY_DEPLOYMENT_STATUS', error)
-      return { status: 500, data: error, statusText: 'Error notifying moove', headers:  [], config: {} }
+      return { status: 500, data: error, statusText: 'Error notifying moove', headers: {}, config: {} }
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
