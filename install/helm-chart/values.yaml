@@ -88,6 +88,7 @@ CharlesApplications:
     enabled: true
     # -- Name of Deployment
     name: charlescd-moove
+    mooveDeployCallback: http://charlescd-moove:8080
     sidecarIstio:
       # -- Enable istio in installation
       enabled: true

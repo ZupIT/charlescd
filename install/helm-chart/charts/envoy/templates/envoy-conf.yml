@@ -41,17 +41,8 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-moove
-                  {{- end}}
-                  {{ if .Values.octopipe.enabled }}
-                  - match:
-                      prefix: "/octopipe/"
-                    route:
-                      prefix_rewrite: "/"
-                      cluster: charlescd-octopipe
-                    typed_per_filter_config:
-                      envoy.filters.http.lua:
-                        "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
-                        disabled: true
+                      auto_host_rewrite: true
+
                   {{- end}}
                   {{ if .Values.circlematcher.enabled }}
                   - match:
@@ -59,6 +50,7 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-circle-matcher
+                      auto_host_rewrite: true
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -80,6 +72,7 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-compass
+                      auto_host_rewrite: true
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -91,6 +84,7 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-hermes
+                      auto_host_rewrite: true
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
@@ -102,12 +96,14 @@ data:
                     route:
                       prefix_rewrite: "/"
                       cluster: charlescd-gate
+                      auto_host_rewrite: true
                   {{- end}}
                   {{ if .Values.ui.enabled }}
                   - match:
                       prefix: "/"
                     route:
                       cluster: charlescd-ui
+                      auto_host_rewrite: true
                     typed_per_filter_config:
                       envoy.filters.http.lua:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
