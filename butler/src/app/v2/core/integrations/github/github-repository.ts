@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,8 +96,8 @@ export class GitHubRepository implements Repository {
   private isFile(data: unknown): boolean {
     return !Array.isArray(data)
   }
-
-  private async fetch(url: URL, config: AxiosRequestConfig) :Promise<AxiosResponse<any, any> | undefined>{
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  private async fetch(url: URL, config: AxiosRequestConfig): Promise<AxiosResponse<any> | undefined>{
     this.consoleLoggerService.log('START:FETCHING_RESOURCE', url.toString())
     try {
       return await this.httpService.get(url.toString(), config).pipe(

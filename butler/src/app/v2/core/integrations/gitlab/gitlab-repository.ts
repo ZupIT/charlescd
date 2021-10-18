@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ export class GitLabRepository implements Repository {
   private isResourceFile(data?: unknown[]): boolean {
     return !data?.length
   }
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   private async fetch(url: string, config: AxiosRequestConfig):Promise<AxiosResponse<any> | undefined> {
     this.consoleLoggerService.log('START:FETCHING RESOURCE', url)
     try {
