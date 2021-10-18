@@ -6,7 +6,7 @@ This is CharlesCD contributing guide. Please read the following sections to lear
 ## **Welcome**
 :wave:Welcome! 
 
-## **Getting started**
+## **Table of contents**
 
 1. [**Before you contribute**](#Before-you-contribute)
     1. [Legal](#Legal)
@@ -51,7 +51,7 @@ Check out the requisites before contributing to CharlesCD:
 ### **Tests aren’t optional**
 We encourage you to write tests before the implementation, see below:
 
-1. Bugfixes need to include a test proving the existence of the bug and why you are fixing it. If it doesn't include, it will return to the sender.
+1. Bug fixes need to include a test proving the existence of the bug and why you are fixing it. If it doesn't include, it will return to the sender.
 2. New features need to include a test that proves it actually works. If it doesn't include, it will return to the sender.
 
 ### **Be aware of documentation changes**
@@ -159,7 +159,7 @@ Follow the steps:
 **Step 9.** Push your commit to get it back up to your fork: ```git push origin your_branch ```
 
 ### **Did you find a bug?**
-Follow the steps to write a bugfix:
+Follow the steps to write a bug fix:
 
 **Step 1.** Make sure your branch is based on the branch of version where the bug was first introduced;
 **Step 2.** Follow the tutorial [**How to make a change suggestion?**](#how-to-make-a-change-suggestion);

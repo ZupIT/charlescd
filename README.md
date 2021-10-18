@@ -30,14 +30,14 @@
 <br>
 
 # **About**
-CharlesCD is an open-source project that deploys quickly, continuously, and securely. It allows development teams to simultaneously perform hypothesis validations with specific groups of users.
+CharlesCD is an open source project that deploys quickly, continuously, and securely. It allows development teams to simultaneously perform hypothesis validations with specific groups of users.
 
 It is possible to segment your customers through specific characteristics (circles) and, at the same time, submit several versions of the same application for testing with users of the circles.
 
 ## **How was the project created?**
-The project's concept refers to the theory proposed by biologist Charles Darwin (1809-1882), that evolution occurs through adaptation to a new environment. In the development's case happens through constant improvements in applications, for example, when you build and test hypotheses to deploy more effective releases.
+The project's concept refers to the theory proposed by biologist Charles Darwin (1809-1882), that evolution occurs through adaptation to a new environment. In the development's case, this logic happens through constant improvements in applications, for example, when you build and test hypotheses to deploy more effective releases.
 
-CharlesCD offers a solution to the community, we want to enhance the deployment and  hypotheses testing work, because it will allow you to identify problems faster and  execute possible solutions to solve them.
+CharlesCD offers a solution to the community: we want to enhance the deployment and  hypotheses testing work, because it will allow you to identify problems faster and  execute possible solutions to solve them.
 
 For this reason, we consider CharlesCD a Darwinism's application within the development and programming universe.
 
@@ -54,10 +54,9 @@ CharlesCD's installation considers these components:
 1. Charles' architecture specific modules; 
 2. **Keycloak**, used for the project's authentication and authorization. However, if you already have an Identity Manager (IDM) and you want to use it, you have just to configure it during Charles' installation;
 3. A PostgreSQL database for backend modules (`charlescd-moove`, `charlescd-butler`,`charlescd-villager`, `charlescd-gate` e `charlescd-compass`) and Keycloak;
-4. A **Redis**:  To be used by `charlescd-circle-matcher`;
-5. By default, a module called `octopipe` is already in Charles' installation. This is a native platform created by our team to make installation easier, without previous configurations. However, you can disable it in the installation files.
-6. A **RabbitMQ** for `charlescd-hermes` use.
-7. **Ingress**: It is used to expose the HTTP and HTTPS routes outside the cluster to services inside the cluster. When you install Charles, it already has a default ingress, however, if you want to use your own.
+4. A **Redis** to be used by `charlescd-circle-matcher`;
+5. A **RabbitMQ** for `charlescd-hermes` use.
+6. **Ingress** which is used to expose the HTTP and HTTPS routes outside the cluster to services inside the cluster. When you install Charles, it already has a default ingress, however, you can use your own.
 
 ### **Requirements**
 To install Charles your environment needs the following requisites: 
