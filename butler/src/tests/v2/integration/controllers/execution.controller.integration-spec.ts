@@ -29,7 +29,6 @@ import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import { simpleManifests } from '../../fixtures/manifests.fixture'
 import { UrlConstants } from '../test-constants'
-import anything = jasmine.anything;
 
 describe('Execution Controller v2', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -67,7 +66,7 @@ describe('Execution Controller v2', () => {
       errors: [{
         meta: {
           component: 'butler',
-          timestamp: anything()
+          timestamp: expect.anything()
         },
         source: {
           pointer: 'size'
@@ -78,7 +77,7 @@ describe('Execution Controller v2', () => {
       {
         meta: {
           component: 'butler',
-          timestamp: anything()
+          timestamp: expect.anything()
         },
         source: {
           pointer: 'page'
