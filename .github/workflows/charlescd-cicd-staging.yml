@@ -488,34 +488,24 @@ jobs:
         id: get_hash_version
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
-#       - name: Update charts
-#         run: |
-#           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
-#           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
-#           echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
-#           rm -f ./install/helm-chart/Chart.old.yaml &&
-#           cat ./install/helm-chart/Chart.yaml
-
-      - name: Update helm dependencies
-        uses: WyriHaximus/github-action-helm3@a6dad6c6efc0f3b13e96eea5fed44f061fee912d
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
-          exec: helm dependency update ./install/helm-chart
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyECRSession
+          role-skip-session-tagging: true
 
-      - name: Zup Settings staging
+
+      - name: Invoke lambda function to deploy butler in apps
         run: |
-          cat <<-EOF > values-charles-staging.yaml
-          ${{ secrets.VALUES_CHARLES_STAGING }}
-          EOF
-          cat <<-EOF > ./install/helm-chart/templates/nginx-cert.yaml
-          ${{ secrets.NGINX_CERT }}
-          EOF
-
-      - name: Deploy staging
-        uses: WyriHaximus/github-action-helm3@a6dad6c6efc0f3b13e96eea5fed44f061fee912d
-        with:
-          exec: helm upgrade -n staging bug-hunting ./install/helm-chart/ --values=./values-charles-staging.yaml --set CharlesApplications.butler.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.moove.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.villager.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.compass.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.ui.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.circleMatcher.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
-          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
-
+          aws lambda invoke --function-name main-release \
+          --invocation-type RequestResponse \
+          --cli-binary-format raw-in-base64-out \
+          --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}", "CLUSTER": "${{ secrets.MAIN_CLUSTER }}" }' response.json
 
   notify-team:
     runs-on: ubuntu-latest
