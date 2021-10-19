@@ -500,12 +500,12 @@ jobs:
           role-skip-session-tagging: true
 
 
-      - name: Invoke lambda function to deploy butler in apps
+      - name: Invoke lambda function to deploy main env
         run: |
           aws lambda invoke --function-name main-release \
           --invocation-type RequestResponse \
           --cli-binary-format raw-in-base64-out \
-          --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}", "CLUSTER": "${{ secrets.MAIN_CLUSTER }}" }' response.json
+          --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}", "CLUSTER": "${{ secrets.MAIN_CLUSTER }}" }' response.json
 
   notify-team:
     runs-on: ubuntu-latest
