@@ -4,6 +4,8 @@
       "config:base"
     ],
     "schedule": [
-      "every weekend"
-    ]
+      "before 3am on the first day of the month"
+    ],
+
+    "commitBody": "Signed-off-by: Renovate Bot <bot@renovateapp.com>"
   }
