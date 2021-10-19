@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ describe('DeploymentCleanupHandler', () => {
     app = await TestSetupUtils.createApplication(module)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     pipe = app.get<UndeploymentValidation>(UndeploymentValidation)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
     manifests = simpleManifests
     TestSetupUtils.seApplicationConstants()
   })
