@@ -29,6 +29,8 @@ on:
     paths:
       - "compass/**"
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest

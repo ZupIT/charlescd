@@ -20,6 +20,8 @@ on:
   push:
     branches: [ main ]
 
+permissions: read-all
+
 jobs:
   build_and_push_alpha_butler:
     runs-on: ubuntu-latest
