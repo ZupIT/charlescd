@@ -507,6 +507,13 @@ jobs:
           --cli-binary-format raw-in-base64-out \
           --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}", "CLUSTER": "${{ secrets.MAIN_CLUSTER }}" }' response.json
 
+      - name: Invoke lambda function to deploy butler in sandbox env
+        run: |
+          aws lambda invoke --function-name main-release \
+          --invocation-type RequestResponse \
+          --cli-binary-format raw-in-base64-out \
+          --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}", "BUTLER_DEPLOY": true, "CLUSTER": "${{ secrets.SANDBOX_CLUSTER }}" }' response.json
+
   notify-team:
     runs-on: ubuntu-latest
     needs: [ deploy_staging ]
