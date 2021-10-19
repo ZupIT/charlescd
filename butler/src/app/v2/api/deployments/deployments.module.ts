@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import { MooveService } from '../../core/integrations/moove'
 import { DeploymentsController } from './controller/deployments.controller'
 import { DeploymentEntityV2 as DeploymentEntity } from './entity/deployment.entity'
 import { Execution } from './entity/execution.entity'
-import { ReceiveNotificationUseCase } from './use-cases/receive-notification.usecase'
 import { ComponentsRepositoryV2 } from './repository'
 import { CreateDeploymentUseCase } from './use-cases/create-deployment.usecase'
 import { CreateUndeploymentUseCase } from './use-cases/create-undeployment.usecase'
@@ -56,7 +55,6 @@ import { LogRepository } from './repository/log.repository'
   providers: [
     CreateDeploymentUseCase,
     CreateUndeploymentUseCase,
-    ReceiveNotificationUseCase,
     PaginatedExecutionsUseCase,
     FindDeploymentLogsByIdUsecase,
     MooveService,
