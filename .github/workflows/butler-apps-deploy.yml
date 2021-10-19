@@ -78,4 +78,4 @@ jobs:
 
     - name: Invoke lambda function to deploy butler in apps
       run: |
-        aws invoke --function-name main-release --invocation-type RequestResponse --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}", "BUTLER_DEPLOY_APPS": true, "CLUSTER": "${{ secrets.APPS_CLUSTER }}" }' response.json
+        aws lambda invoke --function-name main-release --invocation-type RequestResponse --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}", "BUTLER_DEPLOY_APPS": true, "CLUSTER": "${{ secrets.APPS_CLUSTER }}" }' response.json
