@@ -18,7 +18,7 @@ name: butler apps-release
 
 on:
   push:
-    branches: [ release-apps-butler-* ]
+    branches: [ deploy-apps-butler-* ]
 
 jobs:
   build_and_push_prerelease:
@@ -79,11 +79,3 @@ jobs:
     - name: Invoke lambda function to deploy butler in apps
       run: |
         aws invoke --function-name main-release --invocation-type RequestResponse --payload '{ "VERSION": "${{ steps.get_version.outputs.VERSION }}", "BUTLER_DEPLOY_APPS": true, "CLUSTER": "${{ secrets.APPS_CLUSTER }}" }' response.json
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: charlescd-butler
-        IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
-      run: |
-        cd butler
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
