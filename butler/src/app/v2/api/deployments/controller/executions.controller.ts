@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Controller, Get, Query, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Controller, Get, Query, UsePipes } from '@nestjs/common'
 import { ExecutionQuery } from '../dto/execution/paginated-execution-query.dto'
 import { PaginatedResponse } from '../dto/paginated-response.dto'
 import { Execution } from '../entity/execution.entity'
 import { PaginatedExecutionsUseCase } from '../use-cases/paginated-executions.usecase'
+import { JoiValidationExecutionPipe } from '../pipes/joi-validation-execution-pipe'
 
 @Controller('v2/executions')
 export class ExecutionsController {
@@ -27,7 +28,7 @@ export class ExecutionsController {
   ) { }
 
   @Get('/')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new JoiValidationExecutionPipe())
   public async allExecutions(
     @Query() params: ExecutionQuery,
   ): Promise<PaginatedResponse<Execution>> {
