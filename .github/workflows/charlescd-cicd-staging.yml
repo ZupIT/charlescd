@@ -64,7 +64,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -118,7 +118,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -170,7 +170,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -226,7 +226,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -285,7 +285,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
       
       - name: Login to Amazon ECR
@@ -341,7 +341,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -393,7 +393,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -445,7 +445,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
@@ -496,7 +496,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-duration-seconds: 1200
-          role-session-name: MyECRSession
+          role-session-name: MyLambdaSession
           role-skip-session-tagging: true
 
 
