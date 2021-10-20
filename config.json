@@ -26,6 +26,7 @@
     "**/mocks/**",
     "coverage/**",
     "upgrades/**",
+    "**/*.xml",
     "**/*.svg",
     "**/*.lock",
     "**/*.sum",
