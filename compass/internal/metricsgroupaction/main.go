@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import (
 type UseCases interface {
 	ValidateGroupAction(metricsGroupAction MetricsGroupAction, workspaceID uuid.UUID) errors.ErrorList
 	ParseGroupAction(metricsGroupAction io.ReadCloser) (MetricsGroupAction, errors.Error)
-	FindGroupActionById(id string) (MetricsGroupAction, errors.Error)
+	FindGroupActionByID(id string) (MetricsGroupAction, errors.Error)
 	SaveGroupAction(metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)
 	ListGroupActionExecutionResumeByGroup(groupID string) ([]GroupActionExecutionStatusResume, errors.Error)
 	UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error)

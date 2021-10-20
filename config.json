@@ -23,12 +23,15 @@
     ".gitignore",
     ".vscode",
     "dist/",
+    "**/mocks/**",
     "coverage/**",
     "upgrades/**",
+    "**/*.xml",
     "**/*.svg",
     "**/*.lock",
     "**/*.sum",
-    "**/*.ico"
+    "**/*.ico",
+    "**/*.tpl"
   ],
   "startDateLicense": 2020
 }

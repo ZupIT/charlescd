@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Body, Controller, Get, Headers, HttpStatus, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, Get, Headers, HttpStatus, Param, Post, UsePipes } from '@nestjs/common'
 import { validate as uuidValidate } from 'uuid'
 import { CreateDeploymentRequestDto } from '../dto/create-deployment-request.dto'
 import { ReadDeploymentDto } from '../dto/read-deployment.dto'
@@ -55,7 +55,6 @@ export class DeploymentsController {
   }
 
   @Get('/:id/logs')
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async findDeploymentEvents(
       @Param('id') deploymentId: string,
   ): Promise<ReadLogsDto> {
@@ -64,7 +63,6 @@ export class DeploymentsController {
 
   @Post('/:id/undeploy')
   @UsePipes(UndeploymentValidation)
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async createUndeployment(
     @Param('id') deploymentId: string,
     @Headers('x-circle-id') incomingCircleId: string | undefined
