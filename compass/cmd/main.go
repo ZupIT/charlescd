@@ -95,7 +95,6 @@ func main() {
 		return actionDispatcher.Start(stopChan)
 	})
 
-
 	router := api.NewAPI(
 		enforcer,
 		lmt,
