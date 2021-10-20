@@ -25,6 +25,7 @@
     "dist/",
     "coverage/**",
     "upgrades/**",
+    "**/*.xml",
     "**/*.svg",
     "**/*.lock",
     "**/*.sum",
