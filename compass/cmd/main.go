@@ -95,9 +95,7 @@ func main() {
 		return actionDispatcher.Start(stopChan)
 	})
 
-	if err := group.Wait(); err != nil {
-		logrus.Fatal(err)
-	}
+
 	router := api.NewAPI(
 		enforcer,
 		lmt,
@@ -111,6 +109,10 @@ func main() {
 	)
 
 	api.Start(router)
+
+	if err := group.Wait(); err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 func configureRequestLimiter() *limiter.Limiter {
