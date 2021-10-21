@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,17 +44,17 @@ func DoAuthorization(authorizeUserToken authorizationInteractor.AuthorizeUserTok
 		}
 
 		var systemToken = echoCtx.Request().Header.Get("x-charles-token")
-		var workspaceId = echoCtx.Request().Header.Get("x-workspace-id")
+		var workspaceID = echoCtx.Request().Header.Get("x-workspace-id")
 
 		if systemToken != "" {
-			err := authorizeSystemToken.Execute(systemToken, workspaceId, request.RequestToDomain())
+			err := authorizeSystemToken.Execute(systemToken, workspaceID, request.RequestToDomain())
 			if err != nil {
 				return HandleError(echoCtx, ctx, err)
 			}
 		} else {
 			var userToken = echoCtx.Request().Header.Get("Authorization")
 
-			err := authorizeUserToken.Execute(userToken, workspaceId, request.RequestToDomain())
+			err := authorizeUserToken.Execute(userToken, workspaceID, request.RequestToDomain())
 			if err != nil {
 				return HandleError(echoCtx, ctx, err)
 			}

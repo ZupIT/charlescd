@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ func getPluginsDirectoriesByCategory(categoryName string) ([]Plugin, errors.Erro
 		return []Plugin{}, errors.NewError("Get error", err.Error()).
 			WithOperations("getPluginsDirectoriesByCategory.ReadDir")
 	}
-
+	plugins = make([]Plugin, 0, len(ps))
 	for _, p := range ps {
 		readme, err := ioutil.ReadFile(fmt.Sprintf("%s/%s/%s/readme.json", pluginsDir, categoryName, p.Name()))
 		if err != nil {

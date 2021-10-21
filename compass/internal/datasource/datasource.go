@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -114,9 +114,14 @@ func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.E
 	dataSources := make([]Response, 0)
 
 	rows, err = main.db.Raw(workspaceDatasourceQuery, workspaceID).Rows()
+
+	if rows != nil && rows.Err() != nil {
+		return []Response{}, errors.NewError("Find all error", rows.Err().Error()).
+			WithOperations("FindAllByWorkspace.Raw")
+	}
 	if err != nil {
-        return []Response{}, errors.NewError("Find all error", err.Error()).
-		WithOperations("FindAllByWorkspace.Raw")
+		return []Response{}, errors.NewError("Find all error", err.Error()).
+			WithOperations("FindAllByWorkspace.Raw")
 	}
 
 	for rows.Next() {
@@ -134,7 +139,7 @@ func (main Main) FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.E
 	return dataSources, nil
 }
 
-func (main Main) FindById(id string) (Response, errors.Error) {
+func (main Main) FindByID(id string) (Response, errors.Error) {
 	dataSource := DataSource{}
 	row := main.db.Raw(datasourceDecryptedQuery, id).Row()
 
@@ -142,7 +147,7 @@ func (main Main) FindById(id string) (Response, errors.Error) {
 		&dataSource.WorkspaceID, &dataSource.DeletedAt, &dataSource.PluginSrc)
 	if dbError != nil {
 		return Response{}, errors.NewError("Find by id error", dbError.Error()).
-			WithOperations("FindById.ScanRows")
+			WithOperations("FindByID.ScanRows")
 	}
 
 	return dataSource.toResponse(), nil
@@ -159,9 +164,9 @@ func (main Main) Delete(id string) errors.Error {
 }
 
 func (main Main) GetMetrics(dataSourceID string) (datasource.MetricList, errors.Error) {
-	dataSourceResult, err := main.FindById(dataSourceID)
+	dataSourceResult, err := main.FindByID(dataSourceID)
 	if err != nil {
-		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindById")
+		return datasource.MetricList{}, err.WithOperations("GetMetrics.FindByID")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
@@ -212,7 +217,7 @@ func (main Main) Save(dataSource Request) (Response, errors.Error) {
 	id := uuid.New().String()
 	entity := DataSource{}
 
-	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data,  dataSource.WorkspaceID)).
+	row := main.db.Exec(Insert(id, dataSource.Name, dataSource.PluginSrc, dataSource.Data, dataSource.WorkspaceID)).
 		Raw(datasourceSaveQuery, id).
 		Row()
 

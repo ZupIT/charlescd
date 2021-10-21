@@ -20,6 +20,8 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions: read-all
+
 jobs:
   dco-gpg-validator:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,17 +36,17 @@ type UseCases interface {
 	PeriodValidate(currentPeriod string) (datasourcePKG.Period, errors.Error)
 	Parse(metricsGroup io.ReadCloser) (MetricsGroup, errors.Error)
 	FindAll() ([]MetricsGroup, errors.Error)
-	FindAllByWorkspaceId(workspaceId uuid.UUID) ([]MetricsGroup, errors.Error)
-	ResumeByCircle(circleId string) ([]MetricGroupResume, errors.Error)
+	FindAllByWorkspaceID(workspaceID uuid.UUID) ([]MetricsGroup, errors.Error)
+	ResumeByCircle(circleID string) ([]MetricGroupResume, errors.Error)
 	Save(metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
-	FindById(id string) (MetricsGroup, errors.Error)
+	FindByID(id string) (MetricsGroup, errors.Error)
 	Update(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
 	UpdateName(id string, metricsGroup MetricsGroup) (MetricsGroup, errors.Error)
 	Remove(id string) errors.Error
 	QueryByGroupID(id string, period, interval datasourcePKG.Period) ([]datasourcePKG.MetricValues, errors.Error)
 	ResultByGroup(group MetricsGroup) ([]datasourcePKG.MetricResult, errors.Error)
 	ResultByID(id string) ([]datasourcePKG.MetricResult, errors.Error)
-	ListAllByCircle(circleId string) ([]MetricsGroupRepresentation, errors.Error)
+	ListAllByCircle(circleID string) ([]MetricsGroupRepresentation, errors.Error)
 	Validate(metricsGroup MetricsGroup) errors.ErrorList
 }
 
