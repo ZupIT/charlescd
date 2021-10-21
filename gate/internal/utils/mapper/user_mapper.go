@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,24 +25,24 @@ import (
 
 func UserModelToDomain(user models.User) domain.User {
 	return domain.User{
-		ID:        user.ID,
-		Name:      user.Name,
-		PhotoUrl:  user.PhotoUrl,
-		Email:     user.Email,
-		IsRoot:    user.IsRoot,
-		SystemTokenId: user.SystemTokenId,
-		CreatedAt: user.CreatedAt,
+		ID:            user.ID,
+		Name:          user.Name,
+		PhotoURL:      user.PhotoURL,
+		Email:         user.Email,
+		IsRoot:        user.IsRoot,
+		SystemTokenID: user.SystemTokenID,
+		CreatedAt:     user.CreatedAt,
 	}
 }
 
 func UserDomainToModel(user domain.User) models.User {
 	return models.User{
-		ID:        user.ID,
-		Name:      user.Name,
-		PhotoUrl:  user.PhotoUrl,
-		Email:     user.Email,
-		IsRoot:    user.IsRoot,
-		SystemTokenId: user.SystemTokenId,
-		CreatedAt: user.CreatedAt,
+		ID:            user.ID,
+		Name:          user.Name,
+		PhotoURL:      user.PhotoURL,
+		Email:         user.Email,
+		IsRoot:        user.IsRoot,
+		SystemTokenID: user.SystemTokenID,
+		CreatedAt:     user.CreatedAt,
 	}
 }

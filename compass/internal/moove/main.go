@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type ApiUseCases interface {
-	GetMooveComponents(circleIDHeader, circleId string, workspaceId uuid.UUID) ([]byte, errors.Error)
+type APIUseCases interface {
+	GetMooveComponents(circleIDHeader, circleID string, workspaceID uuid.UUID) ([]byte, errors.Error)
 }
 
 type APIClient struct {
@@ -36,7 +36,7 @@ type APIClient struct {
 	httpClient *http.Client
 }
 
-func NewAPIClient(url string, timeout time.Duration) ApiUseCases {
+func NewAPIClient(url string, timeout time.Duration) APIUseCases {
 	return APIClient{
 		URL: url,
 		httpClient: &http.Client{

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ func (s *Suite) TestFindDataSourceById() {
 	dataSourceInsert, dataSourceStruct := datasourceInsert("src.so")
 
 	s.DB.Exec(dataSourceInsert)
-	res, err := s.repository.FindById(dataSourceStruct.ID.String())
+	res, err := s.repository.FindByID(dataSourceStruct.ID.String())
 
 	require.Nil(s.T(), err)
 	dataSourceStruct.BaseModel = res.BaseModel
@@ -188,7 +188,7 @@ func (s *Suite) TestDelete() {
 }
 
 func (s *Suite) TestFindByIdNotFoundError() {
-	_, err := s.repository.FindById("any-id")
+	_, err := s.repository.FindByID("any-id")
 	require.NotNil(s.T(), err)
 }
 

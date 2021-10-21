@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import (
 type UseCases interface {
 	Parse(dataSource io.ReadCloser) (Request, errors.Error)
 	FindAllByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
-	FindById(id string) (Response, errors.Error)
+	FindByID(id string) (Response, errors.Error)
 	Save(dataSource Request) (Response, errors.Error)
 	Delete(id string) errors.Error
 	GetMetrics(dataSourceID string) (datasource.MetricList, errors.Error)
