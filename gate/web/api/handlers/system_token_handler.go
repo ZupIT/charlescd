@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,14 +19,15 @@
 package handlers
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
-	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers/representation"
 	uuidPkg "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"strconv"
 )
 
 func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken) echo.HandlerFunc {
@@ -47,8 +48,9 @@ func CreateSystemToken(createSystemToken systemTokenInteractor.CreateSystemToken
 		}
 
 		var authorization = echoCtx.Request().Header.Get("Authorization")
-
-		createdSystemToken, err := createSystemToken.Execute(authorization, request.RequestToInput())
+		input := request.RequestToInput()
+		input.RemoveDuplicationOnFields()
+		createdSystemToken, err := createSystemToken.Execute(authorization, input)
 		if err != nil {
 			return HandleError(echoCtx, ctx, err)
 		}

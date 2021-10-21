@@ -66,7 +66,7 @@ func (_m *SystemTokenRepository) FindAll(name string, pageRequest domain.Page) (
 }
 
 // FindById provides a mock function with given fields: id
-func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
+func (_m *SystemTokenRepository) FindByID(id uuid.UUID) (domain.SystemToken, error) {
 	ret := _m.Called(id)
 
 	var r0 domain.SystemToken
@@ -123,6 +123,20 @@ func (_m *SystemTokenRepository) Update(systemToken domain.SystemToken) error {
 
 // UpdateLastUsedAt provides a mock function with given fields: systemToken
 func (_m *SystemTokenRepository) UpdateLastUsedAt(systemToken domain.SystemToken) error {
+	ret := _m.Called(systemToken)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.SystemToken) error); ok {
+		r0 = rf(systemToken)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateRevokeStatus provides a mock function with given fields: systemToken
+func (_m *SystemTokenRepository) UpdateRevokeStatus(systemToken domain.SystemToken) error {
 	ret := _m.Called(systemToken)
 
 	var r0 error

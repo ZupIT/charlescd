@@ -143,7 +143,7 @@ export class HelmManifest implements Manifest {
     // TODO remove this when possible. Here only because of manifest backward compatibility
     return {
       name: config.componentName,
-      'image.tag': config.imageUrl,
+      'image.url': config.imageUrl,
       circleId: config.circleId,
       component: config.componentName,
       tag: config.tag

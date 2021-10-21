@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
+
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
 	"github.com/golang-migrate/migrate/v4"
@@ -37,9 +37,9 @@ import (
 
 type persistenceManager struct {
 	systemTokenRepository repository.SystemTokenRepository
-	permissionRepository repository.PermissionRepository
-	userRepository repository.UserRepository
-	workspaceRepository repository.WorkspaceRepository
+	permissionRepository  repository.PermissionRepository
+	userRepository        repository.UserRepository
+	workspaceRepository   repository.WorkspaceRepository
 }
 
 func prepareDatabase() (persistenceManager, error) {
@@ -88,6 +88,9 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 
 func runMigrations(sqlDb *sql.DB) error {
 	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
+	if err != nil {
+		return err
+	}
 	dbMigrated, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", "resources/migrations"),
 		configuration.Get("DB_NAME"), driver)
@@ -114,30 +117,30 @@ func initCryptoLib() error {
 func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 	queriesPath := configuration.Get("QUERIES_PATH")
 
-	systemTokenRepo, err := repository.NewSystemTokenRepository(db, queriesPath)
+	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate system token repository with error: %w", err)
 	}
 
 	permissionRepo, err := repository.NewPermissionRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate permission repository with error: %s", err.Error())
 	}
 
 	userRepo, err := repository.NewUserRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate user repository with error: %s", err.Error())
 	}
 
 	workspaceRepo, err := repository.NewWorkspaceRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate workspace repository with error: %s", err.Error())
 	}
 
 	return persistenceManager{
 		systemTokenRepository: systemTokenRepo,
-		permissionRepository: permissionRepo,
-		userRepository: userRepo,
-		workspaceRepository: workspaceRepo,
+		permissionRepository:  permissionRepo,
+		userRepository:        userRepo,
+		workspaceRepository:   workspaceRepo,
 	}, nil
 }

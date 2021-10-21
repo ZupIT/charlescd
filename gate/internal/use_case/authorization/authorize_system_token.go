@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package authorization
 
 import (
 	"errors"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	"github.com/ZupIT/charlescd/gate/internal/repository"
@@ -27,7 +28,7 @@ import (
 )
 
 type AuthorizeSystemToken interface {
-	Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error
+	Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error
 }
 
 type authorizeSystemToken struct {
@@ -50,7 +51,7 @@ func NewAuthorizeSystemToken(enforcer service.SecurityFilterService,
 	}
 }
 
-func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error {
+func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error {
 	allowed, err := authorizeSystemToken.enforcer.Authorize("public", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.systemToken")
@@ -63,7 +64,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 	if allowed {
 		systemToken.SetLastUsed()
-		authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+		err := authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+		if err != nil {
+			return logging.WithOperation(err, "authorize.systemToken")
+		}
 		return nil
 	}
 
@@ -72,17 +76,17 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 	}
 
 	if !systemToken.AllWorkspaces {
-		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenId(systemToken.ID.String())
+		workspaces, err := authorizeSystemToken.workspaceRepository.FindBySystemTokenID(systemToken.ID.String())
 		if err != nil {
 			return logging.WithOperation(err, "authorize.systemToken")
 		}
 
-		if !contains(workspaces, workspaceId) {
+		if !contains(workspaces, workspaceID) {
 			return logging.NewError("Forbidden", errors.New("forbidden"), logging.ForbiddenError, nil, "authorize.systemToken")
 		}
 	}
 
-	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenId(systemToken.ID.String())
+	permissions, err := authorizeSystemToken.permissionRepository.FindBySystemTokenID(systemToken.ID.String())
 	if err != nil {
 		return logging.WithOperation(err, "authorize.systemToken")
 	}
@@ -95,7 +99,10 @@ func (authorizeSystemToken authorizeSystemToken) Execute(authorizationToken stri
 
 		if allowed {
 			systemToken.SetLastUsed()
-			authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+			err := authorizeSystemToken.systemTokenRepository.UpdateLastUsedAt(systemToken)
+			if err != nil {
+				return logging.NewError(err.Error(), err, logging.InternalError, nil, "authorize.systemToken")
+			}
 			return nil
 		}
 	}

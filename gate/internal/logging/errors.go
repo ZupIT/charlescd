@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@
 package logging
 
 import (
-	"fmt"
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
 	"strconv"
 	"time"
+
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/google/uuid"
 )
@@ -39,7 +39,7 @@ type CustomError struct {
 }
 
 func (customError CustomError) Error() string {
-	return fmt.Sprintf("%s", customError.Detail)
+	return customError.Detail
 }
 
 func WithOperation(err error, operation string) error {
@@ -90,7 +90,7 @@ func NewError(message string, err error, typeError string, meta map[string]strin
 func NewValidationError(validationError error, uniTranslator *ut.UniversalTranslator) error {
 	errors := validationError.(validator.ValidationErrors)
 	translator, _ := uniTranslator.GetTranslator("en")
-	meta := make(map[string]string, 0)
+	meta := make(map[string]string)
 
 	for _, validErr := range errors {
 		meta[validErr.Namespace()] = validErr.Translate(translator)

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithPermissionsNotFound() {
 
 	require.Zero(st.T(), result)
 	require.NotNil(st.T(), err)
-	require.Equal(st.T(), "some permissions were not found", err.Error())
+	require.Equal(st.T(), "invalid permissions", err.Error())
 
 	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
@@ -249,7 +249,7 @@ func (st *SystemTokenSuite) TestCreateSystemTokenWithWorkspaceNotFound() {
 
 	require.Zero(st.T(), result)
 	require.NotNil(st.T(), err)
-	require.Equal(st.T(), "some workspaces were not found", err.Error())
+	require.Equal(st.T(), "workspaces were not found", err.Error())
 
 	require.Equal(st.T(), 1, len(st.userRepository.ExpectedCalls))
 	require.Equal(st.T(), 1, len(st.permissionRepository.ExpectedCalls))
