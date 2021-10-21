@@ -27,8 +27,7 @@ class ButlerErrorDecoderTest extends Specification {
     ErrorDecoder errorDecoder
 
     void setup() {
-        ButlerEncoderConfiguration butlerEncoderConfiguration = new ButlerEncoderConfiguration()
-        errorDecoder = butlerEncoderConfiguration.butlerErrorDecoder()
+        this.errorDecoder = new ButlerErrorDecoder()
     }
 
     def "should throw business exception when status is 401"() {
