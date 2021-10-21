@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="23px" viewBox="0 0 18 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Account</title>
+    <defs>
+        <path d="M5,4.781 L5,12 C5,16.549 10.39,19.948 11.999,20.863 C13.607,19.947 19,16.536 19,12 L19,4.781 L12,3.031 L5,4.781 Z M12,23 C11.847,23 11.693,22.965 11.553,22.895 C11.204,22.72 3,18.543 3,12 L3,4 C3,3.541 3.313,3.141 3.757,3.03 L11.757,1.03 C11.917,0.99 12.083,0.99 12.243,1.03 L20.242,3.03 C20.688,3.141 21,3.541 21,4 L21,12 C21,18.543 12.796,22.72 12.447,22.895 C12.307,22.965 12.153,23 12,23 L12,23 Z" id="path-user1"></path>
+    </defs>
+    <g id="Symbols-user" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="illustration-user/circle-matcher" transform="translate(-494.000000, -129.000000)">
+            <g id="Icon-user/Security/Shield" transform="translate(491.000000, 128.373793)">
+                <mask id="mask-user2" fill="white">
+                    <use xlink:href="#path-user1"></use>
+                </mask>
+                <use id="Icon-user-Shield" fill="currentColor" fill-rule="evenodd" xlink:href="#path-user1"></use>
+            </g>
+        </g>
+    </g>
+</svg>
