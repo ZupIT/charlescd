@@ -29,6 +29,8 @@ on:
     paths:
       - "hermes/**"
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest

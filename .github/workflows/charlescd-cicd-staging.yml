@@ -22,6 +22,8 @@ on:
   push:
     branches: [ charlescd-release-*.0 ]
 
+permissions: read-all
+
 jobs:
   build_and_push_beta_butler:
     runs-on: ubuntu-latest
