@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,20 +26,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var whitelistPaths = []string{
-	"/health",
-}
-
-func getWhiteList(path string) string {
-	for _, p := range whitelistPaths {
-		if p == path {
-			return p
-		}
-	}
-
-	return ""
-}
-
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -59,6 +45,10 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		w.WriteHeader(recorderWrite.Code)
-		recorderWrite.Body.WriteTo(w)
+		_, err := recorderWrite.Body.WriteTo(w)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }

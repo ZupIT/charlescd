@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ func (c *Client) handleReconnect(addr string, messageQueue string, waitQueue str
 	for c.alive {
 		c.isConnected = false
 		t := time.Now()
-		fmt.Printf("Attempting to connect to rabbitMQ: %s\n", addr)
+		logrus.Infof("Attempting to connect to rabbitMQ: %s\n", addr)
 		var retryCount int
 		for !c.connect(addr, messageQueue, waitQueue, exchangeMessageQueue, exchangeWaitQueue, messageRoutingKey) {
 			if !c.alive {
@@ -122,8 +122,11 @@ func (c *Client) connect(addr string, messageQueue string, waitQueue string, exc
 		c.logger.Printf("failed connecting to channel: %v", err)
 		return false
 	}
-	ch.Confirm(false)
-
+	err = ch.Confirm(false)
+	if err != nil {
+		c.logger.Printf("Error to put channel in confirm mode: %v", err)
+		return false
+	}
 	err = ch.ExchangeDeclare(
 		exchangeMessageQueue,
 		"topic",
@@ -192,7 +195,12 @@ func (c *Client) connect(addr string, messageQueue string, waitQueue string, exc
 func (c *Client) changeConnection(connection *amqp.Connection, channel *amqp.Channel) {
 	c.connection = connection
 	c.channel = channel
-	c.channel.Confirm(false)
+	err := c.channel.Confirm(false)
+	if err != nil {
+		c.logger.WithFields(logrus.Fields{
+			"err": fmt.Errorf("cannot confirm channel %s", err.Error()),
+		})
+	}
 	c.notifyClose = make(chan *amqp.Error)
 	c.notifyConfirm = make(chan amqp.Confirmation, 1)
 	c.channel.NotifyClose(c.notifyClose)
@@ -309,17 +317,25 @@ func (c *Client) Stream() (<-chan amqp.Delivery, error) {
 }
 
 func (c *Client) LogAndAck(msg amqp.Delivery, response payloads.MessageResponse) {
-	msg.Ack(false)
-
+	ackErr := msg.Ack(false)
+	if ackErr != nil {
+		c.logger.WithFields(logrus.Fields{
+			"err": fmt.Errorf("cannot acknowledge message %s", ackErr.Error()),
+		})
+	}
 	c.logger.WithFields(logrus.Fields{
-		"Message consumed": response.Id,
+		"Message consumed": response.ID,
 		"Time":             time.Now(),
 	}).Info()
 }
 
 func (c *Client) LogAndNack(msg amqp.Delivery, t time.Time, err string, args ...interface{}) {
-	msg.Nack(false, false)
-
+	nackErr := msg.Nack(false, false)
+	if nackErr != nil {
+		c.logger.WithFields(logrus.Fields{
+			"err": fmt.Errorf("cannot nack message %s", nackErr.Error()),
+		})
+	}
 	c.logger.WithFields(logrus.Fields{
 		"took-ms": time.Since(t).Milliseconds(),
 	}).Error(fmt.Sprintf(err, args...))
