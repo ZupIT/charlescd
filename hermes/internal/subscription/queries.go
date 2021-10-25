@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,17 +26,17 @@ import (
 	"hermes/internal/configuration"
 )
 
-func InsertMap(id, externalId uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
+func InsertMap(id, externalID uuid.UUID, url, description, apiKey, createdBy string, events pq.StringArray) map[string]interface{} {
 	return map[string]interface{}{
 		"id":          id,
-		"ExternalId":  externalId,
-		"Url":         url,
+		"ExternalID":  externalID,
+		"URL":         url,
 		"Description": description,
-		"ApiKey": clause.Expr{
+		"APIKey": clause.Expr{
 			SQL: `PGP_SYM_ENCRYPT(?,?,'cipher-algo=aes256')`,
 			Vars: []interface{}{
-				fmt.Sprintf("%s", apiKey),
-				fmt.Sprintf("%s", configuration.GetConfiguration("ENCRYPTION_KEY")),
+				apiKey,
+				configuration.GetConfiguration("ENCRYPTION_KEY"),
 			},
 		},
 		"Events":    events,

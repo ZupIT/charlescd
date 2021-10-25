@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import { TestSetupUtils } from '../test-setup-utils'
 import { simpleManifests } from '../../fixtures/manifests.fixture'
 import { UrlConstants } from '../test-constants'
 
-describe('DeploymentController v2', () => {
+describe('Execution Controller v2', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let manager: EntityManager
@@ -48,7 +48,7 @@ describe('DeploymentController v2', () => {
     app = await TestSetupUtils.createApplication(module)
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
     manifests = simpleManifests
   })
 
@@ -62,19 +62,35 @@ describe('DeploymentController v2', () => {
   })
 
   it('validate query string parameters', async() => {
-    const errorMessages = {
-      error: 'Bad Request',
-      message: [
-        'size must not be less than 1',
-        'page must not be less than 0'
-      ],
-      statusCode: 400
+    const errorResponse = {
+      errors: [{
+        meta: {
+          component: 'butler',
+          timestamp: expect.anything()
+        },
+        source: {
+          pointer: 'size'
+        },
+        status: 400,
+        title: '"size" must be greater than or equal to 1'
+      },
+      {
+        meta: {
+          component: 'butler',
+          timestamp: expect.anything()
+        },
+        source: {
+          pointer: 'page'
+        },
+        status: 400,
+        title: '"page" must be greater than or equal to 0'
+      }]
     }
     await request(app.getHttpServer())
       .get('/v2/executions').query({ current: false, size: 0, page: -1 })
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(response => {
-        expect(response.body).toEqual(errorMessages)
+        expect(response.body).toEqual(errorResponse)
       })
   })
 

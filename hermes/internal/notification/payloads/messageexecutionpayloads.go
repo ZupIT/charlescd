@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import (
 )
 
 type FullMessageExecutionResponse struct {
-	Id           uuid.UUID `json:"-"`
-	ExecutionId  uuid.UUID `json:"-"`
+	ID           uuid.UUID `json:"-"`
+	ExecutionID  uuid.UUID `json:"-"`
 	ExecutionLog string    `json:"executionLog"`
-	HttpStatus   int       `json:"httpStatus"`
+	HTTPStatus   int       `json:"httpStatus"`
 	Status       string    `json:"status"`
 	LoggedAt     time.Time `json:"loggedAt"`
 }

@@ -22,6 +22,8 @@ on:
       - prereleased
     branches: [ main ]
 
+permissions: read-all
+
 jobs:
   build_and_push_release_butler:
     runs-on: ubuntu-latest

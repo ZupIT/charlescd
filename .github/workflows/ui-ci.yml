@@ -28,7 +28,9 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'ui/**'
-    
+
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest

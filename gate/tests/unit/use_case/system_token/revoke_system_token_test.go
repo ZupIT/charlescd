@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020,2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import (
 func (st *SystemTokenSuite) TestRevokeSystemToken() {
 	systemToken := utils.GetDummySystemToken()
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindByID", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")).Return(nil).Once()
 
 	err := st.revokeSystemToken.Execute(systemToken.ID)
@@ -38,7 +38,7 @@ func (st *SystemTokenSuite) TestRevokeSystemToken() {
 	require.Nil(st.T(), err)
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindByID", systemToken.ID))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")))
 
 	updatedSystemToken := st.systemTokenRepository.Calls[1].Parent.Calls[1].Arguments.Get(0).(domain.SystemToken)
@@ -49,7 +49,7 @@ func (st *SystemTokenSuite) TestRevokeSystemToken() {
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
 	uuid := uuid.New()
-	st.systemTokenRepository.On("FindById", uuid).
+	st.systemTokenRepository.On("FindByID", uuid).
 		Return(domain.SystemToken{}, logging.NewError("Not found error", logging.CustomError{}, logging.NotFoundError, nil)).Once()
 
 	err := st.revokeSystemToken.Execute(uuid)
@@ -58,13 +58,13 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenIDNotFound() {
 	require.Equal(st.T(), logging.NotFoundError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", uuid))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindByID", uuid))
 }
 
 func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 	systemToken := utils.GetDummySystemToken()
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindByID", systemToken.ID).Return(systemToken, nil).Once()
 	st.systemTokenRepository.On("UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")).
 		Return(logging.NewError("Not found error", logging.CustomError{}, logging.NotFoundError, nil)).Once()
 
@@ -74,7 +74,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenErrorWhenUpdating() {
 	require.Equal(st.T(), logging.NotFoundError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 2, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindByID", systemToken.ID))
 	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "UpdateRevokeStatus", mock.AnythingOfType("domain.SystemToken")))
 }
 
@@ -82,7 +82,7 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
 	systemToken := utils.GetDummySystemToken()
 	systemToken.Revoked = true
 
-	st.systemTokenRepository.On("FindById", systemToken.ID).Return(systemToken, nil).Once()
+	st.systemTokenRepository.On("FindByID", systemToken.ID).Return(systemToken, nil).Once()
 
 	err := st.revokeSystemToken.Execute(systemToken.ID)
 
@@ -90,5 +90,5 @@ func (st *SystemTokenSuite) TestRevokeSystemTokenOkIfTokenIsAlreadyRevoked() {
 	require.Equal(st.T(), logging.BusinessError, logging.GetErrorType(err))
 
 	require.Equal(st.T(), 1, len(st.systemTokenRepository.ExpectedCalls))
-	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindById", systemToken.ID))
+	require.True(st.T(), st.systemTokenRepository.AssertCalled(st.T(), "FindByID", systemToken.ID))
 }

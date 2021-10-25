@@ -21,6 +21,8 @@ on:
     paths:
       - 'keycloak/**'
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest

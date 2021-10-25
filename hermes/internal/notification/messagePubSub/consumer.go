@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,17 +69,29 @@ func (main *Main) sendWebhookEvent(messageResponse payloads.MessageResponse) {
 				WithOperations("SendWebhookEvent"),
 		}).Errorln(webhookErr)
 
-		main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHttpStatus(webhookErr))
+		updateMessageErr := main.updateMessageInfo(messageResponse, deliveredFailed, webhookErr.Error().Detail, extractHTTPStatus(webhookErr))
+		if updateMessageErr != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Cannot update message", updateMessageErr.Error()).
+					WithOperations("SendWebhookEvent"),
+			}).Errorln(updateMessageErr)
+		}
 
 		if messageResponse.RetryCount < configuration.GetConfigurationAsInt("CONSUMER_MESSAGE_RETRY_ATTEMPTS") {
 			sendToWaitQueue(main, messageResponse)
 		}
 	} else {
-		main.updateMessageInfo(messageResponse, delivered, successLog, 200)
+		updateMessageErr := main.updateMessageInfo(messageResponse, delivered, successLog, 200)
+		if updateMessageErr != nil {
+			logrus.WithFields(logrus.Fields{
+				"err": errors.NewError("Cannot update message", updateMessageErr.Error()).
+					WithOperations("SendWebhookEvent"),
+			}).Errorln(updateMessageErr)
+		}
 	}
 }
 
-func extractHttpStatus(err errors.Error) int {
+func extractHTTPStatus(err errors.Error) int {
 	httpStatus, aErr := strconv.Atoi(err.Error().Meta["http-status"])
 	if aErr != nil {
 		logrus.Error(aErr)
@@ -88,7 +100,7 @@ func extractHttpStatus(err errors.Error) int {
 }
 
 func sendToWaitQueue(main *Main, msg payloads.MessageResponse) {
-	msg.RetryCount += 1
+	msg.RetryCount++
 	err := main.sendMessageWithExpiration(msg)
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
