@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ type UseCases interface {
 	ParseUpdate(subscription io.ReadCloser) (UpdateRequest, errors.Error)
 	Validate(subscription Request) errors.ErrorList
 	Save(subscription Request) (SaveResponse, errors.Error)
-	Update(subscriptionId uuid.UUID, subscription UpdateRequest) (Response, errors.Error)
-	Delete(subscriptionId uuid.UUID, author string) errors.Error
-	FindById(subscriptionId uuid.UUID) (Response, errors.Error)
-	FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error)
-	FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error)
-	CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error)
+	Update(subscriptionID uuid.UUID, subscription UpdateRequest) (Response, errors.Error)
+	Delete(subscriptionID uuid.UUID, author string) errors.Error
+	FindByID(subscriptionID uuid.UUID) (Response, errors.Error)
+	FindAllByExternalIDAndEvent(externalID uuid.UUID, event string) ([]ExternalIDResponse, errors.Error)
+	FindAllByExternalID(externalID uuid.UUID) ([]Response, errors.Error)
+	CountAllByExternalID(externalID uuid.UUID) (int64, errors.Error)
 	SendWebhookEvent(msg payloads.MessageResponse) errors.Error
 }
 type Main struct {

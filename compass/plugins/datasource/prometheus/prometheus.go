@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import (
 	"github.com/prometheus/common/model"
 )
 
-func getPrometheusApiClient(datasourceConfiguration []byte) (api.Client, error) {
+func getPrometheusAPIClient(datasourceConfiguration []byte) (api.Client, error) {
 	var prometheusConfig map[string]string
 	_ = json.Unmarshal(datasourceConfiguration, &prometheusConfig)
 
@@ -50,7 +50,7 @@ func getErrorMoreThanOneResultByQuery(query string) error {
 
 func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult model.Vector) ([]datasource.Value, error) {
 	if prometheusResult.Len() > 1 {
-		return nil, getErrorMoreThanOneResultByQuery(string(query))
+		return nil, getErrorMoreThanOneResultByQuery(query)
 	}
 
 	datasourceValues := []datasource.Value{}
@@ -75,7 +75,7 @@ func getDatasourceValuesByPrometheusVectorResult(query string, prometheusResult 
 
 func getDatasourceValuesByPrometheusVectorMetrix(query string, prometheusResult model.Matrix) ([]datasource.Value, error) {
 	if prometheusResult.Len() > 1 {
-		return nil, getErrorMoreThanOneResultByQuery(string(query))
+		return nil, getErrorMoreThanOneResultByQuery(query)
 	}
 
 	datasourceValues := []datasource.Value{}
@@ -110,7 +110,7 @@ func TestConnection(datasourceConfiguration []byte) error {
 }
 
 func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
-	apiClient, err := getPrometheusApiClient(datasourceConfiguration)
+	apiClient, err := getPrometheusAPIClient(datasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func GetMetrics(datasourceConfiguration []byte) (datasource.MetricList, error) {
 }
 
 func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
-	apiClient, err := getPrometheusApiClient(request.DatasourceConfiguration)
+	apiClient, err := getPrometheusAPIClient(request.DatasourceConfiguration)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func Query(request datasource.QueryRequest) ([]datasource.Value, error) {
 }
 
 func Result(request datasource.ResultRequest) (float64, error) {
-	values, err := Query(datasource.QueryRequest{request, datasource.Period{}, datasource.Period{}})
+	values, err := Query(datasource.QueryRequest{ResultRequest: request, RangePeriod: datasource.Period{}, Interval: datasource.Period{}})
 	if err != nil {
 		return 0, err
 	}

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ func TestMessageValidate(t *testing.T) {
 
 	t.Run("Validate without error", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
-			ExternalId: uuid.New(),
-			EventType: "DEPLOY",
-			Event: event,
+			ExternalID: uuid.New(),
+			EventType:  "DEPLOY",
+			Event:      event,
 		}
 
 		expected := 0
@@ -54,23 +54,22 @@ func TestMessageValidate(t *testing.T) {
 
 	})
 
-
 	t.Run("Validate with invalid uuid", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
-			ExternalId: uuid.Nil,
-			EventType: "DEPLOY",
-			Event: event,
+			ExternalID: uuid.Nil,
+			EventType:  "DEPLOY",
+			Event:      event,
 		}
 
 		err := main.Validate(eventMessage)
-		verifyResult(t, "ExternalId is required", err.GetErrors()[0].Error().Detail)
+		verifyResult(t, "ExternalID is required", err.GetErrors()[0].Error().Detail)
 	})
 
 	t.Run("Validate with empty event type", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
-			ExternalId: uuid.New(),
-			EventType: "",
-			Event: event,
+			ExternalID: uuid.New(),
+			EventType:  "",
+			Event:      event,
 		}
 
 		err := main.Validate(eventMessage)
@@ -79,9 +78,9 @@ func TestMessageValidate(t *testing.T) {
 
 	t.Run("Validate with empty event", func(t *testing.T) {
 		eventMessage := payloads.PayloadRequest{
-			ExternalId: uuid.New(),
-			EventType: "DEPLOY",
-			Event: nil,
+			ExternalID: uuid.New(),
+			EventType:  "DEPLOY",
+			Event:      nil,
 		}
 
 		err := main.Validate(eventMessage)
@@ -89,7 +88,6 @@ func TestMessageValidate(t *testing.T) {
 	})
 
 }
-
 
 func TestMessageParsePayload(t *testing.T) {
 

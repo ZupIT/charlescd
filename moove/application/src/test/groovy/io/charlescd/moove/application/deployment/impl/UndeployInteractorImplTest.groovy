@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,6 @@ class UndeployInteractorImplTest extends Specification {
 
     def 'should undeploy successfully and notify using authorization'() {
         given:
-        def circle =  getCircle(false, MatcherTypeEnum.SIMPLE_KV)
         def workspaceId = TestUtils.workspaceId
         def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
@@ -103,23 +102,6 @@ class UndeployInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.update(_)
-        1 * circleRepository.update(_) >> circle
-        1 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
-        1 * circleMatcherService.updateImport(_, _, _, _, _) >> { arguments ->
-            def circleCompare = arguments[0]
-            def reference = arguments[1]
-            def nodes = arguments[2]
-            def matcherUrl = arguments[3]
-            def active = arguments[4]
-
-            assert circleCompare instanceof Circle
-            assert circleCompare.id == circle.id
-            assert matcherUrl.toString() == workspace.circleMatcherUrl
-            assert reference == circle.reference
-            assert !active
-            assert nodes instanceof List<JsonNode>
-            assert nodes.size() == 1
-        }
 
        notThrown()
     }
@@ -127,7 +109,6 @@ class UndeployInteractorImplTest extends Specification {
     def 'should undeploy successfully and update on matcher with status active false'() {
         given:
         def deployment = getRegularDeployment()
-        def circle = getCircle(false, MatcherTypeEnum.REGULAR)
         def workspaceId = TestUtils.workspaceId
         def workspace = TestUtils.workspace
         def authorization = TestUtils.authorization
@@ -149,21 +130,6 @@ class UndeployInteractorImplTest extends Specification {
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.update(_)
-        0 * circleRepository.update(_) >> circle
-        0 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
-        1 * circleMatcherService.update(_, _, _, _) >> { arguments ->
-            def circleCompare = arguments[0]
-            def reference = arguments[1]
-            def matcherUrl = arguments[2]
-            def active = arguments[3]
-
-            assert circleCompare instanceof Circle
-            assert circleCompare.id == circle.id
-            assert matcherUrl.toString() == workspace.circleMatcherUrl
-            assert reference == circle.reference
-            assert active == false
-
-        }
         notThrown()
     }
 
@@ -191,9 +157,6 @@ class UndeployInteractorImplTest extends Specification {
         1 * userRepository.findBySystemTokenId(systemTokenId) >> Optional.of(author)
         1 * hermesService.notifySubscriptionEvent(_)
         1 * deploymentRepository.update(_)
-        1 * circleRepository.update(_) >> getCircle(false, MatcherTypeEnum.SIMPLE_KV)
-        1 * keyValueRuleRepository.findByCircle(_) >> [TestUtils.keyValueRule]
-        1 * circleMatcherService.updateImport(_, _, _, _, _)
     }
 
     def 'when undeploy has error should throw exception and notify'() {
@@ -213,13 +176,13 @@ class UndeployInteractorImplTest extends Specification {
         1 * workspaceRepository.find(workspaceId) >> Optional.of(workspace)
         1 * deploymentConfigurationRepository.find(deploymentConfigId) >> Optional.of(deploymentConfig)
         1 * deploymentRepository.find(deploymentId, workspaceId) >> Optional.of(getDummyDeployment())
-        1 * buildRepository.findById(buildId) >> Optional.of(build)
+        2 * buildRepository.findById(buildId) >> Optional.of(build)
         1 * deployService.undeploy(deploymentId, author.id, deploymentConfig) >> {
             throw new RuntimeException("Error")
         }
         1 * managementUserSecurityService.getUserEmail(authorization) >> author.email
         1 * userRepository.findByEmail(author.email) >> Optional.of(author)
-        1 * hermesService.notifySubscriptionEvent(_)
+        2 * hermesService.notifySubscriptionEvent(_)
 
         thrown(RuntimeException)
     }
