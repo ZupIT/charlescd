@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import (
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	postgresmigrate "github.com/golang-migrate/migrate/v4/database/postgres"
+	// Only needs init function
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	// Only needs init function
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
@@ -50,6 +52,10 @@ func GetDBConnection(migrationsPath string) (*gorm.DB, error) {
 	}
 
 	driver, err := postgresmigrate.WithInstance(dbInstance, &postgresmigrate.Config{})
+
+	if err != nil {
+		return nil, err
+	}
 
 	m, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", migrationsPath),
@@ -111,4 +117,3 @@ func GetConfigurationAsInt(configuration string) int {
 	}
 	return envAsInt
 }
-

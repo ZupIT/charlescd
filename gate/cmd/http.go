@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"github.com/ZupIT/charlescd/gate/internal/logging"
 	authorizationInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/authorization"
-	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	systemTokenInteractor "github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/web/api/handlers"
 	"github.com/ZupIT/charlescd/gate/web/api/middlewares"
 	"github.com/go-playground/locales/en"
@@ -51,12 +51,12 @@ type CustomValidator struct {
 	translator *ut.UniversalTranslator
 }
 
-func newServer(pm persistenceManager, sm serviceManager) (server, error) {
+func newServer(pm persistenceManager, sm serviceManager) server {
 	return server{
 		persistenceManager: pm,
 		serviceManager:     sm,
-		httpServer:         createHttpServerInstance(),
-	}, nil
+		httpServer:         createHTTPServerInstance(),
+	}
 }
 
 func (server server) start(port string) error {
@@ -64,7 +64,7 @@ func (server server) start(port string) error {
 	return server.httpServer.Start(fmt.Sprintf(":%s", port))
 }
 
-func createHttpServerInstance() *echo.Echo {
+func createHTTPServerInstance() *echo.Echo {
 	httpServer := echo.New()
 	httpServer.Use(echoMiddleware.RequestID())
 	httpServer.Use(middlewares.ContextLogger)

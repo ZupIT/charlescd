@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ package utils
 import (
 	"github.com/ZupIT/charlescd/gate/internal/domain"
 	"github.com/ZupIT/charlescd/gate/internal/service"
-	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	"github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"time"
@@ -76,22 +76,22 @@ func GetDummyAuthorizationNotFound() string {
 	return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTU4NDk4MzEsImlhdCI6MTYxMjU1Mzc4NiwiYXV0aF90aW1lIjoxNjEyNTM1NDE0LCJqdGkiOiI0ZTQ4YWQwNS00M2RkLTQ3NDYtYTc1YS1kYmVjZmIxMDVjNzUiLCJpc3MiOiJodHRwOi8vc2FtcGxlLmlkbS5jb20vYXV0aC9yZWFsbXMvc2FtcGxlLXJlYWxtIiwic3ViIjoiYTRlZGJlMDItZWViOC00N2NiLWFlOTctY2I0NDg2ZmIxZTE0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2FtcGxlLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiJkZDUzMzc5My01MGE5LTQ0ODAtODE1Ni03MWI1N2JlOWYyYTEiLCJhY3IiOiIwIiwibmFtZSI6IkNoYXJsZXMgQWRtaW4iLCJlbWFpbCI6ImNoYXJsZXNhZG1pbkBub3Rmb3VuZCJ9.l5vT9gdKKSK3rc1U83yXlPqLuOjkkChba_Af5KaA45o"
 }
 
-func GetDummyCreateSystemTokenInput() system_token.CreateSystemTokenInput {
-	return system_token.CreateSystemTokenInput{
+func GetDummyCreateSystemTokenInput() systoken.CreateSystemTokenInput {
+	return systoken.CreateSystemTokenInput{
 		Name:        "System Token Test",
 		Permissions: []string{"circles_write", "deploy_write"},
 		Workspaces:  []string{"ddb90f09-146a-4c9d-95f8-2be4841e7e7e", "d2f0a275-4532-4730-8d20-81d00033ee0b"},
 	}
 }
 
-func GetDummyUserSystemToken(systemTokenId uuid.UUID) domain.User {
+func GetDummyUserSystemToken(systemTokenID uuid.UUID) domain.User {
 	return domain.User{
 		ID:            uuid.New(),
 		Name:          "System Token Test",
-		PhotoUrl:      "",
-		Email:         systemTokenId.String() + "@system.token",
+		PhotoURL:      "",
+		Email:         systemTokenID.String() + "@system.token",
 		IsRoot:        false,
-		SystemTokenId: systemTokenId,
+		SystemTokenID: systemTokenID,
 		CreatedAt:     time.Now(),
 	}
 }
@@ -129,7 +129,7 @@ func GetDummyRootUser() domain.User {
 	return domain.User{
 		ID:        uuid.New(),
 		Name:      "Charles Admin",
-		PhotoUrl:  "",
+		PhotoURL:  "",
 		Email:     "charlesadmin@admin",
 		IsRoot:    true,
 		CreatedAt: time.Now(),
@@ -140,7 +140,7 @@ func GetDummyUserAuthorize() domain.User {
 	return domain.User{
 		ID:        uuid.New(),
 		Name:      "John Doe",
-		PhotoUrl:  "",
+		PhotoURL:  "",
 		Email:     "johndoe@email.com",
 		IsRoot:    false,
 		CreatedAt: time.Now(),

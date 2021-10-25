@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,9 +110,9 @@ export class CreateDeploymentUseCase {
     const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
       createDeploymentDto.circle.id
     )
-    const requestedComponentsNames: string[] = this.getDeploymentRequestComponentNames(createDeploymentDto)
+    const requestedComponentIds: string[] = this.getDeploymentRequestComponentIds(createDeploymentDto)
     const unchangedComponents: ComponentEntity[] = activeComponents
-      .filter(component => !requestedComponentsNames.includes(component.name))
+      .filter(component => !requestedComponentIds.includes(component.componentId))
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
     const components = await this.getDeploymentComponents(createDeploymentDto.namespace, createDeploymentDto.circle.id, createDeploymentDto.components, createDeploymentDto.git.token, createDeploymentDto.git.provider)
@@ -168,7 +168,7 @@ export class CreateDeploymentUseCase {
     return execution
   }
 
-  private getDeploymentRequestComponentNames(createDeploymentDto: CreateDeploymentRequestDto): string[] {
-    return createDeploymentDto.components.flatMap(c => c.componentName)
+  private getDeploymentRequestComponentIds(createDeploymentDto: CreateDeploymentRequestDto): string[] {
+    return createDeploymentDto.components.flatMap(c => c.componentId)
   }
 }
