@@ -13,9 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-{{ if and (.Values.mtls.enabled) .Values.mtls.job.enabled }}
 ---
+  {{ if and (.Values.mtls.enabled) .Values.mtls.job.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:

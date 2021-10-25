@@ -185,7 +185,7 @@ env:
 - name: MTLS_ENABLED
   value: {{ .RangeContext.mtls.enabled | quote }}
 {{ end }}
-{{ if .RangeContext.mtls }}
+{{ if .RangeContext.mtls.enabled }}
 - name: KEY_STORE_PASSWORD
   valueFrom:
       secretKeyRef:

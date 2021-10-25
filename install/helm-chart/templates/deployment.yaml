@@ -13,6 +13,7 @@
   # See the License for the specific language governing permissions and
   # limitations under the License.
   #
+---
 
 {{- range .Values.CharlesApplications -}}
 {{- if .enabled -}}
@@ -93,8 +94,10 @@ spec:
           resources:
             {{- toYaml .resources | nindent 14 }}
           volumeMounts:
-          {{- if and (.mtls)  (eq .name "charlescd-moove") }}
-            {{- toYaml .mtls.volumeMounts | nindent 14 }}
+          {{- if and (eq .name "charlescd-moove") (.mtls) }}
+            {{- if (.mtls.enabled) }}
+              {{- toYaml .mtls.volumeMounts | nindent 14 }}
+            {{- end}}
           {{- end}}
       {{- with .nodeSelector }}
       nodeSelector:
@@ -109,8 +112,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-      {{- if and (.mtls) (eq .name "charlescd-moove") }}
-        {{- toYaml .mtls.volumes | nindent 8 }}
+      {{- if and (eq .name "charlescd-moove") (.mtls) }}
+        {{- if (.mtls.enabled) }}
+          {{- toYaml .mtls.volumes | nindent 8 }}
+        {{- end}}
       {{- end}}
 ---
 {{- end }}
