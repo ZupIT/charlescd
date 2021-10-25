@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ package subscription
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"hermes/internal/notification/payloads"
 	"hermes/pkg/errors"
 	"hermes/util"
@@ -36,10 +36,10 @@ import (
 
 type Subscription struct {
 	util.BaseModel
-	ExternalId  uuid.UUID      `json:"externalId"`
-	Url         string         `json:"url"`
+	ExternalID  uuid.UUID      `json:"externalId"`
+	URL         string         `json:"url"`
 	Description string         `json:"description"`
-	ApiKey      []byte         `json:"apiKey" gorm:"type:bytea"`
+	APIKey      []byte         `json:"apiKey" gorm:"type:bytea"`
 	Events      pq.StringArray `json:"events" gorm:"type:text[]"`
 	CreatedBy   string         `json:"createdBy"`
 	DeletedBy   string         `json:"-"`
@@ -49,8 +49,8 @@ type Subscription struct {
 func (main Main) Validate(subscription Request) errors.ErrorList {
 	ers := errors.NewErrorList()
 
-	if subscription.Url == "" {
-		err := errors.NewError("Invalid data", "Url is required").
+	if subscription.URL == "" {
+		err := errors.NewError("Invalid data", "URL is required").
 			WithMeta("field", "url").
 			WithOperations("Validate.UrlIsNil")
 		ers.Append(err)
@@ -102,7 +102,7 @@ func (main Main) Save(request Request) (SaveResponse, errors.Error) {
 	id := uuid.New()
 	var response = SaveResponse{}
 
-	insert := main.db.Model(Subscription{}).Create(InsertMap(id, request.ExternalId, request.Url, request.Description, request.ApiKey, request.CreatedBy, request.Events)).Scan(&response)
+	insert := main.db.Model(Subscription{}).Create(InsertMap(id, request.ExternalID, request.URL, request.Description, request.APIKey, request.CreatedBy, request.Events)).Scan(&response)
 	if insert.Error != nil {
 		return SaveResponse{}, errors.NewError("Save Subscription error", insert.Error.Error()).
 			WithOperations("Save.Insert")
@@ -117,11 +117,11 @@ func (main Main) Save(request Request) (SaveResponse, errors.Error) {
 	return response, nil
 }
 
-func (main Main) Update(subscriptionId uuid.UUID, request UpdateRequest) (Response, errors.Error) {
+func (main Main) Update(subscriptionID uuid.UUID, request UpdateRequest) (Response, errors.Error) {
 	var response = Response{}
 
 	update := main.db.Model(&Subscription{}).
-		Where("id = ?", subscriptionId).
+		Where("id = ?", subscriptionID).
 		Update("events", &request.Events).
 		Scan(&response)
 
@@ -133,8 +133,8 @@ func (main Main) Update(subscriptionId uuid.UUID, request UpdateRequest) (Respon
 	return response, nil
 }
 
-func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
-	result := main.db.Model(&Subscription{}).Where("id = ?", subscriptionId).Updates(map[string]interface{}{"deleted_at": time.Now(), "deleted_by": author})
+func (main Main) Delete(subscriptionID uuid.UUID, author string) errors.Error {
+	result := main.db.Model(&Subscription{}).Where("id = ?", subscriptionID).Updates(map[string]interface{}{"deleted_at": time.Now(), "deleted_by": author})
 	if result.Error != nil {
 		return errors.NewError("Delete Subscription error", result.Error.Error()).
 			WithOperations("Delete.DeleteSubscription")
@@ -143,57 +143,57 @@ func (main Main) Delete(subscriptionId uuid.UUID, author string) errors.Error {
 	return nil
 }
 
-func (main Main) FindById(subscriptionId uuid.UUID) (Response, errors.Error) {
+func (main Main) FindByID(subscriptionID uuid.UUID) (Response, errors.Error) {
 	res := Response{}
 
-	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery(), subscriptionId).Row().
-		Scan(&res.ID, &res.Description, &res.ExternalId, &res.Url, &res.ApiKey, &res.Events)
+	err := main.db.Set("gorm:auto_preload", true).Raw(decryptedSubscriptionQuery(), subscriptionID).Row().
+		Scan(&res.ID, &res.Description, &res.ExternalID, &res.URL, &res.APIKey, &res.Events)
 	if err != nil {
 		return Response{}, errors.NewError("Find Subscription error", err.Error()).
-			WithOperations("FindById.QuerySubscription")
+			WithOperations("FindByID.QuerySubscription")
 	}
 
 	return res, nil
 }
 
-func (main Main) FindAllByExternalIdAndEvent(externalId uuid.UUID, event string) ([]ExternalIdResponse, errors.Error) {
-	var res []ExternalIdResponse
+func (main Main) FindAllByExternalIDAndEvent(externalID uuid.UUID, event string) ([]ExternalIDResponse, errors.Error) {
+	var res []ExternalIDResponse
 
-	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND ? = any(events) AND deleted_at IS NULL", externalId.String(), event)
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND ? = any(events) AND deleted_at IS NULL", externalID.String(), event)
 	if q.Error != nil {
-		return []ExternalIdResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
-			WithOperations("FindAllByExternalIdAndEvent.QuerySubscription")
+		return []ExternalIDResponse{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
+			WithOperations("FindAllByExternalIDAndEvent.QuerySubscription")
 	}
 
 	return res, nil
 }
 
-func (main Main) FindAllByExternalId(externalId uuid.UUID) ([]Response, errors.Error) {
+func (main Main) FindAllByExternalID(externalID uuid.UUID) ([]Response, errors.Error) {
 	var res []Response
 
-	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND deleted_at IS NULL", externalId)
+	q := main.db.Model(&Subscription{}).Find(&res, "external_id = ? AND deleted_at IS NULL", externalID)
 	if q.Error != nil {
 		return []Response{}, errors.NewError("Find Subscription Using ExternalID error", q.Error.Error()).
-			WithOperations("FindAllByExternalId.QuerySubscription")
+			WithOperations("FindAllByExternalID.QuerySubscription")
 	}
 
 	return res, nil
 }
 
-func (main Main) CountAllByExternalId(externalId uuid.UUID) (int64, errors.Error) {
+func (main Main) CountAllByExternalID(externalID uuid.UUID) (int64, errors.Error) {
 	var count int64
 
-	q := main.db.Model(&Subscription{}).Where("external_id = ? AND deleted_at IS NULL", externalId).Count(&count)
+	q := main.db.Model(&Subscription{}).Where("external_id = ? AND deleted_at IS NULL", externalID).Count(&count)
 	if q.Error != nil {
 		return 0, errors.NewError("Count Subscription Using ExternalID error", q.Error.Error()).
-			WithOperations("CountAllByExternalId.QuerySubscription")
+			WithOperations("CountAllByExternalID.QuerySubscription")
 	}
 
 	return count, nil
 }
 
 func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
-	sub, e := main.FindById(msg.SubscriptionId)
+	sub, e := main.FindByID(msg.SubscriptionID)
 	if e != nil {
 		return e
 	}
@@ -201,7 +201,7 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 	msgEvent, err := msg.Event.MarshalJSON()
 	if err != nil {
 		return errors.NewError("Error marshaling message event: ", err.Error()).
-			WithOperations(msg.Id.String())
+			WithOperations(msg.ID.String())
 	}
 
 	type eventBody struct {
@@ -209,34 +209,42 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 	}
 	reqBody, err := json.Marshal(eventBody{Content: string(msgEvent)})
 
-	req, err := http.NewRequest("POST", sub.Url, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return errors.NewError("Error marshalling event: ", err.Error())
+	}
+
+	req, err := http.NewRequest("POST", sub.URL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return errors.NewError("Error creating http request: ", err.Error()).
-			WithOperations(sub.Url)
+			WithOperations(sub.URL)
 	}
 
 	req.Header.Add("Content-type", "application/json")
-	if string(sub.ApiKey) != "" {
-		req.Header.Add("x-application-key", string(sub.ApiKey))
+	if string(sub.APIKey) != "" {
+		req.Header.Add("x-application-key", string(sub.APIKey))
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if res == nil {
-		return httpErrorHandler(404, sub.Url, "Invalid url")
+		return httpErrorHandler(404, sub.URL, "Invalid url")
 	}
 
 	if err != nil {
-		return httpErrorHandler(res.StatusCode, sub.Url, err.Error())
+		return httpErrorHandler(res.StatusCode, sub.URL, err.Error())
 	}
 
 	if res.StatusCode < 200 || res.StatusCode > 226 {
-		return httpErrorHandler(res.StatusCode, sub.Url, res.Status)
+		return httpErrorHandler(res.StatusCode, sub.URL, res.Status)
 	}
 
 	defer res.Body.Close()
 	resBody, err := ioutil.ReadAll(res.Body)
-	fmt.Printf("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
+
+	if err != nil {
+		httpErrorHandler(http.StatusInternalServerError, sub.URL, err.Error())
+	}
+	logrus.Infof("[Webhook] Status: %d - Body: %s\n", res.StatusCode, resBody)
 
 	return nil
 }
@@ -244,5 +252,5 @@ func (main Main) SendWebhookEvent(msg payloads.MessageResponse) errors.Error {
 func httpErrorHandler(httpStatus int, url, error string) *errors.AdvancedError {
 	return errors.NewError("Error calling http request: ", error).
 		WithOperations(url).
-		WithMeta("http-status",  strconv.Itoa(httpStatus))
+		WithMeta("http-status", strconv.Itoa(httpStatus))
 }

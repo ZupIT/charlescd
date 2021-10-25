@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -219,7 +219,7 @@ func (s *SuiteMetricGroup) TestFindAllByWorkspaceId() {
 		s.DB.Create(&metricGroup)
 	}
 
-	list, err := s.repository.FindAllByWorkspaceId(group1.WorkspaceID)
+	list, err := s.repository.FindAllByWorkspaceID(group1.WorkspaceID)
 	require.Nil(s.T(), err)
 
 	require.NotEmpty(s.T(), list)
@@ -232,7 +232,7 @@ func (s *SuiteMetricGroup) TestFindAllByWorkspaceId() {
 func (s *SuiteMetricGroup) TestFindAllByWorkspaceIdError() {
 	s.DB.Close()
 
-	_, err := s.repository.FindAllByWorkspaceId(uuid.New())
+	_, err := s.repository.FindAllByWorkspaceID(uuid.New())
 	require.NotNil(s.T(), err)
 }
 
@@ -241,7 +241,7 @@ func (s *SuiteMetricGroup) TestMetricsGroupFindById() {
 
 	s.DB.Create(&metricGroup)
 
-	item, err := s.repository.FindById(metricGroup.ID.String())
+	item, err := s.repository.FindByID(metricGroup.ID.String())
 	require.Nil(s.T(), err)
 
 	metricGroup.BaseModel = item.BaseModel
@@ -384,7 +384,7 @@ func (s *SuiteMetricGroup) TestFindCircleMetricGroupsError() {
 
 func (s *SuiteMetricGroup) TestFindByIdError() {
 	s.DB.Close()
-	_, err := s.repository.FindById("any-id")
+	_, err := s.repository.FindByID("any-id")
 	require.NotNil(s.T(), err)
 }
 

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import (
 )
 
 type Configuration struct {
-	ViewId         string `json:"viewId"`
+	ViewID         string `json:"viewId"`
 	ServiceAccount string `json:"serviceAccount"`
 }
 
@@ -93,7 +93,7 @@ func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsRe
 	reportRequestData := &analyticsreporting.GetReportsRequest{
 		ReportRequests: []*analyticsreporting.ReportRequest{
 			{
-				ViewId: configuration.ViewId,
+				ViewId: configuration.ViewID,
 				Metrics: []*analyticsreporting.Metric{
 					{
 						Expression: request.Query,
@@ -106,7 +106,7 @@ func doRequest(request datasource.QueryRequest) (analyticsreporting.GetReportsRe
 	if request.RangePeriod.Value != 0 && request.RangePeriod.Unit != "" {
 		currentPeriod, ok := Periods[request.RangePeriod.Unit]
 		if !ok {
-			return analyticsreporting.GetReportsResponse{}, errors.New("This period not supported...")
+			return analyticsreporting.GetReportsResponse{}, errors.New("this period not supported")
 		}
 
 		analyticsPeriod := currentPeriod(request.RangePeriod)
