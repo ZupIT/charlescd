@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ const (
 )
 
 const (
-	DatasourceSaveError           = "DATASOURCE_SAVE_ERROR"
-	FindDatasourceError           = "FIND_DATASOURCE_ERROR"
-	DeleteDatasourceError         = "DELETE_ERROR"
-	OpenPluginGetMetricsError     = "OPEN_PLUGIN_GET_METRICS_ERROR"
-	PluginListError               = "PLUGIN_LIST_ERROR"
+	DatasourceSaveError       = "DATASOURCE_SAVE_ERROR"
+	FindDatasourceError       = "FIND_DATASOURCE_ERROR"
+	DeleteDatasourceError     = "DELETE_ERROR"
+	OpenPluginGetMetricsError = "OPEN_PLUGIN_GET_METRICS_ERROR"
+	PluginListError           = "PLUGIN_LIST_ERROR"
 )
 
 const (
-	FindMetricById    = "FIND_METRIC_BY_ID"
+	FindMetricByID    = "FIND_METRIC_BY_ID"
 	SaveMetricError   = "SAVE_METRIC_ERROR"
 	UpdateMetricError = "UPDATE_METRIC_ERROR"
 	RemoveMetricError = "REMOVE_METRIC_ERROR"
@@ -57,13 +57,13 @@ const (
 	RemoveMetricsGroupError     = "REMOVE_METRICS_GROUP_ERROR"
 	QueryFindDatasourceError    = "QUERY_FIND_DATASOURCE_ERROR"
 	QueryGetPluginError         = "QUERY_GET_PLUGIN_ERROR"
-	QueryByGroupIdError         = "QUERY_BY_GROUP_ID_ERROR"
+	QueryByGroupIDError         = "QUERY_BY_GROUP_ID_ERROR"
 	ListAllByGroupError         = "LIST_ALL_BY_GROUP_ERROR"
 )
 
 const (
 	FindPluginError    = "FIND_PLUGIN_ERROR"
-	GetPluginByIdError = "GET_PLUGIN_BY_ID_ERROR"
+	GetPluginByIDError = "GET_PLUGIN_BY_ID_ERROR"
 )
 
 const (

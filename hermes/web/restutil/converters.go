@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,17 +32,17 @@ func MessageAndExecutionToHistoryResponse(messages []payloads.FullMessageRespons
 	for _, messageResponse := range messages {
 		p := payloads.HistoryResponse{
 			FullMessageResponse: payloads.FullMessageResponse{
-				Id:             messageResponse.Id,
+				ID:             messageResponse.ID,
 				EventType:      messageResponse.EventType,
 				Event:          messageResponse.Event,
 				LastStatus:     messageResponse.LastStatus,
-				SubscriptionId: messageResponse.SubscriptionId,
+				SubscriptionID: messageResponse.SubscriptionID,
 			},
 		}
 
 		var execs []payloads.FullMessageExecutionResponse
 		for _, executionResponse := range executions {
-			if messageResponse.Id == executionResponse.ExecutionId {
+			if messageResponse.ID == executionResponse.ExecutionID {
 				execs = append(execs, executionResponse)
 				p.Executions = execs
 			}
@@ -55,7 +55,7 @@ func MessageAndExecutionToHistoryResponse(messages []payloads.FullMessageRespons
 	return response
 }
 
-func SubscriptionToMessageRequest(subscriptions []subscription.ExternalIdResponse, request payloads.PayloadRequest) ([]payloads.Request, error) {
+func SubscriptionToMessageRequest(subscriptions []subscription.ExternalIDResponse, request payloads.PayloadRequest) ([]payloads.Request, error) {
 	var messages []payloads.Request
 
 	unEvent, err := strconv.Unquote(string(request.Event))
@@ -67,7 +67,7 @@ func SubscriptionToMessageRequest(subscriptions []subscription.ExternalIdRespons
 
 	for _, s := range subscriptions {
 		msg := payloads.Request{
-			SubscriptionId: s.Id,
+			SubscriptionID: s.ID,
 			EventType:      request.EventType,
 			Event:          rawEvent,
 		}

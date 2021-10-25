@@ -32,6 +32,8 @@ on:
     paths:
       - 'utils/matcher-s3-sync/**'
 
+permissions: read-all
+
 jobs:
   build:
 

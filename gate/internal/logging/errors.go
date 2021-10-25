@@ -19,7 +19,6 @@
 package logging
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -40,7 +39,7 @@ type CustomError struct {
 }
 
 func (customError CustomError) Error() string {
-	return fmt.Sprintf("%s", customError.Detail)
+	return customError.Detail
 }
 
 func WithOperation(err error, operation string) error {
@@ -91,7 +90,7 @@ func NewError(message string, err error, typeError string, meta map[string]strin
 func NewValidationError(validationError error, uniTranslator *ut.UniversalTranslator) error {
 	errors := validationError.(validator.ValidationErrors)
 	translator, _ := uniTranslator.GetTranslator("en")
-	meta := make(map[string]string, 0)
+	meta := make(map[string]string)
 
 	for _, validErr := range errors {
 		meta[validErr.Namespace()] = validErr.Translate(translator)

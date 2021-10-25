@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Controller, Post, Body, UsePipes, ValidationPipe, HttpCode } from '@nestjs/common'
+import { Controller, Post, Body, HttpCode } from '@nestjs/common'
 import { RouteHookParams } from '../interfaces/params.interface'
 import { HookReconcileResponseDto } from '../dto/hook-reconcile-response.dto'
 import { ReconcileRoutesUsecase } from '../use-cases/reconcile-routes.usecase'
@@ -28,7 +28,6 @@ export class RoutesHookController {
 
   @Post('/v2/operator/routes/hook/reconcile')
   @HttpCode(200)
-  @UsePipes(new ValidationPipe({ transform: true }))
   public async reconcile(@Body() params: RouteHookParams): Promise<HookReconcileResponseDto> {
     return await this.createRoutesUseCase.execute(params)
   }
