@@ -36,7 +36,8 @@ it('should generate the correct destination rules manifest with one circle and o
         circleId: 'default-circle-id',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: true
+        defaultCircle: true,
+        metadata: null,
       }
     },
     {
@@ -55,7 +56,8 @@ it('should generate the correct destination rules manifest with one circle and o
         circleId: 'normal-circle-id',
         createdAt: new Date(),
         namespace: 'sandbox',
-        defaultCircle: false
+        defaultCircle: false,
+        metadata: null,
       }
     }
   ]
@@ -64,8 +66,6 @@ it('should generate the correct destination rules manifest with one circle and o
     IstioDeploymentManifestsUtils.getDestinationRulesManifest('A', 'sandbox', activeByName)
   ).toEqual(twoSubsetsDr)
 })
-
-// TODO generate destination rules with empty subsets
 
 // TODO generate correct virtual services
 

@@ -46,7 +46,8 @@ class DeploymentExtractor(private val objectMapper: ObjectMapper) : ResultSetExt
         circle = mapDeploymentCircle(resultSet),
         buildId = resultSet.getString("deployment_build_id"),
         workspaceId = resultSet.getString("deployment_workspace_id"),
-        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime()
+        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime(),
+        metadata = getMetadata(resultSet.getString("deployment_metadata"))
     )
 
     private fun mapDeploymentUser(resultSet: ResultSet) = User(
@@ -81,4 +82,10 @@ class DeploymentExtractor(private val objectMapper: ObjectMapper) : ResultSetExt
         workspaces = emptyList(),
         createdAt = resultSet.getTimestamp("deployment_circle_user_created_at").toLocalDateTime()
     )
+
+    private fun getMetadata(metadata: String?): Metadata? {
+        return metadata?.let {
+            return objectMapper.readValue(metadata, Metadata::class.java)
+        }
+    }
 }

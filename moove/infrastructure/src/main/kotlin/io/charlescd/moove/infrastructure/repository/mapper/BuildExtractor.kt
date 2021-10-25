@@ -21,6 +21,8 @@ package io.charlescd.moove.infrastructure.repository.mapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.charlescd.moove.domain.*
 import java.sql.ResultSet
+import java.util.*
+import kotlin.collections.HashSet
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.stereotype.Component
 
@@ -93,9 +95,15 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         return builds.map {
             it.copy(
                 features = features.toList(),
-                deployments = deployments.toList()
+                deployments = getBuildDeployment(deployments, it.id)
             )
         }.toHashSet()
+    }
+
+    private fun getBuildDeployment(deployments: HashSet<Deployment>, id: String): List<Deployment> {
+        return deployments.filter {
+            it.buildId == id
+        }
     }
 
     private fun composeFeatures(
@@ -195,8 +203,15 @@ class BuildExtractor(private val objectMapper: ObjectMapper) : ResultSetExtracto
         circle = mapCircle(resultSet),
         buildId = resultSet.getString("deployment_build_id"),
         workspaceId = resultSet.getString("deployment_workspace_id"),
-        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime()
+        undeployedAt = resultSet.getTimestamp("deployment_undeployed_at")?.toLocalDateTime(),
+        metadata = getMetadata(resultSet.getString("deployment_metadata"))
     )
+
+    private fun getMetadata(metadata: String?): Metadata? {
+        return metadata?.let {
+            objectMapper.readValue(it, Metadata::class.java)
+        }
+    }
 
     private fun mapDeploymentUser(resultSet: ResultSet) = User(
         id = resultSet.getString("deployment_user_id"),

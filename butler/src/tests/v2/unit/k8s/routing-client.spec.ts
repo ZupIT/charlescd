@@ -43,6 +43,7 @@ const activeComponents: Component[] = [
       defaultCircle: true,
       createdAt: new Date(),
       namespace: 'sandbox',
+      metadata: null
     }
   },
   {
@@ -62,6 +63,7 @@ const activeComponents: Component[] = [
       defaultCircle: false,
       createdAt: new Date(),
       namespace: 'sandbox',
+      metadata: null
     }
   },
   {
@@ -80,7 +82,8 @@ const activeComponents: Component[] = [
       circleId: 'default-circle-id',
       defaultCircle: true,
       createdAt: new Date(),
-      namespace: 'sandbox'
+      namespace: 'sandbox',
+      metadata: null
     }
   }
 ]

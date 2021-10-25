@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,34 +34,31 @@ const mockGetModules = JSON.stringify({
       components: [
         {
           id: 'component-1',
-          name: 'component-1'
+          name: 'component-1',
         },
         {
           id: 'component-1component-1component-1component-1component-1',
-          name: 'component-1component-1component-1component-1component-1'
-        }
-      ]
-    }
-  ]
+          name: 'component-1component-1component-1component-1component-1',
+        },
+      ],
+    },
+  ],
 });
 
-const mockGetTags1 = JSON.stringify(
-  [
-    {
-      name: 'image-1.0.0',
-      artifact: 'module-1/component-1:image-1.0.0'
-    }
-  ]
-);
+const mockGetTags1 = JSON.stringify([
+  {
+    name: 'image-1.0.0',
+    artifact: 'module-1/component-1:image-1.0.0',
+  },
+]);
 
-const mockGetTags2 = JSON.stringify(
-  [
-    {
-      name: 'image-1.0.0',
-      artifact: 'module-1/component-1component-1component-1component-1component-1:image-1.0.0'
-    }
-  ]
-);
+const mockGetTags2 = JSON.stringify([
+  {
+    name: 'image-1.0.0',
+    artifact:
+      'module-1/component-1component-1component-1component-1component-1:image-1.0.0',
+  },
+]);
 
 test('form should be valid', async () => {
   (fetch as FetchMock)
@@ -69,9 +66,7 @@ test('form should be valid', async () => {
     .mockResponseOnce(mockGetTags1)
     .mockResponse(JSON.stringify([]));
 
-  render(
-    <CreateRelease circleId="123" onDeployed={() => { }} />
-  );
+  render(<CreateRelease circleId="123" onDeployed={() => {}} />);
 
   const nameInput = screen.getByTestId('input-text-releaseName');
   await act(async () => userEvent.type(nameInput, 'release-name'));
@@ -85,22 +80,22 @@ test('form should be valid', async () => {
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
-  await waitFor(() =>
-    expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
+  await waitFor(
+    () =>
+      expect(screen.getByTestId('button-default-submit')).not.toBeDisabled(),
     { timeout: 700 }
   );
 });
 
 test('should validate form when max lenght is greater than the limit', async () => {
-  const errorMessage = 'Sum of component name and version name cannot be greater than 63 characters.';
+  const errorMessage =
+    'Sum of component name and version name cannot be greater than 63 characters.';
   (fetch as FetchMock)
     .mockResponseOnce(mockGetModules)
     .mockResponseOnce(mockGetTags2)
     .mockResponse(JSON.stringify([]));
 
-  render(
-    <CreateRelease circleId="123" onDeployed={() => { }} />
-  );
+  render(<CreateRelease circleId="123" onDeployed={() => {}} />);
 
   const nameInput = screen.getByTestId('input-text-releaseName');
   await act(async () => userEvent.type(nameInput, 'release-name'));
@@ -109,7 +104,12 @@ test('should validate form when max lenght is greater than the limit', async () 
   await act(async () => selectEvent.select(moduleLabel, 'module-1'));
 
   const componentLabel = screen.getByText('Select a component');
-  await act(async () => selectEvent.select(componentLabel, 'component-1component-1component-1component-1component-1'));
+  await act(async () =>
+    selectEvent.select(
+      componentLabel,
+      'component-1component-1component-1component-1component-1'
+    )
+  );
 
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
@@ -119,10 +119,9 @@ test('should validate form when max lenght is greater than the limit', async () 
   const versionNameLabel = screen.getByTestId('label-text-modules[0].version');
   expect(versionNameLabel).toHaveStyle(`color: ${inputTheme.error.color};`);
 
-  await waitFor(() =>
-    expect(screen.getByTestId('button-default-submit')).toBeDisabled(),
-    { timeout: 700 }
-  );
+  const buttonSubmit = await screen.findByTestId('button-default-submit');
+
+  await waitFor(() => expect(buttonSubmit).toBeDisabled(), { timeout: 700 });
 });
 
 test('form should be invalid when version name not found', async () => {
@@ -130,9 +129,7 @@ test('form should be invalid when version name not found', async () => {
     .mockResponseOnce(mockGetModules)
     .mockResponseOnce(JSON.stringify([]));
 
-  render(
-    <CreateRelease circleId="123" onDeployed={() => { }} />
-  );
+  render(<CreateRelease circleId="123" onDeployed={() => {}} />);
 
   const nameInput = screen.getByTestId('input-text-releaseName');
   fireEvent.change(nameInput, { target: { value: 'release-name' } });
@@ -157,9 +154,7 @@ test('should disable button on deploy', async () => {
     .mockResponseOnce(mockGetTags1)
     .mockResponse(JSON.stringify([]));
 
-  render(
-    <CreateRelease circleId="123" onDeployed={() => { }} />
-  );
+  render(<CreateRelease circleId="123" onDeployed={() => {}} />);
 
   const nameInput = screen.getByTestId('input-text-releaseName');
   await act(async () => userEvent.type(nameInput, 'release-name'));
@@ -173,7 +168,9 @@ test('should disable button on deploy', async () => {
   const versionInput = screen.getByTestId('input-text-modules[0].version');
   await act(async () => userEvent.type(versionInput, 'image-1.0.0'));
 
-  await act(async () => userEvent.click(screen.getByTestId('button-default-submit')));
+  await act(async () =>
+    userEvent.click(screen.getByTestId('button-default-submit'))
+  );
 
   expect(screen.getByTestId('button-default-submit')).toBeDisabled();
 });

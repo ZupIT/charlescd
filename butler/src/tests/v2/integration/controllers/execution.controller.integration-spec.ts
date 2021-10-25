@@ -113,6 +113,7 @@ describe('Execution Controller v2', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
+      metadata: null
     }
 
     await createDeploymentAndExecution(params, 'namespace', manifests, manager)
@@ -173,7 +174,8 @@ describe('Execution Controller v2', () => {
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
       incomingCircleId: '0d81c2b0-37f2-4ef9-8b96-afb2e3979a30',
-      defaultCircle: false
+      defaultCircle: false,
+      metadata: null
     }
 
     await createDeploymentAndExecution(params, 'default', [], manager)
@@ -309,7 +311,8 @@ const createDeploymentAndExecution = async(params: any, namespace: string, manif
     components,
     params.defaultCircle,
     namespace,
-    5
+    5,
+    null
   ))
 
   const execution : Execution = await manager.save(new Execution(

@@ -21,7 +21,9 @@ package io.charlescd.moove.application.deployment.request
 import io.charlescd.moove.domain.Circle
 import io.charlescd.moove.domain.Deployment
 import io.charlescd.moove.domain.DeploymentStatusEnum
+import io.charlescd.moove.domain.Metadata
 import io.charlescd.moove.domain.User
+import io.charlescd.moove.domain.validation.MetadataConstraint
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.constraints.NotBlank
@@ -32,7 +34,10 @@ data class CreateDeploymentRequest(
     val circleId: String,
 
     @field:NotBlank
-    val buildId: String
+    val buildId: String,
+    @MetadataConstraint
+    val metadata: Metadata? = null
+
 ) {
     fun toDeployment(workspaceId: String, user: User, circle: Circle): Deployment {
         return Deployment(
@@ -44,6 +49,7 @@ data class CreateDeploymentRequest(
             status = DeploymentStatusEnum.DEPLOYING,
             workspaceId = workspaceId,
             buildId = buildId,
+            metadata = metadata,
             undeployedAt = null
         )
     }

@@ -18,6 +18,9 @@
 
 package io.charlescd.moove.infrastructure.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.charlescd.moove.domain.*
 import io.charlescd.moove.domain.repository.DeploymentRepository
 import io.charlescd.moove.infrastructure.repository.mapper.*
@@ -37,6 +40,8 @@ class JdbcDeploymentRepository(
 
 ) : DeploymentRepository {
 
+    private val objectMapper =
+        ObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     companion object {
         const val BASE_QUERY_STATEMENT = """
                 SELECT deployments.id                        AS deployment_id,
@@ -47,6 +52,7 @@ class JdbcDeploymentRepository(
                        deployments.build_id                  AS deployment_build_id,
                        deployments.workspace_id              AS deployment_workspace_id,
                        deployments.undeployed_at             AS deployment_undeployed_at,
+                       deployments.metadata                  AS deployment_metadata,
                        deployment_user.id                    AS deployment_user_id,
                        deployment_user.name                  AS deployment_user_name,
                        deployment_user.email                 AS deployment_user_email,
@@ -147,8 +153,9 @@ class JdbcDeploymentRepository(
                 "status," +
                 "circle_id," +
                 "build_id," +
-                "workspace_id) VALUES (" +
-                "?,?,?,?,?,?,?,?)"
+                "workspace_id," +
+                "metadata) VALUES (" +
+                "?,?,?,?,?,?,?,?,to_json(?::jsonb))"
 
         this.jdbcTemplate.update(
             statement,
@@ -159,7 +166,8 @@ class JdbcDeploymentRepository(
             deployment.status.name,
             deployment.circle.id,
             deployment.buildId,
-            deployment.workspaceId
+            deployment.workspaceId,
+            objectMapper.writeValueAsString(deployment.metadata)
         )
     }
 

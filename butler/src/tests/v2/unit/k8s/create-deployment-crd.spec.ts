@@ -26,6 +26,7 @@ it('must generate the correct CharlesDeployment custom resource object', () => {
     namespace: 'sandbox',
     defaultCircle: false,
     circleId: 'circle-id',
+    metadata: null,
     createdAt: new Date(),
     components: [
       {

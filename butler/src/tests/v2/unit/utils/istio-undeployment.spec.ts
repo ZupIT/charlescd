@@ -37,6 +37,7 @@ it('must not insert two default circle subsets', () => {
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
     circleId: 'default-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     namespace: 'sandbox',
     components: [
@@ -58,6 +59,7 @@ it('must not insert two default circle subsets', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         defaultCircle: true,
         namespace: 'sandbox'
@@ -77,6 +79,7 @@ it('must not insert two default circle subsets', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'normal-circle-id',
+        metadata: null,
         createdAt: new Date(),
         defaultCircle: false,
         namespace: 'sandbox'
@@ -106,6 +109,7 @@ it('must not insert two subsets for the same circle', () => {
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
     circleId: 'normal-circle-id',
     defaultCircle: true,
+    metadata: null,
     createdAt: new Date(),
     namespace: 'sandbox',
     components: [
@@ -129,7 +133,8 @@ it('must not insert two subsets for the same circle', () => {
         circleId: 'default-circle-id',
         createdAt: new Date(),
         defaultCircle: true,
-        namespace: 'sandbox'
+        namespace: 'sandbox',
+        metadata: null
       }
     },
     {
@@ -148,7 +153,8 @@ it('must not insert two subsets for the same circle', () => {
         circleId: 'normal-circle-id',
         createdAt: new Date(),
         defaultCircle: false,
-        namespace: 'sandbox'
+        namespace: 'sandbox',
+        metadata: null
       }
     }
   ]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
-import isEmpty from 'lodash/isEmpty';
-import Text from 'core/components/Text';
-import Icon from 'core/components/Icon';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
-import { validationResolver, formatDataModules, validFields } from './helpers';
+import Text from 'core/components/Text';
+import Icon from 'core/components/Icon';
+import Button from 'core/components/Button/ButtonDefault';
+import ConnectionStatus from 'core/components/Message';
+import Module from './Module';
+import Metadata from '../Metadata';
 import { ModuleForm } from '../interfaces/Module';
+import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ONE, MODULE } from '../constants';
 import { useComposeBuild, useCreateDeployment } from '../hooks';
-import Module from './Module';
+import { Scope } from '../Metadata/interfaces';
+import { toKeyValue } from '../Search/helpers';
 import Styled from '../styled';
-import Message from 'core/components/Message';
 
 const defaultValues = {
   modules: [MODULE],
@@ -52,27 +55,20 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
     mode: 'onChange',
     resolver: validationResolver,
   });
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    errors,
-    getValues,
-    formState,
-  } = form;
+  const { register, control, handleSubmit, watch, getValues, formState } = form;
   const watchFields = watch();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'modules',
   });
+  const metadataFields = useFieldArray({ control, name: 'metadata.content' });
   const isNotUnique = fields.length > ONE;
   const [error, setError] = useState('');
   const [isDeploying, setIsDeploying] = useState(false);
 
   useEffect(() => {
     if (watchFields) {
-      const isValid = validFields(watchFields);
+      let isValid = validFields(watchFields);
       setIsEmptyFields(!isValid);
     }
   }, [watchFields]);
@@ -85,12 +81,18 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
   useEffect(() => {
     if (build) {
+      const { metadata } = getValues();
+
       createDeployment({
         buildId: build.id,
         circleId,
+        metadata: {
+          scope: Scope.APPLICATION,
+          content: toKeyValue(metadata),
+        },
       });
     }
-  }, [createDeployment, build, circleId]);
+  }, [createDeployment, build, circleId, getValues]);
 
   const onSubmit = () => {
     setIsDeploying(true);
@@ -138,27 +140,23 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         <Styled.Module.Info tag="H5" color="dark">
           You can add other modules:
         </Styled.Module.Info>
-        <Styled.Module.Button
+        <Button
           type="button"
+          size="EXTRA_SMALL"
           id="add-module"
-          isDisabled={isEmptyFields || !isEmpty(errors)}
+          isDisabled={isEmptyFields}
           onClick={() => append(MODULE)}
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
-        </Styled.Module.Button>
-        {error && <Message errorMessage={error} status={'error'} />}
+        </Button>
+        {error && <ConnectionStatus errorMessage={error} status={'error'} />}
+        <Metadata fieldArray={metadataFields} />
         <Styled.Submit
           id="submit"
           type="submit"
-          size="EXTRA_SMALL"
+          size="SMALL"
           isLoading={savingBuild}
-          isDisabled={
-            isEmptyFields ||
-            !isEmpty(errors) ||
-            !isEmpty(error) ||
-            isDeploying ||
-            !formState.isValid
-          }
+          isDisabled={!formState.isValid || isDeploying || isEmptyFields}
         >
           Deploy
         </Styled.Submit>

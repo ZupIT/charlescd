@@ -47,14 +47,8 @@ const Module = ({ index, onClose, onError, isNotUnique }: Props) => {
   const [isError, setIsError] = useState(false);
   const prefixName = `modules[${index}]`;
   const { getComponentTag, status } = useComponentTags();
-  const {
-    errors,
-    register,
-    control,
-    getValues,
-    setValue,
-    clearErrors,
-  } = useFormContext();
+  const { errors, register, control, getValues, setValue, clearErrors } =
+    useFormContext();
 
   useEffect(() => {
     getAllModules();

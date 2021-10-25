@@ -34,7 +34,6 @@ const ComponentForm = ({ field, fields, index, remove }: Props) => {
     return found.length === 1 ? true : 'duplicate component';
   }
 
-
   return (
     <Styled.Components.ColumnWrapper key={field.id} data-testid={`components[${index}]`}>
       <Styled.Components.Wrapper>

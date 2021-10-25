@@ -26,6 +26,7 @@ import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
 import { EntityManager } from 'typeorm'
 import { ComponentEntityV2 } from '../../../../app/v2/api/deployments/entity/component.entity'
+import { MetadataScopeEnum } from '../../../../app/v2/api/deployments/enums/metadata-scope.enum'
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 
 describe('DeploymentController v2', () => {
@@ -183,6 +184,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
+      metadata: null
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -549,7 +551,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      timeoutInSeconds: 10
+      timeoutInSeconds: 10,
+      metadata: null
     }
     const response = await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -650,7 +653,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
     }
 
     const errorResponse = {
@@ -678,7 +681,6 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         expect(response.body).toEqual(errorResponse)
       })
   })
-
   it('returns an error when there is one active default deployment on the same namespace with a different circle id', async() => {
     const createDeploymentRequest = {
       deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
@@ -733,6 +735,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'default',
       120,
+      null
     )
     sameNamespaceActiveDeployment.current = true
 
@@ -804,7 +807,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
         }
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
-      callbackUrl: UrlConstants.deploymentCallbackUrl
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      metadata: null
     }
 
     const differentNamespaceActiveDeployment = new DeploymentEntityV2(
@@ -827,6 +831,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'test2',
       120,
+      null
     )
     differentNamespaceActiveDeployment.current = true
 
@@ -902,6 +907,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       false,
       'default',
       120,
+      null
     )
     differentNamespaceActiveDeployment.current = true
 
@@ -976,6 +982,339 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       })
   })
 
+  it('returns error for defined metadata and empty metadata keys/values', async() => {
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [{
+        componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+        buildImageUrl: 'imageurl.com',
+        buildImageTag: 'tag1',
+        componentName: 'component-name',
+        helmRepository: UrlConstants.helmRepository,
+      }],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {}
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns error for defined metadata key is empty', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          '': 'value',
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns error for defined metadata when metadata value is longer than 253', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'key': `${'4'.repeat(254)}`,
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns error for defined metadata when metadata key is longer than ', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'too-big-key-that-overcome-the-sixty-three-characters-limit-of-ke': 'some-value'
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata Key size must be between 1 and 63 and  Metadata value size must be between 0 and 253',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('returns error for metadata when metadata key/label do not respect dns format', async() => {
+
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: Buffer.from('123123').toString('base64'),
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'key': 'somevalue-',
+          'another-key': '-somevalue',
+          'more-key': 'some@value'
+        }
+      }
+    }
+    const errorResponse = {
+      errors: [
+        {
+          title: 'Metadata key and value must consist of alphanumeric characters, "-" or ".", and must start and end with an alphanumeric character',
+          meta: {
+            component: 'butler',
+            timestamp: expect.anything()
+          },
+          source: {
+            pointer: 'metadata'
+          },
+          status: 400
+        }
+      ]
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(400)
+      .expect(response => {
+        expect(response.body).toEqual(errorResponse)
+      })
+  })
+
+  it('should allow metadata with label format', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      namespace: 'some-namespace',
+      circle: {
+        id: 'ad03d665-f689-42aa-b1de-d19653e89b86',
+        default: true
+      },
+      git: {
+        token: base64Token,
+        provider: 'GITHUB'
+      },
+      components: [
+        {
+          componentId: '888865f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag1',
+          componentName: 'component-name',
+          helmRepository: UrlConstants.helmRepository
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: 'http://localhost:8883/deploy/notifications/deployment',
+      metadata: {
+        scope: MetadataScopeEnum.APPLICATION,
+        content: {
+          'key': 'someValue',
+          'Key': 'SOMEVALUE',
+          'another-key': '012345',
+          'more-KEY': 'value.key',
+          'more-key': ''
+        }
+      }
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+
+  })
+
   it('returns logs from deployment id', async() => {
     const deploymentId = '6d1e1881-72d3-4fb5-84da-8bd61bb8e2d3'
     const deployment = new DeploymentEntityV2(
@@ -998,6 +1337,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       true,
       'default',
       120,
+      null
     )
 
     await manager.save(deployment)

@@ -105,23 +105,8 @@ const Info = styled(Text)`
   margin-bottom: 10px;
 `;
 
-const AddModule = styled(ButtonComponentDefault)`
-  display: flex;
-  background-color: transparent;
-  border: 2px solid ${({ theme }) => theme.button.default.outline.border};
-  margin-bottom: 40px;
-  padding: 0 20px;
-  border-radius: 4px;
-  align-items: center;
-  color: ${({ theme }) => theme.button.default.outline.color};
-
-  > i {
-    margin-right: 5px;
-  }
-`;
-
 const Submit = styled(ButtonComponentDefault)`
-  width: 80px;
+  margin-top: 20px;
 `;
 
 export default {
@@ -139,7 +124,6 @@ export default {
     Trash: WrapperTrash,
     Icon: Trash,
     Wrapper: moduleWrapper,
-    Button: AddModule,
     Info,
     Input: ModuleInput
   }

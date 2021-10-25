@@ -73,4 +73,17 @@ data class Build(
             feature.modules
         }.distinct()
     }
+
+    fun withLastDeployment(): Build {
+        return this.copy(
+            deployments = deployments
+            .takeIf { deployments -> deployments.isNotEmpty() }
+            ?.sortedByDescending { it.deployedAt }
+            ?.let {
+                listOf(
+                    it.first()
+                )
+            } ?: emptyList()
+        )
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import CardRelease from 'core/components/Card/Release';
+import CardRelease, { Props as cardReleaseProps} from 'core/components/Card/Release';
 import ContentIcon from 'core/components/ContentIcon';
 import ButtonRounded from 'core/components/Button/ButtonRounded';
 import Text from 'core/components/Text';
@@ -36,7 +36,7 @@ const LayerRelease = ({ circle, onClickCreate, releaseEnabled }: Props) => {
   const renderRelease = ({ tag, artifacts }: Deployment) => (
     <Styled.Release>
       <CardRelease
-        status={circle?.deployment?.status}
+        status={circle?.deployment?.status as cardReleaseProps['status']}
         description={tag}
         expandItems={artifacts}
       />

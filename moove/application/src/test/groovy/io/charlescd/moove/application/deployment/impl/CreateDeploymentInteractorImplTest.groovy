@@ -65,7 +65,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def buildId = "5d4c95b4-6f83-11ea-bc55-0242ac130003"
         def workspaceId = TestUtils.workspaceId
         def authorization = TestUtils.authorization
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, buildId, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -90,7 +90,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -120,7 +120,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def authorization = TestUtils.authorization
         def build = getDummyBuild(BuildStatusEnum.BUILDING, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -147,7 +147,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.NOT_DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -177,7 +177,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
@@ -238,8 +238,8 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def workspaceId = TestUtils.workspaceId
         def deploymentConfigId = TestUtils.deploymentConfigId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
         def authorization = TestUtils.authorization
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id, null)
         def workspace = TestUtils.workspace
         def deploymentConfig = TestUtils.deploymentConfig
 
@@ -301,8 +301,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id)
         def authorization = TestUtils.authorization
+
+        def createDeploymentRequest = new CreateDeploymentRequest(circle.id, build.id, null)
 
         def workspace = TestUtils.workspace
 
@@ -358,9 +359,9 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def circle = new Circle(circleId, 'Circle name', 'f8296df6-6ae1-11ea-bc55-0242ac130003',
                 author, LocalDateTime.now(), MatcherTypeEnum.SIMPLE_KV, null, null, null, false, "1a58c78a-6acb-11ea-bc55-0242ac130003", false, null)
@@ -421,7 +422,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
         def deploymentConfigurationId = TestUtils.deploymentConfigId
         def deploymentConfiguration = TestUtils.deploymentConfig
 
@@ -481,7 +482,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = TestUtils.user
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
         def workspace = TestUtils.workspace
 
         when:
@@ -510,7 +511,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def circleId = "5d4c9492-6f83-11ea-bc55-0242ac130003"
         def workspaceId = "5d4c97da-6f83-11ea-bc55-0242ac130003"
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, false)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
@@ -549,7 +550,7 @@ class CreateDeploymentInteractorImplTest extends Specification {
         def author = getDummyUser()
         def workspaceId = TestUtils.workspaceId
         def build = getDummyBuild(BuildStatusEnum.BUILT, DeploymentStatusEnum.DEPLOYED, true)
-        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id)
+        def createDeploymentRequest = new CreateDeploymentRequest(circleId, build.id, null)
 
         def deploymentConfigId = TestUtils.deploymentConfigId
         def deploymentConfig = TestUtils.deploymentConfig
@@ -638,6 +639,6 @@ class CreateDeploymentInteractorImplTest extends Specification {
 
     private static Deployment getDeployment(DeploymentStatusEnum status, LocalDateTime deployedAt, LocalDateTime undeployAt, Boolean isDefaultCircle) {
         return new Deployment('3c3b864a-702e-11ea-bc55-0242ac130003', TestUtils.user,
-                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, undeployAt)
+                LocalDateTime.now(), deployedAt, status, getCircle(isDefaultCircle), buildId, TestUtils.workspaceId, null, undeployAt)
     }
 }

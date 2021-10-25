@@ -32,6 +32,8 @@ const Button = styled.button<Partial<Props>>`
   cursor: pointer;
   transition: 0.2s;
   width: fit-content;
+  display: flex;
+  align-items: center;
 
   :hover {
     transform: scale(1.1);

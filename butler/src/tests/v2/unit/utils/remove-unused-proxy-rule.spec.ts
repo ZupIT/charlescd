@@ -36,7 +36,8 @@ it('should not perform cleanup when no components where overriden', () => {
         circleId: 'circle-id',
         defaultCircle: false,
         createdAt: new Date(),
-        namespace: 'sandbox'
+        namespace: 'sandbox',
+        metadata: null
       }
     }
   ]
@@ -48,6 +49,7 @@ it('should not perform cleanup when no components where overriden', () => {
     namespace: 'sandbox',
     circleId: 'another-circle-id',
     defaultCircle: false,
+    metadata: null,
     createdAt: new Date(),
     components: [
       {
@@ -76,6 +78,7 @@ it('should not perform cleanup when no new component is deployed', () => {
     callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=1',
     namespace: 'sandbox',
     defaultCircle: false,
+    metadata: null,
     circleId: 'circle-id',
     createdAt: new Date(),
     components: [
@@ -127,6 +130,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=4',
         circleId: 'circle-id',
+        metadata: null,
         createdAt: new Date(),
         namespace: 'sandbox',
         defaultCircle: false
@@ -147,6 +151,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id',
         defaultCircle: false,
+        metadata: null,
         createdAt: new Date(),
         namespace: 'sandbox',
       }
@@ -166,6 +171,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=5',
         circleId: 'circle-id',
         defaultCircle: false,
+        metadata: null,
         createdAt: new Date(),
         namespace: 'sandbox',
       }
@@ -184,6 +190,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=6',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         namespace: 'sandbox',
         defaultCircle: true
@@ -205,6 +212,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         circleId: 'default-circle-id',
         createdAt: new Date(),
         namespace: 'sandbox',
+        metadata: null,
         defaultCircle: true
       }
     },
@@ -222,6 +230,7 @@ it('should not perform cleanup when no new component is deployed', () => {
         authorId: 'user-1',
         callbackUrl: 'http://localhost:1234/notifications/deployment?deploymentId=8',
         circleId: 'default-circle-id',
+        metadata: null,
         createdAt: new Date(),
         namespace: 'sandbox',
         defaultCircle: true
@@ -241,6 +250,7 @@ it('should perform override when there is only one component active in circle', 
     defaultCircle: false,
     circleId: 'circle-id',
     createdAt: new Date(),
+    metadata: null,
     components: [
       {
         id: 'component-id-1',
@@ -272,6 +282,7 @@ it('should perform override when there is only one component active in circle', 
         circleId: 'circle-id',
         createdAt: new Date(),
         namespace: 'sandbox',
+        metadata: null,
         defaultCircle: false
       }
     }

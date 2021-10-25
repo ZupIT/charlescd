@@ -14,43 +14,51 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { render, screen, fireEvent } from 'unit-test/testUtils';
+import userEvent from '@testing-library/user-event';
+import { render, screen, act } from 'unit-test/testUtils';
 import Release from '../index';
 
-test('should render the CreateRelease component', () => {
+test('should render the CreateRelease component', async () => {
   render(
     <Release id="1" onGoBack={() => {}} onCreateRelease={() => {}} />
   );
 
-  const createButton = screen.getByTestId("radio-group-type-item-create");
-  fireEvent.click(createButton);
+  const RadioButtonCreate = await screen.findByTestId("radio-group-type-item-create");
+  act(() => userEvent.click(RadioButtonCreate));
 
-  const release = screen.getByTestId('create-release');
-  expect(release).toBeInTheDocument();
+  const CreateContent = await screen.findByTestId('create-release');
+  expect(CreateContent).toBeInTheDocument();
+
+  const SubmitCreate = await screen.findByTestId('button-default-submit');
+  expect(SubmitCreate).toHaveStyle('margin-top: 20px;');
+  expect(SubmitCreate).toBeInTheDocument();
 });
 
-test('should render the SearchRelease component', () => {
+test('should render the SearchRelease component', async () => {
   render(
     <Release id="1" onGoBack={() => {}} onCreateRelease={() => {}} />
   );
 
-  const searchButton = screen.getByTestId("radio-group-type-item-search");
-  fireEvent.click(searchButton);
+  const RadioButtonSearch = await screen.findByTestId("radio-group-type-item-search");
+  act(() => userEvent.click(RadioButtonSearch));
 
-  const release = screen.getByTestId('search-release');
-  expect(release).toBeInTheDocument();
+  const SearchContent = await screen.findByTestId('search-release');
+  expect(SearchContent).toBeInTheDocument();
+
+  const SubmitSearch = await screen.findByTestId('button-default-submit');
+  expect(SubmitSearch).toHaveStyle('margin-top: 20px;');
+  expect(SubmitSearch).toBeInTheDocument();
 });
 
-test('should trigger goBack fn', () => {
+test('should trigger goBack fn', async () => {
   const goBack = jest.fn();
 
   render(
     <Release id="1" onGoBack={goBack} onCreateRelease={() => {}} />
   );
 
-  const goBackBtn = screen.getByTestId('icon-arrow-left');
-  fireEvent.click(goBackBtn);
+  const ButtonGoBack = await screen.findByTestId('icon-arrow-left');
+  act(() => userEvent.click(ButtonGoBack));
 
   expect(goBack).toBeCalled();
 });
