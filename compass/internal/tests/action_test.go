@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ func (s *ActionSuite) TestParseAction() {
 	require.Equal(s.T(), "Open-sea up", res.Nickname)
 	require.Equal(s.T(), "CircleUpstream", res.Type)
 	require.Equal(s.T(), "", res.Description)
-	require.Equal(s.T(), wsID, res.WorkspaceId)
+	require.Equal(s.T(), wsID, res.WorkspaceID)
 	require.NotNil(s.T(), res.Configuration)
 	require.True(s.T(), len(res.Configuration) > 0)
 }
@@ -116,7 +116,7 @@ func (s *ActionSuite) TestParseActionUseDefault() {
 	require.Equal(s.T(), "Open-sea up", res.Nickname)
 	require.Equal(s.T(), "CircleUpstream", res.Type)
 	require.Equal(s.T(), "", res.Description)
-	require.Equal(s.T(), wsID, res.WorkspaceId)
+	require.Equal(s.T(), wsID, res.WorkspaceID)
 	require.NotNil(s.T(), res.Configuration)
 	require.True(s.T(), len(res.Configuration) > 0)
 }
@@ -134,7 +134,7 @@ func (s *ActionSuite) TestFindActionById() {
 	insertAction, actionToFind := actionInsert("validaction")
 
 	s.DB.Exec(insertAction)
-	res, err := s.repository.FindActionById(actionToFind.ID.String())
+	res, err := s.repository.FindActionByID(actionToFind.ID.String())
 
 	require.Nil(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
@@ -143,7 +143,7 @@ func (s *ActionSuite) TestFindActionById() {
 
 func (s *ActionSuite) TestFindActionByIdError() {
 	s.DB.Close()
-	_, err := s.repository.FindActionById(uuid.New().String())
+	_, err := s.repository.FindActionByID(uuid.New().String())
 	require.NotNil(s.T(), err)
 }
 
@@ -151,7 +151,7 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
 	insertAction, actionToFind := actionInsert("validaction")
 
 	s.DB.Exec(insertAction)
-	res, err := s.repository.FindActionByIdAndWorkspace(actionToFind.ID, actionToFind.WorkspaceId)
+	res, err := s.repository.FindActionByIDAndWorkspace(actionToFind.ID, actionToFind.WorkspaceID)
 
 	require.Nil(s.T(), err)
 	actionToFind.BaseModel = res.BaseModel
@@ -160,17 +160,17 @@ func (s *ActionSuite) TestFindActionByIdAndWorkspace() {
 
 func (s *ActionSuite) TestFindActionByIdAndWorkspaceError() {
 	s.DB.Close()
-	_, err := s.repository.FindActionByIdAndWorkspace(uuid.New(), uuid.New())
+	_, err := s.repository.FindActionByIDAndWorkspace(uuid.New(), uuid.New())
 	require.NotNil(s.T(), err)
 }
 
 func (s *ActionSuite) TestFindAllActionByWorkspace() {
 	wspID := uuid.New()
 	actionStruct1 := newBasicAction()
-	actionStruct1.WorkspaceId = wspID
+	actionStruct1.WorkspaceID = wspID
 
 	actionStruct2 := newBasicAction()
-	actionStruct2.WorkspaceId = wspID
+	actionStruct2.WorkspaceID = wspID
 
 	s.DB.Create(&actionStruct1)
 	s.DB.Create(&actionStruct2)
@@ -313,7 +313,7 @@ func (s *ActionSuite) TestValidateActionEmptyConfiguration() {
 
 func (s *ActionSuite) TestValidateActionNilWorkspace() {
 	act := newBasicActionRequest()
-	act.WorkspaceId = uuid.Nil
+	act.WorkspaceID = uuid.Nil
 
 	res := s.repository.ValidateAction(act)
 

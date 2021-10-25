@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ type ActionsConfiguration struct {
 }
 
 type GroupActionExecutionStatusResume struct {
-	Id         string     `json:"id"`
+	ID         string     `json:"id"`
 	Nickname   string     `json:"nickname"`
 	ActionType string     `json:"actionType"`
 	Status     string     `json:"status"`
@@ -122,12 +122,12 @@ func (main Main) ValidateGroupAction(metricsGroupAction MetricsGroupAction, work
 		ers.Append(err)
 	} else {
 		var err errors.Error
-		act, err = main.actionRepo.FindActionByIdAndWorkspace(metricsGroupAction.ActionID, workspaceID)
+		act, err = main.actionRepo.FindActionByIDAndWorkspace(metricsGroupAction.ActionID, workspaceID)
 		if err != nil || act.Type == "" {
 			needConfigValidation = false
 			err := errors.NewError("Validate error", "action is invalid").
 				WithMeta("field", "action").
-				WithOperations("ValidateGroupAction.FindActionByIdAndWorkspace")
+				WithOperations("ValidateGroupAction.FindActionByIDAndWorkspace")
 			ers.Append(err)
 		}
 	}
@@ -151,7 +151,7 @@ func (main Main) validateJobConfiguration(configuration ActionsConfiguration) er
 		ers.Append(err)
 	}
 
-	if configuration.Repeatable == false && configuration.NumberOfCycles == 0 {
+	if !configuration.Repeatable && configuration.NumberOfCycles == 0 {
 		err := errors.NewError("Validate error", "a not repeatable action needs a defined number of cycles").
 			WithMeta("field", "configuration.Repeatable").
 			WithOperations("validateJobConfiguration.RepeatableLen")
@@ -205,13 +205,13 @@ func (main Main) SaveGroupAction(metricsGroupAction MetricsGroupAction) (Metrics
 }
 
 func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupAction) (MetricsGroupAction, errors.Error) {
-	parsedId, err := uuid.Parse(id)
+	parsedID, err := uuid.Parse(id)
 	if err != nil {
 		return MetricsGroupAction{}, errors.NewError("Update error", err.Error()).
 			WithOperations("UpdateGroupAction.Parse")
 	}
 
-	metricsGroupAction.BaseModel.ID = parsedId
+	metricsGroupAction.BaseModel.ID = parsedID
 	db := main.db.Save(&metricsGroupAction)
 	if db.Error != nil {
 		return MetricsGroupAction{}, errors.NewError("Update error", db.Error.Error()).
@@ -221,12 +221,12 @@ func (main Main) UpdateGroupAction(id string, metricsGroupAction MetricsGroupAct
 	return metricsGroupAction, nil
 }
 
-func (main Main) FindGroupActionById(id string) (MetricsGroupAction, errors.Error) {
+func (main Main) FindGroupActionByID(id string) (MetricsGroupAction, errors.Error) {
 	metricsGroupAction := MetricsGroupAction{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metricsGroupAction)
 	if db.Error != nil {
 		return MetricsGroupAction{}, errors.NewError("Find error", db.Error.Error()).
-			WithOperations("FindGroupActionById.First")
+			WithOperations("FindGroupActionByID.First")
 	}
 
 	return metricsGroupAction, nil
