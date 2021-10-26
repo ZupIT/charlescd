@@ -18,8 +18,9 @@ package io.charlescd.villager.exceptions;
 
 public class ThirdPartyIntegrationException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
 
-    public ThirdPartyIntegrationException(Exception exception) {
+	public ThirdPartyIntegrationException(Exception exception) {
         super(exception);
     }
 

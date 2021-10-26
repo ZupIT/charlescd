@@ -138,7 +138,8 @@ public class GetDockerRegistryTagInteractorTest {
     }
 
 
-    @Test
+    @SuppressWarnings("unused")
+	@Test
     public void testDockerRegistryForbiddenWorkspace()  {
 
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);
@@ -162,7 +163,8 @@ public class GetDockerRegistryTagInteractorTest {
 
     }
 
-    @Test
+    @SuppressWarnings("unused")
+	@Test
     public void testDockerRegistryNotFound() throws ResourceNotFoundException {
 
         var entity = DockerRegistryTestUtils.generateDockerRegistryConfigurationEntity(RegistryType.AZURE);

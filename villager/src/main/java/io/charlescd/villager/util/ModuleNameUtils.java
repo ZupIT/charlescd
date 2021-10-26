@@ -16,14 +16,12 @@
 
 package io.charlescd.villager.util;
 
-import javax.validation.constraints.NotNull;
-
 public class ModuleNameUtils {
 
     private ModuleNameUtils() {
     }
 
-    public static String normalize(@NotNull String name) {
+    public static String normalize(String name) {
         String[] nameArray = name.split("/");
         if (nameArray.length > 1) {
             return nameArray[1];

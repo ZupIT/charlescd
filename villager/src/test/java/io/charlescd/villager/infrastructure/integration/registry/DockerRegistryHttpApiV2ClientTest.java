@@ -1,14 +1,14 @@
 package io.charlescd.villager.infrastructure.integration.registry;
 
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import static org.mockito.Mockito.mock;
+
+import java.util.UUID;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import static org.mockito.Mockito.mock;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
 
 class DockerRegistryHttpApiV2ClientTest {
 
@@ -150,7 +150,7 @@ class DockerRegistryHttpApiV2ClientTest {
     }
 
     @Test
-    void whenConfigureIgnoringSSLShouldBeSuccessful() {
+    void whenConfigureIgnoringSSLShouldBeSuccessful() throws Exception {
         //GIVEN
         final String address = "127.0.0.1";
         final String accessKey = UUID.randomUUID().toString();
@@ -162,5 +162,7 @@ class DockerRegistryHttpApiV2ClientTest {
         //WHEN
 
         dockerRegistryIgnoreSSl.configureAuthentication(regitryType, data, "");
+        
+        dockerRegistryIgnoreSSl.close();
     }
 }

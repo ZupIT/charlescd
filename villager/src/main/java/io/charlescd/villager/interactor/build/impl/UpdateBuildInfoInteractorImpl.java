@@ -126,7 +126,7 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
         BuildEntity buildEntity = buildRepository.findById(buildEntityId);
 
         if (hasAnyTimeout) {
-            this.buildNotificationService.notify(buildEntity, Collections.EMPTY_LIST);
+            this.buildNotificationService.notify(buildEntity, Collections.emptyList());
             return;
         }
 

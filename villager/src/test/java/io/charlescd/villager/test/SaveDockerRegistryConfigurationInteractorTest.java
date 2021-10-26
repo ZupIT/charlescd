@@ -16,16 +16,18 @@
 
 package io.charlescd.villager.test;
 
-import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
-import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
-import io.charlescd.villager.interactor.registry.DockerHubDockerRegistryAuth;
-import io.charlescd.villager.interactor.registry.DockerRegistryConfigurationInput;
-import io.charlescd.villager.interactor.registry.GCPDockerRegistryAuth;
-import io.charlescd.villager.interactor.registry.*;
-import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
-import io.charlescd.villager.service.RegistryService;
-import io.charlescd.villager.utils.DockerRegistryTestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,14 +37,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import io.charlescd.villager.infrastructure.integration.registry.RegistryType;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationEntity;
+import io.charlescd.villager.infrastructure.persistence.DockerRegistryConfigurationRepository;
+import io.charlescd.villager.interactor.registry.impl.SaveDockerRegistryConfigurationInteractorImpl;
+import io.charlescd.villager.service.RegistryService;
+import io.charlescd.villager.utils.DockerRegistryTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class SaveDockerRegistryConfigurationInteractorTest {
@@ -319,7 +319,8 @@ public class SaveDockerRegistryConfigurationInteractorTest {
 
     }
 
-    @Test
+    @SuppressWarnings("unused")
+	@Test
     public void testRegistryTypeNotSupported() {
 
         var input = DockerRegistryTestUtils.generateDockerRegistryConfigurationInputWithInvalidRegistry();

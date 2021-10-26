@@ -18,7 +18,9 @@ package io.charlescd.villager.exceptions;
 
 public class IllegalAccessResourceException extends RuntimeException {
 
-    public IllegalAccessResourceException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public IllegalAccessResourceException(String message) {
         super(message);
     }
 }
