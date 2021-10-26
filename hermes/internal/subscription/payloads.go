@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import (
 
 type Request struct {
 	util.BaseModel
-	ExternalId  uuid.UUID      `json:"externalId"`
-	Url         string         `json:"url"`
+	ExternalID  uuid.UUID      `json:"externalId"`
+	URL         string         `json:"url"`
 	Description string         `json:"description"`
-	ApiKey      string         `json:"apiKey"`
+	APIKey      string         `json:"apiKey"`
 	Events      pq.StringArray `json:"events"`
 	CreatedBy   string         `json:"createdBy"`
 }
@@ -44,13 +44,13 @@ type SaveResponse struct {
 
 type Response struct {
 	ID          uuid.UUID      `json:"id"`
-	ExternalId  uuid.UUID      `json:"externalId"`
-	ApiKey      []byte         `json:"apiKey" gorm:"type:bytea"`
-	Url         string         `json:"url"`
+	ExternalID  uuid.UUID      `json:"externalId"`
+	APIKey      []byte         `json:"apiKey" gorm:"type:bytea"`
+	URL         string         `json:"url"`
 	Description string         `json:"description"`
 	Events      pq.StringArray `json:"events" gorm:"type:text[]"`
 }
 
-type ExternalIdResponse struct {
-	Id uuid.UUID `json:"id"`
+type ExternalIDResponse struct {
+	ID uuid.UUID `json:"id"`
 }

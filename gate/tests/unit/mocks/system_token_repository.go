@@ -66,7 +66,7 @@ func (_m *SystemTokenRepository) FindAll(name string, pageRequest domain.Page) (
 }
 
 // FindById provides a mock function with given fields: id
-func (_m *SystemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
+func (_m *SystemTokenRepository) FindByID(id uuid.UUID) (domain.SystemToken, error) {
 	ret := _m.Called(id)
 
 	var r0 domain.SystemToken

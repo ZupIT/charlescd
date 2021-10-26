@@ -46,7 +46,7 @@ describe('DeploymentController v2', () => {
     TestSetupUtils.seApplicationConstants()
     app = await TestSetupUtils.createApplication(module)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
   })
 
   afterAll(async() => {

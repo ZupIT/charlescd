@@ -34,7 +34,7 @@ import (
 type SystemTokenRepository interface {
 	Create(systemToken domain.SystemToken) (domain.SystemToken, error)
 	FindAll(name string, pageRequest domain.Page) ([]domain.SystemToken, domain.Page, error)
-	FindById(id uuid.UUID) (domain.SystemToken, error)
+	FindByID(id uuid.UUID) (domain.SystemToken, error)
 	FindByToken(token string) (domain.SystemToken, error)
 	Update(systemToken domain.SystemToken) error
 	UpdateRevokeStatus(systemToken domain.SystemToken) error
@@ -107,7 +107,7 @@ func (systemTokenRepository systemTokenRepository) FindAll(name string, pageRequ
 	return mapper.SystemTokensModelToDomains(systemTokens), page, nil
 }
 
-func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domain.SystemToken, error) {
+func (systemTokenRepository systemTokenRepository) FindByID(id uuid.UUID) (domain.SystemToken, error) {
 	var systemToken models.SystemToken
 
 	res := systemTokenRepository.db.Model(models.SystemToken{}).
@@ -118,9 +118,9 @@ func (systemTokenRepository systemTokenRepository) FindById(id uuid.UUID) (domai
 
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return domain.SystemToken{}, handleSystemTokenError("Token not found", "SystemTokenRepository.FindById.First", res.Error, logging.NotFoundError)
+			return domain.SystemToken{}, handleSystemTokenError("Token not found", "SystemTokenRepository.FindByID.First", res.Error, logging.NotFoundError)
 		}
-		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindById.First", res.Error, logging.InternalError)
+		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindByID.First", res.Error, logging.InternalError)
 	}
 	return mapper.SystemTokenModelToDomain(systemToken), nil
 }
@@ -135,9 +135,9 @@ func (systemTokenRepository systemTokenRepository) FindByToken(token string) (do
 
 	if res.Error != nil {
 		if res.Error.Error() == "record not found" {
-			return domain.SystemToken{}, handleSystemTokenError("Token not found", "SystemTokenRepository.FindById.First", res.Error, logging.NotFoundError)
+			return domain.SystemToken{}, handleSystemTokenError("Token not found", "SystemTokenRepository.FindByID.First", res.Error, logging.NotFoundError)
 		}
-		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindById.First", res.Error, logging.InternalError)
+		return domain.SystemToken{}, handleSystemTokenError("Find token failed", "SystemTokenRepository.FindByID.First", res.Error, logging.InternalError)
 	}
 
 	return mapper.SystemTokenModelToDomain(systemToken), nil
@@ -198,16 +198,16 @@ func systemTokenMap(systemToken models.SystemToken) map[string]interface{} {
 	}
 }
 
-func insertSystemTokenPermissionsMap(systemTokenId, permissionId uuid.UUID) map[string]interface{} {
+func insertSystemTokenPermissionsMap(systemTokenID, permissionID uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{
-		"system_token_id": systemTokenId,
-		"permission_id":   permissionId,
+		"system_token_id": systemTokenID,
+		"permission_id":   permissionID,
 	}
 }
 
-func insertSystemTokenWorkspacesMap(systemTokenId, workspaceId uuid.UUID) map[string]interface{} {
+func insertSystemTokenWorkspacesMap(systemTokenID, workspaceID uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{
-		"system_token_id": systemTokenId,
-		"workspace_id":    workspaceId,
+		"system_token_id": systemTokenID,
+		"workspace_id":    workspaceID,
 	}
 }

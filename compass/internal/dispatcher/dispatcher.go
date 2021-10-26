@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,11 +68,11 @@ func (dispatcher *Dispatcher) dispatch() {
 
 func compareResultWithMetricThreshold(result float64, threshold float64, condition string) bool {
 	switch condition {
-	case metricsgroup.EQUAL.String():
+	case metricsgroup.Equal.String():
 		return result == threshold
-	case metricsgroup.GREATER_THAN.String():
+	case metricsgroup.GreaterThan.String():
 		return result > threshold
-	case metricsgroup.LOWER_THAN.String():
+	case metricsgroup.LowerThan.String():
 		return result < threshold
 	default:
 		return false
@@ -91,7 +91,7 @@ func (dispatcher *Dispatcher) getMetricResult(execution metric.MetricExecution) 
 	defer dispatcher.mux.Unlock()
 	dispatcher.mux.Lock()
 
-	currentMetric, err := dispatcher.metric.FindMetricById(execution.MetricID.String())
+	currentMetric, err := dispatcher.metric.FindMetricByID(execution.MetricID.String())
 	if err != nil {
 		return
 	}

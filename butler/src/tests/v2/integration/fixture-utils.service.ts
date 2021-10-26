@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@nestjs/common'
-import { Connection, EntityManager } from 'typeorm'
+import { Injectable } from '@nestjs/common'
+import { EntityManager } from 'typeorm'
 import { CreateDeploymentRequestDto } from '../../../app/v2/api/deployments/dto/create-deployment-request.dto'
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
@@ -27,8 +27,7 @@ interface DatabaseEntity {
 @Injectable()
 export class FixtureUtilsService {
   constructor(
-    @Inject('Connection') public connection: Connection,
-    private readonly manager: EntityManager
+    public readonly manager: EntityManager
   ) {
   }
 
@@ -36,7 +35,7 @@ export class FixtureUtilsService {
     try {
       const entities: DatabaseEntity[] = this.getOrderedClearDbEntities()
       for (const entity of entities) {
-        const repository = await this.connection.getRepository(entity.name)
+        const repository = await this.manager.connection.getRepository(entity.name)
         await repository.query(`TRUNCATE ${entity.tableName} CASCADE;`)
       }
     } catch (error) {

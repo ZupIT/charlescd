@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import (
 	"time"
 )
 
-type Api struct {
+type API struct {
 	// Dependencies
 	subscriptionMain subscription.UseCases
 	messageMain      message.UseCases
@@ -43,8 +43,8 @@ type Readiness struct {
 	MessageQueue string
 }
 
-func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, db *sql.DB) *mux.Router {
-	api := Api{
+func NewAPI(subscriptionMain subscription.UseCases, messageMain message.UseCases, executionMain messageexecutionhistory.UseCases, db *sql.DB) *mux.Router {
+	api := API{
 		subscriptionMain: subscriptionMain,
 		messageMain:      messageMain,
 		executionMain:    executionMain,
@@ -62,14 +62,17 @@ func NewApi(subscriptionMain subscription.UseCases, messageMain message.UseCases
 	return router
 }
 
-func (api *Api) health(r *mux.Router) {
+func (api *API) health(r *mux.Router) {
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(":)"))
-		return
+		_, err := w.Write([]byte(":)"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }
 
-func (api *Api) readiness(r *mux.Router, db *sql.DB) {
+func (api *API) readiness(r *mux.Router, db *sql.DB) {
 	r.HandleFunc("/ready", func(w http.ResponseWriter, r *http.Request) {
 		ready := Readiness{
 			Database:     "ALIVE",
@@ -87,8 +90,11 @@ func (api *Api) readiness(r *mux.Router, db *sql.DB) {
 			}).Warnln()
 		}
 
-		w.Write(response)
-		return
+		_, err = w.Write(response)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			logrus.Error(err)
+		}
 	})
 }
 

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ func Create(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-		subscriptionsCount, err := subscriptionMain.CountAllByExternalId(request.ExternalId)
+		subscriptionsCount, err := subscriptionMain.CountAllByExternalID(request.ExternalID)
 
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
@@ -88,13 +88,13 @@ func Update(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 		}
 
 		params := mux.Vars(r)
-		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		subscriptionID, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
-		updatedResponse, err := subscriptionMain.Update(subscriptionId, request)
+		updatedResponse, err := subscriptionMain.Update(subscriptionID, request)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -107,7 +107,7 @@ func Update(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		subscriptionID, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
@@ -119,7 +119,7 @@ func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 			return
 		}
 
-		err := subscriptionMain.Delete(subscriptionId, author)
+		err := subscriptionMain.Delete(subscriptionID, author)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -129,16 +129,16 @@ func Delete(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, 
 	}
 }
 
-func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func FindByID(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		subscriptionID, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
-		result, err := subscriptionMain.FindById(subscriptionId)
+		result, err := subscriptionMain.FindByID(subscriptionID)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -151,7 +151,7 @@ func FindById(subscriptionMain subscription.UseCases) func(w http.ResponseWriter
 func History(messageMain message.UseCases, executionMain messageexecutionhistory.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		subscriptionID, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
@@ -164,7 +164,6 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			"EventValue": r.URL.Query().Get("eventValue"),
 		}
 
-
 		page, atoiErr := strconv.Atoi(r.URL.Query().Get("page"))
 		if atoiErr != nil {
 			page = defaultPageValue
@@ -175,7 +174,7 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 			size = defaultSizeValue
 		}
 
-		result, err := messageMain.FindAllBySubscriptionIdAndFilter(subscriptionId, qp, page, size)
+		result, err := messageMain.FindAllBySubscriptionIDAndFilter(subscriptionID, qp, page, size)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -183,10 +182,10 @@ func History(messageMain message.UseCases, executionMain messageexecutionhistory
 
 		var executionIds []uuid.UUID
 		for _, msg := range result {
-			executionIds = append(executionIds, msg.Id)
+			executionIds = append(executionIds, msg.ID)
 		}
 
-		response, err := executionMain.FindAllByExecutionId(executionIds)
+		response, err := executionMain.FindAllByExecutionID(executionIds)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return
@@ -211,16 +210,16 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 			return
 		}
 
-		subscriptions, sErr := subscriptionMain.FindAllByExternalIdAndEvent(request.ExternalId, request.EventType)
+		subscriptions, sErr := subscriptionMain.FindAllByExternalIDAndEvent(request.ExternalID, request.EventType)
 		if sErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, sErr)
 			return
 		}
 
-        if len(subscriptions) <= 0 {
-            restutil.NewResponse(w, http.StatusOK, "No subscription founded to this event")
-            return
-        }
+		if len(subscriptions) <= 0 {
+			restutil.NewResponse(w, http.StatusOK, "No subscription founded to this event")
+			return
+		}
 
 		requestMessages, eventErr := restutil.SubscriptionToMessageRequest(subscriptions, request)
 		if eventErr != nil {
@@ -238,16 +237,16 @@ func Publish(messageMain message.UseCases, subscriptionMain subscription.UseCase
 	}
 }
 
-func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
+func FindByExternalID(subscriptionMain subscription.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		externalId, uuidErr := uuid.Parse(params["externalId"])
+		externalID, uuidErr := uuid.Parse(params["externalId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr.Error())
 			return
 		}
 
-		result, err := subscriptionMain.FindAllByExternalId(externalId)
+		result, err := subscriptionMain.FindAllByExternalID(externalID)
 
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
@@ -258,17 +257,16 @@ func FindByExternalId(subscriptionMain subscription.UseCases) func(w http.Respon
 	}
 }
 
-
 func HealthCheck(messageMain message.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
-		subscriptionId, uuidErr := uuid.Parse(params["subscriptionId"])
+		subscriptionID, uuidErr := uuid.Parse(params["subscriptionId"])
 		if uuidErr != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, uuidErr)
 			return
 		}
 
-		result, err := messageMain.FindMostRecent(subscriptionId)
+		result, err := messageMain.FindMostRecent(subscriptionID)
 		if err != nil {
 			restutil.NewResponse(w, http.StatusInternalServerError, err)
 			return

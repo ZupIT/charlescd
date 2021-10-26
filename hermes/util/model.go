@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package util
 
 import (
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -29,7 +28,7 @@ type BaseModel struct {
 	CreatedAt time.Time `json:"-"`
 }
 
-func (baseModel *BaseModel) BeforeCreate(scope *gorm.DB) error {
+func (baseModel *BaseModel) BeforeCreate() error {
 	baseModel.ID = uuid.New()
 	return nil
 }

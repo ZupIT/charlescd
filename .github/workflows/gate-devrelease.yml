@@ -20,6 +20,8 @@ on:
   push:
     branches: [release-darwin-*]
 
+permissions: read-all
+
 jobs:
   build_and_push_prerelease:
     runs-on: ubuntu-latest

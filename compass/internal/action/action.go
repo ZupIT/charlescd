@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import (
 
 type Action struct {
 	util.BaseModel
-	WorkspaceId   uuid.UUID  `json:"workspaceId"`
+	WorkspaceID   uuid.UUID  `json:"workspaceId"`
 	Nickname      string     `json:"nickname"`
 	Type          string     `json:"type"`
 	Description   string     `json:"description"`
@@ -45,7 +45,7 @@ type Action struct {
 
 type Request struct {
 	util.BaseModel
-	WorkspaceId   uuid.UUID       `json:"workspaceId"`
+	WorkspaceID   uuid.UUID       `json:"workspaceId"`
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
 	Description   string          `json:"description"`
@@ -56,7 +56,7 @@ type Request struct {
 
 type Response struct {
 	util.BaseModel
-	WorkspaceId   uuid.UUID       `json:"workspaceId"`
+	WorkspaceID   uuid.UUID       `json:"workspaceId"`
 	Nickname      string          `json:"nickname"`
 	Type          string          `json:"type"`
 	Description   string          `json:"description"`
@@ -122,7 +122,7 @@ func (main Main) ValidateAction(action Request) errors.ErrorList {
 		needConfigValidation = false
 	}
 
-	if action.WorkspaceId == uuid.Nil {
+	if action.WorkspaceID == uuid.Nil {
 		err := errors.NewError("Invalid data", "workspaceId is required").
 			WithMeta("field", "workspaceId").
 			WithOperations("ValidateAction.WorkspaceIdIsNil")
@@ -184,29 +184,29 @@ func (main Main) validateActionConfig(actionType string, actionConfiguration jso
 	return ers
 }
 
-func (main Main) FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error) {
+func (main Main) FindActionByIDAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error) {
 	entity := Action{}
-	row := main.db.Set("gorm:auto_preload", true).Raw(decryptedWorkspaceAndIdActionQuery, id, workspaceID).Row()
+	row := main.db.Set("gorm:auto_preload", true).Raw(decryptedWorkspaceAndIDActionQuery, id, workspaceID).Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceID, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
 		return Response{}, errors.NewError("Find all error", dbError.Error()).
-			WithOperations("FindActionByIdAndWorkspace.Raw")
+			WithOperations("FindActionByIDAndWorkspace.Raw")
 	}
 
 	return entity.toResponse(), nil
 }
 
-func (main Main) FindActionById(id string) (Response, errors.Error) {
+func (main Main) FindActionByID(id string) (Response, errors.Error) {
 	entity := Action{}
 	row := main.db.Set("gorm:auto_preload", true).Raw(idActionQuery, id).Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceID, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt, &entity.Configuration)
 	if dbError != nil {
 		return Response{}, errors.NewError("Find by id error", dbError.Error()).
-			WithOperations("FindActionById.Raw")
+			WithOperations("FindActionByID.Raw")
 	}
 
 	return entity.toResponse(), nil
@@ -239,11 +239,11 @@ func (main Main) SaveAction(action Request) (Response, errors.Error) {
 	id := uuid.New().String()
 	entity := Action{}
 
-	row := main.db.Exec(Insert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceId)).
+	row := main.db.Exec(Insert(id, action.Nickname, action.Type, action.Description, action.Configuration, action.WorkspaceID)).
 		Raw(actionQuery, id).
 		Row()
 
-	dbError := row.Scan(&entity.ID, &entity.WorkspaceId, &entity.Nickname, &entity.Type,
+	dbError := row.Scan(&entity.ID, &entity.WorkspaceID, &entity.Nickname, &entity.Type,
 		&entity.Description, &entity.CreatedAt, &entity.DeletedAt)
 	if dbError != nil {
 		return Response{}, errors.NewError("Save error", dbError.Error()).
@@ -266,7 +266,7 @@ func (main Main) DeleteAction(id string) errors.Error {
 func (entity Action) toResponse() Response {
 	return Response{
 		BaseModel:     entity.BaseModel,
-		WorkspaceId:   entity.WorkspaceId,
+		WorkspaceID:   entity.WorkspaceID,
 		Nickname:      entity.Nickname,
 		Type:          entity.Type,
 		Description:   entity.Description,

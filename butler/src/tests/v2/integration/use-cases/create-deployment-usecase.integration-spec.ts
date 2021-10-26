@@ -45,7 +45,7 @@ describe('CreateDeploymentUsecase v2', () => {
 
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
   })
 
   afterAll(async() => {
@@ -135,7 +135,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
           'v1',
           'https://repository.com/A:v1',
           'A',
-          'f1c95177-438c-4c4f-94fd-c207e8d2eb61',
+          '777765f8-bb29-49f7-bf2b-3ec956a71583',
           null,
           null,
           getSimpleManifests('A', 'my-namespace', 'imageurl.com')
@@ -238,7 +238,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 
     expect(newDeployment.components).toEqual(expectedDeploymentComponents)
   })
-    
+
   it('when is a incremental deployment should concat the correct previous deployment components', async() => {
     const encryptedToken = `-----BEGIN PGP MESSAGE-----
 
@@ -248,6 +248,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
 -----END PGP MESSAGE-----
 `
     const base64Token = Buffer.from(encryptedToken).toString('base64')
+
     const previousComponentA = new ComponentEntity(
       UrlConstants.helmRepository,
       'v1',
@@ -301,7 +302,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       'v2',
       'https://repository.com/A:v2',
       'A',
-      '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
+      previousComponentA.componentId,
       null,
       null,
       getSimpleManifestsWithAllLabels(
@@ -347,6 +348,81 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .expect(201)
     const deploymentCreated = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
     expect(deploymentCreated.components).toEqual(expectedComponents)
+  })
+
+  it('should not merge components with same ids and different names', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        id: 'f5d23a57-5607-4306-9993-477e1598cc2a',
+        default: true
+      },
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      components: [
+        {
+          helmRepository: UrlConstants.helmRepository,
+          componentId: '777765f8-bb29-49f7-bf2b-3ec956a71583',
+          buildImageUrl: 'imageurl.com',
+          buildImageTag: 'tag-example',
+          componentName: 'A'
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      namespace: 'my-namespace',
+      overrideCircle: false
+    }
+
+    const expectedDeploymentComponent = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'tag-example',
+      'imageurl.com',
+      'new-A',
+      createDeploymentRequest.components[0].componentId,
+      null,
+      null,
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
+    )
+    const sameCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
+      'baa226a2-97f1-4e1b-b05a-d758839408f9',
+      'user-1',
+      createDeploymentRequest.circle.id,
+      'http://localhost:1234/notifications/deployment?deploymentId=1',
+      [
+        expectedDeploymentComponent
+      ],
+      true,
+      'my-namespace',
+      60
+    )
+
+    sameCircleActiveDeployment.current = true
+
+
+    await manager.save(sameCircleActiveDeployment)
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+
+    const newDeployment =
+          await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
+
+    expect(newDeployment.components.length).toEqual(1)
+    expect(newDeployment.components[0].componentId).toEqual(expectedDeploymentComponent.componentId)
   })
 
   it('when is a deployment to override circle should override the previous deployment components', async() => {
@@ -445,13 +521,15 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       namespace: 'my-namespace',
-      overrideCircle: true
+      overrideCircle: true,
     }
+
     await request(app.getHttpServer())
       .post('/v2/deployments')
       .send(createDeploymentRequest)
       .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
       .expect(201)
+
     const deploymentCreated = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
     expect(deploymentCreated.components).toEqual(expectedComponents)
 

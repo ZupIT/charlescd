@@ -20,6 +20,8 @@ on:
   push:
     branches: [ main ]
 
+permissions: read-all
+
 jobs:
   build_and_push_alpha_butler:
     runs-on: ubuntu-latest
@@ -170,6 +172,102 @@ jobs:
           IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
         run: |
           cd compass
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
+        with:
+          go-version: "^1.14.2"
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyECRSession
+          role-skip-session-tagging: true
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-gate
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          cd gate
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
+
+  build_and_push_alpha_hermes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
+        with:
+          go-version: "^1.14.2"
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_SHA)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyECRSession
+          role-skip-session-tagging: true
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: charlescd-hermes
+          IMAGE_TAG: ${{ steps.get_version.outputs.VERSION }}
+        run: |
+          cd hermes
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:alpha-latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:alpha-$IMAGE_TAG
@@ -341,7 +439,9 @@ jobs:
              build_and_push_alpha_moove,
              build_and_push_alpha_ui,
              build_and_push_alpha_villager,
-             build_and_push_alpha_compass
+             build_and_push_alpha_compass,
+             build_and_push_alpha_gate,
+             build_and_push_alpha_hermes
     ]
     steps:
       - name: Get the version

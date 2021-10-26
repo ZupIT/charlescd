@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import (
 type UseCases interface {
 	ParseMetric(metric io.ReadCloser) (Metric, errors.Error)
 	CountMetrics(metrics []Metric) (int, int, int)
-	FindMetricById(id string) (Metric, errors.Error)
+	FindMetricByID(id string) (Metric, errors.Error)
 	SaveMetric(metric Metric) (Metric, errors.Error)
 	UpdateMetric(metric Metric) (Metric, errors.Error)
 	RemoveMetric(id string) errors.Error
