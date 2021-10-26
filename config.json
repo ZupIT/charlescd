@@ -14,8 +14,8 @@
   ],
   "ignore": [
     "node_modules/**",
-    "**.md",
-    "**.json",
+    "**/*.md",
+    "**/*.json",
     "**.png",
     "**.idea",
     ".github",
@@ -23,9 +23,15 @@
     ".gitignore",
     ".vscode",
     "dist/",
+    "**/mocks/**",
     "coverage/**",
     "upgrades/**",
-    "**.svg"
+    "**/*.xml",
+    "**/*.svg",
+    "**/*.lock",
+    "**/*.sum",
+    "**/*.ico",
+    "**/*.tpl"
   ],
   "startDateLicense": 2020
 }

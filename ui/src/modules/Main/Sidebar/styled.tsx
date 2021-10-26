@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,10 +61,11 @@ const Item = styled.div`
 `;
 
 const WorkspaceItem = styled(Item)`
-  >span{
+  > span {
     width: 90px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -92,9 +93,9 @@ interface LinkIconProps {
   isActive?: boolean;
 }
 
-const LinkIcon = styled((props: IconProps) => <IconComponent {...props} />)<
-  LinkIconProps
->`
+const LinkIcon = styled((props: IconProps) => (
+  <IconComponent {...props} />
+))<LinkIconProps>`
   margin-right: 10px;
   color: ${({ isActive, theme }) =>
     isActive ? theme.sidebar.menuIconActive : theme.sidebar.menuIcon};
@@ -199,7 +200,7 @@ export default {
   Logo,
   Expand: {
     Button: ExpandButton,
-    Icon: ExpandIcon
+    Icon: ExpandIcon,
   },
   Dropdown,
   DropdownItem,
@@ -209,5 +210,5 @@ export default {
   Bottom,
   Footer,
   Item,
-  WorkspaceItem
+  WorkspaceItem,
 };

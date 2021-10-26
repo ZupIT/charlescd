@@ -29,6 +29,8 @@ on:
     paths:
       - "compass/**"
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -62,15 +64,6 @@ jobs:
           file: ./compass/coverage.cov
           flags: compass
           fail_ci_if_error: true
-
-      - name: Code Style
-        uses: docker://morphy/revive-action@sha256:5642ac5a33b9add49139db42fa12014294c3c783c241056a4e46b1a2e059cc7c
-        with:
-          config: ./compass/revive.toml
-          path: "./compass/..."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Horusec Security
         working-directory: ./compass
         env: 
@@ -78,3 +71,13 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
           horusec start -p . -n="Charles/compass" -u="https://api-horusec.zup.com.br"
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+            working-directory: ./compass
+            version: v1.42.0

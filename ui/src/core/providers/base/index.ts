@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ export interface EnvVariables {
   REACT_APP_WORKSPACE_ID?: string;
   REACT_APP_MOCK?: string;
   REACT_APP_CHARLES_VERSION: string;
+  REACT_APP_CIRCLE_MATCHER_URL?: string;
 }
 
 type GlobalApexCharts = {
@@ -64,6 +65,7 @@ declare global {
 export const basePath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_API_URI;
 export const authPath = window.CHARLESCD_ENVIRONMENT?.REACT_APP_AUTH_URI;
 export const charlesVersion = window.CHARLESCD_ENVIRONMENT?.REACT_APP_CHARLES_VERSION;
+export const matcherUrl = window.CHARLESCD_ENVIRONMENT?.REACT_APP_CIRCLE_MATCHER_URL;
 
 export const authRequest = (
   url: string,
@@ -88,7 +90,6 @@ export const authRequest = (
 };
 
 export const unauthenticatedRequest = (
-  url: string,
   body: object | string | undefined = undefined,
   options?: RequestInit
 ): ((options: RequestInit) => Promise<Response>) => {
@@ -99,7 +100,7 @@ export const unauthenticatedRequest = (
   const mergedOptions = defaultsDeep(options, defaultOptions);
 
   return (options?: RequestInit) =>
-    fetch(`${basePath}${url}`, defaultsDeep(mergedOptions, options)).then(
+    fetch(`${matcherUrl}`, defaultsDeep(mergedOptions, options)).then(
       (response: Response) => {
         if (!response.ok) {
           return Promise.reject(response);

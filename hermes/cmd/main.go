@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,9 +69,9 @@ func main() {
 	c.AddFunc(configuration.GetConfiguration("PUBLISHER_TIME"), func() { messagePubSubMain.Publish() })
 	go c.Start()
 
-	stopChan := make(chan bool, 0)
+	stopChan := make(chan bool)
 	go messagePubSubMain.Consume(stopChan)
 
-	router := api.NewApi(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
+	router := api.NewAPI(subscriptionMain, messageMain, messageExecutionMain, sqlDB)
 	api.Start(router)
 }

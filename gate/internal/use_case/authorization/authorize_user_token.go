@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 )
 
 type AuthorizeUserToken interface {
-	Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error
+	Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error
 }
 
 type authorizeUserToken struct {
@@ -46,7 +46,7 @@ func NewAuthorizeUserToken(securityFilterService service.SecurityFilterService, 
 	}
 }
 
-func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, workspaceId string, authorization domain.Authorization) error {
+func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, workspaceID string, authorization domain.Authorization) error {
 	allowed, err := authorizeUserToken.securityFilterService.Authorize("public", authorization.Path, authorization.Method)
 	if err != nil {
 		return logging.NewError("Forbidden", err, logging.InternalError, nil, "authorize.userToken")
@@ -83,7 +83,11 @@ func (authorizeUserToken authorizeUserToken) Execute(authorizationToken string, 
 		return nil
 	}
 
-	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceId, user.ID.String())
+	userPermission, err := authorizeUserToken.workspaceRepository.GetUserPermissionAtWorkspace(workspaceID, user.ID.String())
+
+	if err != nil {
+		return logging.WithOperation(err, "authorize.userToken")
+	}
 	for _, ps := range userPermission {
 		for _, p := range ps {
 			allowed, err = authorizeUserToken.securityFilterService.Authorize(p.Name, authorization.Path, authorization.Method)

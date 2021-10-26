@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ func Create(actionMain action.UseCases) func(w http.ResponseWriter, r *http.Requ
 			return
 		}
 		workspaceID := r.Header.Get("x-workspace-id")
-		request.WorkspaceId = uuid.MustParse(workspaceID)
+		request.WorkspaceID = uuid.MustParse(workspaceID)
 
 		if err := actionMain.ValidateAction(request); len(err.GetErrors()) > 0 {
 			util.NewResponse(w, http.StatusInternalServerError, err)
