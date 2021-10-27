@@ -18,9 +18,9 @@ package io.charlescd.villager.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
-	
-	private ResourceEnum resource;
+    private static final long serialVersionUID = 1L;
+
+    private ResourceEnum resource;
 
     public ResourceNotFoundException(ResourceEnum resource) {
         super(String.format("Resource %s not found", resource.name()));

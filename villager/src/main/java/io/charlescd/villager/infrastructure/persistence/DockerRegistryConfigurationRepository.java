@@ -254,7 +254,7 @@ public class DockerRegistryConfigurationRepository {
     }
 
     @SuppressWarnings("unchecked")
-	private Map<String, String> deserializeConnectionData(ResultSet rs) throws JsonProcessingException, SQLException {
+    private Map<String, String> deserializeConnectionData(ResultSet rs) throws JsonProcessingException, SQLException {
         return new ObjectMapper().readValue(rs.getString("connection_data"), Map.class);
     }
 }

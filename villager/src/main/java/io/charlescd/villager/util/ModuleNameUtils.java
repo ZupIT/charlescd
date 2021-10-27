@@ -16,12 +16,15 @@
 
 package io.charlescd.villager.util;
 
+import java.util.Objects;
+
 public class ModuleNameUtils {
 
     private ModuleNameUtils() {
     }
 
     public static String normalize(String name) {
+        Objects.requireNonNull(name, "'name' is required.");
         String[] nameArray = name.split("/");
         if (nameArray.length > 1) {
             return nameArray[1];
