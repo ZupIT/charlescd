@@ -94,6 +94,7 @@ export const isLogged = () => getAccessToken() && getRefreshToken();
 export const clearSession = () => {
   localStorage.removeItem(accessTokenKey);
   localStorage.removeItem(refreshTokenKey);
+  localStorage.removeItem('anonymous');
   clearCircleId();
   clearProfile();
   clearWorkspace();

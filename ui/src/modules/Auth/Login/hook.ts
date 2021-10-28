@@ -71,9 +71,10 @@ export const useLogin = (): {
   const [error, setError] = useState('');
 
   const doLogin = useCallback(
-    async (email: string, password: string) => {
+    async (email?: string, password?: string, anonymous?: boolean) => {
       setStatus('pending');
       setError('');
+
       try {
         const response: AuthResponse = await getSession(email, password);
         saveSessionData(response['access_token'], response['refresh_token']);

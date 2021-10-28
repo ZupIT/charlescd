@@ -48,6 +48,11 @@ const Login = () => {
     doLogin(email, password);
   };
 
+  const anonymousLogin = () => {
+    localStorage.setItem('anonymous', 'true');
+    doLogin('', '', true);
+  };
+
   return (
     <Fragment>
       <Icon name="charles-logo" />
@@ -87,6 +92,13 @@ const Login = () => {
           Continue
         </Styled.Button>
       </Styled.Form>
+      <Styled.ButtonAnonymous
+        id="login-anonymous"
+        size="EXTRA_SMALL"
+        onClick={() => anonymousLogin()}
+      >
+        Anonymous login
+      </Styled.ButtonAnonymous>
     </Fragment>
   );
 };

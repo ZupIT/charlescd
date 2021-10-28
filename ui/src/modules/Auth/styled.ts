@@ -117,6 +117,13 @@ const Button = styled(ButtonComponentDefault)`
   right: 0;
 `;
 
+const ButtonAnonymous = styled(ButtonComponentDefault)`
+  position: absolute;
+  border-radius: 30px;
+  margin-top: 28px;
+  right: 10;
+`;
+
 export default {
   Wrapper,
   Background,
@@ -129,5 +136,6 @@ export default {
   Button,
   Copyright,
   Heart,
-  Zup
+  Zup,
+  ButtonAnonymous
 };
