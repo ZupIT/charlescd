@@ -35,7 +35,7 @@
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
         <charlescd.tracing.version>1.0</charlescd.tracing.version>
         <jboss.resteasy.version>3.1.4.Final</jboss.resteasy.version>
-        <snakeyaml.version>1.25</snakeyaml.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
         <keycloak.version>13.0.0</keycloak.version>
         <csv.validator.version>1.1</csv.validator.version>
         <json.patch.version>1.12</json.patch.version>
