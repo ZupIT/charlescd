@@ -38,7 +38,7 @@ public class RedisClientConfiguration {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         @SuppressWarnings("rawtypes")
-		Jackson2JsonRedisSerializer jackson2JsonRedisSerializer =  new Jackson2JsonRedisSerializer<>(Object.class);
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
