@@ -12,17 +12,17 @@
 
 
 ## **Table of contents**
-1. [**About**](#About)
-2. [**How was the project created?**](#How-was-the-project-created?)
-3. [**What does Charles do?**](#What-does-Charles-do?)
-4. [**Start using CharlesCD**](#Start-using-CharlesCD)
-    1. [**Installing Charles**](#Installing-Charles)
-    2. [**Requirements**](#Requirements)
-    3. [**Usage**](#Usage)
-5. [**Help us to evolve CharlesCD**](#Help-us-to-evolve-CharlesCD)
-    1. [**Developer Certificate of Origin - DCO**](#Developer-Certificate-of-Origin-DCO)
-6. [**License**](#License)
-7. [**Forum**](#Community)
+### 1. [**About**](#About)
+### 2. [**Getting Started**](#Getting-Started)
+>#### i. [**Requirements**](#Requirements)
+>#### ii. [**Installation**](#Installation)
+>#### iii. [**Usage**](#Usage)
+### 3. [**Documentation**](#Documentation)
+### 4. [**Contributing**](#Contributing)
+>#### i. [**Developer Certificate of Origin - DCO**](#Developer-Certificate-of-Origin-DCO)
+### 5. [**Code of Conduct**](#Code-of-Conduct)
+### 6. [**License**](#License)
+### 7. [**Community**](#Community)
 
  
 <br>
@@ -47,8 +47,16 @@ For this reason, we consider CharlesCD a Darwinism's application within the deve
 * Easy version management in case of multiple releases in parallel in the production environment;
 * Monitoring the impacts of each version using metrics defined during the creation of the deployment.
 
-## **Start using CharlesCD**
-### **Installing Charles**
+## **Getting Started**
+
+### **Requirements**
+To install Charles your environment needs the following requisites: 
+- Kubernetes
+- Helm
+- Istio (version>= 1.7 and enabled sidecar injection on the deploy namespace of your application).
+- Prometheus, in case you want to use metrics. 
+
+### **Installation**
 CharlesCD's installation considers these components:
 
 1. Charles' architecture specific modules; 
@@ -58,50 +66,55 @@ CharlesCD's installation considers these components:
 5. A **RabbitMQ** for `charlescd-hermes` use.
 6. **Ingress** which is used to expose the HTTP and HTTPS routes outside the cluster to services inside the cluster. When you install Charles, it already has a default ingress, however, you can use your own.
 
-### **Requirements**
-To install Charles your environment needs the following requisites: 
-- Kubernetes
-- Helm
-- Istio (version>= 1.7 and enabled sidecar injection on the deploy namespace of your application).
-- Prometheus, in case you want to use metrics. 
-
 ### **Usage**
-For more details, check out the [**documentation**](https://docs.charlescd.io).
+For more details, check out the [**documentation**](https://docs.charlescd.io/v1.0.x/overview/).
 
-## **Help us to evolve CharlesCD**
-We will be happy with your ideas! Please see our [**contributing guide**](CONTRIBUTING.md).
+## **Documentation**
+You can find Charles's documentation on our [**website**](https://docs.charlescd.io/v1.0.x/).
+
+## **Contributing**
+
+#### **Help us to evolve CharlesCD**
+Check out our [**contributing guide**](CONTRIBUTING.md) to learn about our development process, how to propose bug fixes and improvements, build and test your changes to Charles. 
 
 ### **Developer Certificate of Origin - DCO**
 
  This is a security layer for the project and for the developers. It is mandatory.
  
- There are two ways to use DCO, see them below: 
+ 
+ Follow one of these two methods to add DCO to your commits:
  
 **1. Command line**
  Follow the steps: 
- **Step 1:** Check out your local git:
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
 
  ```
 git config --global user.name “Name”
 git config --global user.email “email@domain.com.br”
 ```
-**Step 2:** When you commit, add the sigoff via `-s` flag:
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
 
 ```
 $ git commit -s -m "This is my commit message"
 ```
-**2. GitHub website**
 
-**Step 1:** When the commit changes box opens, add 
+**2. GitHub website**
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
 ```
-$ git commit -m “My signed commit” Signed-off-by: username <email address>
+Signed-off-by: Name < e-mail address >
 ```
-Note: For this option, your e-mail must be the same in registered in GitHub. 
+For this method, your name and e-mail must be the same registered to your GitHub account.
+
+## **Code of Conduct**
+Please follow the [**Code of Conduct**](https://github.com/ZupIT/charlescd/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
 
 ## **License**
  [**Apache License 2.0**](https://github.com/ZupIT/charlescd/blob/main/LICENSE).
 
-## **Forum** 
+## **Community** 
 If you have any questions or ideas, let's chat in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
 
 Keep evolving.

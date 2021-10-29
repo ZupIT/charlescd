@@ -8,33 +8,36 @@ This is CharlesCD contributing guide. Please read the following sections to lear
 
 ## **Table of contents**
 
-1. [**Before you contribute**](#Before-you-contribute)
-    1. [**Legal**](#Legal)
-3. [**Prerequisites**](#Prerequisites)
-    1. [**Tests aren’t optional**](#Tests-aren’t-optional)
-    2. [**Be aware of documentation changes**](#Be-aware-of-documentation-changes)
-    3. [**Code reviews**](#Code-reviews)
-    4. [**Continuous Integration**](#Continuous-Integration)
-    5. [**Developer Certificate of Origin - DCO**](#Developer-Certificate-of-Origin-DCO)
-4. [**Help us to Evolve**](#Prerequisites)
-    1. [**How to contribute?**](#How-to-contribute?)
-    2. [**First contribution**](#First-contribution)
-    3. [**Do you want to add a new feature or change an existing one?**](#Do-you-want-to-add-a-new-feature-or-change-an-existing-one?)
-    4. [**Adding a new feature**](#Adding-a-new-feature)
-    5. [**Before open an issue**](#Before-open-an-issue)
-    6. [**Opening a new issue**](#Opening-a-new-issue)
-    7. [**How to make a change suggestion?**](#How-to-make-a-change-suggestion?)
-    8. [**Did you find a bug?**](#Did-you-find-a-bug?)
-5. [**Community**](#Community)
+### 1. [**Before you contribute**](#Before-you-contribute)
+> #### i. [**Code of Conduct**](#Code-of-Conduct)
+> #### ii. [**Legal**](#Legal)
+### 2. [**Prerequisites**](#Prerequisites)
+> #### i. [**Tests aren’t optional**](#Tests-aren’t-optional)
+> #### ii. [**Be aware of documentation changes**](#Be-aware-of-documentation-changes)
+> #### iii. [**Code reviews**](#Code-reviews)
+> #### iv. [**Continuous Integration**](#Continuous-Integration)
+> #### v. [**Developer Certificate of Origin - DCO**](#Developer-Certificate-of-Origin-DCO)
+### 3. [**How to contribute?**](#How-to-contribute?)
+> #### i. [**First contribution**](#First-contribution)
+> #### ii. [**Do you want to add a new feature or change an existing one?**](#Do-you-want-to-add-a-new-feature-or-change-an-existing-one?)
+> #### iii. [**Adding a new feature**](#Adding-a-new-feature)
+> #### iv. [**Before open an issue**](#Before-open-an-issue)
+> #### v. [**Opening a new issue**](#Opening-a-new-issue)
+> #### vi. [**How to make a change suggestion?**](#How-to-make-a-change-suggestion?)
+> #### vii. [**Did you find a bug?**](#Did-you-find-a-bug?)
+### 4. [**Community**](#Community)
 
 
 ## **Before you contribute**
 
+### **Code of Conduct**
+Please follow the [**Code of Conduct**](https://github.com/ZupIT/charlescd/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
+
 ### **Legal**
 As you contribute, keep in mind that the code, docs and other materials submitted to open source projects are usually considered licensed under the same terms as the rest of the work.
 
-- CharlesCD is licensed over [**ASL - Apache License**](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header. For more information, please check out [**Apache license**](https://www.apache.org/licenses/LICENSE-2.0).
-You should configure a pre-commit Githook in your local machine, so it will help you not commit files without a license header. Please check out [more about Githooks](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
+- CharlesCD is licensed over [**ASF - Apache License**](https://github.com/ZupIT/charlescd/blob/main/LICENSE), version 2, so new files must have the ASL version 2 header. For more information, please check out [**Apache license**](https://www.apache.org/licenses/LICENSE-2.0).
+You should configure a pre-commit Githook in your local machine, so it will help you not commit files without a license header. Please check out [**more about Githooks**](https://github.com/ZupIT/charlescd/blob/main/hooks/README.md).
 
 - All contributions are subject to the [**Developer Certificate of Origin (DCO)**](https://developercertificate.org). 
 When you commit, use the ```**-s** ``` option to include the Signed-off-by line at the end of the commit log message. At the root of this repository, you will find the DCO text verbatim in the [**dco.txt**](https://github.com/ZupIT/charlescd/blob/main/dco.txt) file.
@@ -72,33 +75,37 @@ After forking CharlesCD repo, you must go to ’Actions’ tab (on your own fork
 
  This is a security layer for the project and for the developers. It is mandatory.
  
- There are two ways to use DCO, see them below: 
+ Follow one of these two methods to add DCO to your commits:
  
 **1. Command line**
  Follow the steps: 
- **Step 1:** Check out your local git:
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
 
  ```
 git config --global user.name “Name”
 git config --global user.email “email@domain.com.br”
 ```
-**Step 2:** When you commit, add the sigoff via `-s` flag:
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
 
 ```
 $ git commit -s -m "This is my commit message"
 ```
+
 **2. GitHub website**
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
 
-**Step 1:** When the commit changes box opens, add the following command:
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
 ```
-$ git commit -m “My signed commit” Signed-off-by: username <email address>
+Signed-off-by: Name < e-mail address >
 ```
-Note: For this option, your e-mail must be the same in registered in GitHub. 
+For this method, your name and e-mail must be the same registered to your GitHub account.
 
-## **Help us to Evolve** 
-### **How to contribute?** 
+## **How to contribute?** 
 
-See the guidelines to submit evolutions: 
+### **Help us to Evolve** 
+
+See the guidelines to submit your changes: 
 
 ### **Prepare your development environment**
 
@@ -148,15 +155,24 @@ Your issue needs to have:
 
 ### **How to suggest changes?**
 Follow the steps: 
-**Step 1.** Click ‘Fork’ on Github, creating e.g. yourname/charlescd
-**Step 2.** Clone your project: ```git clone git@github.com:yourname/charlescd ```
+
+**Step 1.** Click ‘Fork’ on Github, creating e.g. yourname/charlescd;
+
+**Step 2.** Clone your project: ```git clone git@github.com:yourname/charlescd ```;
+
 **Step 3.** ```cd charlescd ```
+
 **Step 4.** Configure the environment(s) for module(s) that you are collaborating
+
 **Step 5.** Create a branch: ```git checkout -b your_branch source_branch ```
-**Step 6.** Test, code, test again and repeat.
+
+**Step 6.** Test, code, test again and repeat;
+
 **Step 7.** Commit your changes: ```git commit -s -S -m "My wonderful new evolution" ``` (don’t forget the ```-s ``` and  ```-S ``` flags);
-**Step 8.** Rebase from original repo: ```git pull --rebase upstream source_branch ```
-**Step 9.** Push your commit to get it back up to your fork: ```git push origin your_branch ```
+
+**Step 8.** Rebase from original repo: ```git pull --rebase upstream source_branch ```;
+
+**Step 9.** Push your commit to get it back up to your fork: ```git push origin your_branch ```.
 
 ### **Did you find a bug?**
 Follow the steps to write a bug fix:
