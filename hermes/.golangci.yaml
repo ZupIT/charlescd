@@ -1,0 +1,87 @@
+run:
+  timeout: 10m
+  issues-exit-code: 1
+  tests: true
+  skip-files:
+    - '_test.go'
+#  modules-download-mode: readonly
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  errcheck:
+    check-type-assertions: false
+    check-blank: false
+    exclude-functions:
+    - github.com/joho/godotenv.Load
+    - (*github.com/robfig/cron/v3.Cron).AddFunc
+  golint:
+    min-confidence: 0.8
+  maligned:
+    suggest-new: true
+  revive:
+    ignore-generated-header: true
+    severity: error
+    rules:
+      - name: atomic
+      - name: unhandled-error
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+#      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+
+linters:
+  disable-all: true
+  enable:
+  - revive
+  - govet
+  - gosimple
+  - bodyclose
+  - nakedret
+  - unconvert
+  - errcheck
+  - gofmt
+  - errcheck
+  - ineffassign
+  - staticcheck
+  - structcheck
+  - typecheck
+  - unused
+  - varcheck
+  - asciicheck
+  - bodyclose
+  - depguard
+  - dogsled
+  - dupl
+  - exportloopref
+  - gocyclo
+  - goheader
+  - gomodguard
+  - goprintffuncname
+  - misspell
+  - nakedret
+  - rowserrcheck
+  - sqlclosecheck
+  - unconvert

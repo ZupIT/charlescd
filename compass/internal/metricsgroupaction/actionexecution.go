@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import (
 )
 
 const (
-	notExecuted      = "NOT_EXECUTED"
 	executionSuccess = "SUCCESS"
 	inExecution      = "IN_EXECUTION"
 	executionFailed  = "FAILED"
@@ -34,20 +33,20 @@ const (
 
 type ActionsExecutions struct {
 	util.BaseModel
-	GroupActionId uuid.UUID  `json:"groupActionId"`
+	GroupActionID uuid.UUID  `json:"groupActionId"`
 	ExecutionLog  string     `json:"executionLog"`
 	Status        string     `json:"status"`
 	StartedAt     *time.Time `json:"startedAt"`
 	FinishedAt    *time.Time `json:"finishedAt"`
 }
 
-func (main Main) findExecutionById(actionExecutionID string) (ActionsExecutions, errors.Error) {
+func (main Main) findExecutionByID(actionExecutionID string) (ActionsExecutions, errors.Error) {
 	var execution ActionsExecutions
 	result := main.db.Where("id = ?", actionExecutionID).Find(&execution)
 
 	if result.Error != nil {
 		return ActionsExecutions{}, errors.NewError("Find error", result.Error.Error()).
-			WithOperations("findExecutionById.Find")
+			WithOperations("findExecutionByID.Find")
 	}
 
 	return execution, nil
@@ -64,7 +63,7 @@ func (main Main) CreateNewExecution(groupActionID string) (ActionsExecutions, er
 	execution := ActionsExecutions{
 		Status:        inExecution,
 		StartedAt:     &timeNow,
-		GroupActionId: parsedID,
+		GroupActionID: parsedID,
 	}
 
 	db := main.db.Create(&execution)
@@ -76,9 +75,9 @@ func (main Main) CreateNewExecution(groupActionID string) (ActionsExecutions, er
 }
 
 func (main Main) SetExecutionFailed(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error) {
-	execution, err := main.findExecutionById(actionExecutionID)
+	execution, err := main.findExecutionByID(actionExecutionID)
 	if err != nil {
-		return ActionsExecutions{}, err.WithOperations("SetExecutionFailed.findExecutionById")
+		return ActionsExecutions{}, err.WithOperations("SetExecutionFailed.findExecutionByID")
 	}
 
 	if !validateActionCanFinish(execution) {
@@ -100,9 +99,9 @@ func (main Main) SetExecutionFailed(actionExecutionID string, executionLog strin
 }
 
 func (main Main) SetExecutionSuccess(actionExecutionID string, executionLog string) (ActionsExecutions, errors.Error) {
-	execution, err := main.findExecutionById(actionExecutionID)
+	execution, err := main.findExecutionByID(actionExecutionID)
 	if err != nil {
-		return ActionsExecutions{}, err.WithOperations("SetExecutionSuccess.findExecutionById")
+		return ActionsExecutions{}, err.WithOperations("SetExecutionSuccess.findExecutionByID")
 	}
 
 	if !validateActionCanFinish(execution) {

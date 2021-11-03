@@ -1,3 +1,21 @@
+///*
+// *
+// *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// *
+// *  Licensed under the Apache License, Version 2.0 (the "License");
+// *  you may not use this file except in compliance with the License.
+// *  You may obtain a copy of the License at
+// *
+// *      http://www.apache.org/licenses/LICENSE-2.0
+// *
+// *  Unless required by applicable law or agreed to in writing, software
+// *  distributed under the License is distributed on an "AS IS" BASIS,
+// *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// *  See the License for the specific language governing permissions and
+// *  limitations under the License.
+// *
+// */
+
 module github.com/ZupIT/charlescd/compass
 
 go 1.14
@@ -20,5 +38,6 @@ require (
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43 // indirect
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	google.golang.org/api v0.31.0
 )

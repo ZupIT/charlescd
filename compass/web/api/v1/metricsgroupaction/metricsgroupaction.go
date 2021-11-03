@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ func FindByID(metricsgroupactionMain metricsgroupaction.UseCases) func(w http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := mux.Vars(r)["metricgroupactionID"]
 
-		act, err := metricsgroupactionMain.FindGroupActionById(id)
+		act, err := metricsgroupactionMain.FindGroupActionByID(id)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return

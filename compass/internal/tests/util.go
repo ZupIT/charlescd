@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@
  *
  */
 
+//nolint
 package tests
 
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"time"
 	"github.com/ZupIT/charlescd/compass/internal/action"
 	"github.com/ZupIT/charlescd/compass/internal/configuration"
 	"github.com/ZupIT/charlescd/compass/internal/datasource"
@@ -33,6 +32,8 @@ import (
 	datasourcePKG "github.com/ZupIT/charlescd/compass/pkg/datasource"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"os"
+	"time"
 )
 
 const dbLog = false
@@ -110,7 +111,7 @@ func newBasicMetric() metric.Metric {
 
 func newBasicAction() action.Action {
 	return action.Action{
-		WorkspaceId:   uuid.New(),
+		WorkspaceID:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
 		Description:   "Some description",
@@ -124,7 +125,7 @@ func actionInsert(actionType string) (string, action.Response) {
 		BaseModel: util.BaseModel{
 			ID: uuid.New(),
 		},
-		WorkspaceId:   uuid.New(),
+		WorkspaceID:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
 		Description:   "Some description",
@@ -134,13 +135,13 @@ func actionInsert(actionType string) (string, action.Response) {
 
 	return fmt.Sprintf(`INSERT INTO actions (id, workspace_id, nickname, type, description, configuration, deleted_at)
 			VALUES ('%s', '%s', '%s', '%s', '%s', PGP_SYM_ENCRYPT('%s', '%s', 'cipher-algo=aes256'), null);`,
-			entity.ID, entity.WorkspaceId, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("ENCRYPTION_KEY")),
+			entity.ID, entity.WorkspaceID, entity.Nickname, actionType, entity.Description, entity.Configuration, configuration.GetConfiguration("ENCRYPTION_KEY")),
 		entity
 }
 
 func newBasicActionRequest() action.Request {
 	return action.Request{
-		WorkspaceId:   uuid.New(),
+		WorkspaceID:   uuid.New(),
 		Nickname:      "nickname",
 		Type:          "validaction",
 		Description:   "Some description",
