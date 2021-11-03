@@ -28,9 +28,9 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name          string   `json:"name" validate:"required,notblank"`
-	Permissions   []string `json:"permissions" validate:"dive,notblank"`
-	Workspaces    []string `json:"workspaces" validate:"required, notblank, min=1" `
+	Name          string   `json:"name" validate:"required"`
+	Permissions   []string `json:"permissions" validate:"required"`
+	Workspaces    []string `json:"workspaces" validate:"required" `
 	AllWorkspaces bool     `json:"allWorkspaces"`
 }
 
