@@ -429,8 +429,58 @@ jobs:
           ${{ secrets.NGINX_CERT }}
           EOF
 
-#      - name: Deploy dev
-#        uses: WyriHaximus/github-action-helm3@v2.1.3
-#        with:
-#          exec: helm upgrade charlescd ./install/helm-chart/ --install --wait --atomic --values=./values-charles-dev.yaml
-#          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
+  sign-artifacts:
+    runs-on: ubuntu-latest
+    outputs:
+      gpg-fingerprint: ${{ steps.import-gpg.outputs.fingerprint }}
+    needs: deploy
+    steps:
+      - name: Import GPG key
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@8c43807e82148a7bafc633cc9584d04bf54be8d0 # v3.1.0
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+      - name: Signs release artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import-gpg.outputs.fingerprint }}
+          TARBALL_URL: ${{ github.event.repository.html_url }}/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz
+          ZIPBALL_URL: ${{ github.event.repository.html_url }}/archive/refs/tags/${{ github.event.release.tag_name }}.zip
+          FILE_NAME: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
+          UPLOAD_URL: ${{ github.event.release.upload_url }}
+        run: |
+          set -e; set -x
+          UPLOAD_URL=$(echo $UPLOAD_URL | cut -d '{' -f1)
+          curl -sSL "${TARBALL_URL}" --output "${FILE_NAME}.tar.gz"
+          curl -sSL "${ZIPBALL_URL}" --output "${FILE_NAME}.zip"
+          sha256sum "${FILE_NAME}.tar.gz" >> checksums.txt
+          sha256sum "${FILE_NAME}.zip" >> checksums.txt
+          gpg --batch -u ${GPG_FINGERPRINT} --output "checksums.txt.sig" --detach-sign "checksums.txt"
+          curl -sSL "${UPLOAD_URL}?name=checksums.txt.sig" \
+            -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: $(file -b --mime-type "checksums.txt.sig")" \
+            --data-binary @checksums.txt.sig
+          curl -sSL "${UPLOAD_URL}?name=checksums.txt" \
+            -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: $(file -b --mime-type "checksums.txt")" \
+            --data-binary @checksums.txt
+
+  check-signature:
+    runs-on: ubuntu-latest
+    needs: sign-artifacts
+    steps:
+      - name: Verify the signature
+        env:
+          GPG_FINGERPRINT: ${{ needs.sign-artifacts.outputs.gpg-fingerprint }}
+          ZIPBALL_URL: ${{ github.event.repository.html_url }}/archive/refs/tags/${{ github.event.release.tag_name }}.zip
+          TARBALL_URL: ${{ github.event.repository.html_url }}/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz
+          FILE_NAME: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
+          DOWNLOADS_URL: ${{ github.event.repository.html_url }}/releases/download/${{ github.event.release.tag_name }}
+        run: |
+          set -e; set -x
+          curl -sSL ${TARBALL_URL} --output ${FILE_NAME}.tar.gz
+          curl -sSL ${ZIPBALL_URL} --output ${FILE_NAME}.zip
+          curl -sSL ${DOWNLOADS_URL}/checksums.txt.sig --output checksums.txt.sig
+          curl -sSL ${DOWNLOADS_URL}/checksums.txt --output checksums.txt
+          gpg --keyserver keys.openpgp.org --recv-keys ${GPG_FINGERPRINT}
+          gpg --verify checksums.txt.sig checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
