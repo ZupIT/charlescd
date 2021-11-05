@@ -62,12 +62,12 @@ func prepareDatabase() (persistenceManager, error) {
 }
 
 func connectDatabase() (*sql.DB, *gorm.DB, error) {
-	sqlDb, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		configuration.Get("DB_USER"),
-		configuration.Get("DB_PASSWORD"),
+	sqlDb, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		configuration.Get("DB_HOST"),
 		configuration.Get("DB_PORT"),
+		configuration.Get("DB_USER"),
 		configuration.Get("DB_NAME"),
+		configuration.Get("DB_PASSWORD"),
 		configuration.Get("DB_SSL"),
 	))
 	if err != nil {
