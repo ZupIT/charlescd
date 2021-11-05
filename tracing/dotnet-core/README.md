@@ -1,14 +1,14 @@
-### Bibloteca de propagação de header Charles - Zup
-Biblioteca simples para propagaçao do "header" de tracing do "Charles".
+# **Library to propagate Charles header - Zup**
+Biblioteca simples para propagaï¿½ao do "header" de tracing do "Charles".
 
-#### Como iniciar
-Primeiro importe biblioteca em sua aplicação:
+#### **How to begin?**
+1. Import the library in your application: 
 
 ```csharp
 using Zup.Tracing;
 ```
 
-Posteriormente no método `ConfigureServices` da classe `Startup` diga ao pipeline do asp.net que iremos usar a propagação de "headers" necessários para o fucionamento do "Charles" adicionando a lina abaixo:
+2. In the `ConfigureServices` method of the `Startup`class, tell the asp.net pipeline, we will use headers propagation to make Charles work. Add the line below: 
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -18,7 +18,7 @@ public void ConfigureServices(IServiceCollection services)
     ...
 }
 ```
-Entao em sua aplicação basta usar normalmente o a sua classe `HttpClient` a partir da injeção de dependência da interface `IHttpClientFactory`:
+3. In your application, use your the `HttpClient` class from the interface `IHttpClientFactory`dependency:
 
 ```csharp
 [Route("api/[controller]")]
@@ -41,9 +41,10 @@ public class FooController : ControllerBase
 }
 ```
 
-#### Configuraçoes extras
+### **Configuration**
 
-Por padrão qualquer objeto da classe `HttpClient` irá repassar o "header" `x-circle-id` caso a requisição o receba, porém é possivel trabalhar com clientes nomeados e/ou propagar mais "headers" usando as sobrecargas que fornecem opções adicionais de configuração do serviço:
+Any `HttpClient` class object will pass the `x-circle-id` header by default, in case the request receives it. However, it is possible to work with named clients and/or propagate more header using the overloads that provide additional service configuration options:
+
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -56,4 +57,4 @@ public void ConfigureServices(IServiceCollection services)
     });
 }
 ```
-É importante salientar que usando esta configuração, é necessário adicionar o header `x-circle-id` novamente uma vez a opção sobrescreve a configuração padrão.
+When you use this configuration, it is necessary to add the  `x-circle-id` header again, once it overwrites the default configuration.

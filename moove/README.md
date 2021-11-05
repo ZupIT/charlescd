@@ -1,5 +1,17 @@
 # **CharlesCD Moove**
 
+## **Table of contents**
+### 1. [**About**](#About)
+### 2. [**How does Moove work?**](#How-does-Moove-work?)
+### 3. [**Usage**](#Usage)
+>#### i. [**Requirements**](#Requirements)
+>#### ii. [**Configuration**](#Configuration)
+### 4. [**Documentation**](#Documentation)
+### 5. [**Contributing**](#Contributing)
+### 6. [**License**](#License)
+### 7. [**Community**](#Community)
+
+## **About**
 Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your circles. It is the bridge between [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler), [**Villager**](https://github.com/ZupIT/charlescd/tree/main/villager), and [**Circle Matcher**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher). 
  
 ## **How does Moove work?**
@@ -51,7 +63,7 @@ Follow the steps below:
 
 After both approaches, the application will be available on port 8080. Additionally, two containers will be running: a PostgreSQL database and a stub server.
  
-- Moove provides a [Swagger API Documentation](http://localhost:8080/swagger-ui.html), and an up to date [Postman Collection](https://www.postman.com/).
+- Moove provides a [**Swagger API Documentation**](http://localhost:8080/swagger-ui.html), and an up to date [**Postman Collection**](https://www.postman.com/).
 
 ## **Documentation**
 
@@ -61,16 +73,41 @@ For more information about CharlesCD, please check out the [**documentation**](h
 
 If you want to contribute to this module, access our [**Contributing Guide**](https://github.com/ZupIT/charlescd/blob/main/CONTRIBUTING.md).
 
+### **Developer Certificate of Origin - DCO**
 
-[JDK 1.8+]: https://www.oracle.com/java/technologies/javase-jdk8-downloads.html
-[Docker]: https://docs.docker.com/get-docker/
-[Docker Compose]: https://docs.docker.com/compose/install/
-[Maven]: https://maven.apache.org/install.html
-[Keycloak]: https://www.keycloak.org/docs/6.0/server_admin/
-[Swagger API Documentation]: http://localhost:8080/swagger-ui.html
-[Postman Collection]: data/postman/Charles%20Collection.postman_collection.json
-[Butler]: https://github.com/ZupIT/charlescd/tree/master/butler
-[Villager]: https://github.com/ZupIT/charlescd/tree/master/villager
-[Circle Matcher]: https://github.com/ZupIT/charlescd/tree/master/circle-matcher
-[Contributing Guide]: https://github.com/ZupIT/charlescd/blob/master/CONTRIBUTING.md
-[Documentation]: https://docs.charlescd.io/
+ This is a security layer for the project and for the developers. It is mandatory.
+ 
+ Follow one of these two methods to add DCO to your commits:
+ 
+**1. Command line**
+ Follow the steps: 
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
+
+ ```
+git config --global user.name “Name”
+git config --global user.email “email@domain.com.br”
+```
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
+
+```
+$ git commit -s -m "This is my commit message"
+```
+
+**2. GitHub website**
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
+```
+Signed-off-by: Name < e-mail address >
+```
+
+For this method, your name and e-mail must be the same registered to your GitHub account.
+
+## **License**
+[**Apache License 2.0**](https://github.com/ZupIT/charlescd/blob/main/LICENSE).
+
+## **Community**
+
+Do you have any question about CharlesCD? Let's chat in our [**forum**](https://forum.zup.com.br/). 
+
