@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import (
 type UseCases interface {
 	ValidateAction(action Request) errors.ErrorList
 	ParseAction(action io.ReadCloser) (Request, errors.Error)
-	FindActionByIdAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
-	FindActionById(id string) (Response, errors.Error)
+	FindActionByIDAndWorkspace(id, workspaceID uuid.UUID) (Response, errors.Error)
+	FindActionByID(id string) (Response, errors.Error)
 	FindAllActionsByWorkspace(workspaceID uuid.UUID) ([]Response, errors.Error)
 	SaveAction(action Request) (Response, errors.Error)
 	DeleteAction(id string) errors.Error

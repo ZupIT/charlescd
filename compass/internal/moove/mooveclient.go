@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import (
 	"os"
 )
 
-func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspaceID uuid.UUID) ([]byte, errors.Error) {
-	mooveUrl := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleId)
+func (api APIClient) GetMooveComponents(circleIDHeader, circleID string, workspaceID uuid.UUID) ([]byte, errors.Error) {
+	mooveURL := fmt.Sprintf("%s/v2/modules/components/by-circle/%s", api.URL, circleID)
 
-	request, err := http.NewRequest(http.MethodGet, mooveUrl, nil)
+	request, err := http.NewRequest(http.MethodGet, mooveURL, nil)
 	if err != nil {
 		return nil, errors.NewError("Get error", err.Error()).
 			WithOperations("GetMooveComponents.NewRequest")
@@ -53,6 +53,9 @@ func (api APIClient) GetMooveComponents(circleIDHeader, circleId string, workspa
 	}
 
 	resultBody, err := ioutil.ReadAll(response.Body)
-
+	if err != nil {
+		return nil, errors.NewError("Read response body error", err.Error()).
+			WithOperations("GetMooveComponents.NewRequest")
+	}
 	return resultBody, nil
 }

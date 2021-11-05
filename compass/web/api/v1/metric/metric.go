@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import (
 
 func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		metricgroupId := mux.Vars(r)["metricGroupID"]
+		metricGroupID := mux.Vars(r)["metricGroupID"]
 
 		newMetric, err := metricMain.ParseMetric(r.Body)
 		if err != nil {
@@ -40,13 +40,13 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 			return
 		}
 
-		metricGroup, err := metricsgroupMain.FindById(metricgroupId)
+		metricGroup, err := metricsgroupMain.FindByID(metricGroupID)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		newMetric.MetricsGroupID = uuid.MustParse(metricgroupId)
+		newMetric.MetricsGroupID = uuid.MustParse(metricGroupID)
 		newMetric.CircleID = metricGroup.CircleID
 
 		if err := metricMain.Validate(newMetric); len(err.GetErrors()) > 0 {
@@ -66,8 +66,8 @@ func Create(metricMain metric.UseCases, metricsgroupMain metricsgroup.UseCases) 
 
 func Update(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		metricId := mux.Vars(r)["metricID"]
-		metricGroupId := mux.Vars(r)["metricGroupID"]
+		metricID := mux.Vars(r)["metricID"]
+		metricGroupID := mux.Vars(r)["metricGroupID"]
 
 		newMetric, err := metricMain.ParseMetric(r.Body)
 		if err != nil {
@@ -80,8 +80,8 @@ func Update(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Requ
 			return
 		}
 
-		newMetric.ID = uuid.MustParse(metricId)
-		newMetric.MetricsGroupID = uuid.MustParse(metricGroupId)
+		newMetric.ID = uuid.MustParse(metricID)
+		newMetric.MetricsGroupID = uuid.MustParse(metricGroupID)
 		updateMetric, err := metricMain.UpdateMetric(newMetric)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
@@ -93,8 +93,8 @@ func Update(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Requ
 
 func Delete(metricMain metric.UseCases) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		metricId := mux.Vars(r)["metricID"]
-		err := metricMain.RemoveMetric(metricId)
+		metricID := mux.Vars(r)["metricID"]
+		err := metricMain.RemoveMetric(metricID)
 		if err != nil {
 			util.NewResponse(w, http.StatusInternalServerError, err)
 			return
