@@ -35,7 +35,7 @@
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
         <charlescd.tracing.version>1.0</charlescd.tracing.version>
         <jboss.resteasy.version>3.1.4.Final</jboss.resteasy.version>
-        <snakeyaml.version>1.25</snakeyaml.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
         <keycloak.version>13.0.0</keycloak.version>
         <csv.validator.version>1.1</csv.validator.version>
         <json.patch.version>1.12</json.patch.version>
@@ -65,6 +65,11 @@
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
@@ -291,6 +296,7 @@
                     </compilerPlugins>
                     <args>
                         <arg>-Xjsr305=strict</arg>
+                        <arg>-Werror</arg>
                     </args>
                 </configuration>
                 <dependencies>
@@ -349,23 +355,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <id>ktlint</id>
-                        <phase>none</phase>
+                        <phase>verify</phase>
                         <configuration>
                             <target name="ktlint">
-                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
+                                <!-- TODO: fix all lint issues and set failonerror to true -->
+                                <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="false"
                                       classname="com.pinterest.ktlint.Main" classpathref="maven.plugin.classpath">
                                     <arg value="src/**/*.kt"/>
                                 </java>
                             </target>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>ktlint-format</id>
-                        <phase>none</phase>
                         <configuration>
                             <target name="ktlint">
                                 <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
@@ -375,13 +384,16 @@
                                 </java>
                             </target>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
                         <groupId>com.pinterest</groupId>
                         <artifactId>ktlint</artifactId>
-                        <version>0.35.0</version>
+                        <version>0.42.1</version>
                     </dependency>
                 </dependencies>
             </plugin>

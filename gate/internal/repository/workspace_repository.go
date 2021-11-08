@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import (
 
 type WorkspaceRepository interface {
 	FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error)
-	GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error)
-	FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error)
+	GetUserPermissionAtWorkspace(workspaceID string, userID string) ([][]domain.Permission, error)
+	FindBySystemTokenID(systemTokenID string) ([]domain.SimpleWorkspace, error)
 }
 
 type workspaceRepository struct {
@@ -52,10 +52,10 @@ func NewWorkspaceRepository(db *gorm.DB, queriesPath string) (WorkspaceRepositor
 	}, nil
 }
 
-func (workspaceRepository workspaceRepository) FindByIds(workspaceIds []string) ([]domain.SimpleWorkspace, error) {
+func (workspaceRepository workspaceRepository) FindByIds(workspaceIDs []string) ([]domain.SimpleWorkspace, error) {
 	var workspaces []models.Workspace
 
-	res := workspaceRepository.db.Table("workspaces").Where("id IN ?", workspaceIds).Scan(&workspaces)
+	res := workspaceRepository.db.Table("workspaces").Where("id IN ?", workspaceIDs).Scan(&workspaces)
 
 	if res.Error != nil {
 		return []domain.SimpleWorkspace{}, handleWorkspaceError("Find all workspaces failed", "WorkspaceRepository.CountByIds.Count", res.Error, logging.InternalError)
@@ -64,16 +64,16 @@ func (workspaceRepository workspaceRepository) FindByIds(workspaceIds []string) 
 	return mapper.WorkspacesModelToDomains(workspaces), nil
 }
 
-func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(workspaceId string, userId string) ([][]domain.Permission, error) {
-	var permissionsJson []json.RawMessage
+func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(workspaceID string, userID string) ([][]domain.Permission, error) {
+	var permissionsJSON []json.RawMessage
 
-	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-user-permissions-at-workspace"], workspaceId, userId).Scan(&permissionsJson)
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-user-permissions-at-workspace"], workspaceID, userID).Scan(&permissionsJSON)
 	if res.Error != nil {
 		return [][]domain.Permission{}, handleWorkspaceError("Find User permissions at Workspace", "WorkspaceRepository.GetUserPermissionAtWorkspace.Scan", res.Error, logging.InternalError)
 	}
 
 	var permissionsList = make([][]models.Permission, 0)
-	for _, p := range permissionsJson {
+	for _, p := range permissionsJSON {
 		var permissions []models.Permission
 		err := json.Unmarshal(p, &permissions)
 		if err != nil {
@@ -90,13 +90,13 @@ func (workspaceRepository workspaceRepository) GetUserPermissionAtWorkspace(work
 	return permissionsListDomain, nil
 }
 
-func (workspaceRepository workspaceRepository) FindBySystemTokenId(systemTokenId string) ([]domain.SimpleWorkspace, error) {
+func (workspaceRepository workspaceRepository) FindBySystemTokenID(systemTokenID string) ([]domain.SimpleWorkspace, error) {
 	var workspaces []models.Workspace
 
-	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-workspaces-by-system-token-id"], systemTokenId).Scan(&workspaces)
+	res := workspaceRepository.db.Raw(workspaceRepository.queries["find-workspaces-by-system-token-id"], systemTokenID).Scan(&workspaces)
 
 	if res.Error != nil {
-		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "WorkspaceRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+		return []domain.SimpleWorkspace{}, handlePermissionError("Find all workspaces by system token id failed", "WorkspaceRepository.FindBySystemTokenID.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.WorkspacesModelToDomains(workspaces), nil

@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import (
 	"net/http"
 )
 
-func HandleError(echoCtx echo.Context, ctx context.Context, err error) error  {
+func HandleError(echoCtx echo.Context, ctx context.Context, err error) error {
 	logging.LogErrorFromCtx(ctx, err)
 	return echoCtx.JSON(getErrorStatusCode(logging.GetErrorType(err)), err)
 }

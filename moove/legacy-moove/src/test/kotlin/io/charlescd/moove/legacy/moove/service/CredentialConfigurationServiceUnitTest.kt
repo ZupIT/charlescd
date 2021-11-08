@@ -1,12 +1,12 @@
 /*
  *
- *  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     https://www.apache.org/licenses/LICENSE-2.0
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,9 +41,9 @@ import io.charlescd.moove.legacy.repository.entity.User
 import io.mockk.every
 import io.mockk.mockkClass
 import io.mockk.verify
+import org.junit.Test
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import org.junit.Test
 
 class CredentialConfigurationServiceUnitTest {
 
@@ -1409,8 +1409,8 @@ class CredentialConfigurationServiceUnitTest {
         val workspaceId = "workspaceId"
 
         every {
-            userServiceLegacy.findUser("authorId")
-        } returns throw NotFoundExceptionLegacy("user", "authorID")
+            userServiceLegacy.findFromAuthMethods(getAuthorization(), null)
+        }.throws(NotFoundExceptionLegacy("user", "authorID"))
 
         credentialConfigurationService.createRegistryConfig(request, workspaceId, getAuthorization(), null)
     }

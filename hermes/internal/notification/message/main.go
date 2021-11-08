@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ type UseCases interface {
 	ParsePayload(request io.ReadCloser) (payloads.PayloadRequest, errors.Error)
 	Validate(message payloads.PayloadRequest) errors.ErrorList
 	Publish(messagesRequest []payloads.Request) ([]payloads.FullMessageResponse, errors.Error)
-	FindAllBySubscriptionIdAndFilter(subscriptionId uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error)
+	FindAllBySubscriptionIDAndFilter(subscriptionID uuid.UUID, parameters map[string]string, page int, size int) ([]payloads.FullMessageResponse, errors.Error)
 	FindAllNotEnqueued() ([]payloads.MessageResponse, errors.Error)
-	FindMostRecent(subscriptionId uuid.UUID) (payloads.StatusResponse, errors.Error)
+	FindMostRecent(subscriptionID uuid.UUID) (payloads.StatusResponse, errors.Error)
 }
 
 type Main struct {

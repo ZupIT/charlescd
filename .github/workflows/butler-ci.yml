@@ -32,6 +32,8 @@ on:
     paths:
       - 'butler/**'
 
+permissions: read-all
+
 jobs:
   build:
 

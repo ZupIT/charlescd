@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import (
 
 type PermissionRepository interface {
 	FindAll(permissions []string) ([]domain.Permission, error)
-	FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error)
+	FindBySystemTokenID(systemTokenID string) ([]domain.Permission, error)
 }
 
 type permissionRepository struct {
@@ -62,13 +62,13 @@ func (permissionRepository permissionRepository) FindAll(permissionNames []strin
 	return mapper.PermissionsModelToDomains(permissions), nil
 }
 
-func (permissionRepository permissionRepository) FindBySystemTokenId(systemTokenId string) ([]domain.Permission, error) {
+func (permissionRepository permissionRepository) FindBySystemTokenID(systemTokenID string) ([]domain.Permission, error) {
 	var permissions []models.Permission
 
-	res := permissionRepository.db.Raw(permissionRepository.queries["find-permissions-by-system-token-id"], systemTokenId).Scan(&permissions)
+	res := permissionRepository.db.Raw(permissionRepository.queries["find-permissions-by-system-token-id"], systemTokenID).Scan(&permissions)
 
 	if res.Error != nil {
-		return []domain.Permission{}, handlePermissionError("Find all permissions by system token id failed", "PermissionRepository.FindBySystemTokenId.Find", res.Error, logging.InternalError)
+		return []domain.Permission{}, handlePermissionError("Find all permissions by system token id failed", "PermissionRepository.FindBySystemTokenID.Find", res.Error, logging.InternalError)
 	}
 
 	return mapper.PermissionsModelToDomains(permissions), nil
