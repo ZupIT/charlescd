@@ -41,7 +41,7 @@ interface Props {
 
 const CreateRelease = ({ circleId, onDeployed }: Props) => {
   const [isEmptyFields, setIsEmptyFields] = useState(true);
-  const [overrideCircle, setoverrideCircle] = useState<boolean>(true);
+  const [incremental, setIncremental] = useState<boolean>(true);
   const {
     composeBuild,
     response: build,
@@ -100,7 +100,7 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      overrideCircle,
+      incremental,
       releaseName: data.releaseName,
     });
   };
@@ -150,9 +150,9 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         </Styled.Module.Button>
         <Styled.CheckboxWrapper>
           <Styled.Checkbox
-            value="overrideCircle"
+            value="incremental"
             defaultChecked={true}
-            onChange={() => setoverrideCircle(!overrideCircle)}
+            onChange={() => setIncremental(!incremental)}
           />
           <Styled.CheckboxLabel tag="H5" color="dark">
               Deploy incremental.
