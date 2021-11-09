@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
@@ -32,7 +32,9 @@ data class CreateDeploymentRequest(
     val circleId: String,
 
     @field:NotBlank
-    val buildId: String
+    val buildId: String,
+
+    val override: Boolean?
 ) {
     fun toDeployment(workspaceId: String, user: User, circle: Circle): Deployment {
         return Deployment(

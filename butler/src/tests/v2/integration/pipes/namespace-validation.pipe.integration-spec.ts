@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,8 @@ describe('NamespaceValidationPipe', () => {
       ],
       'iaminvalid',
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
-      10
+      10,
+      false
     )
     await expect(pipe.transform(req)).rejects.toThrow(new HttpException({}, HttpStatus.BAD_REQUEST))
   })
@@ -123,7 +124,8 @@ describe('NamespaceValidationPipe', () => {
       ],
       'iamvalid',
       new CreateGitDeploymentDto(expect.anything(), GitProvidersEnum.GITHUB),
-      10
+      10,
+      false
     )
 
     expect(await pipe.transform(req)).toEqual(req)

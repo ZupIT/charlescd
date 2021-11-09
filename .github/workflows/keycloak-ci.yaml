@@ -1,3 +1,19 @@
+#
+  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  #
+  # Licensed under the Apache License, Version 2.0 (the "License");
+  # you may not use this file except in compliance with the License.
+  # You may obtain a copy of the License at
+  #
+  #  http://www.apache.org/licenses/LICENSE-2.0
+  #
+  # Unless required by applicable law or agreed to in writing, software
+  # distributed under the License is distributed on an "AS IS" BASIS,
+  # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  # See the License for the specific language governing permissions and
+  # limitations under the License.
+#
+
 name: Keycloak-ci
 on:
   push:
@@ -5,28 +21,30 @@ on:
     paths:
       - 'keycloak/**'
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
     - name: QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
 
     - name: Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@abe5d8f79a1606a2d3e218847032f3f2b1726ab0
 
     
     - name: bump version
       id: tagging
-      uses: mathieudutour/github-tag-action@v4.5
+      uses: mathieudutour/github-tag-action@981ffb2cc3f2b684b2bfd8ee17bc8d781368ba60
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
+      uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
       with:
         path: ./keycloak
         username: ${{secrets.DOCKERHUB_USERNAME}}

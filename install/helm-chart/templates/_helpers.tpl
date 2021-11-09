@@ -143,6 +143,8 @@ env:
   value: "{{ .RangeContext.internalIdmEnabled }}"
 - name: ORIGIN_HOSTS
   value: "http://localhost:3000,http://localhost:3001,http://localhost:8081,http://localhost:8080,{{ .RangeContext.allowedOriginHost }}"
+- name: DEPLOY_CALLBACK_BASE_PATH
+  value: "{{ .RangeContext.mooveDeployCallback }}"
 - name: GITLAB_IGNORE_CRETIFICATE_ERRORS
   value: {{ .RangeContext.gitlabIgnoreSSL | default false | quote }}
 - name: ENCRYPTION_KEY

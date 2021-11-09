@@ -1,3 +1,19 @@
+#
+  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  #
+  # Licensed under the Apache License, Version 2.0 (the "License");
+  # you may not use this file except in compliance with the License.
+  # You may obtain a copy of the License at
+  #
+  #  http://www.apache.org/licenses/LICENSE-2.0
+  #
+  # Unless required by applicable law or agreed to in writing, software
+  # distributed under the License is distributed on an "AS IS" BASIS,
+  # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  # See the License for the specific language governing permissions and
+  # limitations under the License.
+#
+
 name: charlescd-prerelease
 
 on:
@@ -6,17 +22,19 @@ on:
       - prereleased
     branches: [ main ]
 
+permissions: read-all
+
 jobs:
   build_and_push_release_butler:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -24,7 +42,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
         with:
           node-version: 12.x
 
@@ -37,7 +55,7 @@ jobs:
           CI: true
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
+        uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
         with:
           path: ./butler
           username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -55,12 +73,12 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@master
+        uses: DeLaGuardo/setup-graalvm@a766aa7b5fcc0a801fa3d4fd521ca299c03c9c00
         with:
           graalvm-version: '21.0.0.java11'
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
@@ -72,7 +90,7 @@ jobs:
         run: mvn -B clean install -Djfr.unsupported.vm=true
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
+        uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
         with:
           path: ./circle-matcher
           username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -86,18 +104,18 @@ jobs:
   build_and_push_release_moove:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@3bc31aaf88e8fc94dc1e632d48af61be5ca8721c
         with:
           java-version: 1.11
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
@@ -109,7 +127,7 @@ jobs:
         run: mvn -B clean install
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
+        uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
         with:
           path: ./moove/web
           username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -123,13 +141,13 @@ jobs:
   build_and_push_release_ui:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -137,7 +155,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
         with:
           node-version: 12.x
 
@@ -149,7 +167,7 @@ jobs:
           CI: true
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
+        uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
         with:
           path: ./ui
           username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -163,10 +181,10 @@ jobs:
   build_and_push_release_villager:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@3bc31aaf88e8fc94dc1e632d48af61be5ca8721c
         with:
           java-version: 1.11
 
@@ -174,7 +192,7 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
@@ -186,7 +204,7 @@ jobs:
         run: mvn -B clean install
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v1.0.1
+        uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
         with:
           path: ./villager
           username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -201,24 +219,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
       with:
         go-version: '^1.14.2'
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
+      uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
       with:
         path: ./compass
         username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -233,25 +251,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
 
-    - uses: actions/setup-go@v2
+    - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
       with:
         go-version: '1.15'
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
+      uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
       with:
         path: ./hermes
         username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -265,13 +283,13 @@ jobs:
   build_and_push_release_matcher_s3_sync:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - uses: actions/cache@v1
+    - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -279,7 +297,7 @@ jobs:
           ${{ runner.os }}-node-
           
     - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
       with:
         node-version: 12.x
 
@@ -292,7 +310,7 @@ jobs:
         CI: true
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
+      uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
       with:
         path: ./utils/matcher-s3-sync
         username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -306,15 +324,15 @@ jobs:
   build_and_push_release_keycloak:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
     - name: QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
 
     - name: Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@27d0a4f181a40b142cce983c5393082c365d1480
 
     - name: Build and push Docker images
-      uses: docker/build-push-action@v1.0.1
+      uses: docker/build-push-action@e5e36c4a4e2085c523c6fb6a553b8d00c30c1716
       with:
         path: ./keycloak
         username: ${{secrets.DOCKERHUB_USERNAME}}
@@ -335,7 +353,7 @@ jobs:
              build_and_push_release_compass
     ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       with:
         ref: master
 
@@ -352,12 +370,12 @@ jobs:
 #         sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
 
     - name: Generate single file
-      uses: WyriHaximus/github-action-helm3@v1.0.0
+      uses: WyriHaximus/github-action-helm3@009a012cceae416b5b94bb80bf373a472b9a8d63
       with:
         exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
     - name: Running changelog generator
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
       with:
         node-version: 12.x
 
@@ -375,7 +393,7 @@ jobs:
         git commit -sam "Automated updated chart and changelog file"
         
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v2
+      uses: peter-evans/create-pull-request@4d3b0a48efaa29be1a91dbe756c93798daf406d5
       with:
         title: CI Update of charts and changelog
         commit-message: |

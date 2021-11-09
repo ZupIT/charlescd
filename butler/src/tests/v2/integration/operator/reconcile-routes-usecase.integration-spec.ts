@@ -1,9 +1,25 @@
+/*
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from '../../../../app/app.module'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 import { ReconcileRoutesUsecase } from '../../../../app/v2/operator/use-cases/reconcile-routes.usecase'
-import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
+import { deploymentFixture, executionFixture } from '../../fixtures/deployment-entity.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { TestSetupUtils } from '../test-setup-utils'
 import {
@@ -18,12 +34,16 @@ import { DeploymentEntityV2 } from '../../../../app/v2/api/deployments/entity/de
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { UrlConstants } from '../test-constants'
 import { EntityManager } from 'typeorm'
+import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
+import { MooveService } from '../../../../app/v2/core/integrations/moove'
 
 describe('Reconcile routes usecase', () => {
   let fixtureUtilsService: FixtureUtilsService
   let app: INestApplication
   let deploymentRepository: DeploymentRepositoryV2
   let componentsRepository: ComponentsRepositoryV2
+  let executionRepository: ExecutionRepository
+  let mooveService: MooveService
   let consoleLoggerService: ConsoleLoggerService
   let routeUseCase: ReconcileRoutesUsecase
   let hookParamsWith2Components: RouteHookParams
@@ -45,9 +65,11 @@ describe('Reconcile routes usecase', () => {
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     deploymentRepository = app.get<DeploymentRepositoryV2>(DeploymentRepositoryV2)
     componentsRepository = app.get<ComponentsRepositoryV2>(ComponentsRepositoryV2)
+
+    executionRepository = app.get<ExecutionRepository>(ExecutionRepository)
     consoleLoggerService = app.get<ConsoleLoggerService>(ConsoleLoggerService)
     routeUseCase = app.get<ReconcileRoutesUsecase>(ReconcileRoutesUsecase)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
 
     hookParamsWith2Components = {
       controller: {},
@@ -101,6 +123,7 @@ describe('Reconcile routes usecase', () => {
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     deploymentFixture.current = true
     await deploymentRepository.save(deploymentFixture)
+    await executionRepository.save(executionFixture())
 
     const params = [
       {
@@ -177,6 +200,7 @@ describe('Reconcile routes usecase', () => {
 
     firstDeployment.circleId = firstCircleId
     await deploymentRepository.save(firstDeployment)
+    await executionRepository.save(executionFixture())
 
     secondDeployment.circleId = secondCircleId
     secondDeployment.id = 'a7d08a07-f29d-452e-a667-7a39820f3262'
@@ -313,7 +337,9 @@ describe('Reconcile routes usecase', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)
@@ -377,7 +403,9 @@ describe('Reconcile routes usecase', () => {
     const routeUseCase = new ReconcileRoutesUsecase(
       deploymentRepository,
       componentsRepository,
-      consoleLoggerService
+      consoleLoggerService,
+      executionRepository,
+      mooveService
     )
 
     const manifests = await routeUseCase.execute(hookParamsWith2Components)

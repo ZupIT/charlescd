@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@
 package representation
 
 import (
+	"time"
+
 	"github.com/ZupIT/charlescd/gate/internal/domain"
-	"github.com/ZupIT/charlescd/gate/internal/use_case/system_token"
+	"github.com/ZupIT/charlescd/gate/internal/use_case/systoken"
 	"github.com/ZupIT/charlescd/gate/internal/utils/mapper"
 	"github.com/google/uuid"
-	"time"
 )
 
 type SystemTokenRequest struct {
 	Name          string   `json:"name" validate:"required,notblank"`
-	Permissions   []string `json:"permissions" validate:"min=1,dive,notblank"`
-	Workspaces    []string `json:"workspaces" validate:"required",notblank,validate:"min=1"`
+	Permissions   []string `json:"permissions" validate:"dive,notblank"`
+	Workspaces    []string `json:"workspaces" validate:"required, notblank, min=1" `
 	AllWorkspaces bool     `json:"allWorkspaces"`
 }
 
@@ -59,8 +60,8 @@ type RegenerateTokenResponse struct {
 	Token string `json:"token"`
 }
 
-func (systemTokenRequest SystemTokenRequest) RequestToInput() system_token.CreateSystemTokenInput {
-	return system_token.CreateSystemTokenInput{
+func (systemTokenRequest SystemTokenRequest) RequestToInput() systoken.CreateSystemTokenInput {
+	return systoken.CreateSystemTokenInput{
 		Name:          systemTokenRequest.Name,
 		Permissions:   systemTokenRequest.Permissions,
 		Workspaces:    systemTokenRequest.Workspaces,

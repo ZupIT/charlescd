@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,22 +27,21 @@ import org.springframework.stereotype.Service
 @Service
 class DeployClientService(private val deployClient: DeployClient) : DeployService {
 
-    @Value("\${application.base.path}")
-    lateinit var APPLICATION_BASE_PATH: String
+    @Value("\${deploy.callback.base.path}")
+    lateinit var DEPLOY_CALLBACK_BASE_PATH: String
 
     companion object {
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, isDefaultCircle: Boolean, configuration: DeploymentConfiguration) {
+    override fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, override: Boolean?) {
         deployClient.deploy(
             URI.create(configuration.butlerUrl),
             buildDeployRequest(
                 deployment,
                 build,
-                deployment.circle.id,
-                isDefaultCircle,
-                configuration
+                configuration,
+                override ?: false
             )
         )
     }
@@ -62,9 +61,8 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
     private fun buildDeployRequest(
         deployment: Deployment,
         build: Build,
-        circleId: String,
-        isDefault: Boolean,
-        deploymentConfiguration: DeploymentConfiguration
+        deploymentConfiguration: DeploymentConfiguration,
+        override: Boolean
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -72,8 +70,9 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             callbackUrl = createCallbackUrl(deployment),
             namespace = deploymentConfiguration.namespace,
             components = buildComponentsDeployRequest(build),
-            circle = CircleRequest(circleId, isDefault),
-            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider)
+            circle = CircleRequest(deployment.circle.id, deployment.circle.isDefaultCircle()),
+            git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
+            overrideCircle = override
         )
     }
 
@@ -95,7 +94,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         }
 
     private fun createCallbackUrl(deployment: Deployment): String {
-        return "$APPLICATION_BASE_PATH/$DEPLOY_CALLBACK_API_PATH/${deployment.id}/callback"
+        return "$DEPLOY_CALLBACK_BASE_PATH/$DEPLOY_CALLBACK_API_PATH/${deployment.id}/callback"
     }
 
     private fun getModulesFromBuild(build: Build): List<ModuleSnapshot> {

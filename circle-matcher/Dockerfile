@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-ce:20.3.0
+FROM ghcr.io/graalvm/graalvm-ce@sha256:8ea9e44a05e7b2ff4b8765024de8bfdfcb7300482feb1865f84652432c510673
 
 ENV APP_TARGET target
 ENV APP charlescd-circle-matcher.jar

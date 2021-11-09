@@ -1,3 +1,19 @@
+#
+  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  #
+  # Licensed under the Apache License, Version 2.0 (the "License");
+  # you may not use this file except in compliance with the License.
+  # You may obtain a copy of the License at
+  #
+  #  http://www.apache.org/licenses/LICENSE-2.0
+  #
+  # Unless required by applicable law or agreed to in writing, software
+  # distributed under the License is distributed on an "AS IS" BASIS,
+  # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  # See the License for the specific language governing permissions and
+  # limitations under the License.
+#
+
 name: build compass
 
 on:
@@ -13,21 +29,23 @@ on:
     paths:
       - "compass/**"
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
+      - name: Run actions checkout
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+      - name: Run Actions cache
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
         with:
           go-version: "^1.14.2"
 
@@ -41,22 +59,25 @@ jobs:
           go test -v -coverpkg ./internal/action,./internal/datasource,./internal/dispatcher,./internal/metric,./internal/metricsgroup,./internal/metricsgroupaction,./internal/moove,./internal/plugin ./internal/tests/ -coverprofile=coverage.cov
 
       - name: Tests coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192
         with:
           file: ./compass/coverage.cov
           flags: compass
           fail_ci_if_error: true
-
-      - name: Code Style
-        uses: docker://morphy/revive-action:v1
-        with:
-          config: ./compass/revive.toml
-          path: "./compass/..."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Horusec Security
         working-directory: ./compass
+        env: 
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
         run: |
-          curl -fsSL https://horusec-cli.s3.amazonaws.com/install.sh | bash
-          horusec start -p ./
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -n="Charles/compass" -u="https://api-horusec.zup.com.br"
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+            working-directory: ./compass
+            version: v1.42.0

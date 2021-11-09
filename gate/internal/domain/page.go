@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,10 +38,9 @@ func (pg Page) IsLast() bool {
 func (pg Page) TotalPages() int {
 	if pg.Total == 0 {
 		return 1
-	} else {
-		d := float64(pg.Total) / float64(pg.PageSize)
-		return int(math.Ceil(d))
 	}
+	d := float64(pg.Total) / float64(pg.PageSize)
+	return int(math.Ceil(d))
 }
 
 func (pg *Page) FillDefaults() {

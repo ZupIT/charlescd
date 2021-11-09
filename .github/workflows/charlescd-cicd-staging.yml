@@ -1,3 +1,19 @@
+#
+  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  #
+  # Licensed under the Apache License, Version 2.0 (the "License");
+  # you may not use this file except in compliance with the License.
+  # You may obtain a copy of the License at
+  #
+  #  http://www.apache.org/licenses/LICENSE-2.0
+  #
+  # Unless required by applicable law or agreed to in writing, software
+  # distributed under the License is distributed on an "AS IS" BASIS,
+  # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  # See the License for the specific language governing permissions and
+  # limitations under the License.
+#
+
 name: charlescd-cicd-staging
 
 # Charles branchs of beta images, pre-release must have name in format of version starting at patch .0 charlescd-release-<VERSION>.0
@@ -6,13 +22,15 @@ on:
   push:
     branches: [ charlescd-release-*.0 ]
 
+permissions: read-all
+
 jobs:
   build_and_push_beta_butler:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -20,7 +38,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
         with:
           node-version: 12.x
 
@@ -41,15 +59,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -66,12 +88,12 @@ jobs:
   build_and_push_beta_circle_matcher:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@master
+        uses: DeLaGuardo/setup-graalvm@a766aa7b5fcc0a801fa3d4fd521ca299c03c9c00
         with:
           graalvm-version: '21.0.0.java11'
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./circle-matcher/pom.xml') }}
@@ -91,15 +113,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -117,16 +143,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
         with:
           go-version: "^1.14.2"
 
@@ -139,15 +165,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -164,14 +194,14 @@ jobs:
   build_and_push_beta_moove:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@d202f5dbf7256730fb690ec59f6381650114feb2
         with:
           java-version: 1.11
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./moove/pom.xml') }}
@@ -191,15 +221,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -216,9 +250,9 @@ jobs:
   build_and_push_beta_ui:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -226,7 +260,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Use Node.js 12.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
         with:
           node-version: 12.x
 
@@ -244,17 +278,21 @@ jobs:
       - name: Get Hash Version
         id: get_hash_version
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
-
+      
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
+      
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -271,14 +309,14 @@ jobs:
   build_and_push_beta_villager:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@d202f5dbf7256730fb690ec59f6381650114feb2
         with:
           java-version: 1.11
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('./villager/pom.xml') }}
@@ -298,15 +336,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -324,16 +366,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
         with:
           go-version: "1.15"
 
@@ -346,15 +388,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -372,16 +418,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@331ce1d993939866bb63c32c6cbbfd48fa76fc57
         with:
           go-version: "1.15"
 
@@ -394,15 +440,19 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
       - name: Build, tag, and push image to Amazon ECR
         env:
@@ -428,7 +478,7 @@ jobs:
              build_and_push_beta_gate
     ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
           ref: charlescd-release-1.0.0
 
@@ -440,34 +490,31 @@ jobs:
         id: get_hash_version
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
-#       - name: Update charts
-#         run: |
-#           mv ./install/helm-chart/Chart.yaml ./install/helm-chart/Chart.old.yaml &&
-#           cat ./install/helm-chart/Chart.old.yaml | grep -v appVersion > ./install/helm-chart/Chart.yaml &&
-#           echo -e "appVersion: beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}" >> ./install/helm-chart/Chart.yaml &&
-#           rm -f ./install/helm-chart/Chart.old.yaml &&
-#           cat ./install/helm-chart/Chart.yaml
-
-      - name: Update helm dependencies
-        uses: WyriHaximus/github-action-helm3@v2.1.3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
         with:
-          exec: helm dependency update ./install/helm-chart
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 1200
+          role-session-name: MyLambdaSession
+          role-skip-session-tagging: true
 
-      - name: Zup Settings staging
+
+      - name: Invoke lambda function to deploy main env
         run: |
-          cat <<-EOF > values-charles-staging.yaml
-          ${{ secrets.VALUES_CHARLES_STAGING }}
-          EOF
-          cat <<-EOF > ./install/helm-chart/templates/nginx-cert.yaml
-          ${{ secrets.NGINX_CERT }}
-          EOF
+          aws lambda invoke --function-name main-release \
+          --invocation-type RequestResponse \
+          --cli-binary-format raw-in-base64-out \
+          --payload '{ "VERSION": "beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}", "CLUSTER": "${{ secrets.MAIN_CLUSTER }}" }' response.json
 
-      - name: Deploy staging
-        uses: WyriHaximus/github-action-helm3@v2.1.3
-        with:
-          exec: helm upgrade -n staging bug-hunting ./install/helm-chart/ --values=./values-charles-staging.yaml --set CharlesApplications.butler.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.moove.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.villager.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.compass.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.ui.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.circleMatcher.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }} --set CharlesApplications.gate.image.tag=beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}
-          kubeconfig: '${{ secrets.KUBECONFIG_DEV }}'
-
+      - name: Invoke lambda function to deploy butler in sandbox env
+        run: |
+          aws lambda invoke --function-name main-release \
+          --invocation-type RequestResponse \
+          --cli-binary-format raw-in-base64-out \
+          --payload '{ "VERSION": "beta-${{ steps.get_version.outputs.VERSION }}-${{ steps.get_hash_version.outputs.HASH_VERSION }}", "BUTLER_DEPLOY": true, "CLUSTER": "${{ secrets.SANDBOX_CLUSTER }}" }' response.json
 
   notify-team:
     runs-on: ubuntu-latest

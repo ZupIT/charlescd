@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,33 +25,33 @@ import (
 )
 
 type Request struct {
-	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	SubscriptionID uuid.UUID       `json:"subscriptionId"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
 }
 
 type PayloadRequest struct {
-	ExternalId uuid.UUID       `json:"externalId"`
+	ExternalID uuid.UUID       `json:"externalId"`
 	EventType  string          `json:"eventType"`
 	Event      json.RawMessage `json:"event"`
 }
 
 type MessageResponse struct {
-	Id             uuid.UUID       `json:"id"`
+	ID             uuid.UUID       `json:"id"`
 	CreatedAt      time.Time       `json:"createdAt"`
-	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	SubscriptionID uuid.UUID       `json:"subscriptionId"`
 	LastStatus     string          `json:"lastStatus"`
 	EventType      string          `json:"eventType"`
 	Event          json.RawMessage `json:"event"`
-	RetryCount int  `json:"retryCount"ss`
+	RetryCount     int             `json:"retryCount"`
 }
 
 type FullMessageResponse struct {
-	Id             uuid.UUID       `json:"id"`
-	EventType      string          `json:"eventType"`
-	Event          string          `json:"event"`
-	LastStatus     string          `json:"lastStatus"`
-	SubscriptionId uuid.UUID       `json:"subscriptionId"`
+	ID             uuid.UUID `json:"id"`
+	EventType      string    `json:"eventType"`
+	Event          string    `json:"event"`
+	LastStatus     string    `json:"lastStatus"`
+	SubscriptionID uuid.UUID `json:"subscriptionId"`
 }
 
 type StatusResponse struct {

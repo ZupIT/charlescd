@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,14 +55,14 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 
 	deployment, err := commons.GetCurrentDeploymentAtCircle(ec.OriginCircleID, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceId: %s", ac.MooveURL, ec.OriginCircleID, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("MooveUrl: %s, CircleId: %s, WorkspaceID: %s", ac.MooveURL, ec.OriginCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
 		return err
 	}
 
-	if deployment.BuildId == "" {
+	if deployment.BuildID == "" {
 		err = errors.New("circle has no active build")
-		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceId: %s", ec.OriginCircleID, ec.WorkspaceID)
+		dataErr := fmt.Sprintf("CircleId: %s, WorkspaceID: %s", ec.OriginCircleID, ec.WorkspaceID)
 		logger.Error("DO_CIRCLE_GET", "DoDeploymentAction", err, dataErr)
 		return err
 	}
@@ -74,15 +74,15 @@ func Do(actionConfig []byte, executionConfig []byte) error {
 	}
 
 	request := commons.DeploymentRequest{
-		AuthorID: user.Id,
+		AuthorID: user.ID,
 		CircleID: ec.DestinationCircleID,
-		BuildID:  deployment.BuildId,
+		BuildID:  deployment.BuildID,
 	}
 
 	err = commons.DeployBuildAtCircle(request, ec.WorkspaceID, ac.MooveURL)
 	if err != nil {
-		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceId: %s, DestinationCircleId: %s, BuildId: %s, AuthorId: %s",
-			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildId, user.Id)
+		dataErr := fmt.Sprintf("MooveUrl: %s, WorkspaceID: %s, DestinationCircleId: %s, BuildID: %s, AuthorId: %s",
+			ac.MooveURL, ec.WorkspaceID, ec.DestinationCircleID, deployment.BuildID, user.ID)
 		logger.Error("DO_CIRCLE_DEPLOYMENT", "DoDeploymentAction", err, dataErr)
 		return err
 	}

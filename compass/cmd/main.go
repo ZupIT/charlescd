@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 package main
 
 import (
+	"golang.org/x/sync/errgroup"
 	"log"
 	"time"
 
@@ -46,6 +47,7 @@ import (
 )
 
 func main() {
+	var group errgroup.Group
 	godotenv.Load()
 
 	logrus.SetFormatter(&logrus.JSONFormatter{})
@@ -84,11 +86,16 @@ func main() {
 	metricDispatcher := dispatcher.NewDispatcher(metricMain)
 	actionDispatcher := dispatcher.NewActionDispatcher(metricsgroupMain, actionMain, pluginMain, metricMain, metricsGroupActionMain)
 
-	stopChan := make(chan bool, 0)
-	go metricDispatcher.Start(stopChan)
-	go actionDispatcher.Start(stopChan)
+	stopChan := make(chan bool)
 
-	router := api.NewApi(
+	group.Go(func() error {
+		return metricDispatcher.Start(stopChan)
+	})
+	group.Go(func() error {
+		return actionDispatcher.Start(stopChan)
+	})
+
+	router := api.NewAPI(
 		enforcer,
 		lmt,
 		pluginMain,
@@ -101,6 +108,10 @@ func main() {
 	)
 
 	api.Start(router)
+
+	if err := group.Wait(); err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 func configureRequestLimiter() *limiter.Limiter {

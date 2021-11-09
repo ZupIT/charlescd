@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -176,13 +176,13 @@ func (main Main) CountMetrics(metrics []Metric) (int, int, int) {
 	return configuredMetrics, reachedMetrics, allMetrics
 }
 
-func (main Main) FindMetricById(id string) (Metric, errors.Error) {
+func (main Main) FindMetricByID(id string) (Metric, errors.Error) {
 	metric := Metric{}
 	db := main.db.Set("gorm:auto_preload", true).Where("id = ?", id).First(&metric)
 	if db.Error != nil {
-		logger.Error(util.FindMetricById, "FindMetricById", db.Error, "Id = "+id)
+		logger.Error(util.FindMetricByID, "FindMetricByID", db.Error, "ID = "+id)
 		return Metric{}, errors.NewError("Find error", db.Error.Error()).
-			WithOperations("FindMetricById.First")
+			WithOperations("FindMetricByID.First")
 	}
 	return metric, nil
 }
@@ -269,9 +269,9 @@ func (main Main) getQueryByMetric(metric Metric) string {
 }
 
 func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	dataSourceResult, err := main.datasourceMain.FindByID(metric.DataSourceID.String())
 	if err != nil {
-		return 0, err.WithOperations("ResultQuery.FindById")
+		return 0, err.WithOperations("ResultQuery.FindByID")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
@@ -311,9 +311,9 @@ func (main Main) ResultQuery(metric Metric) (float64, errors.Error) {
 }
 
 func (main Main) Query(metric Metric, period, interval datasource.Period) (interface{}, errors.Error) {
-	dataSourceResult, err := main.datasourceMain.FindById(metric.DataSourceID.String())
+	dataSourceResult, err := main.datasourceMain.FindByID(metric.DataSourceID.String())
 	if err != nil {
-		return nil, err.WithOperations("ResultQuery.FindById")
+		return nil, err.WithOperations("ResultQuery.FindByID")
 	}
 
 	plugin, err := main.pluginMain.GetPluginBySrc(dataSourceResult.PluginSrc)
