@@ -1,12 +1,12 @@
 # **Matcher-s3-sync**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Conditions**](#Conditions)
-### 3. [**Documentation**](#Documentation)
-### 4. [**Contributing**](#Contributing)
-### 5. [**License**](#License)
-### 6. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Conditions**](#conditions)
+### 3. [**Documentation**](#cocumentation)
+### 4. [**Contributing**](#contributing)
+### 5. [**License**](#license)
+### 6. [**Community**](#community)
 
 ## **About**
 Matcher-s3-sync is a tool to synchronize the charlescd-circle-matcher and charlescd-moove databases with CSV files hosted in AWS S3.

@@ -1,15 +1,15 @@
 # **CharlesCD Villager**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**How does Villager work?**](#How-does-Villager-work?)
-### 3. [**Usage**](#Usage)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Configuration**](#Configuration)
-### 4. [**Documentation**](#Documentation)
-### 5. [**Contributing**](#Contributing)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**How does Villager work?**](#how-does-villager-work?)
+### 3. [**Usage**](#usage)
+>#### i. [**Requirements**](#requirements)
+>#### ii. [**Configuration**](#configuration)
+### 4. [**Documentation**](#documentation)
+### 5. [**Contributing**](#contributing)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
 
 ## **About**
 Villager is a tool that abstracts multiple cloud providers to provide a unique API to integrate with container registries.
@@ -23,6 +23,8 @@ Villager is a tool that abstracts multiple cloud providers to provide a unique A
 ## **Usage**
 
 ### **Requirements**
+See below the requirements to run Villager:
+
 - [**Java 11**](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 - [**Docker**](https://docs.docker.com/get-docker/)
 - [**Docker Compose**](https://docs.docker.com/compose/install/)

@@ -1,15 +1,15 @@
 # **CharlesCD Moove**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**How does Moove work?**](#How-does-Moove-work?)
-### 3. [**Usage**](#Usage)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Configuration**](#Configuration)
-### 4. [**Documentation**](#Documentation)
-### 5. [**Contributing**](#Contributing)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**How does Moove work?**](#how-does-moove-work?)
+### 3. [**Usage**](#usage)
+>#### i. [**Requirements**](#requirements)
+>#### ii. [**Configuration**](#configuration)
+### 4. [**Documentation**](#documentation)
+### 5. [**Contributing**](#contributing)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
 
 ## **About**
 Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your circles. It is the bridge between [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler), [**Villager**](https://github.com/ZupIT/charlescd/tree/main/villager), and [**Circle Matcher**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher). 

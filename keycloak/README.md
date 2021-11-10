@@ -1,11 +1,11 @@
 # **Keycloak - CharlesCD Custom Theme**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Documentation**](#Documentation)
-### 3. [**Contributing**](#Contributing)
-### 4. [**License**](#License)
-### 5. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Documentation**](#documentation)
+### 3. [**Contributing**](#contributing)
+### 4. [**License**](#license)
+### 5. [**Community**](#community)
 
 ## **About**
 This is a custom theme implementation of Keycloak Login Page based on Keycloak 9.0.2.

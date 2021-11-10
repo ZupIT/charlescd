@@ -1,13 +1,13 @@
 # **GitHooks**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Usage**](#Usage)
->#### i. [**Configuration**](#Configuration)
-### 3. [**Documentation**](#Documentation)
-### 4. [**Contributing**](#Contributing)
-### 5. [**License**](#License)
-### 6. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Usage**](#usage)
+>#### i. [**Configuration**](#configuration)
+### 3. [**Documentation**](#documentation)
+### 4. [**Contributing**](#contributing)
+### 5. [**License**](#license)
+### 6. [**Community**](#community)
 
 ## **About**
 Hooks are programs you place in a **Git Hooks directory**, they trigger actions in Git's execution.

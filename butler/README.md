@@ -2,15 +2,15 @@
 # **CharlesCD Butler**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**How does Butler work?**](#How-does-Butler-work?)
-### 3. [**Usage**](#Usage)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Configuration**](#Configuration)
-### 4. [**Documentation**](#Documentation)
-### 5. [**Contributing**](#Contributing)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**How does Butler work?**](#how-does-butler-work?)
+### 3. [**Usage**](#usage)
+>#### i. [**Requirements**](#requirements)
+>#### ii. [**Configuration**](#configuration)
+### 4. [**Documentation**](#documentation)
+### 5. [**Contributing**](#contributing)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
 
 ## **About**
 Butler is a Kubernetes deployment tool that abstracts the routing feature of Istio's service mesh. It enables access to different applications versions based on a custom header value. 

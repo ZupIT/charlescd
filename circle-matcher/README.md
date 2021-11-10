@@ -1,15 +1,15 @@
 # **CharlesCD Circle Matcher** 
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**How does Circle Matcher work?**](#How-does-Circle-Matcher-work?)
-### 3. [**Usage**](#Usage)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Configuration**](#Configuration)
-### 4. [**Documentation**](#Documentation)
-### 5. [**Contributing**](#Contributing)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**How does Circle Matcher work?**](#how-does-circle-matcher-work?)
+### 3. [**Usage**](#usage)
+>#### i. [**Requirements**](#requirements)
+>#### ii. [**Configuration**](#configuration)
+### 4. [**Documentation**](#documentation)
+### 5. [**Contributing**](#contributing)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
 
 ## **About**
 
@@ -21,7 +21,7 @@ CharlesCD deploys different versions of your applications and it defines which u
 ## **Usage**
 
 ### **Requirements**
-See below the requirements to run locally: 
+See below the requirements to run Circle Matcher: 
 
 - **GraalVM 20.3.0 with JDK 1.8+**
 - [**Docker**](https://docs.docker.com/get-docker/)

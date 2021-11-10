@@ -1,14 +1,14 @@
 # **CharlesCD UI**
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Usage**](#Usage)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Configuration**](#Configuration)
-### 3. [**Documentation**](#Documentation)
-### 4. [**Contributing**](#Contributing)
-### 5. [**License**](#License)
-### 6. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Usage**](#usage)
+>#### i. [**Requirements**](#requirements)
+>#### ii. [**Configuration**](#configuration)
+### 3. [**Documentation**](#documentation)
+### 4. [**Contributing**](#contributing)
+### 5. [**License**](#license)
+### 6. [**Community**](#community)
 
 
 ## **About**
@@ -16,6 +16,7 @@ The user interface is responsible for providing an easy-to-use interface for all
 
 ## **Usage**
 ### **Requirements**
+See below the requirements to run CharlesCD UI:
 - [**Node**](https://nodejs.org/en/download/)
 - [**npm**](https://docs.npmjs.com/cli/v7/commands/npm-install)
 
