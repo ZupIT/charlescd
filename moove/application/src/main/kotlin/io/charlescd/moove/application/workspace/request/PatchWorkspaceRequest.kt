@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,12 +60,12 @@ data class PatchWorkspaceRequest(override val patches: List<PatchOperation>) : B
                 patch.path == "/name" && (patch.op == OpCodeEnum.ADD || patch.op == OpCodeEnum.REPLACE) -> {
                     Assert.notNull(patch.value, "Name cannot be null.")
                     Assert.isTrue((patch.value as String).isNotBlank(), "Name cannot be blank.")
-                    Assert.isTrue(((patch.value as String).length in 1..50), "Name minimum size is 1 and maximum is 50.")
+                    Assert.isTrue((patch.value.length in 1..50), "Name minimum size is 1 and maximum is 50.")
                 }
                 patch.path == "/circleMatcherUrl" && (patch.op == OpCodeEnum.ADD || patch.op == OpCodeEnum.REPLACE) -> {
                     Assert.notNull(patch.value, "Circle Matcher URL cannot be null.")
                     Assert.isTrue((patch.value as String).isNotBlank(), "Circle Matcher URL cannot be blank.")
-                    Assert.isTrue(((patch.value as String).length in 1..256), "Circle Matcher URL minimum size is 1 and maximum is 256.")
+                    Assert.isTrue((patch.value.length in 1..256), "Circle Matcher URL minimum size is 1 and maximum is 256.")
                 }
             }
         }

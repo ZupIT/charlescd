@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,13 +109,13 @@ open class DeploymentCallbackInteractorImpl(
     }
 
     private fun notifyEvent(request: DeploymentCallbackRequest, deployment: Deployment) {
-        val webhookEventType = getWebhookEventType(request, deployment)
+        val webhookEventType = getWebhookEventType(request)
         val webhookEventSubType = getWebhookEventSubType(webhookEventType)
         val webhookEventStatus = getWebhookEventStatus(request)
         webhookEventService.notifyDeploymentEvent(deployment.workspaceId, webhookEventType, webhookEventSubType, webhookEventStatus, deployment)
     }
 
-    private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest, deployment: Deployment): WebhookEventTypeEnum {
+    private fun getWebhookEventType(callbackRequest: DeploymentCallbackRequest): WebhookEventTypeEnum {
         if (callbackRequest.isDeployEvent() || callbackRequest.deploymentStatus == DeploymentRequestStatus.TIMED_OUT) {
             return WebhookEventTypeEnum.DEPLOY
         }
