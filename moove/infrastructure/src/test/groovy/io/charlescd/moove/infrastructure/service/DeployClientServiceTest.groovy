@@ -38,7 +38,7 @@ class DeployClientServiceTest extends Specification {
 
     def 'when circle is default, should call method to deploy into default circle'() {
         given:
-        def override = false;
+        def incremental = false;
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Default', user, true)
@@ -48,7 +48,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build,  deploymentConfig, override)
+        deployClientService.deploy(deployment, build,  deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -99,9 +99,9 @@ class DeployClientServiceTest extends Specification {
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
         def deploymentConfig = getDummyDeploymentConfiguration(user)
-        def override = false
+        def incremental = false
         when:
-        deployClientService.deploy(deployment, build, deploymentConfig, override)
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -174,7 +174,7 @@ class DeployClientServiceTest extends Specification {
 
     def 'when is not specified if it is a deployment that override circle should send to butler the correct payload'() {
         given:
-        def override = null
+        def incremental = null
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Circle Name', user, false)
@@ -184,7 +184,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, deploymentConfig, override)
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -192,13 +192,13 @@ class DeployClientServiceTest extends Specification {
 
             assert deployRequest instanceof DeployRequest
 
-           assert !deployRequest.overrideCircle
+           assert deployRequest.incremental
         }
     }
 
     def 'when is a deployment that override circle should send the correct payload to butler '() {
         given:
-        def override = true
+        def incremental = false
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Circle Name', user, false)
@@ -208,7 +208,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, deploymentConfig, override)
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -216,13 +216,13 @@ class DeployClientServiceTest extends Specification {
 
             assert deployRequest instanceof DeployRequest
 
-            assert deployRequest.overrideCircle
+            assert !deployRequest.incremental
         }
     }
 
     def 'when is not a override deployment should send the correct payload to butler '() {
         given:
-        def override = false
+        def incremental = true
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Circle Name', user, false)
@@ -232,7 +232,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build,  deploymentConfig, override)
+        deployClientService.deploy(deployment, build,  deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -240,7 +240,7 @@ class DeployClientServiceTest extends Specification {
 
             assert deployRequest instanceof DeployRequest
 
-            assert !deployRequest.overrideCircle
+            assert deployRequest.incremental
         }
     }
 

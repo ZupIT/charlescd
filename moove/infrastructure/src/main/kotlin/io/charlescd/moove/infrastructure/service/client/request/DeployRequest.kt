@@ -26,7 +26,7 @@ data class DeployRequest(
     val components: List<DeployComponentRequest>,
     val git: GitRequest,
     val circle: CircleRequest,
-    val overrideCircle: Boolean
+    val incremental: Boolean
 )
 
 data class DeployComponentRequest(

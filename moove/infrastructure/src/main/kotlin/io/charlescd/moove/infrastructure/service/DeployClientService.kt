@@ -34,14 +34,14 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         const val DEPLOY_CALLBACK_API_PATH = "v2/deployments"
     }
 
-    override fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, override: Boolean?) {
+    override fun deploy(deployment: Deployment, build: Build, configuration: DeploymentConfiguration, incremental: Boolean?) {
         deployClient.deploy(
             URI.create(configuration.butlerUrl),
             buildDeployRequest(
                 deployment,
                 build,
                 configuration,
-                override ?: false
+                incremental ?: true
             )
         )
     }
@@ -62,7 +62,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
         deployment: Deployment,
         build: Build,
         deploymentConfiguration: DeploymentConfiguration,
-        override: Boolean
+        incremental:  Boolean
     ): DeployRequest {
         return DeployRequest(
             deploymentId = deployment.id,
@@ -72,7 +72,7 @@ class DeployClientService(private val deployClient: DeployClient) : DeployServic
             components = buildComponentsDeployRequest(build),
             circle = CircleRequest(deployment.circle.id, deployment.circle.isDefaultCircle()),
             git = GitRequest(deploymentConfiguration.gitToken, deploymentConfiguration.gitProvider),
-            overrideCircle = override
+            incremental = incremental
         )
     }
 
