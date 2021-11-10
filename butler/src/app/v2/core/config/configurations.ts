@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,13 @@ export const Configuration: IEnvConfiguration = {
     max: 5,
     retentionDays: 7
   },
-
+  mtls: {
+    enabled: (process.env.MTLS_ENABLED === 'true') || ConfigurationConstants.MTLS_ENABLED,
+    cert:    process.env.TLS_CERT,
+    key: process.env.TLS_KEY,
+    mooveCert: process.env.MOOVE_CERT,
+    caCert: process.env.CA_CERT,
+  },
   butlerUrl: process.env.BUTLER_URL || ConfigurationConstants.BUTLER_URL,
 
   butlerNamespace: process.env.BUTLER_NAMESPACE || ConfigurationConstants.BUTLER_NAMESPACE,

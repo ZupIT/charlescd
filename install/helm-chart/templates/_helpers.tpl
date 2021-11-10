@@ -105,7 +105,31 @@ env:
   valueFrom:
     secretKeyRef:
       name: application-aes256-key
-      key: encryption-key      
+      key: encryption-key
+{{ if .RangeContext.mtls.enabled }}
+- name: TLS_CERT
+  valueFrom:
+    secretKeyRef:
+      name: "butler-tls-cert"
+      key: "tls.crt"
+- name: TLS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: "butler-tls-cert"
+      key: "tls.key"
+- name: MOOVE_CERT
+  valueFrom:
+    secretKeyRef:
+      name: "moove-tls-cert"
+      key: "tls.crt"
+- name: CA_CERT
+  valueFrom:
+    secretKeyRef:
+      name: "butler-tls-cert"
+      key: "ca.crt"
+- name: MTLS_ENABLED
+  value: {{ .RangeContext.mtls.enabled | quote }}
+{{ end }}
 {{- end -}}
 
 {{- define "test.moove-envs" -}}
@@ -157,6 +181,18 @@ env:
     secretKeyRef:
       name: "gate-aes256-key"
       key: "encryption-key"
+{{ if .RangeContext.mtls }}
+- name: MTLS_ENABLED
+  value: {{ .RangeContext.mtls.enabled | quote }}
+{{ end }}
+{{ if .RangeContext.mtls.enabled }}
+- name: KEY_STORE_PASSWORD
+  valueFrom:
+      secretKeyRef:
+        name: "moove-tls-cert"
+        key: "store_password"
+{{ end }}
+
 {{- end -}}
 
 {{- define "test.circle-matcher-envs" -}}

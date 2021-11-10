@@ -17,16 +17,17 @@
 package io.charlescd.moove.infrastructure.configuration
 
 import feign.Client
-import feign.okhttp.OkHttpClient
+import feign.codec.ErrorDecoder
 import javax.net.ssl.SSLSocketFactory
 import org.apache.http.ssl.SSLContexts
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
 
 @Configuration
-class ButlerEncoderConfiguration(
+class ButlerConfiguration(
     @Value("\${key.store.password}")
     val keyStorePassword: String,
     @Value("\${butler.tls.store.path}")
@@ -37,17 +38,16 @@ class ButlerEncoderConfiguration(
     val mtlsEnabled: Boolean,
     val resourceLoader: ResourceLoader
 ) {
-
+    private val logger = LoggerFactory.getLogger(this.javaClass)
     @Bean
-    fun butlerErrorDecoder(): ButlerErrorDecoder {
-        return ButlerErrorDecoder()
+    fun butlerErrorDecoder(): ErrorDecoder {
+        return CustomFeignErrorDecoder()
     }
-
     @Bean
     fun feignClient(): Client {
         return when (mtlsEnabled) {
             true -> Client.Default(getSSLSocketFactory(), null)
-            else -> OkHttpClient()
+            else -> Client.Default(null, null)
         }
     }
 

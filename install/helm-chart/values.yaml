@@ -52,6 +52,8 @@ CharlesApplications:
     imagePullSecrets: false
     # -- Image Pull Policy
     pullPolicy: Always
+    mtls:
+      enabled: false
     service:
       # -- Service Name
       name: charlescd-butler
@@ -62,7 +64,11 @@ CharlesApplications:
         - name: http
         # -- Port Number
           port: 3000
-    # -- Replica Count
+        # -- Port Protocol
+        - name: https
+        # -- Port Number
+          port: 443
+
     replicaCount: 1
     resources:
       limits:
@@ -115,6 +121,7 @@ CharlesApplications:
       port: 8080
       # -- Health Check Initial Delay
       initialDelay: 180
+
     image:
       # -- Repository Registry
       registry: zupcharles
@@ -136,6 +143,30 @@ CharlesApplications:
           port: 8080
     # -- Replica Count
     replicaCount: 1
+    mtls:
+      enabled: false
+      volumeMounts:
+        - name: moove-certs
+          mountPath: /certs/moove
+          readOnly: true
+        - name: butler-certs
+          mountPath: /certs/butler
+          readOnly: true
+      volumes:
+        - name: moove-certs
+          secret:
+            secretName: "moove-tls-cert"
+            items:
+              - key: store.jks
+                path: moove-store.jks
+        - name: butler-certs
+          secret:
+            secretName: "butler-tls-cert"
+            items:
+              - key: store.jks
+                path: butler-store.jks
+
+
     resources:
       limits:
         # -- Resource CPU Limit
@@ -680,7 +711,6 @@ job:
   enabled: false
   # -- Job Name
   name: init-db
-
 redis:
   # -- Enable Redis Installation
   enabled: true
