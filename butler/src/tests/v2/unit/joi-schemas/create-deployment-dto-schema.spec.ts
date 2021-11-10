@@ -55,7 +55,7 @@ it('Returns valid DTO object when params are valid', () => {
     authorId: 'bc2a1669-34b8-4af2-b42c-acbad2ec6b60',
     callbackUrl: UrlConstants.deploymentCallbackUrl,
     timeoutInSeconds: 10,
-    overrideCircle: true
+    incremental: true
   }
   const validator = new CreateDeploymentValidator(params).validate()
   const expectedDto = new CreateDeploymentRequestDto(
@@ -138,8 +138,8 @@ it('Formats the error to the correct format', () => {
     },
     {
       'status': HttpStatus.BAD_REQUEST,
-      'title': '"overrideCircle" is required',
-      'source': 'overrideCircle'
+      'title': '"incremental" is required',
+      'source': 'incremental'
     }
   ]
   expect(formattedErrors).toEqual(expectedErrors)
@@ -204,7 +204,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     ],
     authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
     callbackUrl: UrlConstants.deploymentCallbackUrl,
-    overrideCircle: false
+    incremental: false
   }
   const validator = new CreateDeploymentValidator(params)
   const validatorResult = validator.validate()

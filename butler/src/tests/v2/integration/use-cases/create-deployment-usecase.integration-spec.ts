@@ -89,7 +89,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       namespace: 'my-namespace',
       timeoutInSeconds: 10,
-      overrideCircle: false
+      incremental: false
     }
 
     const component1 = new ComponentEntity(
@@ -339,7 +339,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       namespace: 'my-namespace',
-      overrideCircle: false
+      incremental: true
     }
     await request(app.getHttpServer())
       .post('/v2/deployments')
@@ -381,7 +381,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       namespace: 'my-namespace',
-      overrideCircle: false
+      incremental: false
     }
 
     const expectedDeploymentComponent = new ComponentEntity(
@@ -521,7 +521,7 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
       namespace: 'my-namespace',
-      overrideCircle: true,
+      incremental: false,
     }
 
     await request(app.getHttpServer())

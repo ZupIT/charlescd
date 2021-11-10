@@ -52,7 +52,7 @@ export class CreateDeploymentRequestDto {
   public status: DeploymentStatusEnum
 
   @ApiProperty()
-  public overrideCircle: boolean
+  public incremental: boolean
 
   @ApiProperty({ type: () => [CreateComponentRequestDto] })
   @Type(() => CreateComponentRequestDto)
@@ -68,7 +68,7 @@ export class CreateDeploymentRequestDto {
     namespace: string,
     git: CreateGitDeploymentDto,
     timeoutInSeconds: number,
-    overrideCircle: boolean
+    incremental: boolean
   ) {
     this.deploymentId = deploymentId
     this.authorId = authorId
@@ -79,7 +79,7 @@ export class CreateDeploymentRequestDto {
     this.namespace = namespace
     this.git = git
     this.timeoutInSeconds = timeoutInSeconds
-    this.overrideCircle = overrideCircle
+    this.incremental = incremental
   }
 
   public toCircleEntity(newComponents: ComponentEntity[]): DeploymentEntity {

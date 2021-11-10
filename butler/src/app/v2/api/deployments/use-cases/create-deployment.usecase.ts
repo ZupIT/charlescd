@@ -173,6 +173,6 @@ export class CreateDeploymentUseCase {
   }
 
   private isOverrideDeployment(createDeploymentDto: CreateDeploymentRequestDto): boolean {
-    return createDeploymentDto.overrideCircle && !createDeploymentDto.circle.default
+    return !createDeploymentDto.incremental && !createDeploymentDto.circle.default
   }
 }

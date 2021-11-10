@@ -90,7 +90,7 @@ export class CreateDeploymentValidator {
       value.namespace,
       new CreateGitDeploymentDto(value.git.token, value.git.provider),
       value.timeoutInSeconds,
-      value.overrideCircle
+      value.incremental
     )
     return dto
   }
@@ -111,7 +111,7 @@ export class CreateDeploymentValidator {
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255),
       timeoutInSeconds: Joi.number().integer().min(5).optional(),
-      overrideCircle: Joi.bool().required()
+      incremental: Joi.bool().required()
     })
   }
 
