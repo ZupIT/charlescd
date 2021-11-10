@@ -48,9 +48,10 @@ const Login = () => {
     doLogin(email, password);
   };
 
+  //working only with mocks
   const anonymousLogin = () => {
     localStorage.setItem('anonymous', 'true');
-    doLogin('', '', true);
+    doLogin('anonymous@admin', 'anonymous', true);
   };
 
   return (

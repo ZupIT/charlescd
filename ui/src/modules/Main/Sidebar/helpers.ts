@@ -18,7 +18,9 @@ import {
   rootMainMenu,
   mainMenu,
   workspaceMenu,
-  MenuType
+  MenuType,
+  anonymousMenu,
+  anonymousWorkspaceMenu
 } from '../constants';
 import find from 'lodash/find';
 import forEach from 'lodash/forEach';
@@ -29,16 +31,30 @@ export const getExpandIcon = (expand: boolean) =>
 
 export const getItems = () => {
   const [,path] = window.location.pathname.split('/');
+  const isAnonymous = localStorage.getItem('anonymous');
   let currentMenu: MenuType[] = [];
-  const menus = isRoot() ? [workspaceMenu, rootMainMenu] : [workspaceMenu, mainMenu];
 
-  forEach(menus, (menu) => {
-    find(menu, ({to}) => {
-      if(to.includes(`/${path}`)) {
-        currentMenu = menu;
-      }
-    })
-  });
+  if(isAnonymous) {
+    const menus = [anonymousWorkspaceMenu, anonymousMenu];
+
+    forEach(menus, (menu) => {
+      find(menu, ({to}) => {
+        if(to.includes(`/${path}`)) {
+          currentMenu = menu;
+        }
+      })
+    });
+  } else {
+    const menus = !isRoot() ? [workspaceMenu, rootMainMenu] : [workspaceMenu, mainMenu];
+
+    forEach(menus, (menu) => {
+      find(menu, ({to}) => {
+        if(to.includes(`/${path}`)) {
+          currentMenu = menu;
+        }
+      })
+    });
+  };
 
   return currentMenu;
 };

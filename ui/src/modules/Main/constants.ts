@@ -60,8 +60,49 @@ export const workspaceMenu: MenuType[] = [
     subject: 'maintenance'
   }
 ];
+export const anonymousWorkspaceMenu: MenuType[] = [
+  {
+    id: genMenuId(routes.circles),
+    icon: 'circles',
+    text: 'Circles',
+    to: routes.circles,
+    action: 'read',
+    subject: 'circles'
+  },
+  {
+    id: genMenuId(routes.modules),
+    icon: 'modules',
+    text: 'Modules',
+    to: routes.modules,
+    action: 'read',
+    subject: 'modules'
+  },
+  {
+    id: genMenuId(routes.settings),
+    icon: 'settings',
+    text: 'Settings',
+    to: routes.credentials,
+    action: 'write',
+    subject: 'maintenance'
+  }
+];
 
 export const mainMenu: MenuType[] = [
+  {
+    id: genMenuId(routes.workspaces),
+    icon: 'workspaces',
+    text: 'Workspaces',
+    to: routes.workspaces
+  },
+  {
+    id: genMenuId(routes.accountProfile),
+    icon: 'account',
+    text: 'Account',
+    to: routes.accountProfile
+  }
+];
+
+export const anonymousMenu: MenuType[] = [
   {
     id: genMenuId(routes.workspaces),
     icon: 'workspaces',
