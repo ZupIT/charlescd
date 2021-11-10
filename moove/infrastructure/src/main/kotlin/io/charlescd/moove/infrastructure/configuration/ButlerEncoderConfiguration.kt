@@ -21,6 +21,7 @@ import feign.okhttp.OkHttpClient
 import javax.net.ssl.SSLSocketFactory
 import org.apache.http.ssl.SSLContexts
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cloud.commons.httpclient.OkHttpClientFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ResourceLoader
@@ -64,5 +65,5 @@ class ButlerEncoderConfiguration(
     }
 
     fun loadFromFile(fileName: String) =
-        this.resourceLoader.getResource("file:///$fileName") ?: throw IllegalStateException("File not found: $fileName")
+        this.resourceLoader.getResource("file:///$fileName")
 }
