@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,5 +54,16 @@ export class LogRepository extends Repository<LogEntity> {
       return -1
     }
     return 0
+  }
+
+  public async saveDeploymentsLogs(currentDeploymentsIds: string[], log: Log): Promise<void[]> {
+    return this.manager.transaction( manager => {
+      return Promise.all(currentDeploymentsIds.map(
+        async deploymentId => {
+          const logEntity = new LogEntity(deploymentId, [log])
+          await manager.save(LogEntity, logEntity)
+        }
+      ))
+    })
   }
 }
