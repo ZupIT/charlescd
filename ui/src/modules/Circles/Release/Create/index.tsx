@@ -89,9 +89,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
       createDeployment({
         buildId: build.id,
         circleId,
+        incremental,
       });
     }
-  }, [createDeployment, build, circleId]);
+  }, [createDeployment, build, circleId, incremental]);
 
   const onSubmit = () => {
     setIsDeploying(true);
@@ -100,7 +101,6 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
 
     composeBuild({
       modules,
-      incremental,
       releaseName: data.releaseName,
     });
   };
