@@ -134,7 +134,7 @@ export class ReconcileDeploymentUsecase {
     const deploymentManifests = Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
       .filter(p => p.metadata.labels.deploymentId === deploymentId)
-
+    this.consoleLoggerService.log('DEPLOYMENT_CONDITIONS', deploymentManifests.map(it => it.spec))
     return this.checkDeploymentConditions(deploymentManifests)
   }
 
