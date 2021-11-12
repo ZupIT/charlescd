@@ -4,8 +4,8 @@
 ### 1. [**About**](#about)
 ### 2. [**How does Villager work?**](#how-does-villager-work?)
 ### 3. [**Usage**](#usage)
->#### i. [**Requirements**](#requirements)
->#### ii. [**Configuration**](#configuration)
+>#### 3.1. [**Requirements**](#requirements)
+>#### 3.2. [**Configuration**](#configuration)
 ### 4. [**Documentation**](#documentation)
 ### 5. [**Contributing**](#contributing)
 ### 6. [**License**](#license)
@@ -83,7 +83,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 Signed-off-by: Name < e-mail address >
 ```
 
-For this method, your name and e-mail must be the same registered to your GitHub account.
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
 [Java 11]: https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
 [Docker]: https://docs.docker.com/get-docker/

@@ -18,23 +18,23 @@ This folder contains two applications and two charts:
 
 # **Application and flow**
 
-The main goal of these applications is to simulate a common scenario of web applications with forms. The user writes some personal information and after that, some questions are presented with the percentage of success in the final step.
+These applications simulate a common scenario of web applications with forms. The user writes personal information and after that, some questions show up with the percentage of success in the final step.
 
-To use with Charles we added a POST to a new module (charlescd-circle-matcher) to get the x-circle-id before the request to the questions API and frontend chunks, because of this the next screen (questions) will change according to the x-circle-id.
+To use with Charles we added a POST to a new module (charlescd-circle-matcher) to get the `x-circle-id` before the request to the questions API and frontend chunks, because of this the next screen (questions) will change according to the `x-circle-id`.
 
-So in a hypothetical scenario with two circles:
+In a hypothetical scenario with two circles:
 
-- Default circle, don't need x-circle-id to be accessed and have quiz-app-backend/quiz-app-frontend with v1 version.
-- Test circle, need x-circle-id with 1111-2222-3333 value to be accessed and have quiz-app-backend/quiz-app-frontend with v2 version.
+- Default circle: It doesn't need `x-circle-id` to be accessed and it has quiz-app-backend/quiz-app-frontend with v1 version.
+- Test circle: It needs `x-circle-id` with 1111-2222-3333 value to be accessed and it has quiz-app-backend/quiz-app-frontend with v2 version.
 
 Then: 
-1. The first request to get the form screen ALWAYS reach default circle and because of this the user will get quiz-app-frontend V1.
+1. The first request to get the form screen **always** reaches the default circle. The user will get quiz-app-frontend V1.
 
-2. After the user submits the form the frontend make a POST to charlescd-circle-matcher with the answers to find the x-circle-id.
+2. After the user submits the form the frontend, it makes a POST to charlescd-circle-matcher with the answers to find the `x-circle-id`.
 
-3. With the x-circle-id (default or test circle) frontend store the value in cookies and send the user to the /questions screen and make a request to questions API.
+3. The `x-circle-id` (default or test circle) frontend stores the value in cookies and sends the user to the /questions screen to make a request to questions API.
 
-4. If the x-circle-id value is equal to test circle user will get V2 and if x-circle-id is different user will get V1.
+4. If the `x-circle-id` value is equal to the test circle, the user gets V2 and, if the `x-circle-id` is different, the user gets V1.
 
 # **How to add quiz-app to CharlesCD**
 

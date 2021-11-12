@@ -3,7 +3,7 @@
 ## **Table of contents**
 ### 1. [**About**](#about)
 ### 2. [**Usage**](#usage)
->#### i. [**Configuration**](#configuration)
+>#### 2.1. [**Configuration**](#configuration)
 ### 3. [**Documentation**](#documentation)
 ### 4. [**Contributing**](#contributing)
 ### 5. [**License**](#license)
@@ -72,7 +72,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 Signed-off-by: Name < e-mail address >
 ```
 
-For this method, your name and e-mail must be the same registered to your GitHub account.
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
 ## **License**
 [**Apache License 2.0**](https://github.com/ZupIT/charlescd/blob/main/LICENSE).
