@@ -119,20 +119,20 @@ export class ReconcileRoutesUsecase {
   }
 
   public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+    let allRoutedAndHealthy = false
     const components = groupBy(componentStatus, 'circle')
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
       const status = c[1]
-      let allTrue = status.every(s => s.status === true)
+      const allTrue = status.every(s => s.status === true)
       if (allTrue) {
-        allTrue = false
         const deployment = await this.deploymentRepository.findByCircleId(circleId)
         if(deployment.healthy) {
           await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
-          allTrue = true
+          allRoutedAndHealthy = true
         }
       }
-      return await this.deploymentRepository.updateRouteStatus(circleId, allTrue)
+      return await this.deploymentRepository.updateRouteStatus(circleId, allRoutedAndHealthy)
     }))
     return results
   }
