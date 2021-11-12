@@ -123,10 +123,14 @@ export class ReconcileRoutesUsecase {
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
       const status = c[1]
-      const allTrue = status.every(s => s.status === true)
+      let allTrue = status.every(s => s.status === true)
       if (allTrue) {
+        allTrue = false
         const deployment = await this.deploymentRepository.findByCircleId(circleId)
-        await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+        if(deployment.healthy) {
+          await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+          allTrue = true
+        }
       }
       return await this.deploymentRepository.updateRouteStatus(circleId, allTrue)
     }))

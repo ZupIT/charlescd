@@ -49,7 +49,7 @@ export class ReconcileDeploymentUsecase {
     if (!resourcesCreated) {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
-
+    this.consoleLoggerService.log('START:CHECK_DEPLOYMENT_HEALTH')
     const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
     if (!isDeploymentReady) {
       // if is not ready it must not remove old deployment until current is healthy
