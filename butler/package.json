@@ -40,6 +40,7 @@
     "amqp-connection-manager": "^3.7.0",
     "amqplib": "^0.8.0",
     "bunyan": "^1.8.15",
+    "bunyan-debug-stream": "^2.0.0",
     "cache-manager": "^3.4.4",
     "class-transformer": "^0.3.1",
     "cls-hooked": "^4.2.2",
