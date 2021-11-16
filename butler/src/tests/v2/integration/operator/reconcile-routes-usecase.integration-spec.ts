@@ -119,9 +119,10 @@ describe('Reconcile routes usecase', () => {
     await fixtureUtilsService.clearDatabase()
   })
 
-  it('Updates the healthy column to true when both VirtualService and DestinationRule for a component is true', async() => {
+  it('Updates the routed column to true when both VirtualService and DestinationRule for a component is true', async() => {
     deploymentFixture.circleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     deploymentFixture.current = true
+    deploymentFixture.healthy = true
     await deploymentRepository.save(deploymentFixture)
     await executionRepository.save(executionFixture())
 
@@ -192,12 +193,13 @@ describe('Reconcile routes usecase', () => {
     expect(result.map(r => r.routed)).toEqual([false])
   })
 
-  it('Updates the healthy column for multiple circles independently', async() => {
+  it('Updates the routed column for multiple circles independently', async() => {
     const firstCircleId = 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60'
     const secondCircleId = 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60'
     const firstDeployment = deploymentFixture
     const secondDeployment = deploymentFixture
-
+    firstDeployment.healthy = true
+    firstDeployment.current = true
     firstDeployment.circleId = firstCircleId
     await deploymentRepository.save(firstDeployment)
     await executionRepository.save(executionFixture())

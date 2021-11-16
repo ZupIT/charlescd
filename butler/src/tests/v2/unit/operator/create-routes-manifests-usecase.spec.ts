@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -488,6 +488,8 @@ describe('Hook Routes Manifest Creation', () => {
   })
 
   it('should notify moove and  set routes health status true when all of the desired components have been observed', async() => {
+    const healthyDeployment = deploymentFixture
+    healthyDeployment.healthy = true
     const componentsCircle2 = [
       createDeployComponent('A', 'v2', 'circle-2', false, 'noManifest', 'namespace', true),
       createDeployComponent('B', 'v2', 'circle-2', false, 'noManifest', 'namespace', true)
@@ -499,7 +501,7 @@ describe('Hook Routes Manifest Creation', () => {
     jest.spyOn(componentsRepository, 'findPreviousComponentsFromCurrentUnhealthyByCircleId')
       .mockImplementation(async() => [])
     jest.spyOn(deploymentRepository, 'findByCircleId')
-      .mockImplementation(async() => deploymentFixture)
+      .mockImplementation(async() => healthyDeployment)
     jest.spyOn(executionRepository, 'findOneOrFail')
       .mockImplementation(async() => executionFixture() )
 
