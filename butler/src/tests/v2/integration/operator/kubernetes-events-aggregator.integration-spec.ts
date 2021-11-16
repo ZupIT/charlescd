@@ -65,7 +65,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     logRepository = app.get<LogRepository>(LogRepository)
     k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
-    manager = fixtureUtilsService.connection.manager
+    manager = fixtureUtilsService.manager
   })
 
   beforeEach(async() => {
