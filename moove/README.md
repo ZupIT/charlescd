@@ -12,7 +12,7 @@
 ### 7. [**Community**](#community)
 
 ## **About**
-Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your circles. It is the bridge between [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler), [**Villager**](https://github.com/ZupIT/charlescd/tree/main/villager), and [**Circle Matcher**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher). 
+Moove is CharlesCD's application responsible for orchestrating the hypothesis tests of your products and the delivery pipeline until it reaches your segmentations. It is the bridge between [**Butler**](https://github.com/ZupIT/charlescd/tree/main/butler), [**Villager**](https://github.com/ZupIT/charlescd/tree/main/villager), and [**Circle Matcher**](https://github.com/ZupIT/charlescd/tree/main/circle-matcher). 
  
 ## **How does Moove work?**
 
@@ -46,7 +46,7 @@ All this information belongs to your [**Keycloak**](https://www.keycloak.org/doc
                                      
 After that, you have two options to start the application:
 
-### **On your terminal**
+### **1. On your terminal**
 Inside the root folder, run the following command:
 
 ```
@@ -55,7 +55,7 @@ mvn clean install
 ./web/run-local.sh
 ```
 
-### **Using your IDE**
+### **2. Using your IDE**
 Follow the steps below: 
 **Step 1.** Run the command `docker-compose up` on your terminal;
 **Step 2.** Set the property `spring.profiles.active` as `local`;

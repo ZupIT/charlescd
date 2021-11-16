@@ -42,7 +42,7 @@ mvn clean install
 mvn compile quarkus:dev
 ```
 
-These commands will install all project dependencies, run two containers with a PostgreSQL database and a stub server and finally, start the application on port 8080.
+These commands will install all project dependencies, run two containers with a PostgreSQL database and a stub server and, finally, start the application on port 8080.
 
 - Villager provides a [**Swagger API Documentation**](http://localhost:8080/swagger-ui.html), and an up to date [**Postman Collection**](https://www.postman.com/).
 

@@ -39,11 +39,11 @@ docker-compose up
 npm start
 ```
 
-2. These commands will install all project dependencies:
+2. These commands will install all project dependencies. Right after, you must: 
     - Run two containers with a PostgreSQL database and a stub server;
     - Start the application on port 3000.
 
-A **Swagger API Documentation** is provided on application startup. We also provided a up to date [**Postman Collection**](https://www.postman.com/).
+A **Swagger API Documentation** is provided on application startup. We also provide an up to date [**Postman Collection**](https://www.postman.com/).
 
 ## **Documentation**
 

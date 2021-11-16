@@ -21,13 +21,13 @@ See below the requirements to run CharlesCD UI:
 - [**Node**](https://nodejs.org/en/download/)
 - [**npm**](https://docs.npmjs.com/cli/v7/commands/npm-install)
 
-Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charles application] api.
+Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charles application] API.
 
 ### **Configuration**
 
 ### **On terminal**
 
-Run the following commands in the **root folder** to get all dependencies installed in ui and to start the server:
+Run the following commands in the **root folder** to get all dependencies installed in UI and to start the server:
 
 ```
 npm install
@@ -49,19 +49,19 @@ npm run start:local
 
 ### **Testing**
 
-To run the tests execute `npm run test`.
+To run the tests, execute `npm run test`.
 
 ### **Run single test**
 
-To run single test execute `npm run test:watch -- --testPathPattern [your-file-path]`.
+To run single test, execute `npm run test:watch -- --testPathPattern [your-file-path]`.
 
 ### **Building & Deploying**
 
-To build the ui, run `npm run build`. The built ui lives in `build/`.
+To build the UI, run `npm run build`. The built ui lives in `build/`.
 
 ### **CRA**
 
-We use [**create react app**](https://reactjs.org/docs/create-a-new-react-app.html) to create a user interface. You may need define a new environment or set up a proxy, etc. For more information, check out [**React's documentation**](https://reactjs.org/docs/getting-started.html).
+We use [**create react app**](https://reactjs.org/docs/create-a-new-react-app.html) to create a user interface. You may need to define a new environment or set up a proxy, etc. For more information, check out [**React's documentation**](https://reactjs.org/docs/getting-started.html).
 
 ## **Documentation**
 

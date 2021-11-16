@@ -1,5 +1,5 @@
 # **Library to propagate Charles header - Zup**
-Biblioteca simples para propaga�ao do "header" de tracing do "Charles".
+Simple library to propagate Charles' tracing "header".
 
 #### **How to begin?**
 1. Import the library in your application: 

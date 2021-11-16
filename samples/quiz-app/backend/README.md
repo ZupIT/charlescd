@@ -11,8 +11,8 @@
 ### 6. [**Community**](#community)
 
 ## **Requirements**
-- golang
-- Docker (with docker-compose)
+- [**Golang**](https://golang.org/dl/)
+- [**Docker - with docker-compose**](https://docs.docker.com/get-docker/)
 
 ## **Build**
 

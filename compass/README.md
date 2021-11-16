@@ -12,11 +12,11 @@
 ### 7. [**Community**](#community)
 
 ## **About**
-Compass is CharlesCD's application responsible for providing metrics through the connection with several data sources, in addition the application allows you to create actions based on the metrics consumed. The Compass also use a plugin architecture, which means that you can develop your own plugins for different data sources also create metrics-based actions plugins.
+Compass is CharlesCD's application responsible for providing metrics through the connection with several data sources, in addition the application allows you to create actions based on the metrics consumed. Compass also uses a plugin architecture, which means that you can develop your own plugins for different data sources and also create metrics-based actions plugins.
 
 ## **How does Compass work?**
 Through the Compass APIs, you can:
-- Integrate with metric providers to monitor the health of your applications and explore your circle's evolution.
+- Integrate with metric providers to monitor the health of your applications and explore your segmentation's (circle's) evolution.
 - Set thresholds based on your application metrics.
 - Create automated actions based on metrics and thresholds provided by your application.
 - Use different types of data sources because of the architecture plugin.
@@ -33,9 +33,9 @@ See below the requirements to run Compass:
 - [**GNU Make**](https://www.gnu.org/software/make/)
 
 ### **Configuration**
-If you want to run your application locally you will need a metric provider datasource running on the port 9090.
+If you want to run your application locally, you will need a metric provider data source running on port 9090.
 
-### **On your terminal**
+### **1. On your terminal**
 
 Inside the root folder, run the following command:
 
@@ -44,7 +44,7 @@ docker-compose up
 make start
 ```
 
-### **Using your IDE**
+### **2. Using your IDE**
 Follow the steps below: 
 
 **Step 1.** Run the command **`docker-compose up`** on your terminal;

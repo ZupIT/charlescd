@@ -10,7 +10,7 @@
 ### 6. [**Community**](#community)
 
 ## **About**
-Hooks are programs you place in a **Git Hooks directory**, they trigger actions in Git's execution.
+Hooks are programs that, when you place in a **Git Hooks directory**, it triggers actions in Git's execution.
 
 In CharlesCD, there are two Githooks, check out below:
 

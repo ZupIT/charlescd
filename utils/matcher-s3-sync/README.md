@@ -11,13 +11,13 @@
 ## **About**
 Matcher-s3-sync is a tool to synchronize the charlescd-circle-matcher and charlescd-moove databases with CSV files hosted in AWS S3.
 
-CharlesCD accepts two types of segmentation, manual and CSV import. Both need that the user interacts with the charles interface, making this process onerous in some cases.
+CharlesCD accepts two types of segmentation: manual and CSV import. Both need the user to interact with CharlesCD's interface, making this process onerous in some cases.
 
-This tool has been created to facilitate this process, Matcher-s3-sync will get CSV files in some S3 buckets and update charlescd database with the information in those CSV files.
+This tool has been created to facilitate this process, Matcher-s3-sync will get CSV files in some S3 buckets and update CharlesCD's database with the information in those CSV files.
 
 ## **Conditions**
  - The S3 bucket needs to respect the following rules:
-    - Each subfolder of this bucket must be a circle previously created in the CharlesCD and the name of this subfolder must be the circle ID.
+    - Each subfolder of this bucket must be a segmentation (circle) previously created in the CharlesCD and the name of this subfolder must be the circle ID.
     - The CSV inside every subfolder must respect the following documentation in [**CSV import section**](https://docs.charlescd.io/reference/circles)
     - To make compatible with AWS Athenas, the CSV files have to be compressed (.gz)
     - Matcher-S3-Sync will get always the newest object in each folder.

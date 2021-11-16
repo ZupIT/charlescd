@@ -18,14 +18,14 @@ This folder contains two applications and two charts:
 
 # **Application and flow**
 
-These applications simulate a common scenario of web applications with forms. The user writes personal information and after that, some questions show up with the percentage of success in the final step.
+These applications simulate a common scenario of web applications with forms. The user writes personal information, and after that, some questions show up with the percentage of success in the final step.
 
-To use with Charles we added a POST to a new module (charlescd-circle-matcher) to get the `x-circle-id` before the request to the questions API and frontend chunks, because of this the next screen (questions) will change according to the `x-circle-id`.
+To use this feature with Charles, we added a POST to a new module (charlescd-circle-matcher) to get the `x-circle-id` before the request to the questions API and frontend chunks, because of this the next screen (questions) will change according to the `x-circle-id`.
 
 In a hypothetical scenario with two circles:
 
-- Default circle: It doesn't need `x-circle-id` to be accessed and it has quiz-app-backend/quiz-app-frontend with v1 version.
-- Test circle: It needs `x-circle-id` with 1111-2222-3333 value to be accessed and it has quiz-app-backend/quiz-app-frontend with v2 version.
+**1. Default circle:** It doesn't need `x-circle-id` to be accessed and it has quiz-app-backend/quiz-app-frontend with v1 version.
+**2. Test circle:** It needs `x-circle-id` with 1111-2222-3333 value to be accessed and it has quiz-app-backend/quiz-app-frontend with v2 version.
 
 Then: 
 1. The first request to get the form screen **always** reaches the default circle. The user will get quiz-app-frontend V1.
