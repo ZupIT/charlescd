@@ -5,7 +5,7 @@ This is CharlesCD contributing guide. Please read the following sections to lear
 
 ## **Welcome**
 :wave:Welcome! 
-
+ 
 ## **Table of contents**
 
 ### 1. [**Before you contribute**](#before-you-contribute)
@@ -160,7 +160,7 @@ Follow the steps:
 
 **Step 2.** Clone your project: ```git clone git@github.com:yourname/charlescd ```;
 
-**Step 3.** ```cd charlescd ```
+**Step 3.**  Run the command ```cd charlescd ```
 
 **Step 4.** Configure the environment(s) for module(s) that you are collaborating
 
@@ -184,7 +184,7 @@ Follow the steps to write a bug fix:
 
 ## **Community**
 
-- You can ask question and chat with us in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
+- Do you have any question about CharlesCD? Let's chat in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
 
 Thank you for considering evoluting CharlesCD!!!:heart::heart::heart:
 
