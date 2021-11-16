@@ -12,17 +12,17 @@
 
 
 ## **Table of contents**
-### 1. [**About**](#About)
-### 2. [**Getting Started**](#Getting-Started)
->#### i. [**Requirements**](#Requirements)
->#### ii. [**Installation**](#Installation)
->#### iii. [**Usage**](#Usage)
-### 3. [**Documentation**](#Documentation)
-### 4. [**Contributing**](#Contributing)
->#### i. [**Developer Certificate of Origin - DCO**](#Developer-Certificate-of-Origin-DCO)
-### 5. [**Code of Conduct**](#Code-of-Conduct)
-### 6. [**License**](#License)
-### 7. [**Community**](#Community)
+### 1. [**About**](#about)
+### 2. [**Getting Started**](#getting-started)
+>#### 2.1. [**Requirements**](#requirements)
+>#### 2.2. [**Installation**](#installation)
+>#### 2.3. [**Usage**](#usage)
+### 3. [**Documentation**](#documentation)
+### 4. [**Contributing**](#contributing)
+>#### 4.1. [**Developer Certificate of Origin - DCO**](#developer-certificate-of-origin-DCO)
+### 5. [**Code of Conduct**](#Ccde-of-conduct)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
 
  
 <br>
@@ -106,7 +106,7 @@ You can also manually sign your commits during GitHub reviews and suggestions, f
 ```
 Signed-off-by: Name < e-mail address >
 ```
-For this method, your name and e-mail must be the same registered to your GitHub account.
+For this method, your name and e-mail must be the same registered on your GitHub account.
 
 ## **Code of Conduct**
 Please follow the [**Code of Conduct**](https://github.com/ZupIT/charlescd/blob/main/CODE_OF_CONDUCT.md) in all your interactions with our project.
