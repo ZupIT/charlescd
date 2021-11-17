@@ -1,6 +1,0 @@
-node_modules
-*.gz
-dist-server
-lib
-pod-test-aws.yaml
-sa-test-aws.yaml
