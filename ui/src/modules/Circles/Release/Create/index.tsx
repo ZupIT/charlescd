@@ -150,7 +150,7 @@ const CreateRelease = ({ circleName, circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
-        {isDefaultCircle(circleName) && (
+        {!isDefaultCircle(circleName) && (
           <Styled.CheckboxWrapper>
             <Styled.Checkbox
               value="incremental"
