@@ -20,7 +20,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 
 	"github.com/ZupIT/charlescd/gate/internal/configuration"
@@ -63,12 +62,12 @@ func prepareDatabase() (persistenceManager, error) {
 }
 
 func connectDatabase() (*sql.DB, *gorm.DB, error) {
-	sqlDb, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		configuration.Get("DB_USER"),
-		configuration.Get("DB_PASSWORD"),
+	sqlDb, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		configuration.Get("DB_HOST"),
 		configuration.Get("DB_PORT"),
+		configuration.Get("DB_USER"),
 		configuration.Get("DB_NAME"),
+		configuration.Get("DB_PASSWORD"),
 		configuration.Get("DB_SSL"),
 	))
 	if err != nil {
@@ -89,6 +88,9 @@ func connectDatabase() (*sql.DB, *gorm.DB, error) {
 
 func runMigrations(sqlDb *sql.DB) error {
 	driver, err := pgMigrate.WithInstance(sqlDb, &pgMigrate.Config{})
+	if err != nil {
+		return err
+	}
 	dbMigrated, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", "resources/migrations"),
 		configuration.Get("DB_NAME"), driver)
@@ -117,22 +119,22 @@ func loadPersistenceManager(db *gorm.DB) (persistenceManager, error) {
 
 	systemTokenRepo, err := repository.NewSystemTokenRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate system token repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate system token repository with error: %w", err)
 	}
 
 	permissionRepo, err := repository.NewPermissionRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate permission repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("cannot instantiate permission repository with error: %s", err.Error())
 	}
 
 	userRepo, err := repository.NewUserRepository(db)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate user repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate user repository with error: %s", err.Error())
 	}
 
 	workspaceRepo, err := repository.NewWorkspaceRepository(db, queriesPath)
 	if err != nil {
-		return persistenceManager{}, errors.New(fmt.Sprintf("Cannot instantiate workspace repository with error: %s", err.Error()))
+		return persistenceManager{}, fmt.Errorf("Cannot instantiate workspace repository with error: %s", err.Error())
 	}
 
 	return persistenceManager{

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ export class ReconcileDeploymentUsecase {
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
+    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
-
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
     // TODO check if this is necessary
     if (!resourcesCreated) {
@@ -52,6 +52,7 @@ export class ReconcileDeploymentUsecase {
 
     const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
     if (!isDeploymentReady) {
+      // if is not ready it must not remove old deployment until current is healthy
       const previousDeploymentId = deployment.previousDeploymentId
       if (previousDeploymentId === null) {
         await this.deploymentRepository.updateHealthStatus(deployment.id, false)

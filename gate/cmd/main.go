@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,10 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server, err := newServer(persistenceManager, serviceManager)
-	if err != nil {
-		log.Fatal(err)
-	}
+	server := newServer(persistenceManager, serviceManager)
 
 	log.Fatalln(server.start("8080"))
 }

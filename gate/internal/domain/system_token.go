@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,15 +41,15 @@ func (systemToken SystemToken) CreateUserFromSystemToken() User {
 	return User{
 		ID:            uuid.New(),
 		Name:          systemToken.Name,
-		PhotoUrl:      "",
+		PhotoURL:      "",
 		Email:         systemToken.ID.String() + "@system.token",
 		IsRoot:        false,
-		SystemTokenId: systemToken.ID,
+		SystemTokenID: systemToken.ID,
 		CreatedAt:     time.Now(),
 	}
 }
 
-func(systemToken *SystemToken) SetLastUsed ()  {
+func (systemToken *SystemToken) SetLastUsed() {
 	lastUsedAt := time.Now()
-	systemToken.LastUsedAt =  &lastUsedAt
+	systemToken.LastUsedAt = &lastUsedAt
 }
