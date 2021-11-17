@@ -369,6 +369,7 @@ const CirclesComparationItem = ({
         {activeSection === SECTIONS.RELEASE && (
           <CreateRelease
             id={id}
+            name={circle?.name}
             onGoBack={() => setActiveSection(undefined)}
             onCreateRelease={onCreateRelease}
           />

@@ -25,11 +25,12 @@ import { Deployment } from '../interfaces/Circle';
 
 interface Props {
   id: string;
+  name: string;
   onGoBack: Function;
   onCreateRelease: (deploy: Deployment) => void;
 }
 
-const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
+const Release = ({ id, name, onGoBack, onCreateRelease }: Props) => {
   const [type, setType] = useState('');
 
   return (
@@ -54,6 +55,7 @@ const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
         />
         {type === 'create' && (
           <CreateRelease
+            circleName={name}
             circleId={id}
             onDeployed={(deploy: Deployment) => onCreateRelease(deploy)}
           />
