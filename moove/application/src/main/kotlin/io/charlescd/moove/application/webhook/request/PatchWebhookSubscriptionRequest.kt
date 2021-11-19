@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ data class PatchWebhookSubscriptionRequest(override val patches: List<PatchOpera
 
     private fun validateValues() {
         patches.forEach { patch ->
-            Assert.notEmpty(patch.value as List<out Any>, "Events cannot be empty.")
+            Assert.notEmpty(patch.value as List<*>, "Events cannot be empty.")
         }
     }
 }
