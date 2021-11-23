@@ -1,3 +1,21 @@
+{{/*
+#
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+*/}}
+
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
@@ -75,7 +93,14 @@ env:
 - name: DATABASE_USER
   value: {{ .RangeContext.database.user}}
 - name: DATABASE_PASS
+{{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+      key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+{{- else }}
   value: "{{ .RangeContext.database.password}}"
+{{- end }}
 - name: DATABASE_NAME
   value: {{ .RangeContext.database.name}}
 {{ if .RangeContext.database.ssl }}
@@ -117,7 +142,14 @@ env:
 - name: DB_USERNAME
   value: "{{ .RangeContext.database.user}}"
 - name: DB_PASSWORD
+{{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+      key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+{{ else }}
   value: "{{ .RangeContext.database.password}}"
+{{ end }}
 - name: KEYCLOCK_REALM
   value: "{{ .RangeContext.keycloak.realm }}"
 {{ if .ChartContext.Values.keycloak.enabled }}
@@ -138,7 +170,14 @@ env:
 - name: RATELIMIT_SECONDS
   value: "1"
 - name: KEYCLOAK_CLIENT_SECRET
+{{- if and .RangeContext.keycloak.clientSecretFrom.secretKeyRef.name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .RangeContext.keycloak.clientSecretFrom.secretKeyRef.name }}
+      key: {{ .RangeContext.keycloak.clientSecretFrom.secretKeyRef.key | default "client-secret" }}
+{{- else }}
   value: "{{ .RangeContext.keycloak.clientSecret}}"
+{{- end }}
 - name: INTERNAL_IDM_ENABLED
   value: "{{ .RangeContext.internalIdmEnabled }}"
 - name: ORIGIN_HOSTS
@@ -168,7 +207,14 @@ env:
 - name: SPRING_REDIS_PORT
   value: "{{ .RangeContext.redis.port }}"
 - name: SPRING_REDIS_PASSWORD
+  {{- if and .RangeContext.redis.passwordFrom.secretKeyRef.name }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .RangeContext.redis.passwordFrom.secretKeyRef.name }}
+      key: {{ .RangeContext.redis.passwordFrom.secretKeyRef.key | default "password" }}
+  {{- else }}
   value: {{ .RangeContext.redis.password }}
+  {{- end }}
 - name: SPRING_REDIS_SSL
   value: "{{ .RangeContext.redis.ssl }}"
 - name: ALLOWED_ORIGINS
@@ -194,7 +240,14 @@ env:
   - name: DB_USER
     value: "{{ .RangeContext.database.user}}"
   - name: DB_PASSWORD
+    {{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+        key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+    {{- else }}
     value: "{{ .RangeContext.database.password}}"
+    {{- end }}
   - name: DB_NAME
     value: "{{ .RangeContext.database.name}}"
   - name: MOOVE_DB_HOST
@@ -206,7 +259,14 @@ env:
   - name: MOOVE_DB_USER
     value: "{{ .RangeContext.moove.database.user}}"
   - name: MOOVE_DB_PASSWORD
+    {{- if and .RangeContext.moove.database.passwordFrom.secretKeyRef.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .RangeContext.moove.database.passwordFrom.secretKeyRef.name }}
+        key: {{ .RangeContext.moove.database.passwordFrom.secretKeyRef.key | default "password" }}
+    {{- else }}
     value: "{{ .RangeContext.moove.database.password}}"
+    {{- end }}
   - name: DB_SSL
     value: "disable"
   - name: PLUGINS_DIR
@@ -243,7 +303,14 @@ env:
   - name: CHARLES_VILLAGER_DB_USERNAME
     value: "{{ .RangeContext.database.user}}"
   - name: CHARLES_VILLAGER_DB_PASSWORD
+    {{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+        key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+    {{- else }}
     value: "{{ .RangeContext.database.password}}"
+    {{- end }}
   - name: CHARLES_BUILD_TIMEOUT
     value: "{{ .RangeContext.buildTimeout }}"
   - name: CHARLES_villager_ORGANIZATION
@@ -283,7 +350,14 @@ env:
   - name: DB_USER
     value: "{{ .RangeContext.database.user}}"
   - name: DB_PASSWORD
+    {{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+        key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+    {{- else }}
     value: "{{ .RangeContext.database.password}}"
+    {{- end }}
   - name: DB_NAME
     value: "{{ .RangeContext.database.name}}"
   - name: DB_SSL
@@ -322,7 +396,14 @@ env:
   - name: DB_USER
     value: "{{ .RangeContext.database.user}}"
   - name: DB_PASSWORD
+    {{- if and .RangeContext.database.passwordFrom.secretKeyRef.name }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ .RangeContext.database.passwordFrom.secretKeyRef.name }}
+        key: {{ .RangeContext.database.passwordFrom.secretKeyRef.key | default "password" }}
+    {{- else }}
     value: "{{ .RangeContext.database.password}}"
+    {{- end }}
   - name: DB_HOST
     value: "{{ .RangeContext.database.host}}"
   - name: DB_PORT
