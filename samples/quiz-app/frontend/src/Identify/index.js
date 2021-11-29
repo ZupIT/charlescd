@@ -25,7 +25,8 @@ function Identify() {
 
   useEffect(() => {
     if (status === 'resolved' || status === 'rejected') {
-      window.location.href = '/quiz-app/questions';
+      const publicUrl = process.env.PUBLIC_URL
+      window.location.href = `${publicUrl}/questions`;
     }
   }, [status])
 
