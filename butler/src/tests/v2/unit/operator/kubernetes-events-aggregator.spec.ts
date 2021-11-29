@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import { CoreV1Event, KubernetesObject } from '@kubernetes/client-node'
 import { LogRepository } from '../../../../app/v2/api/deployments/repository/log.repository'
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 import * as moment from 'moment'
+import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -32,6 +33,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
   let k8sClient: K8sClient
   let logRepository: LogRepository
+  let deploymentsRepository: DeploymentRepositoryV2
 
   const butlerNamespace = 'butler-namespace'
   const logService = new ConsoleLoggerService()
@@ -40,6 +42,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   beforeEach(() => {
     k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
     logRepository = new LogRepository()
+    deploymentsRepository = new DeploymentRepositoryV2()
   })
 
   it('Do not aggregate event without valid involved object', async() => {
@@ -49,7 +52,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
       .mockImplementation(() => Promise.resolve({} as LogEntity))
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate({
       involvedObject: {}
     } as CoreV1Event)
@@ -93,7 +96,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       type: 'Normal',
     }
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(1)
@@ -145,7 +148,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       type: 'Normal',
     }
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(1)
@@ -183,7 +186,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       type: 'Normal',
     }
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     const since = new Date('2021-04-23T11:35:20Z')
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event, since)
 
@@ -226,7 +229,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       type: 'Normal',
     }
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event) // First call
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event) // Second call
 
@@ -265,7 +268,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
       type: 'Normal',
     }
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
     expect(readSpy).toBeCalledTimes(0)
@@ -300,7 +303,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
 
 
-    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const eventsLogsAggregator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
     await eventsLogsAggregator.aggregate(coreEvent as CoreV1Event)
 
@@ -359,7 +362,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     const spySaveLogs = jest.spyOn(logRepository, 'save')
 
-    const logAgreggator = new EventsLogsAggregator(k8sClient, logRepository, logService)
+    const logAgreggator = new EventsLogsAggregator(k8sClient, logRepository, logService, deploymentsRepository)
     await logAgreggator.aggregate(corev1Event, timestamp)
     expect(spySaveLogs).not.toBeCalled()
   })

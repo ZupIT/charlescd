@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { ComponentEntityV2 } from '../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 } from '../../../app/v2/api/deployments/entity/deployment.entity'
 import { getComplexManifests, getNoLabelsManifests, getSimpleManifests } from './manifests.fixture'
@@ -194,4 +210,29 @@ export const executionFixture = (): Execution => {
   )
   execution.notificationStatus = NotificationStatusEnum.NOT_SENT
   return execution
+}
+export const deploymentWithoutComponentFixture = (): DeploymentEntityV2=> {
+  return new DeploymentEntityV2(
+    'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [],
+    true,
+    'namespace',
+    60
+  )
+}
+
+export const otherDeploymentWithoutComponentFixture= (): DeploymentEntityV2 => {
+  return new DeploymentEntityV2(
+    'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+    'b8ccdabf-6094-495c-b44e-ba8ea2214e29',
+    'b46fd548-0082-4021-ba80-a50703c44a3b',
+    UrlConstants.deploymentCallbackUrl,
+    [],
+    true,
+    'namespace',
+    60
+  )
 }
