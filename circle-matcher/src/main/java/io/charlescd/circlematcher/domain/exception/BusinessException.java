@@ -1,6 +1,9 @@
 package io.charlescd.circlematcher.domain.exception;
 
 public class BusinessException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
     private MatcherErrorCode errorCode;
     private String  source;
     private String  title;

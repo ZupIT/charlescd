@@ -25,7 +25,7 @@ public interface RedisRepository {
 
     Logger logger = LoggerFactory.getLogger(RedisRepository.class);
 
-    default void closeCursor(Cursor cursor) {
+    default void closeCursor(@SuppressWarnings("rawtypes") Cursor cursor) {
         if (!cursor.isClosed()) {
             try {
                 cursor.close();
