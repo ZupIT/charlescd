@@ -27,7 +27,7 @@ Change `REACT_APP_API_URI` value in [environments/dev] dir to access the [Charle
 
 ### **On terminal**
 
-Run the following commands in the **root folder** to get all dependencies installed in UI and to start the server:
+Run the following commands in the **root folder** to get all dependencies installed in the UI and to start the server:
 
 ```
 npm install
@@ -57,7 +57,7 @@ To run single test, execute `npm run test:watch -- --testPathPattern [your-file-
 
 ### **Building & Deploying**
 
-To build the UI, run `npm run build`. The built ui lives in `build/`.
+To build the UI, run `npm run build`. The built UI lives in `build/`.
 
 ### **CRA**
 

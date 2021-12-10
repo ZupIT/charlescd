@@ -2,13 +2,13 @@
 Simple library to propagate Charles' tracing "header".
 
 #### **How to begin?**
-1. Import the library in your application: 
+**Step 1.** Import the library in your application: 
 
 ```csharp
 using Zup.Tracing;
 ```
 
-2. In the `ConfigureServices` method of the `Startup`class, tell the asp.net pipeline, we will use headers propagation to make Charles work. Add the line below: 
+**Step 2.** In the `ConfigureServices` method of the `Startup`class, tell the asp.net pipeline, we will use headers propagation to make Charles work. Add the line below: 
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -18,7 +18,7 @@ public void ConfigureServices(IServiceCollection services)
     ...
 }
 ```
-3. In your application, use your the `HttpClient` class from the interface `IHttpClientFactory`dependency:
+**Step 3.** In your application, use your the `HttpClient` class from the interface `IHttpClientFactory`dependency:
 
 ```csharp
 [Route("api/[controller]")]
