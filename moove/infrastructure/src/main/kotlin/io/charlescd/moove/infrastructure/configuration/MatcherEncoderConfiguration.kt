@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,17 +74,16 @@ class MatcherEncoderConfiguration {
         }
 
         private fun extractMessageFromResponse(response: Response?): ErrorResponse {
-            var responseAsString: String? = null
-            try {
-                responseAsString = response?.body()?.let {
+            return try {
+                val responseAsString = response?.body()?.let {
                     StreamUtils.copyToString(it.asInputStream(), StandardCharsets.UTF_8)
                 }
-                return responseAsString?.let {
+                responseAsString?.let {
                     getResponseAsObject(it)
                 } ?: createErrorResponse("No response body")
             } catch (ex: IOException) {
                 logger.error(ex.message, ex)
-                return createErrorResponse("Error reading response", ex)
+                createErrorResponse("Error reading response", ex)
             }
         }
 

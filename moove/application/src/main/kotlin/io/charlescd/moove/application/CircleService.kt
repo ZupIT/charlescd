@@ -1,6 +1,6 @@
 /*
  *
- *  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
@@ -105,9 +105,7 @@ class CircleService(private val circleRepository: CircleRepository) {
 
     fun checkIfPercentageCircleCanDeploy(circle: Circle, workspaceId: String) {
         val percentageCircles = this.circleRepository.findCirclesPercentage(workspaceId, null, active = true, pageRequest = null).content
-        val isAlreadyDeployed = percentageCircles.map {
-            circle -> circle.id
-        }.contains(circle.id)
+        val isAlreadyDeployed = percentageCircles.map { it.id }.contains(circle.id)
         val sumPercentage = percentageCircles.takeIf { it.isNotEmpty() }?.map { it -> it.percentage }?.reduce { acc, value -> acc?.plus(value ?: 0) } ?: 0
         if (!isAlreadyDeployed) {
             verifyLimitReached(sumPercentage, circle.percentage!!)
