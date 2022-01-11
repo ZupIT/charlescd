@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class UpdateBuildInfoInteractorImpl implements UpdateBuildInfoInteractor 
         BuildEntity buildEntity = buildRepository.findById(buildEntityId);
 
         if (hasAnyTimeout) {
-            this.buildNotificationService.notify(buildEntity, Collections.EMPTY_LIST);
+            this.buildNotificationService.notify(buildEntity, Collections.emptyList());
             return;
         }
 

@@ -21,7 +21,8 @@ WORKDIR /opt/quiz
 COPY . .
 RUN yarn install && yarn build
 
-FROM nginx:1.15.2-alpine
+FROM nginx:1.19-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 WORKDIR /usr/share/nginx/html
 COPY --from=builder /opt/quiz/build/ .
+COPY --from=builder /opt/quiz/50-env-vars-replace.sh /docker-entrypoint.d/
