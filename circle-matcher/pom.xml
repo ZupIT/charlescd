@@ -41,6 +41,7 @@
         <jedis.version>3.2.0</jedis.version>
         <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
         <jacoco.version>0.8.4</jacoco.version>
+        <compiler-plugin.version>3.8.0</compiler-plugin.version>
     </properties>
 
     <dependencies>
@@ -194,6 +195,22 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version><!--$NO-MVN-MAN-VER$-->
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Werror</arg>
+                        <arg>-Xlint:-processing</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
