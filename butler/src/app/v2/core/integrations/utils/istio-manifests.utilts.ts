@@ -25,7 +25,6 @@ const IstioManifestsUtils = {
         component: component.name,
         tag: component.imageTag,
         circleId: circleId,
-        deploymentId: component.deployment.id
       },
       name: circleId
     }

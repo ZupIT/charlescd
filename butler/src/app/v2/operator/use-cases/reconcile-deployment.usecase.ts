@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@nestjs/common'
-import { isEmpty, uniqWith } from 'lodash'
-import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
-import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
-import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
-import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
-import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
-import { K8sClient } from '../../core/integrations/k8s/client'
-import { MooveService } from '../../core/integrations/moove'
-import { ConsoleLoggerService } from '../../core/logs/console'
-import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
-import { ReconcileUtils } from '../utils/reconcile.utils'
-import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
+import {Injectable} from '@nestjs/common'
+import {isEmpty, uniqWith} from 'lodash'
+import {DeploymentEntityV2} from '../../api/deployments/entity/deployment.entity'
+import {ComponentsRepositoryV2} from '../../api/deployments/repository'
+import {DeploymentRepositoryV2} from '../../api/deployments/repository/deployment.repository'
+import {ExecutionRepository} from '../../api/deployments/repository/execution.repository'
+import {KubernetesManifest, SpecTemplateManifest} from '../../core/integrations/interfaces/k8s-manifest.interface'
+import {K8sClient} from '../../core/integrations/k8s/client'
+import {MooveService} from '../../core/integrations/moove'
+import {ConsoleLoggerService} from '../../core/logs/console'
+import {HookParams, SpecMetadata, SpecStatus} from '../interfaces/params.interface'
+import {ReconcileUtils} from '../utils/reconcile.utils'
+import {ComponentEntityV2} from '../../api/deployments/entity/component.entity'
+import {DeploymentStatusEnum} from "../../api/deployments/enums/deployment-status.enum";
 
 @Injectable()
 export class ReconcileDeploymentUsecase {
@@ -50,7 +51,7 @@ export class ReconcileDeploymentUsecase {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
 
-    const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
+    const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment)
     if (!isDeploymentReady) {
       // if is not ready it must not remove old deployment until current is healthy
       const previousDeploymentId = deployment.previousDeploymentId
@@ -100,14 +101,15 @@ export class ReconcileDeploymentUsecase {
       namespace: deployment.namespace,
       labels: {
         ...manifest.metadata?.labels,
-        'deploymentId': deployment.id,
-        'circleId': deployment.circleId
-      }
+        'circleId': deployment.circleId,
+        'component': component.name,
+        'tag': component.imageTag,
+      },
     }
 
     // TODO what about other resources such as StatefulSet, CronJob etc?
     if (manifest.kind === 'Deployment') {
-      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.id}`
+      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
     }
 
     if (manifest.spec?.template) {
@@ -115,34 +117,48 @@ export class ReconcileDeploymentUsecase {
         ...manifest.spec.template.metadata,
         labels: {
           ...manifest.spec.template.metadata?.labels,
-          'deploymentId': deployment.id,
-          'circleId': deployment.circleId
-        }
+          'circleId': deployment.circleId,
+          'component': component.name,
+          'tag': component.imageTag,
+        },
       }
     }
+    // if (manifest.spec?.selector) {
+    //   manifest.spec.selector.matchLabels = {
+    //     ...manifest.spec.selector.matchLabels,
+    //     'circleId': deployment.circleId,
+    //     'component': component.name,
+    //     'tag': component.imageTag,
+    //   }
+    // }
 
     return manifest
   }
 
   private checkIfResourcesWereCreated(params: HookParams): boolean {
     // TODO we should also check if other resources were created
+    this.consoleLoggerService.log('PARAMS_CHILDREN', params.children)
     return !isEmpty(params.children['Deployment.apps/v1'])
   }
 
-  private checkIfDeploymentIsReady(params: HookParams, deploymentId: string): boolean {
+  private checkIfDeploymentIsReady(params: HookParams, deployment: DeploymentEntityV2): boolean {
     // TODO we should also check if other resources are ready
     const deploymentManifests = Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
-      .filter(p => p.metadata.labels.deploymentId === deploymentId)
+      .filter(p => p.metadata.labels.circleId === deployment.circleId && p.metadata.labels.tag === deployment.components[0].imageTag)
     this.consoleLoggerService.log('DEPLOYMENT_CONDITIONS', deploymentManifests.map(it => it.spec))
     return this.checkDeploymentConditions(deploymentManifests)
   }
 
   private checkDeploymentConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
+    this.consoleLoggerService.log('SPEC_STATUS', specs)
     if (specs.length === 0) {
       return false
     }
     return specs.every(s => {
+      if (!s.status){
+        return false
+      }
       if (s.status.conditions.length === 0) {
         return true
       }

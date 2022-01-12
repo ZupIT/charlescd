@@ -56,7 +56,11 @@ export class ReconcileRoutesUsecase {
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
-    return { children: [...specs, ...services], resyncAfterSeconds: 5 }
+    const notHealthy = healthStatus.find(circleHealthy => !circleHealthy.healthy)
+    if (notHealthy) {
+      return { children: [...specs, ...services], resyncAfterSeconds: 5 }
+    }
+    return { children: [...specs, ...services]  }
   }
 
   private async getDesiredComponentSnapshots(hookParams: RouteHookParams): Promise<ComponentEntityV2[]> {
@@ -106,7 +110,7 @@ export class ReconcileRoutesUsecase {
     return sortedArray[sortedArray.length - 1]
   }
 
-  public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, status: boolean, kind: string}[] {
+  public getRoutesStatus(observed: PartialRouteHookParams, desired: SpecsUnion[]): {circle: string, component: string, healthy: boolean, kind: string}[] {
     if (desired.length === 0) {
       return []
     }
@@ -118,12 +122,12 @@ export class ReconcileRoutesUsecase {
     })
   }
 
-  public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+  public async updateRouteStatus(componentStatus: { circle: string, component: string, healthy: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
     const components = groupBy(componentStatus, 'circle')
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
       const status = c[1]
-      const allTrue = status.every(s => s.status === true)
+      const allTrue = status.every(s => s.healthy === true)
       if (allTrue) {
         const deployment = await this.deploymentRepository.findByCircleId(circleId)
         await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
@@ -147,18 +151,18 @@ export class ReconcileRoutesUsecase {
   }
 
   // TODO check for services too, right now we only check for DR + VS
-  private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, status: boolean, kind: string } {
+  private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, healthy: boolean, kind: string } {
     const baseResponse = {
       circle: circleId,
       component: spec.metadata.name,
       kind: spec.kind,
-      status: false
+      healthy: false
     }
     if (ReconcileUtils.checkObservedRoutesEmptiness(observed)) {
-      baseResponse.status = false
+      baseResponse.healthy = false
       return baseResponse
     }
-    baseResponse.status = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observed, spec, circleId)
+    baseResponse.healthy = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observed, spec, circleId)
     return baseResponse
   }
 
