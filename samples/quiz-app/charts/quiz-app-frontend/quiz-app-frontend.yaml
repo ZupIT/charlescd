@@ -65,6 +65,13 @@ readinessProbe:
   periodSeconds: 20
   successThreshold: 1
   timeoutSeconds: 1   
+envVars:
+  - name: REACT_APP_WORKSPACE_ID
+    value: WORKSPACE_ID
+  - name: REACT_APP_CIRCLE_MATCHER_URL
+    value: CIRCLE_MATCHER_URL
+  - name: REACT_APP_QUESTIONS_URL
+    value: QUESTIONS_URL
 
 istio:
   enabled: true

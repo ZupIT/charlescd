@@ -28,8 +28,8 @@ function App() {
       <Charles className="logo" />
       <Suspense fallback="">
         <Switch>
-          <Route exact path="/quiz-app" component={Identify} />
-          <Route exact path="/quiz-app/questions" component={Questions} />
+          <Route exact path={`${process.env.PUBLIC_URL}/`} component={Identify} />
+          <Route exact path={`${process.env.PUBLIC_URL}/questions`} component={Questions} />
         </Switch>
       </Suspense>
     </BrowserRouter>
