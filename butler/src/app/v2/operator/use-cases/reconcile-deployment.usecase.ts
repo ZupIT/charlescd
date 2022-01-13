@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import {Injectable} from '@nestjs/common'
-import {isEmpty, uniqWith} from 'lodash'
-import {DeploymentEntityV2} from '../../api/deployments/entity/deployment.entity'
-import {ComponentsRepositoryV2} from '../../api/deployments/repository'
-import {DeploymentRepositoryV2} from '../../api/deployments/repository/deployment.repository'
-import {ExecutionRepository} from '../../api/deployments/repository/execution.repository'
-import {KubernetesManifest, SpecTemplateManifest} from '../../core/integrations/interfaces/k8s-manifest.interface'
-import {K8sClient} from '../../core/integrations/k8s/client'
-import {MooveService} from '../../core/integrations/moove'
-import {ConsoleLoggerService} from '../../core/logs/console'
-import {HookParams, SpecMetadata, SpecStatus} from '../interfaces/params.interface'
-import {ReconcileUtils} from '../utils/reconcile.utils'
-import {ComponentEntityV2} from '../../api/deployments/entity/component.entity'
-import {DeploymentStatusEnum} from "../../api/deployments/enums/deployment-status.enum";
+import { Injectable } from '@nestjs/common'
+import { isEmpty, uniqWith } from 'lodash'
+import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
+import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
+import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
+import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
+import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
+import { K8sClient } from '../../core/integrations/k8s/client'
+import { MooveService } from '../../core/integrations/moove'
+import { ConsoleLoggerService } from '../../core/logs/console'
+import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
+import { ReconcileUtils } from '../utils/reconcile.utils'
+import { ComponentEntityV2 } from '../../api/deployments/entity/component.entity'
 
 @Injectable()
 export class ReconcileDeploymentUsecase {
@@ -37,8 +36,6 @@ export class ReconcileDeploymentUsecase {
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly executionRepository: ExecutionRepository,
-    private readonly mooveService: MooveService
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
@@ -123,14 +120,6 @@ export class ReconcileDeploymentUsecase {
         },
       }
     }
-    // if (manifest.spec?.selector) {
-    //   manifest.spec.selector.matchLabels = {
-    //     ...manifest.spec.selector.matchLabels,
-    //     'circleId': deployment.circleId,
-    //     'component': component.name,
-    //     'tag': component.imageTag,
-    //   }
-    // }
 
     return manifest
   }

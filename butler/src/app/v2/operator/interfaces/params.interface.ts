@@ -62,9 +62,6 @@ export interface SpecMetadata {
     service?: string // only on service
     tag: string
   },
-  annotations: {
-    deploymentId : string
-  }
 }
 
 export interface SpecStatus {
