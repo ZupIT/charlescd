@@ -19,10 +19,8 @@ import { isEmpty, uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
-import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
 import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
-import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
 import { ReconcileUtils } from '../utils/reconcile.utils'
@@ -39,7 +37,6 @@ export class ReconcileDeploymentUsecase {
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
@@ -126,7 +123,6 @@ export class ReconcileDeploymentUsecase {
 
   private checkIfResourcesWereCreated(params: HookParams): boolean {
     // TODO we should also check if other resources were created
-    this.consoleLoggerService.log('PARAMS_CHILDREN', params.children)
     return !isEmpty(params.children['Deployment.apps/v1'])
   }
 
@@ -135,12 +131,11 @@ export class ReconcileDeploymentUsecase {
     const deploymentManifests = Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
       .filter(p => p.metadata.labels.circleId === deployment.circleId && p.metadata.labels.tag === deployment.components[0].imageTag)
-    this.consoleLoggerService.log('DEPLOYMENT_CONDITIONS', deploymentManifests.map(it => it.spec))
     return this.checkDeploymentConditions(deploymentManifests)
   }
 
   private checkDeploymentConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
-    this.consoleLoggerService.log('SPEC_STATUS', specs)
+    this.consoleLoggerService.log('RESOURCE_STATUS', specs.map(it => it.status))
     if (specs.length === 0) {
       return false
     }

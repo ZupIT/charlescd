@@ -17,6 +17,7 @@
 import { KubernetesObject } from '@kubernetes/client-node/dist/types'
 import { Injectable } from '@nestjs/common'
 import { groupBy } from 'lodash'
+
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
@@ -56,11 +57,12 @@ export class ReconcileRoutesUsecase {
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
-    const notHealthy = healthStatus.find(circleHealthy => !circleHealthy.healthy)
-    if (notHealthy) {
+    const notHealthyCircle = healthStatus.find(circleStatus => !circleStatus.healthy)
+    if (notHealthyCircle) {
       return { children: [...specs, ...services], resyncAfterSeconds: 5 }
     }
-    return { children: [...specs, ...services]  }
+    return { children: [...specs, ...services] }
+
   }
 
   private async getDesiredComponentSnapshots(hookParams: RouteHookParams): Promise<ComponentEntityV2[]> {
@@ -152,6 +154,10 @@ export class ReconcileRoutesUsecase {
 
   // TODO check for services too, right now we only check for DR + VS
   private handleSpecStatus(observed: PartialRouteHookParams, spec: SpecsUnion, circleId: string): { circle: string, component: string, healthy: boolean, kind: string } {
+    const observedResourceName = `${spec.metadata.namespace}/${spec.metadata.name}`
+    const observedDestinationRules = observed.children['DestinationRule.networking.istio.io/v1alpha3'][observedResourceName]
+    const observedVirtualService = observed.children['VirtualService.networking.istio.io/v1alpha3'][observedResourceName]
+    this.consoleLoggerService.log('START:CHECK_STATUS_ROUTES', { virtualService: observedVirtualService, destinationRules: observedDestinationRules })
     const baseResponse = {
       circle: circleId,
       component: spec.metadata.name,
@@ -162,7 +168,7 @@ export class ReconcileRoutesUsecase {
       baseResponse.healthy = false
       return baseResponse
     }
-    baseResponse.healthy = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observed, spec, circleId)
+    baseResponse.healthy = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observedVirtualService, observedVirtualService, circleId)
     return baseResponse
   }
 
