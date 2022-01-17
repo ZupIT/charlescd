@@ -130,25 +130,25 @@ describe('Reconcile routes usecase', () => {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       }
     ]
 
@@ -166,25 +166,25 @@ describe('Reconcile routes usecase', () => {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'VirtualService',
-        status: false
+        healthy: false
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       }
     ]
 
@@ -211,37 +211,37 @@ describe('Reconcile routes usecase', () => {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'jilo',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'DestinationRule',
-        status: true
+        healthy: true
       },
       {
         circle: 'ad2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       },
       {
         circle: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'DestinationRule',
-        status: false
+        healthy: false
       },
       {
         circle: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
         component: 'abobora',
         kind: 'VirtualService',
-        status: true
+        healthy: true
       }
     ]
 

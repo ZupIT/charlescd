@@ -34,7 +34,6 @@ export const twoSubsetsDr = {
           circleId: 'default-circle-id',
           component: 'A',
           tag: 'v1',
-          deploymentId: 'deployment-id1'
         },
         name: 'default-circle-id'
       },
@@ -43,7 +42,6 @@ export const twoSubsetsDr = {
           circleId: 'normal-circle-id',
           component: 'A',
           tag: 'v1',
-          deploymentId: 'deployment-id'
         },
         name: 'normal-circle-id'
       }

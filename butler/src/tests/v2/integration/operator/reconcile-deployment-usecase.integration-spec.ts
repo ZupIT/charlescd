@@ -27,6 +27,7 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { UrlConstants } from '../test-constants'
 import { getSimpleManifests } from '../../fixtures/manifests.fixture'
+import * as util from 'util'
 
 describe('Reconcile deployments usecase', () => {
   let fixtureUtilsService: FixtureUtilsService
@@ -156,7 +157,7 @@ describe('Reconcile deployments usecase', () => {
                 'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
                 'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
                 // this key is used to match the deployment
-                'version': 'hello-kubernetes',.
+                'version': 'hello-kubernetes',
                 'tag': 'tag'
               },
               'name': 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
@@ -355,11 +356,10 @@ describe('Reconcile deployments usecase', () => {
               app: 'A',
               circleId: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
               component: 'A',
-              deploymentId: '29f3a5ee-73f5-4957-b2e9-47d3b493a484',
-              tag: 'tag-example',
+              tag: currentDeployment.components[0].imageTag,
               version: 'A'
             },
-            name: 'A-v1-29f3a5ee-73f5-4957-b2e9-47d3b493a484',
+            name: 'A-v1-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
             namespace: 'my-namespace'
           },
           spec: {
@@ -378,8 +378,9 @@ describe('Reconcile deployments usecase', () => {
                 labels: {
                   app: 'A',
                   circleId: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-                  deploymentId: '29f3a5ee-73f5-4957-b2e9-47d3b493a484',
-                  version: 'A'
+                  version: 'A',
+                  component: 'A',
+                  tag: currentDeployment.components[0].imageTag,
                 }
               },
               spec: {
@@ -433,99 +434,13 @@ describe('Reconcile deployments usecase', () => {
             }
           }
         },
-        {
-          apiVersion: 'apps/v1',
-          kind: 'Deployment',
-          metadata: {
-            labels: {
-              app: 'A',
-              circleId: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-              component: 'A',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              tag: 'tag-example',
-              version: 'A'
-            },
-            name: 'A-v1-b7d08a07-f29d-452e-a667-7a39820f3262',
-            namespace: 'my-namespace'
-          },
-          spec: {
-            replicas: 1,
-            selector: {
-              matchLabels: {
-                app: 'A',
-                version: 'A'
-              }
-            },
-            template: {
-              metadata: {
-                annotations: {
-                  'sidecar.istio.io/inject': 'true'
-                },
-                labels: {
-                  app: 'A',
-                  circleId: 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-                  version: 'A'
-                }
-              },
-              spec: {
-                containers: [
-                  {
-                    image: 'imageurl.com',
-                    imagePullPolicy: 'Always',
-                    livenessProbe: {
-                      failureThreshold: 3,
-                      httpGet: {
-                        path: '/',
-                        port: 80,
-                        scheme: 'HTTP'
-                      },
-                      initialDelaySeconds: 30,
-                      periodSeconds: 20,
-                      successThreshold: 1,
-                      timeoutSeconds: 1
-                    },
-                    name: 'A',
-                    readinessProbe: {
-                      failureThreshold: 3,
-                      httpGet: {
-                        path: '/',
-                        port: 80,
-                        scheme: 'HTTP'
-                      },
-                      initialDelaySeconds: 30,
-                      periodSeconds: 20,
-                      successThreshold: 1,
-                      timeoutSeconds: 1
-                    },
-                    resources: {
-                      limits: {
-                        cpu: '128m',
-                        memory: '128Mi'
-                      },
-                      requests: {
-                        cpu: '64m',
-                        memory: '64Mi'
-                      }
-                    }
-                  }
-                ],
-                imagePullSecrets: [
-                  {
-                    name: 'realwavelab-registry'
-                  }
-                ]
-              }
-            }
-          }
-        }
       ],
       resyncAfterSeconds: 5
     }
-
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/v2/operator/deployment/hook/reconcile')
       .send(hookParamsWithDeploymentNotReady)
-      .expect(200, expectedReconcileObj)
+      .expect(200)
+    expect(expectedReconcileObj).toEqual(response.body)
   })
 })

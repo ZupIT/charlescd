@@ -186,7 +186,6 @@ export class ReconcileRoutesUsecase {
       namespace: deployment.namespace,
       labels: {
         ...manifest.metadata?.labels,
-        'deploymentId': deployment.id,
         'circleId': deployment.circleId
       }
     }

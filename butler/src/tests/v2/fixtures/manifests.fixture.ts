@@ -123,7 +123,6 @@ export const routesManifestsSameNamespace: KubernetesManifest[] = [
             component: 'A',
             tag: 'v1',
             circleId: 'circle-1',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-1',
         },
@@ -132,7 +131,6 @@ export const routesManifestsSameNamespace: KubernetesManifest[] = [
             component: 'A',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         }
@@ -261,7 +259,6 @@ export const routesManifestsSameNamespace: KubernetesManifest[] = [
             component: 'B',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         },
@@ -371,7 +368,6 @@ export const routesManifests2ComponentsOneCircle: KubernetesManifest[] = [
             component: 'A',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         }
@@ -478,7 +474,6 @@ export const routesManifests2ComponentsOneCircle: KubernetesManifest[] = [
             component: 'B',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         },
@@ -588,7 +583,6 @@ export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
             component: 'A',
             tag: 'v1',
             circleId: 'circle-1',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-1',
         },
@@ -597,7 +591,6 @@ export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
             component: 'A',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         }
@@ -726,7 +719,6 @@ export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
             component: 'B',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         },
@@ -822,7 +814,6 @@ export const routesManifestsSameNamespaceWithService: KubernetesManifest[] = [
       labels: {
         app: 'A',
         circleId: 'circle-1',
-        deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
         component: 'A',
         service: 'A',
         tag: 'tag-example'
@@ -865,7 +856,6 @@ export const routesManifestsSameNamespaceWithServiceAndNoLabels: KubernetesManif
             component: 'A',
             tag: 'v1',
             circleId: 'circle-1',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-1',
         },
@@ -874,7 +864,6 @@ export const routesManifestsSameNamespaceWithServiceAndNoLabels: KubernetesManif
             component: 'A',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         }
@@ -1003,7 +992,6 @@ export const routesManifestsSameNamespaceWithServiceAndNoLabels: KubernetesManif
             component: 'B',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         },
@@ -1098,7 +1086,6 @@ export const routesManifestsSameNamespaceWithServiceAndNoLabels: KubernetesManif
     metadata: {
       labels: {
         circleId: 'circle-1',
-        deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
       },
       name: 'A',
       namespace: 'namespace'
@@ -1138,7 +1125,6 @@ export const routesManifestsDiffNamespace: KubernetesManifest[] = [
             component: 'A',
             tag: 'v1',
             circleId: 'circle-1',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-1',
         }
@@ -1205,7 +1191,6 @@ export const routesManifestsDiffNamespace: KubernetesManifest[] = [
             component: 'A',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         }
@@ -1312,7 +1297,6 @@ export const routesManifestsDiffNamespace: KubernetesManifest[] = [
             component: 'B',
             tag: 'v2',
             circleId: 'circle-2',
-            deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
           },
           name: 'circle-2',
         },
@@ -1422,7 +1406,6 @@ export const routesManifestsWithPreviousDeployment: KubernetesManifest[] = [
             component: 'A',
             tag: 'v1',
             circleId: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
-            deploymentId: 'dbdc12d0-18e9-490b-9e1c-4a4d4592900d'
           },
           name: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
         }
@@ -1529,7 +1512,6 @@ export const routesManifestsWithPreviousDeployment: KubernetesManifest[] = [
             component: 'B',
             tag: 'v1',
             circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
-            deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641'
           },
           name: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
         },
@@ -1626,7 +1608,6 @@ export const routesManifestsWithPreviousDeployment: KubernetesManifest[] = [
         app: 'A',
         circleId: '7dedce83-f39d-46d1-98f3-fb9ef3effb05',
         component: 'A',
-        deploymentId: 'dbdc12d0-18e9-490b-9e1c-4a4d4592900d',
         service: 'A',
         tag: 'tag-example'
       },
@@ -1655,7 +1636,6 @@ export const routesManifestsWithPreviousDeployment: KubernetesManifest[] = [
         app: 'B',
         circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
         component: 'B',
-        deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641',
         service: 'B',
         tag: 'tag-example'
       },
@@ -1697,7 +1677,6 @@ export const routesManifestsWithoutPreviousDeployment: KubernetesManifest[] = [
             component: 'B',
             tag: 'v1',
             circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
-            deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641'
           },
           name: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
         },
@@ -1794,7 +1773,6 @@ export const routesManifestsWithoutPreviousDeployment: KubernetesManifest[] = [
         app: 'B',
         circleId: 'ae0f14a5-52d2-4619-af6c-18819aa729fe',
         component: 'B',
-        deploymentId: 'c595eb75-dbf9-44a5-8e6f-c2646fadd641',
         service: 'B',
         tag: 'tag-example'
       },
