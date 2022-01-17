@@ -69,26 +69,8 @@ export class EventsLogsAggregator {
       return
     }
 
+    await this.createEventFromMetadata(resource, event)
 
-
-    this.createEventFromMetadata(resource, event)
-
-
-    const deploymentId = resource.deploymentId
-    if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
-      await this.createByAnnotation(resource, event)
-      return
-    }
-
-    const log = this.createLogFromEvent(event)
-
-    if (await this.alreadyLogged(log, deploymentId)) {
-      this.consoleLoggerService.log('Log Already saved... discarding event', log)
-      return
-    }
-    this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
-    this.saveLogs(deploymentId, log)
   }
 
   private async createByAnnotation(resource: ResourceWrapper, event: Event) {
@@ -107,7 +89,7 @@ export class EventsLogsAggregator {
   private async createEventFromMetadata(resource: ResourceWrapper, event: Event) {
     const circleId = resource.circleId
     if (circleId) {
-      this.createByCircleId(circleId, event)
+      await this.createByCircleId(circleId, event)
       return
     }
     const deploymentId = resource.deploymentId
