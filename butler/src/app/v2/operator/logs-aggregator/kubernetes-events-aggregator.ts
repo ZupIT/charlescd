@@ -69,11 +69,15 @@ export class EventsLogsAggregator {
       return
     }
 
-    const deploymentId = resource.deploymentId
 
+
+    this.createEventFromMetadata(resource, event)
+
+
+    const deploymentId = resource.deploymentId
     if (!deploymentId) {
       this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
-      await this.checkResourceAnnotation(resource, event)
+      await this.createByAnnotation(resource, event)
       return
     }
 
@@ -87,7 +91,7 @@ export class EventsLogsAggregator {
     this.saveLogs(deploymentId, log)
   }
 
-  private async checkResourceAnnotation(resource: ResourceWrapper, event: Event) {
+  private async createByAnnotation(resource: ResourceWrapper, event: Event) {
     const circles = resource.circles
     const circlesIds = circles?.map(it => it.id)
     if (circlesIds?.length){
@@ -98,6 +102,21 @@ export class EventsLogsAggregator {
       const log = this.createLogFromEvent(event)
       return await this.logsRepository.saveDeploymentsLogs(currentDeploymentsIds, log)
     }
+  }
+
+  private async createEventFromMetadata(resource: ResourceWrapper, event: Event) {
+    const circleId = resource.circleId
+    if (circleId) {
+      this.createByCircleId(circleId, event)
+      return
+    }
+    const deploymentId = resource.deploymentId
+    if (deploymentId) {
+      await this.createByDeploymentId(deploymentId, event)
+      return
+    }
+    await this.createByAnnotation(resource, event)
+    return
   }
 
 
@@ -119,6 +138,28 @@ export class EventsLogsAggregator {
       throw error
     }
   }
+
+  private async createByDeploymentId(deploymentId: string, event: Event) {
+    const log = this.createLogFromEvent(event)
+    if (await this.alreadyLogged(log, deploymentId)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
+    }
+    this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
+    this.saveLogs(deploymentId, log)
+  }
+
+  private async createByCircleId(circleId: string, event: Event) {
+    const deployment = await this.deploymentsRepository.findCurrentByCircleId(circleId)
+    const log = this.createLogFromEvent(event)
+
+    if (await this.alreadyLogged(log, deployment.id)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
+    }
+    this.consoleLoggerService.log(`Saving log for deployment "${deployment.id}"`)
+  }
+
 
   private isEventOlderThan(event: Event, since?: Date): boolean {
     if (!since) {

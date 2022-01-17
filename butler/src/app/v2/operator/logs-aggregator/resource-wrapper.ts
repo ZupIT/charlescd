@@ -43,10 +43,10 @@ export class ResourceWrapper {
     }
 
     public get deploymentId(): string | undefined {
-      const deploymentId = this.resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
-      if (deploymentId) {
-        return deploymentId
-      }
       return this.isCharlesDeployment() ? this.spec?.deploymentId as string : undefined
+    }
+
+    public get circleId(): string | undefined {
+      return  this.resource.metadata?.labels?.[AppConstants.CIRCLE_ID_LABEL]
     }
 }

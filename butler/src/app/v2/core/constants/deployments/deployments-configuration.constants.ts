@@ -26,4 +26,6 @@ export const DeploymentsConfigurationConstants = {
 
   DEPLOYMENT_ID_LABEL: 'deploymentId',
 
+  CIRCLE_ID_LABEL: 'circleId',
+
 }
