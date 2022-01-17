@@ -16,7 +16,7 @@
 
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { Component } from '../../../api/deployments/interfaces'
-import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { IstioManifestsUtils } from './istio-manifests.utils'
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
 import { AppConstants } from '../../constants'
 

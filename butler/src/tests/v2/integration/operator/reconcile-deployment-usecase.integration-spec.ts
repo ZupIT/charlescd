@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,8 +156,8 @@ describe('Reconcile deployments usecase', () => {
                 'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
                 'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
                 // this key is used to match the deployment
-                'deploymentId': 'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
-                'version': 'hello-kubernetes'
+                'version': 'hello-kubernetes',.
+                'tag': 'tag'
               },
               'name': 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
               'namespace': 'default',
