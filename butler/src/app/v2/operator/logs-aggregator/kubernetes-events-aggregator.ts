@@ -140,6 +140,7 @@ export class EventsLogsAggregator {
       return
     }
     this.consoleLoggerService.log(`Saving log for deployment "${deployment.id}"`)
+    this.saveLogs(deployment.id, log)
   }
 
 
