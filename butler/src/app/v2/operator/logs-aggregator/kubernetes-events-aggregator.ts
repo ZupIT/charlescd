@@ -68,9 +68,7 @@ export class EventsLogsAggregator {
       this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace}`)
       return
     }
-
     await this.createEventFromMetadata(resource, event)
-
   }
 
   private async createByAnnotation(resource: ResourceWrapper, event: Event) {
@@ -140,6 +138,7 @@ export class EventsLogsAggregator {
       return
     }
     this.consoleLoggerService.log(`Saving log for deployment "${deployment.id}"`)
+
     this.saveLogs(deployment.id, log)
   }
 
