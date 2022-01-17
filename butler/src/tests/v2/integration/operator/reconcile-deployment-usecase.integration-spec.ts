@@ -27,7 +27,6 @@ import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/d
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { UrlConstants } from '../test-constants'
 import { getSimpleManifests } from '../../fixtures/manifests.fixture'
-import * as util from 'util'
 
 describe('Reconcile deployments usecase', () => {
   let fixtureUtilsService: FixtureUtilsService

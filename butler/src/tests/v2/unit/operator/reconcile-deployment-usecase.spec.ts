@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ import { HookParams } from '../../../../app/v2/operator/interfaces/params.interf
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
-import { MooveService } from '../../../../app/v2/core/integrations/moove'
 import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
-import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
@@ -43,7 +41,6 @@ describe('Reconcile deployment usecase spec', () => {
   const deploymentRepository = new DeploymentRepositoryV2()
   const componentsRepository = new ComponentsRepositoryV2()
   const executionRepository = new ExecutionRepository(consoleLoggerService)
-  const mooveService = new MooveService(new HttpService(), consoleLoggerService)
 
   const k8sClient = new K8sClient(consoleLoggerService, envConfiguration)
 
