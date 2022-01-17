@@ -23,7 +23,6 @@ import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
-import { AppConstants } from '../../core/constants'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { ResourceWrapper } from './resource-wrapper'
 
@@ -131,7 +130,7 @@ export class EventsLogsAggregator {
 
   private async createByCircleId(circleId: string, event: Event) {
     const deployment = await this.deploymentsRepository.findCurrentByCircleId(circleId)
-    const log = this.createLogFromEvent(event)g
+    const log = this.createLogFromEvent(event)
 
     if (await this.alreadyLogged(log, deployment.id)) {
       this.consoleLoggerService.log('Log Already saved... discarding event', log)
