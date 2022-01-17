@@ -131,7 +131,7 @@ export class EventsLogsAggregator {
 
   private async createByCircleId(circleId: string, event: Event) {
     const deployment = await this.deploymentsRepository.findCurrentByCircleId(circleId)
-    const log = this.createLogFromEvent(event)
+    const log = this.createLogFromEvent(event)g
 
     if (await this.alreadyLogged(log, deployment.id)) {
       this.consoleLoggerService.log('Log Already saved... discarding event', log)
