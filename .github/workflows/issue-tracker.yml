@@ -7,7 +7,7 @@ on:
 jobs:
   issue:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.issue.pull_request }}
+    if: ${{ !github.event.issue.pull_request && !github.event.issue.user.login === 'renovate[bot]' }}
     steps:
     - name: Git Issue Details
       run: |
@@ -40,6 +40,10 @@ jobs:
                                      "keyValue": {
                                           "topLabel": "Title",
                                           "content": "${{ github.event.issue.title }}"
+                                      },
+                                      "keyValue": {
+                                          "topLabel": "Repository",
+                                          "content": "${{ github.event.repository.name }}"
                                       }
                                    },
                                    {
