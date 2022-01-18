@@ -395,7 +395,7 @@ describe('Hook Routes Manifest Creation', () => {
 
     const manifests = await routeUseCase.execute(hookParamsWithNoCircle)
 
-    expect(manifests).toEqual({ children: [] })
+    expect(manifests).toEqual({ children: [], resyncAfterSeconds: 5 })
     expect(updateSpy).toHaveBeenCalledTimes(0)
     expect(findSpy).toHaveBeenCalledTimes(0)
     expect(unhealthySpy).toHaveBeenCalledTimes(0)

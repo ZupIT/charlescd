@@ -57,11 +57,7 @@ export class ReconcileRoutesUsecase {
     }
     const healthStatus = this.getRoutesStatus(hookParams, specs)
     await this.updateRouteStatus(healthStatus)
-    const notHealthyCircle = healthStatus.find(circleStatus => !circleStatus.healthy)
-    if (notHealthyCircle) {
-      return { children: [...specs, ...services], resyncAfterSeconds: 5 }
-    }
-    return { children: [...specs, ...services] }
+    return { children: [...specs, ...services], resyncAfterSeconds: 5 }
 
   }
 
@@ -168,7 +164,7 @@ export class ReconcileRoutesUsecase {
       baseResponse.healthy = false
       return baseResponse
     }
-    baseResponse.healthy = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observedVirtualService, observedVirtualService, circleId)
+    baseResponse.healthy = ReconcileUtils.checkIfComponentRoutesExistOnObserved(observedVirtualService, observedDestinationRules, circleId)
     return baseResponse
   }
 
