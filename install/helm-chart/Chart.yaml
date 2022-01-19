@@ -39,7 +39,7 @@ dependencies:
     repository: https://codecentric.github.io/helm-charts
     condition: keycloak.enabled
   - name: ingress-nginx
-    version: 3.15.2
+    version: 4.0.13
     repository: https://kubernetes.github.io/ingress-nginx
     condition: nginx_ingress_controller.enabled
   - name: rabbitmq
