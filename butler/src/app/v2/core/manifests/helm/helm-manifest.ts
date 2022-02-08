@@ -54,7 +54,7 @@ export class HelmManifest implements Manifest {
       await this.saveChartFiles(chartPath, chart)
       this.consoleLoggerService.log('START:GENERATE MANIFEST')
       const manifest =  await this.template(chartPath, config)
-      this.consoleLoggerService.log('FINISH:MANIFEST GENERATED', manifest)
+      this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
       return manifest.filter( manifest => manifest != null)
     } catch (exception) {
       this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
