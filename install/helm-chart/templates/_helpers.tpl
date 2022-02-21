@@ -368,7 +368,14 @@ env:
         name: "hermes-aes256-key"
         key: "encryption-key"
   - name: AMQP_URL
+  {{- if and .RangeContext.amqp.urlFrom.secretKeyRef.name }}
+      valueFrom:
+        secretKeyRef:
+          name: {{ .RangeContext.amqp.urlFrom.secretKeyRef.name }}
+          key: {{ .RangeContext.amqp.urlFrom.secretKeyRef.key | default "password" }}
+  {{- else }}
     value: "{{ .RangeContext.amqp.url}}"
+  {{- end }}
   - name: AMQP_MESSAGE_QUEUE
     value: "{{ .RangeContext.amqp.message.queue}}"
   - name: AMQP_MESSAGE_ROUTING_KEY
