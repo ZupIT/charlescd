@@ -369,10 +369,10 @@ env:
         key: "encryption-key"
   - name: AMQP_URL
   {{- if and .RangeContext.amqp.urlFrom.secretKeyRef.name }}
-      valueFrom:
+    valueFrom:
         secretKeyRef:
-          name: {{ .RangeContext.amqp.urlFrom.secretKeyRef.name }}
-          key: {{ .RangeContext.amqp.urlFrom.secretKeyRef.key | default "password" }}
+            name: {{ .RangeContext.amqp.urlFrom.secretKeyRef.name }}
+            key: {{ .RangeContext.amqp.urlFrom.secretKeyRef.key | default "url" }}
   {{- else }}
     value: "{{ .RangeContext.amqp.url}}"
   {{- end }}
