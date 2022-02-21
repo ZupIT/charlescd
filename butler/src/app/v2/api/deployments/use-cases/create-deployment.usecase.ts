@@ -67,12 +67,12 @@ export class CreateDeploymentUseCase {
   }
 
   private async newDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
-    return createDeploymentDto.circle.default ?
-      await this.createDefaultDeployment(createDeploymentDto) :
-      await this.createCircleDeployment(createDeploymentDto)
+    return this.isOverrideDeployment(createDeploymentDto) ?
+      await this.createOverrideDeployment(createDeploymentDto) :
+      await this.createIncrementalDeployment(createDeploymentDto)
   }
 
-  private async createCircleDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
+  private async createOverrideDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_CIRCLE_DEPLOYMENT')
     const components = await this.getDeploymentComponents(
       createDeploymentDto.namespace,
@@ -105,9 +105,9 @@ export class CreateDeploymentUseCase {
     return updatedDeployment.raw[0].id
   }
 
-  private async createDefaultDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
+  private async createIncrementalDeployment(createDeploymentDto: CreateDeploymentRequestDto): Promise<DeploymentEntity> {
     this.consoleLoggerService.log('START:CREATE_DEFAULT_DEPLOYMENT')
-    const activeComponents: ComponentEntity[] = await this.componentsRepository.findDefaultActiveComponents(
+    const activeComponents: ComponentEntity[] = await this.componentsRepository.findActiveComponentsByCircleId(
       createDeploymentDto.circle.id
     )
     const requestedComponentIds: string[] = this.getDeploymentRequestComponentIds(createDeploymentDto)
@@ -116,7 +116,7 @@ export class CreateDeploymentUseCase {
       .map(component => component.clone())
     this.consoleLoggerService.log('GET:UNCHANGED_DEFAULT_ACTIVE_COMPONENTS', { unchangedComponents })
     const components = await this.getDeploymentComponents(createDeploymentDto.namespace, createDeploymentDto.circle.id, createDeploymentDto.components, createDeploymentDto.git.token, createDeploymentDto.git.provider)
-    const deployment = createDeploymentDto.toDefaultEntity(unchangedComponents, components)
+    const deployment = createDeploymentDto.toIncrementalEntity(unchangedComponents, components)
     deployment.current = true
     this.consoleLoggerService.log('FINISH:CREATE_DEFAULT_DEPLOYMENT')
     return deployment
@@ -170,5 +170,9 @@ export class CreateDeploymentUseCase {
 
   private getDeploymentRequestComponentIds(createDeploymentDto: CreateDeploymentRequestDto): string[] {
     return createDeploymentDto.components.flatMap(c => c.componentId)
+  }
+
+  private isOverrideDeployment(createDeploymentDto: CreateDeploymentRequestDto): boolean {
+    return !createDeploymentDto.incremental && !createDeploymentDto.circle.default
   }
 }

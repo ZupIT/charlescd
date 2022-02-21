@@ -22,7 +22,7 @@ import { AppModule } from '../../../../app/app.module'
 import { ComponentEntityV2 as ComponentEntity } from '../../../../app/v2/api/deployments/entity/component.entity'
 import { DeploymentEntityV2 as DeploymentEntity } from '../../../../app/v2/api/deployments/entity/deployment.entity'
 import { GitProvidersEnum } from '../../../../app/v2/core/configuration/interfaces'
-import { getSimpleManifests } from '../../fixtures/manifests.fixture'
+import { getSimpleManifests, getSimpleManifestsWithAllLabels } from '../../fixtures/manifests.fixture'
 import { FixtureUtilsService } from '../fixture-utils.service'
 import { UrlConstants } from '../test-constants'
 import { TestSetupUtils } from '../test-setup-utils'
@@ -42,6 +42,7 @@ describe('CreateDeploymentUsecase v2', () => {
       ]
     })
     app = await TestSetupUtils.createApplication(module)
+
     TestSetupUtils.seApplicationConstants()
     fixtureUtilsService = app.get<FixtureUtilsService>(FixtureUtilsService)
     manager = fixtureUtilsService.manager
@@ -86,7 +87,9 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      namespace: 'my-namespace'
+      namespace: 'my-namespace',
+      timeoutInSeconds: 10,
+      incremental: false
     }
 
     const component1 = new ComponentEntity(
@@ -236,6 +239,116 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
     expect(newDeployment.components).toEqual(expectedDeploymentComponents)
   })
 
+  it('when is a incremental deployment should concat the correct previous deployment components', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+
+    const previousComponentA = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/A:v1',
+      'A',
+      '222cd8db-3767-45d5-a415-7cca09cccf91',
+      null,
+      null,
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
+    )
+    const previousComponentB = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/B:v1',
+      'B',
+      '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
+      null,
+      null,
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
+    )
+    const previousComponentC = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/C:v1',
+      'C',
+      '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
+      null,
+      null,
+      getSimpleManifests('C', 'my-namespace', 'imageurl.com')
+    )
+    previousComponentC.merged = true
+    previousComponentB.merged = true
+    const currentDeployment = new DeploymentEntity(
+      '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
+      'user-1',
+      'fcd22a4e-c192-4c86-bca2-f23de7b73757',
+      'http://localhost:1234/notifications/deployment?deploymentId=1',
+      [
+        previousComponentA,
+        previousComponentB,
+        previousComponentC
+      ],
+      false,
+      'my-namespace',
+      60
+    )
+    currentDeployment.current = true
+    await manager.save(currentDeployment)
+    const actualComponentA = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v2',
+      'https://repository.com/A:v2',
+      'A',
+      previousComponentA.componentId,
+      null,
+      null,
+      getSimpleManifestsWithAllLabels(
+        'A',
+        'my-namespace',
+        'https://repository.com/A:v2',
+        'v2',
+        currentDeployment.circleId)
+    )
+    actualComponentA.running = false
+    actualComponentA.id = expect.anything()
+    previousComponentC.id = expect.anything()
+    previousComponentB.id = expect.anything()
+    const expectedComponents = [actualComponentA, previousComponentB, previousComponentC]
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        id: 'fcd22a4e-c192-4c86-bca2-f23de7b73757',
+        default: false
+      },
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      components: [
+        {
+          helmRepository: actualComponentA.helmUrl,
+          componentId: actualComponentA.componentId,
+          buildImageUrl: actualComponentA.imageUrl,
+          buildImageTag: actualComponentA.imageTag,
+          componentName: actualComponentA.name
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      namespace: 'my-namespace',
+      incremental: true
+    }
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+    const deploymentCreated = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
+    expect(deploymentCreated.components).toEqual(expectedComponents)
+  })
 
   it('should not merge components with same ids and different names', async() => {
     const encryptedToken = `-----BEGIN PGP MESSAGE-----
@@ -267,7 +380,8 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       ],
       authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
       callbackUrl: UrlConstants.deploymentCallbackUrl,
-      namespace: 'my-namespace'
+      namespace: 'my-namespace',
+      incremental: false
     }
 
     const expectedDeploymentComponent = new ComponentEntity(
@@ -280,10 +394,6 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       null,
       getSimpleManifests('A', 'my-namespace', 'imageurl.com')
     )
-    expectedDeploymentComponent.running = false
-    expectedDeploymentComponent.merged = false
-
-
     const sameCircleActiveDeployment: DeploymentEntity = new DeploymentEntity(
       'baa226a2-97f1-4e1b-b05a-d758839408f9',
       'user-1',
@@ -309,9 +419,119 @@ BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
       .expect(201)
 
     const newDeployment =
-            await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
+          await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
 
     expect(newDeployment.components.length).toEqual(1)
     expect(newDeployment.components[0].componentId).toEqual(expectedDeploymentComponent.componentId)
+  })
+
+  it('when is a deployment to override circle should override the previous deployment components', async() => {
+    const encryptedToken = `-----BEGIN PGP MESSAGE-----
+
+ww0ECQMCcRYScW+NJZZy0kUBbjTidEUAU0cTcHycJ5Phx74jvSTZ7ZE7hxK9AejbNDe5jDRGbqSd
+BSAwlmwpOpK27k2yXj4g1x2VaF9GGl//Ere+xUY=
+=QGZf
+-----END PGP MESSAGE-----
+`
+    const base64Token = Buffer.from(encryptedToken).toString('base64')
+    const previousComponentA = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/A:v1',
+      'A',
+      '222cd8db-3767-45d5-a415-7cca09cccf91',
+      null,
+      null, 
+      getSimpleManifests('A', 'my-namespace', 'imageurl.com')
+    )
+    const previousComponentB = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/B:v1',
+      'B',
+      '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
+      null,
+      null,
+      getSimpleManifests('B', 'my-namespace', 'imageurl.com')
+    )
+    const previousComponentC = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v1',
+      'https://repository.com/C:v1',
+      'C',
+      '32f24614-ecee-4ff5-aae4-2ebd7bb85c56',
+      null,
+      null,
+      getSimpleManifests('C', 'my-namespace', 'imageurl.com')
+    )
+    const currentDeployment = new DeploymentEntity(
+      '2ba59bb7-842a-43e7-b2c8-85f35d62781b',
+      'user-1',
+      'fcd22a4e-c192-4c86-bca2-f23de7b73757',
+      'http://localhost:1234/notifications/deployment?deploymentId=1',
+      [
+        previousComponentA,
+        previousComponentB,
+        previousComponentC
+      ],
+      false,
+      'my-namespace',
+      60
+    )
+    currentDeployment.current = true
+    await manager.save(currentDeployment)
+    const actualComponentA = new ComponentEntity(
+      UrlConstants.helmRepository,
+      'v2',
+      'https://repository.com/A:v2',
+      'A',
+      '32f24614-ecee-4ff5-aae4-2ebd7bb85c58',
+      null,
+      null,
+      getSimpleManifestsWithAllLabels(
+        'A',
+        'my-namespace',
+        'https://repository.com/A:v2',
+        'v2',
+        currentDeployment.circleId)
+    )
+    actualComponentA.running = false
+    actualComponentA.id = expect.anything()
+
+    const expectedComponents = [actualComponentA]
+    const createDeploymentRequest = {
+      deploymentId: '28a3f957-3702-4c4e-8d92-015939f39cf2',
+      circle: {
+        id: 'fcd22a4e-c192-4c86-bca2-f23de7b73757',
+        default: false
+      },
+      git: {
+        token: base64Token,
+        provider: GitProvidersEnum.GITHUB
+      },
+      components: [
+        {
+          helmRepository: actualComponentA.helmUrl,
+          componentId: actualComponentA.componentId,
+          buildImageUrl: actualComponentA.imageUrl,
+          buildImageTag: actualComponentA.imageTag,
+          componentName: actualComponentA.name
+        }
+      ],
+      authorId: '580a7726-a274-4fc3-9ec1-44e3563d58af',
+      callbackUrl: UrlConstants.deploymentCallbackUrl,
+      namespace: 'my-namespace',
+      incremental: false,
+    }
+
+    await request(app.getHttpServer())
+      .post('/v2/deployments')
+      .send(createDeploymentRequest)
+      .set('x-circle-id', 'a45fd548-0082-4021-ba80-a50703c44a3b')
+      .expect(201)
+
+    const deploymentCreated = await manager.findOneOrFail(DeploymentEntity, { relations: ['components'], where: { id: createDeploymentRequest.deploymentId } })
+    expect(deploymentCreated.components).toEqual(expectedComponents)
+
   })
 })

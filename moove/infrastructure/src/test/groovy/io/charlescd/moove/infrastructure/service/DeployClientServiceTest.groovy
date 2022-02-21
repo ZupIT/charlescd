@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ class DeployClientServiceTest extends Specification {
 
     def 'when circle is default, should call method to deploy into default circle'() {
         given:
+        def incremental = false;
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
         def circle = getDummyCircle('Default', user, true)
@@ -47,7 +48,7 @@ class DeployClientServiceTest extends Specification {
         def deploymentConfig = getDummyDeploymentConfiguration(user)
 
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), deploymentConfig)
+        deployClientService.deploy(deployment, build,  deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -89,6 +90,7 @@ class DeployClientServiceTest extends Specification {
     }
 
     def 'when circle is not default, should call method to deploy into segmented circle'() {
+
         given:
         def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
         def user = getDummyUser()
@@ -97,9 +99,9 @@ class DeployClientServiceTest extends Specification {
         def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
                 user, circle, workspaceId)
         def deploymentConfig = getDummyDeploymentConfiguration(user)
-
+        def incremental = false
         when:
-        deployClientService.deploy(deployment, build, circle.isDefaultCircle(), deploymentConfig)
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
 
         then:
         1 * deployClient.deploy(_, _) >> { arguments ->
@@ -167,6 +169,78 @@ class DeployClientServiceTest extends Specification {
 
             assert undeployRequest instanceof UndeployRequest
             assert undeployRequest.authorId == undeployRequestCompare.authorId
+        }
+    }
+
+    def 'when is not specified if it is a deployment that override circle should send to butler the correct payload'() {
+        given:
+        def incremental = null
+        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
+        def user = getDummyUser()
+        def circle = getDummyCircle('Circle Name', user, false)
+        def build = getDummyBuild(user, circle, workspaceId)
+        def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
+                user, circle, workspaceId)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
+
+        when:
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
+
+        then:
+        1 * deployClient.deploy(_, _) >> { arguments ->
+            def deployRequest = arguments[1]
+
+            assert deployRequest instanceof DeployRequest
+
+           assert deployRequest.incremental
+        }
+    }
+
+    def 'when is a deployment that override circle should send the correct payload to butler '() {
+        given:
+        def incremental = false
+        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
+        def user = getDummyUser()
+        def circle = getDummyCircle('Circle Name', user, false)
+        def build = getDummyBuild(user, circle, workspaceId)
+        def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
+                user, circle, workspaceId)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
+
+        when:
+        deployClientService.deploy(deployment, build, deploymentConfig, incremental)
+
+        then:
+        1 * deployClient.deploy(_, _) >> { arguments ->
+            def deployRequest = arguments[1]
+
+            assert deployRequest instanceof DeployRequest
+
+            assert !deployRequest.incremental
+        }
+    }
+
+    def 'when is not a override deployment should send the correct payload to butler '() {
+        given:
+        def incremental = true
+        def workspaceId = '44446b2a-557b-45c5-91be-1e1db9095556'
+        def user = getDummyUser()
+        def circle = getDummyCircle('Circle Name', user, false)
+        def build = getDummyBuild(user, circle, workspaceId)
+        def deployment = getDummyDeployment('1fe2b392-726d-11ea-bc55-0242ac130003', DeploymentStatusEnum.DEPLOYING,
+                user, circle, workspaceId)
+        def deploymentConfig = getDummyDeploymentConfiguration(user)
+
+        when:
+        deployClientService.deploy(deployment, build,  deploymentConfig, incremental)
+
+        then:
+        1 * deployClient.deploy(_, _) >> { arguments ->
+            def deployRequest = arguments[1]
+
+            assert deployRequest instanceof DeployRequest
+
+            assert deployRequest.incremental
         }
     }
 

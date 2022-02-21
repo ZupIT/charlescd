@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ import { Deployment } from '../interfaces/Circle';
 
 interface Props {
   id: string;
+  name: string;
   onGoBack: Function;
   onCreateRelease: (deploy: Deployment) => void;
 }
 
-const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
+const Release = ({ id, name, onGoBack, onCreateRelease }: Props) => {
   const [type, setType] = useState('');
 
   return (
@@ -54,6 +55,7 @@ const Release = ({ id, onGoBack, onCreateRelease }: Props) => {
         />
         {type === 'create' && (
           <CreateRelease
+            circleName={name}
             circleId={id}
             onDeployed={(deploy: Deployment) => onCreateRelease(deploy)}
           />

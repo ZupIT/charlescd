@@ -41,7 +41,7 @@ export class ReconcileDeploymentUsecase {
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
+    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE')
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
@@ -49,7 +49,7 @@ export class ReconcileDeploymentUsecase {
     if (!resourcesCreated) {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
-
+    this.consoleLoggerService.log('START:CHECK_DEPLOYMENT_HEALTH')
     const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
     if (!isDeploymentReady) {
       // if is not ready it must not remove old deployment until current is healthy
@@ -65,7 +65,7 @@ export class ReconcileDeploymentUsecase {
       )
       return { children: currentAndPrevious, resyncAfterSeconds: 5 }
     }
-
+    this.consoleLoggerService.log('FINISH:CHECK_DEPLOYMENT_HEALTH')
     const activeComponents = await this.componentRepository.findActiveComponents()
     try {
       await this.k8sClient.applyRoutingCustomResource(activeComponents)
@@ -139,6 +139,7 @@ export class ReconcileDeploymentUsecase {
   }
 
   private checkDeploymentConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
+    this.consoleLoggerService.log('DEPLOYMENT_CONDITIONS', specs.map(it => it.status.conditions))
     if (specs.length === 0) {
       return false
     }

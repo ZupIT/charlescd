@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@ export class ReconcileRoutesUsecase {
   }
 
   public async updateRouteStatus(componentStatus: { circle: string, component: string, status: boolean, kind: string }[]): Promise<DeploymentEntityV2[]>  {
+    let allRoutedAndHealthy = false
     const components = groupBy(componentStatus, 'circle')
     const results =  await Promise.all(Object.entries(components).flatMap(async c => {
       const circleId = c[0]
@@ -126,9 +127,12 @@ export class ReconcileRoutesUsecase {
       const allTrue = status.every(s => s.status === true)
       if (allTrue) {
         const deployment = await this.deploymentRepository.findByCircleId(circleId)
-        await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+        if(deployment.healthy) {
+          await this.notifyCallback(deployment, DeploymentStatusEnum.SUCCEEDED)
+          allRoutedAndHealthy = true
+        }
       }
-      return await this.deploymentRepository.updateRouteStatus(circleId, allTrue)
+      return await this.deploymentRepository.updateRouteStatus(circleId, allRoutedAndHealthy)
     }))
     return results
   }

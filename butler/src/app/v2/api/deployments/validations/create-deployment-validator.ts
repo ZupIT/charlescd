@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,8 @@ export class CreateDeploymentValidator {
       components,
       value.namespace,
       new CreateGitDeploymentDto(value.git.token, value.git.provider),
-      value.timeoutInSeconds
+      value.timeoutInSeconds,
+      value.incremental
     )
     return dto
   }
@@ -109,7 +110,8 @@ export class CreateDeploymentValidator {
       components: Joi.array().items(componentSchema).required().unique('componentName').label('components').min(1),
       authorId: Joi.string().guid().required(),
       callbackUrl: Joi.string().required().max(255),
-      timeoutInSeconds: Joi.number().integer().min(5).optional()
+      timeoutInSeconds: Joi.number().integer().min(5).optional(),
+      incremental: Joi.bool().required()
     })
   }
 

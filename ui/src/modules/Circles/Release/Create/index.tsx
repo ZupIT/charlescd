@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import Text from 'core/components/Text';
 import Icon from 'core/components/Icon';
 import { isRequiredAndNotBlank } from 'core/utils/validations';
 import { Deployment } from 'modules/Circles/interfaces/Circle';
+import { isDefaultCircle } from 'modules/Circles/Comparation/Item/helpers';
 import { validationResolver, formatDataModules, validFields } from './helpers';
 import { ModuleForm } from '../interfaces/Module';
 import { ONE, MODULE } from '../constants';
@@ -35,12 +36,14 @@ const defaultValues = {
 };
 
 interface Props {
+  circleName: string;
   circleId: string;
   onDeployed: (deploy: Deployment) => void;
 }
 
-const CreateRelease = ({ circleId, onDeployed }: Props) => {
+const CreateRelease = ({ circleName, circleId, onDeployed }: Props) => {
   const [isEmptyFields, setIsEmptyFields] = useState(true);
+  const [incremental, setIncremental] = useState<boolean>(true);
   const {
     composeBuild,
     response: build,
@@ -88,9 +91,10 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
       createDeployment({
         buildId: build.id,
         circleId,
+        incremental,
       });
     }
-  }, [createDeployment, build, circleId]);
+  }, [createDeployment, build, circleId, incremental]);
 
   const onSubmit = () => {
     setIsDeploying(true);
@@ -146,6 +150,18 @@ const CreateRelease = ({ circleId, onDeployed }: Props) => {
         >
           <Icon name="add" color="dark" size="15px" /> Add modules
         </Styled.Module.Button>
+        {!isDefaultCircle(circleName) && (
+          <Styled.CheckboxWrapper>
+            <Styled.Checkbox
+              value="incremental"
+              defaultChecked={true}
+              onChange={() => setIncremental(!incremental)}
+            />
+            <Styled.CheckboxLabel tag="H5" color="dark">
+                Deploy incremental.
+            </Styled.CheckboxLabel>
+          </Styled.CheckboxWrapper>
+        )}
         {error && <Message errorMessage={error} status={'error'} />}
         <Styled.Submit
           id="submit"
