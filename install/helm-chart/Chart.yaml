@@ -14,14 +14,14 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.7.0
+version: 0.7.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 
 dependencies:
   - name: envoy
-    version: 0.3.10
+    version: 0.3.11
     condition: envoy.enabled
   - name: metacontroller
     version: 1.5.6

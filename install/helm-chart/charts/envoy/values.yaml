@@ -1,3 +1,9 @@
+image:
+  registry: docker.io
+  repository: envoyproxy/envoy
+  tag: v1.20.2
+  pullPolicy: IfNotPresent
+  pullSecrets: []
 ui:
   enabled: true
 moove:

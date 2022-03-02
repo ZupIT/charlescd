@@ -30,9 +30,14 @@ spec:
       labels:
         app: envoy-proxy     
     spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: envoy-proxy
-          image: envoyproxy/envoy-dev:latest
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           lifecycle:
             postStart:
               exec:
