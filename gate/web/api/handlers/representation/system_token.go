@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ *  Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import (
 )
 
 type SystemTokenRequest struct {
-	Name          string   `json:"name" validate:"required,notblank"`
-	Permissions   []string `json:"permissions" validate:"dive,notblank"`
-	Workspaces    []string `json:"workspaces" validate:"required, notblank, min=1" `
+	Name          string   `json:"name" validate:"required"`
+	Permissions   []string `json:"permissions" validate:"required"`
+	Workspaces    []string `json:"workspaces" validate:"required" `
 	AllWorkspaces bool     `json:"allWorkspaces"`
 }
 
