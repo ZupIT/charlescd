@@ -1,10 +1,10 @@
-# charlescd
+# **charlescd**
 
 ![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
 
-A Helm chart for install CharlesCD in Kubernetes
+A Helm chart to install CharlesCD in Kubernetes.
 
-## Requirements
+## **Requirements**
 
 | Repository | Name | Version |
 |------------|------|---------|
@@ -16,7 +16,7 @@ A Helm chart for install CharlesCD in Kubernetes
 | https://codecentric.github.io/helm-charts | keycloak | 10.3.1 |
 | https://kubernetes.github.io/ingress-nginx | ingress-nginx | 3.15.2 |
 
-## Values
+## **Values**
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
