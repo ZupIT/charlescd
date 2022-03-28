@@ -141,7 +141,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
 
   const renderAwsFields = () => {
     return (
-      <>
+      <Styled.AwsFields>
         <Form.Input
           ref={register(isRequiredAndNotBlank)}
           name="region"
@@ -167,7 +167,7 @@ const FormRegistry = ({ onFinish }: Props<Registry>) => {
             />
           </>
         )}
-      </>
+      </Styled.AwsFields>
     );
   };
 

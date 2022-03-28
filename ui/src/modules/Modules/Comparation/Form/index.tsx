@@ -113,7 +113,7 @@ const FormModule = ({ module, onChange }: Props) => {
 
   const renderGithub = () => (
     <Fragment>
-      <Styled.FieldPopover>
+      <Styled.FieldPopover>Enter the requested information below:
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"

@@ -86,21 +86,6 @@ const Tab = ({ param }: Props) => {
       <Dropdown>
         <Can I="write" a="modules" passThrough>
           <Dropdown.Item
-            icon="edit"
-            name="Edit"
-            onClick={() =>
-              updateParam(
-                'module',
-                routes.modulesComparation,
-                history,
-                module?.id,
-                `${module?.id}~edit`
-              )
-            }
-          />
-        </Can>
-        <Can I="write" a="modules" passThrough>
-          <Dropdown.Item
             icon="delete"
             name="Delete"
             onClick={() => removeModule(module?.id)}

@@ -66,7 +66,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         <Text tag="H5" color="dark" data-testid="add-workspace-modal-doc">
           {renderDescription()}
           Read our 
-          <Link href={CHARLES_DOC}>
+          <Link href={CHARLES_DOC}>{' '}
             documentation
           </Link>{' '}
           for further details.

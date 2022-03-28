@@ -84,6 +84,10 @@ const Placeholder = styled(Text)`
   overflow: hidden;
 `;
 
+const AwsFields = styled.div`
+  margin-top: 10px;
+`;
+
 export default {
   Content,
   Title,
@@ -92,5 +96,6 @@ export default {
   Fields,
   Message,
   Select,
-  Placeholder
+  Placeholder,
+  AwsFields
 };
