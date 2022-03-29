@@ -130,7 +130,7 @@ const Scopes = ({ mode }: Props) => {
           <Text tag="H5" color="dark" data-testid="scope-doc">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
-            <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>{' '}
+            {' '}<Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
               documentation
             </Link>{' '}
             for further details.
