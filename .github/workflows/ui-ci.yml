@@ -44,10 +44,10 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-    - name: Use Node.js 12.x
+    - name: Use Node.js 16.x
       uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
       with:
-        node-version: 12.x
+        node-version: 16.x
     - run: npm ci
       working-directory: ./ui
     - run: npm run build
