@@ -370,7 +370,7 @@ jobs:
 #         sed -i -E "s/(zupcharles\/.*:)(.*)/\1${{ steps.get_version.outputs.VERSION }}/" ./install/helm-chart/values.yaml
 
     - name: Generate single file
-      uses: WyriHaximus/github-action-helm3@009a012cceae416b5b94bb80bf373a472b9a8d63
+      uses: WyriHaximus/github-action-helm3@240b28c59f85ac58ed1e19314a97f09eaf9cbffb
       with:
         exec: helm template charlescd -n charles ./install/helm-chart > ./install/helm-chart/single-file.yaml
 
