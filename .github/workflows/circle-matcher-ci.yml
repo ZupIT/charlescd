@@ -38,7 +38,7 @@ jobs:
       - name: Run actions checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@a766aa7b5fcc0a801fa3d4fd521ca299c03c9c00
+        uses: DeLaGuardo/setup-graalvm@2ebaf4e808f403090cbecb79873354da5dbd7e09
         with:
           graalvm-version: '21.0.0.java11'
       - name: Run actions cache
