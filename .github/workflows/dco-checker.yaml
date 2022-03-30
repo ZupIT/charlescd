@@ -26,7 +26,7 @@ jobs:
   dco-gpg-validator:
     runs-on: ubuntu-latest
     steps:
-      - uses: ZupIT/zup-dco-validator@18c54faf1f183c4bffddf5d81900559355bdc20a #v.1.0
+      - uses: ZupIT/zup-dco-validator@5298d1dd508cbf40c20aad1702af284cad23f301 #v.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_AUTHORS: "dependabot[bot]"
