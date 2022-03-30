@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "pg": "^8.4.1",
     "qs": "^6.9.4",
     "chalk": "^4.1.0",
