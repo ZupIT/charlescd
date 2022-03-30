@@ -23,7 +23,7 @@
 ### 5. [**Code of Conduct**](#Ccde-of-conduct)
 ### 6. [**License**](#license)
 ### 7. [**Community**](#community)
- 
+### 8. [**Security**](#security)
  
 <br>
 <br>
@@ -129,3 +129,6 @@ Please follow the [**Code of Conduct**](https://github.com/ZupIT/charlescd/blob/
 Do you have any question or suggestion about Charles? Let's chat in our [**forum**](https://forum.zup.com.br/c/en/charles/13).
 
 Keep evolving.
+
+### **Security**
+Check out our [**security**](SECURITY.md) policies.
