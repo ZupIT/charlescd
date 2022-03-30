@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ const Modal = ({ workspaces, onClose, onContinue }: Props) => {
         <Text tag="H5" color="dark" data-testid="add-workspace-modal-doc">
           {renderDescription()}
           Read our 
-          <Link href={CHARLES_DOC}>
+          {' '}<Link href={CHARLES_DOC}>
             documentation
           </Link>{' '}
           for further details.

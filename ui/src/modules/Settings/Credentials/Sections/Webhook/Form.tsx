@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ const FormWebhook = ({ onFinish, data }: Props<Webhook>) => {
       <Text tag="H5" color="dark">
         Webhooks allow external services to be notified when certain events
         happen. When the specified events happen, we’ll send a POST request to
-        each of the URLs you provide.
+        each of the URLs you provide.{' '}
       </Text>
       <Text tag="H5" color="dark">
         See our {' '}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ const Scopes = ({ mode }: Props) => {
           <Text tag="H5" color="dark" data-testid="scope-doc">
             Scopes define the actions that a given token can perform. Your access token can be
             created with one or more scopes. Read our  
-            <Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
+            {' '}<Link href={`${CHARLES_DOC}/get-started/integrating-charles-to-your-ci`}>
               documentation
             </Link>{' '}
             for further details.

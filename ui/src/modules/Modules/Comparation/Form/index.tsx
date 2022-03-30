@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ const FormModule = ({ module, onChange }: Props) => {
 
   const renderGithub = () => (
     <Fragment>
-      <Styled.FieldPopover>
+      <Styled.FieldPopover>Enter the requested information below:
         <Styled.Input
           label="Insert organization"
           name="helmOrganization"
@@ -238,7 +238,7 @@ const FormModule = ({ module, onChange }: Props) => {
             error={errors?.gitRepositoryAddress?.message}
           />
           {!isEditing && <Components key="components" fieldArray={fieldArray} />}
-          {helmGitProvider && renderGitHelm()}
+          {renderGitHelm()}
           <Can I="write" a="modules" isDisabled={!isValid || !isHelmValid} passThrough>
             <Styled.Button
               id="submit"

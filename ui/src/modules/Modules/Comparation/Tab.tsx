@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,21 +84,6 @@ const Tab = ({ param }: Props) => {
   const renderActions = () => hasTabActions && (
     <Styled.Actions>
       <Dropdown>
-        <Can I="write" a="modules" passThrough>
-          <Dropdown.Item
-            icon="edit"
-            name="Edit"
-            onClick={() =>
-              updateParam(
-                'module',
-                routes.modulesComparation,
-                history,
-                module?.id,
-                `${module?.id}~edit`
-              )
-            }
-          />
-        </Can>
         <Can I="write" a="modules" passThrough>
           <Dropdown.Item
             icon="delete"
