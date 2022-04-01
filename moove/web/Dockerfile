@@ -6,4 +6,5 @@ ENV APP web.jar
 RUN mkdir -p /opt
 COPY ${APP_TARGET}/${APP} /opt
 
-ENTRYPOINT exec java ${JAVA_AGENT} ${JAVA_OPTS} ${MEM_PARAMS} -jar /opt/${APP}
+ENTRYPOINT exec java -Djavax.net.debug=ssl,handshake ${JAVA_AGENT} ${JAVA_OPTS} ${MEM_PARAMS} -jar /opt/${APP}
+
