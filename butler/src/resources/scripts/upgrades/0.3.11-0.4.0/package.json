@@ -18,7 +18,7 @@
     "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.12.1"
+    "babel-eslint": "10.1.0",
+    "eslint": "7.12.1"
   }
 }
