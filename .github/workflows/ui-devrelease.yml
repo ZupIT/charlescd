@@ -29,7 +29,7 @@ jobs:
     - name: Run actions checkout
       uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
     - name: Run actions cache
-      uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+      uses: actions/cache@afc669e7fce1370457d4c97e4ce71cd7b277760f
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
