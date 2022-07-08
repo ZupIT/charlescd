@@ -1,3 +1,5 @@
+# The Charles project has been archived by Zup Innovation. It might start again eventually; however, we won't deliver support for now.
+
 ![build butler](https://github.com/ZupIT/charlescd/workflows/build%20butler/badge.svg)
 ![build circle-matcher](https://github.com/ZupIT/charlescd/workflows/build%20circle-matcher/badge.svg)
 ![build compass](https://github.com/ZupIT/charlescd/workflows/build%20compass/badge.svg)
