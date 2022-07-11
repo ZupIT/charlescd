@@ -18,11 +18,26 @@ package io.charlescd.moove.infrastructure.configuration
 
 import feign.Client
 import feign.okhttp.OkHttpClient
+import javax.net.ssl.SSLSocketFactory
+import org.apache.http.ssl.SSLContexts
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.cloud.commons.httpclient.OkHttpClientFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ResourceLoader
 
 @Configuration
-class ButlerEncoderConfiguration {
+class ButlerEncoderConfiguration(
+    @Value("\${key.store.password}")
+    val keyStorePassword: String,
+    @Value("\${butler.tls.store.path}")
+    val butlerStorePath: String,
+    @Value("\${moove.tls.store.path}")
+    val mooveStorePath: String,
+    @Value("\${mtls.enabled:false}")
+    val mtlsEnabled: Boolean,
+    val resourceLoader: ResourceLoader
+) {
 
     @Bean
     fun butlerErrorDecoder(): ButlerErrorDecoder {
@@ -30,7 +45,25 @@ class ButlerEncoderConfiguration {
     }
 
     @Bean
-    fun butlerOkHttpClient(): Client {
-        return OkHttpClient()
+    fun feignClient(): Client {
+        return when (mtlsEnabled) {
+            true -> Client.Default(getSSLSocketFactory(), null)
+            else -> OkHttpClient()
+        }
     }
+
+    fun getSSLSocketFactory(): SSLSocketFactory {
+        val mooveStore = loadFromFile(mooveStorePath)
+        val butlerKeyStore = loadFromFile(butlerStorePath)
+        val sslContext = SSLContexts.custom().loadKeyMaterial(
+            mooveStore.file, keyStorePassword.toCharArray(), keyStorePassword.toCharArray()
+        ).loadTrustMaterial(
+            butlerKeyStore.file, keyStorePassword.toCharArray()
+        ).build()
+
+        return sslContext.socketFactory
+    }
+
+    fun loadFromFile(fileName: String) =
+        this.resourceLoader.getResource("file:///$fileName")
 }
