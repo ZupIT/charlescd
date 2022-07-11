@@ -1,5 +1,5 @@
 #
-  # Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+  # Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
   #
   # Licensed under the Apache License, Version 2.0 (the "License");
   # you may not use this file except in compliance with the License.
@@ -90,6 +90,11 @@ CharlesApplications:
       user: charlescd_butler
       # -- Database password
       password: 3f2Yq8R4HhDCnefR
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Database name
       name: charlescd_butler
       # -- Boolean for database use SSL
@@ -162,6 +167,11 @@ CharlesApplications:
       user: charlescd_moove
       # -- Database password
       password: 7Qs2KuM9gYzw48BS
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Database name
       name: charlescd_moove
     # -- CORS Configuration
@@ -179,6 +189,11 @@ CharlesApplications:
       clientId: realm-charlescd
       # -- Keycloak Client Secret
       clientSecret: "441cfd37-8443-4f3d-bf6c-ee9861b04e28"
+      # -- Keycloak Client Secret stored in a Kubernetes Secret
+      clientSecretFrom:
+        secretKeyRef:
+          key: client-secret
+          name: ""
     # -- Enable IDM
     internalIdmEnabled: true
 
@@ -246,6 +261,11 @@ CharlesApplications:
       user: charlescd_villager
       # -- Database password
       password: ZkQ67Lnhs2bM3MPN
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Database name
       name: charlescd_villager
 
@@ -398,6 +418,11 @@ CharlesApplications:
       port: 6379
       # -- Redis Password
       password: hb2Fj9MGKjBkZ6zV
+      # -- Redis password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Enable SSL
       ssl: false
       cluster:
@@ -477,6 +502,11 @@ CharlesApplications:
       user: charlescd_compass
       # -- Database password
       password: C1UinUu6N0vc
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
     # -- Database ignore SSL
     databaseIgnoreSSL: disable
     # -- Compass Plugin Directory
@@ -504,6 +534,11 @@ CharlesApplications:
         user: charlescd_moove
         # -- Database password
         password: 7Qs2KuM9gYzw48BS
+        # -- Database password stored in a Kubernetes Secret
+        passwordFrom:
+          secretKeyRef:
+            key: password
+            name: ""
 
   hermes:
     # -- Enable Hermes Installation
@@ -558,11 +593,21 @@ CharlesApplications:
       user: charlescd_hermes
       # -- Database password
       password: aGVybWVz
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Database name
       name: charlescd_hermes
     amqp:
       # -- AMQP URL
       url: amqp://guest:guest@charlescd-rabbitmq:5672/
+      # -- Url stored in a Kubernetes Secret
+      urlFrom:
+        secretKeyRef:
+          key: url
+          name: ""
       message:
         # -- Queue Message
         queue: queue-message
@@ -642,6 +687,11 @@ CharlesApplications:
       user: charlescd_moove
       # -- Database password
       password: 7Qs2KuM9gYzw48BS
+      # -- Database password stored in a Kubernetes Secret
+      passwordFrom:
+        secretKeyRef:
+          key: password
+          name: ""
       # -- Database name
       name: charlescd_moove
     # -- Gate Policy Path
