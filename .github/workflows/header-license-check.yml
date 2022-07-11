@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Check License and license year on prs
-        uses: ZupIT/header-license-checker@37c8ae54d54581f1bef0bdf1efefaaf854bda857
+        uses: ZupIT/header-license-checker@635176fe2d08208c8256fd96cebae5c9a47e633c
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
