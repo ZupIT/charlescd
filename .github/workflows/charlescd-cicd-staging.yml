@@ -59,7 +59,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -113,7 +113,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -165,7 +165,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -221,7 +221,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -280,7 +280,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
       
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -336,7 +336,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -388,7 +388,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -440,7 +440,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -491,7 +491,7 @@ jobs:
         run: echo ::set-output name=HASH_VERSION::$(echo $(echo $GITHUB_SHA |cut -c1-7))
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@0d9a5be0dceea74e09396820e1e522ba4a110d2f
+        uses: aws-actions/configure-aws-credentials@8a84b07f2009032ade05a88a28750d733cc30db1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
