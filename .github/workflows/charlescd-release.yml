@@ -76,7 +76,7 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
       - name: Set up GraalVM
-        uses: DeLaGuardo/setup-graalvm@a766aa7b5fcc0a801fa3d4fd521ca299c03c9c00
+        uses: DeLaGuardo/setup-graalvm@2ebaf4e808f403090cbecb79873354da5dbd7e09
         with:
           graalvm-version: '21.0.0.java11'
       - uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
