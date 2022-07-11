@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Run actions checkout
-      uses: actions/checkout@1e204e9a9253d643386038d443f96446fa156a97 # v2.3.5
+      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v2.3.5
     - name: Set up JDK 11
       uses: actions/setup-java@8db439b6b47e5e12312bf036760bbaa6893481ac # v2.3.1
       with:
