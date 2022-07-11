@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import { Log } from '../../api/deployments/interfaces/log.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
 import { LogRepository } from '../../api/deployments/repository/log.repository'
 import * as LRUCache from 'lru-cache'
-import { AppConstants } from '../../core/constants'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
 import { ResourceWrapper } from './resource-wrapper'
 
@@ -68,26 +67,10 @@ export class EventsLogsAggregator {
       this.consoleLoggerService.log(`Could not find resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace}`)
       return
     }
-
-    const deploymentId = resource.deploymentId
-
-    if (!deploymentId) {
-      this.consoleLoggerService.log(`Resource ${involvedObject.kind}/${involvedObject.name} in namespace ${involvedObject.namespace} does not has label ${AppConstants.DEPLOYMENT_ID_LABEL}. Discarding event...`)
-      await this.checkResourceAnnotation(resource, event)
-      return
-    }
-
-    const log = this.createLogFromEvent(event)
-
-    if (await this.alreadyLogged(log, deploymentId)) {
-      this.consoleLoggerService.log('Log Already saved... discarding event', log)
-      return
-    }
-    this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
-    this.saveLogs(deploymentId, log)
+    await this.createEventFromMetadata(resource, event)
   }
 
-  private async checkResourceAnnotation(resource: ResourceWrapper, event: Event) {
+  private async createByAnnotation(resource: ResourceWrapper, event: Event) {
     const circles = resource.circles
     const circlesIds = circles?.map(it => it.id)
     if (circlesIds?.length){
@@ -98,6 +81,21 @@ export class EventsLogsAggregator {
       const log = this.createLogFromEvent(event)
       return await this.logsRepository.saveDeploymentsLogs(currentDeploymentsIds, log)
     }
+  }
+
+  private async createEventFromMetadata(resource: ResourceWrapper, event: Event) {
+    const circleId = resource.circleId
+    if (circleId) {
+      await this.createByCircleId(circleId, event)
+      return
+    }
+    const deploymentId = resource.deploymentId
+    if (deploymentId) {
+      await this.createByDeploymentId(deploymentId, event)
+      return
+    }
+    await this.createByAnnotation(resource, event)
+    return
   }
 
 
@@ -119,6 +117,30 @@ export class EventsLogsAggregator {
       throw error
     }
   }
+
+  private async createByDeploymentId(deploymentId: string, event: Event) {
+    const log = this.createLogFromEvent(event)
+    if (await this.alreadyLogged(log, deploymentId)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
+    }
+    this.consoleLoggerService.log(`Saving log for deployment "${deploymentId}"`)
+    this.saveLogs(deploymentId, log)
+  }
+
+  private async createByCircleId(circleId: string, event: Event) {
+    const deployment = await this.deploymentsRepository.findCurrentByCircleId(circleId)
+    const log = this.createLogFromEvent(event)
+
+    if (await this.alreadyLogged(log, deployment.id)) {
+      this.consoleLoggerService.log('Log Already saved... discarding event', log)
+      return
+    }
+    this.consoleLoggerService.log(`Saving log for deployment "${deployment.id}"`)
+
+    this.saveLogs(deployment.id, log)
+  }
+
 
   private isEventOlderThan(event: Event, since?: Date): boolean {
     if (!since) {

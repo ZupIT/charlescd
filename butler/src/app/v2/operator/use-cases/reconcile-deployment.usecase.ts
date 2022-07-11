@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ import { isEmpty, uniqWith } from 'lodash'
 import { DeploymentEntityV2 } from '../../api/deployments/entity/deployment.entity'
 import { ComponentsRepositoryV2 } from '../../api/deployments/repository'
 import { DeploymentRepositoryV2 } from '../../api/deployments/repository/deployment.repository'
-import { ExecutionRepository } from '../../api/deployments/repository/execution.repository'
 import { KubernetesManifest, SpecTemplateManifest } from '../../core/integrations/interfaces/k8s-manifest.interface'
 import { K8sClient } from '../../core/integrations/k8s/client'
-import { MooveService } from '../../core/integrations/moove'
 import { ConsoleLoggerService } from '../../core/logs/console'
 import { HookParams, SpecMetadata, SpecStatus } from '../interfaces/params.interface'
 import { ReconcileUtils } from '../utils/reconcile.utils'
@@ -36,12 +34,9 @@ export class ReconcileDeploymentUsecase {
     private readonly deploymentRepository: DeploymentRepositoryV2,
     private readonly componentRepository: ComponentsRepositoryV2,
     private readonly consoleLoggerService: ConsoleLoggerService,
-    private readonly executionRepository: ExecutionRepository,
-    private readonly mooveService: MooveService
   ) { }
 
   public async execute(params: HookParams): Promise<{status?: unknown, children: KubernetesManifest[], resyncAfterSeconds?: number}> {
-    this.consoleLoggerService.log('START_DEPLOYMENT_RECONCILE', params)
     const deployment = await this.deploymentRepository.findWithComponentsAndConfig(params.parent.spec.deploymentId)
     const desiredManifests = this.getDesiredManifests(deployment)
     const resourcesCreated = this.checkIfResourcesWereCreated(params)
@@ -50,7 +45,7 @@ export class ReconcileDeploymentUsecase {
       return { children: desiredManifests, resyncAfterSeconds: 5 }
     }
 
-    const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment.id)
+    const isDeploymentReady = this.checkIfDeploymentIsReady(params, deployment)
     if (!isDeploymentReady) {
       // if is not ready it must not remove old deployment until current is healthy
       const previousDeploymentId = deployment.previousDeploymentId
@@ -100,14 +95,16 @@ export class ReconcileDeploymentUsecase {
       namespace: deployment.namespace,
       labels: {
         ...manifest.metadata?.labels,
-        'deploymentId': deployment.id,
-        'circleId': deployment.circleId
-      }
+        'circleId': deployment.circleId,
+        'component': component.name,
+        'tag': component.imageTag,
+      },
     }
 
     // TODO what about other resources such as StatefulSet, CronJob etc?
     if (manifest.kind === 'Deployment') {
-      manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.id}`
+      if (manifest.metadata.name && !manifest.metadata.name.includes(`${component.imageTag}-${deployment.circleId}`))
+        manifest.metadata.name = `${manifest.metadata.name}-${component.imageTag}-${deployment.circleId}`
     }
 
     if (manifest.spec?.template) {
@@ -115,9 +112,10 @@ export class ReconcileDeploymentUsecase {
         ...manifest.spec.template.metadata,
         labels: {
           ...manifest.spec.template.metadata?.labels,
-          'deploymentId': deployment.id,
-          'circleId': deployment.circleId
-        }
+          'circleId': deployment.circleId,
+          'component': component.name,
+          'tag': component.imageTag,
+        },
       }
     }
 
@@ -129,20 +127,23 @@ export class ReconcileDeploymentUsecase {
     return !isEmpty(params.children['Deployment.apps/v1'])
   }
 
-  private checkIfDeploymentIsReady(params: HookParams, deploymentId: string): boolean {
+  private checkIfDeploymentIsReady(params: HookParams, deployment: DeploymentEntityV2): boolean {
     // TODO we should also check if other resources are ready
     const deploymentManifests = Object.entries(params.children['Deployment.apps/v1'])
       .map(c => c[1])
-      .filter(p => p.metadata.labels.deploymentId === deploymentId)
-
+      .filter(p => p.metadata.labels.circleId === deployment.circleId && p.metadata.labels.tag === deployment.components[0].imageTag)
     return this.checkDeploymentConditions(deploymentManifests)
   }
 
   private checkDeploymentConditions(specs: { metadata: SpecMetadata, status: SpecStatus }[]): boolean {
+    this.consoleLoggerService.log('RESOURCE_STATUS', specs.map(it => it.status))
     if (specs.length === 0) {
       return false
     }
     return specs.every(s => {
+      if (!s.status){
+        return false
+      }
       if (s.status.conditions.length === 0) {
         return true
       }

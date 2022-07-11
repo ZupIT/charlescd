@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import { LogRepository } from '../../../../app/v2/api/deployments/repository/log
 import { LogEntity } from '../../../../app/v2/api/deployments/entity/logs.entity'
 import * as moment from 'moment'
 import { DeploymentRepositoryV2 } from '../../../../app/v2/api/deployments/repository/deployment.repository'
+import { deploymentFixture } from '../../fixtures/deployment-entity.fixture'
 
 type K8sClientResolveObject = { body: KubernetesObject, response: http.IncomingMessage }
 
@@ -34,10 +35,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   let k8sClient: K8sClient
   let logRepository: LogRepository
   let deploymentsRepository: DeploymentRepositoryV2
-
+  const currentDeployment = deploymentFixture
   const butlerNamespace = 'butler-namespace'
   const logService = new ConsoleLoggerService()
-  const deploymentId = 'a3e9c42b-8ff4-48a7-9a4e-e81f1d5dc3fa'
 
   beforeEach(() => {
     k8sClient = new K8sClient(logService, { butlerNamespace: butlerNamespace } as IEnvConfiguration)
@@ -62,12 +62,14 @@ describe('Aggregate events from kubernetes to charles logs', () => {
   })
 
   it('Aggregate event as a log when the resource has the deploymentId label', async() => {
+
+
     const readSpy = jest.spyOn(k8sClient, 'readResource')
       .mockImplementation(() => Promise.resolve({
         body: {
           metadata: {
             labels: {
-              deploymentId: deploymentId
+              circleId: currentDeployment.circleId
             }
           }
         },
@@ -76,6 +78,9 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     const logRepositorySpy = jest.spyOn(logRepository, 'save')
       .mockImplementation(() => Promise.resolve({} as LogEntity))
+
+    jest.spyOn(deploymentsRepository, 'findCurrentByCircleId')
+      .mockImplementation(() => Promise.resolve(currentDeployment))
 
     jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
       async() => Promise.resolve(undefined)
@@ -102,7 +107,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
     expect(readSpy).toBeCalledTimes(1)
 
     const expectedLogEntity = {
-      deploymentId: deploymentId,
+      deploymentId: currentDeployment.id,
       logs: [
         {
           type: 'INFO',
@@ -161,7 +166,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
         body: {
           metadata: {
             labels: {
-              deploymentId: deploymentId
+              circleId: currentDeployment.circleId
             }
           }
         },
@@ -200,7 +205,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
         body: {
           metadata: {
             labels: {
-              deploymentId: deploymentId
+              circleId: currentDeployment.circleId
             }
           }
         },
@@ -212,6 +217,10 @@ describe('Aggregate events from kubernetes to charles logs', () => {
 
     jest.spyOn(logRepository, 'findDeploymentLogs').mockImplementation(
       async() => Promise.resolve(undefined)
+    )
+
+    jest.spyOn(deploymentsRepository, 'findCurrentByCircleId').mockImplementation(
+      async() => Promise.resolve(currentDeployment)
     )
 
     const coreEvent = {
@@ -243,7 +252,7 @@ describe('Aggregate events from kubernetes to charles logs', () => {
         body: {
           metadata: {
             labels: {
-              deploymentId: deploymentId
+              circleId: currentDeployment.circleId
             }
           }
         },

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ import { HookParams } from '../../../../app/v2/operator/interfaces/params.interf
 import { ReconcileDeploymentUsecase } from '../../../../app/v2/operator/use-cases/reconcile-deployment.usecase'
 import { K8sClient } from '../../../../app/v2/core/integrations/k8s/client'
 import IEnvConfiguration from '../../../../app/v2/core/configuration/interfaces/env-configuration.interface'
-import { MooveService } from '../../../../app/v2/core/integrations/moove'
 import { ExecutionRepository } from '../../../../app/v2/api/deployments/repository/execution.repository'
-import { HttpService } from '@nestjs/common'
 import { Execution } from '../../../../app/v2/api/deployments/entity/execution.entity'
 import { ExecutionTypeEnum } from '../../../../app/v2/api/deployments/enums'
 import { DeploymentStatusEnum } from '../../../../app/v2/api/deployments/enums/deployment-status.enum'
@@ -43,7 +41,6 @@ describe('Reconcile deployment usecase spec', () => {
   const deploymentRepository = new DeploymentRepositoryV2()
   const componentsRepository = new ComponentsRepositoryV2()
   const executionRepository = new ExecutionRepository(consoleLoggerService)
-  const mooveService = new MooveService(new HttpService(), consoleLoggerService)
 
   const k8sClient = new K8sClient(consoleLoggerService, envConfiguration)
 
@@ -254,7 +251,7 @@ describe('Reconcile deployment usecase spec', () => {
                 'circleId': 'ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
                 'controller-uid': '5c6e0a99-f05b-4198-8499-469fa34f755b',
                 // this key is used to match the deployment
-                'deploymentId': 'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+                'tag': 'v1',
                 'version': 'hello-kubernetes'
               },
               'name': 'batata-ed2a1669-34b8-4af2-b42c-acbad2ec6b60',
@@ -382,11 +379,12 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the reconcile deployment object with the correct metadata changes', async() => {
+    const currentDeployment = getDeploymentWithManifestFixture('simple')
     const componentsCircle1 = [
       createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
     ]
 
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('simple'))
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => currentDeployment)
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(getDeploymentWithManifestFixture('simple'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
@@ -398,15 +396,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
+            name: `hello-kubernetes-${currentDeployment.components[0].imageTag}-${currentDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: currentDeployment.circleId,
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -425,8 +422,9 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+                  circleId: currentDeployment.circleId,
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -489,8 +487,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      executionRepository,
-      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithNothingCreated)
@@ -499,9 +495,11 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the correct desired state with different deployment manifests when a override happens', async() => {
+    const currentDeployment = getDeploymentWithManifestAndPreviousFixture('simple')
+    const previousDeployment = getDeploymentWithManifestFixture('simple')
     jest.spyOn(deploymentRepository, 'findOneOrFail')
       .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture('simple'))
-      .mockImplementationOnce(async() => getDeploymentWithManifestFixture('simple'))
+
 
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(getDeploymentWithManifestAndPreviousFixture('simple'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
@@ -516,15 +514,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
+            name: `hello-kubernetes-${previousDeployment.components[0].imageTag}-${previousDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: previousDeployment.circleId,
+              component: previousDeployment.components[0].name,
+              tag: previousDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -543,8 +540,9 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+                  circleId: previousDeployment.circleId,
+                  component: previousDeployment.components[0].name,
+                  tag: previousDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -602,15 +600,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-2-e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+            name: `hello-kubernetes-${currentDeployment.components[0].imageTag}-${currentDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: currentDeployment.circleId,
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -629,8 +626,10 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54'
+                  circleId: currentDeployment.circleId,
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag
+
                 }
               },
               spec: {
@@ -693,8 +692,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      executionRepository,
-      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithDeploymentNotReady)
@@ -703,6 +700,8 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should generate the correct desired state without manifest repetition when a override happens', async() => {
+    const currentDeployment = getDeploymentWithManifestAndPreviousFixture('complex')
+    const previousDeployment = getDeploymentWithManifestFixture('complex')
     jest.spyOn(deploymentRepository, 'findOneOrFail')
       .mockImplementationOnce(async() => getDeploymentWithManifestAndPreviousFixture('complex'))
       .mockImplementationOnce(async() => getDeploymentWithManifestFixture('complex'))
@@ -720,15 +719,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
+            name: `hello-kubernetes-${previousDeployment.components[0].imageTag}-${previousDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: previousDeployment.circleId,
+              component: previousDeployment.components[0].name,
+              tag: previousDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -747,8 +745,9 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+                  circleId: previousDeployment.circleId,
+                  component: previousDeployment.components[0].name,
+                  tag: previousDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -811,10 +810,10 @@ describe('Reconcile deployment usecase spec', () => {
           metadata: {
             labels: {
               app: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              component: 'hello-kubernetes',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              version: 'hello-kubernetes'
+              version: 'hello-kubernetes',
+              circleId: previousDeployment.circleId,
+              component: previousDeployment.components[0].name,
+              tag: previousDeployment.components[0].imageTag
             },
             name: 'custom-secret',
             namespace: 'namespace'
@@ -825,15 +824,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-2-e728a072-b0aa-4459-88ba-0f4a9b71ae54',
+            name: `hello-kubernetes-${currentDeployment.components[0].imageTag}-${currentDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: currentDeployment.circleId,
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -852,8 +850,9 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'e728a072-b0aa-4459-88ba-0f4a9b71ae54'
+                  circleId: currentDeployment.circleId,
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -916,8 +915,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      executionRepository,
-      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithDeploymentNotReady)
@@ -926,6 +923,7 @@ describe('Reconcile deployment usecase spec', () => {
   })
 
   it('should return the desired manifests of the new deployment when there is no previous and it is not ready yet', async() => {
+    const currentDeployment = getDeploymentWithManifestFixture('complex')
     jest.spyOn(deploymentRepository, 'findOneOrFail')
       .mockImplementation(async() => getDeploymentWithManifestFixture('complex'))
 
@@ -941,8 +939,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      executionRepository,
-      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithDeploymentNotReady)
@@ -953,15 +949,14 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
+            name: `hello-kubernetes-${currentDeployment.components[0].imageTag}-${currentDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               app: 'hello-kubernetes',
               version: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
-              component: 'hello-kubernetes',
-              tag: 'tag-example'
+              circleId: currentDeployment.circleId,
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag
             }
           },
           spec: {
@@ -980,8 +975,9 @@ describe('Reconcile deployment usecase spec', () => {
                 labels: {
                   app: 'hello-kubernetes',
                   version: 'hello-kubernetes',
-                  circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+                  circleId: currentDeployment.circleId,
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -1044,9 +1040,9 @@ describe('Reconcile deployment usecase spec', () => {
           metadata: {
             labels: {
               app: 'hello-kubernetes',
-              circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              component: 'hello-kubernetes',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              circleId: currentDeployment.circleId,
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag,
               version: 'hello-kubernetes'
             },
             name: 'custom-secret',
@@ -1060,12 +1056,13 @@ describe('Reconcile deployment usecase spec', () => {
     expect(reconcileObj).toEqual(expectedReconcileObj)
   })
 
-  it('should create the correct medatada labels/namespace fields when the manifests dont have it', async() => {
+  it('should create the correct metadata labels/namespace fields when the manifests dont have it', async() => {
     const componentsCircle1 = [
       createDeployComponent('A', 'v1', 'circle-1', true, 'noManifest', 'namespace', true)
     ]
+    const currentDeployment = getDeploymentWithManifestFixture('noLabels')
 
-    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => getDeploymentWithManifestFixture('noLabels'))
+    jest.spyOn(deploymentRepository, 'findOneOrFail').mockImplementation(async() => currentDeployment)
     jest.spyOn(executionRepository, 'findOneOrFail').mockImplementation(async() =>
       new Execution(getDeploymentWithManifestFixture('noLabels'), ExecutionTypeEnum.DEPLOYMENT, null, DeploymentStatusEnum.CREATED)
     )
@@ -1077,11 +1074,12 @@ describe('Reconcile deployment usecase spec', () => {
           apiVersion: 'apps/v1',
           kind: 'Deployment',
           metadata: {
-            name: 'hello-kubernetes-build-image-tag-b7d08a07-f29d-452e-a667-7a39820f3262',
+            name: `hello-kubernetes-${currentDeployment.components[0].imageTag}-${currentDeployment.circleId}`,
             namespace: 'namespace',
             labels: {
               circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag,
             }
           },
           spec: {
@@ -1098,7 +1096,8 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262'
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag,
                 }
               },
               spec: {
@@ -1160,7 +1159,8 @@ describe('Reconcile deployment usecase spec', () => {
             namespace: 'namespace',
             labels: {
               circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-              deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+              component: currentDeployment.components[0].name,
+              tag: currentDeployment.components[0].imageTag,
             }
           },
           spec: {
@@ -1178,7 +1178,8 @@ describe('Reconcile deployment usecase spec', () => {
                 },
                 labels: {
                   circleId: 'b46fd548-0082-4021-ba80-a50703c44a3b',
-                  deploymentId: 'b7d08a07-f29d-452e-a667-7a39820f3262',
+                  component: currentDeployment.components[0].name,
+                  tag: currentDeployment.components[0].imageTag
                 }
               },
               spec: {
@@ -1230,8 +1231,6 @@ describe('Reconcile deployment usecase spec', () => {
       deploymentRepository,
       componentsRepository,
       consoleLoggerService,
-      executionRepository,
-      mooveService
     )
 
     const reconcileObj = await reconcileDeploymentUsecase.execute(hookParamsWithNothingCreated)

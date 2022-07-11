@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,10 @@ export class ResourceWrapper {
     }
 
     public get deploymentId(): string | undefined {
-      const deploymentId = this.resource.metadata?.labels?.[AppConstants.DEPLOYMENT_ID_LABEL]
-      if (deploymentId) {
-        return deploymentId
-      }
       return this.isCharlesDeployment() ? this.spec?.deploymentId as string : undefined
+    }
+
+    public get circleId(): string | undefined {
+      return  this.resource.metadata?.labels?.[AppConstants.CIRCLE_ID_LABEL]
     }
 }

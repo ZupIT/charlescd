@@ -1,5 +1,5 @@
 /*
- * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,4 +66,12 @@ export class DeploymentRepositoryV2 extends Repository<DeploymentEntityV2> {
       .andWhere('v2deployments.current = true')
       .getMany()
   }
+
+  public async findCurrentByCircleId(circleId: string): Promise<DeploymentEntityV2>{
+    return await this.createQueryBuilder('v2deployments')
+      .where( { circleId: circleId })
+      .andWhere('v2deployments.current = true')
+      .getOneOrFail()
+  }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { DeploymentComponent } from '../../../api/deployments/interfaces/deploym
 import { DestinationRuleSpec, VirtualServiceSpec } from '../../../operator/interfaces/params.interface'
 import { Http, Subset } from '../interfaces/k8s-manifest.interface'
 import { DeploymentUtils } from './deployment.utils'
-import { IstioManifestsUtils } from './istio-manifests.utilts'
+import { IstioManifestsUtils } from './istio-manifests.utils'
 import { AppConstants } from '../../constants'
 
 const IstioUndeploymentManifestsUtils = {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2022 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ export class HelmManifest implements Manifest {
       this.consoleLoggerService.log('START:GENERATE MANIFEST')
       const manifest =  await this.template(chartPath, config)
       this.consoleLoggerService.log('FINISH:MANIFEST GENERATED')
-      return manifest
+      return manifest.filter( manifest => manifest != null)
     } catch (exception) {
       this.consoleLoggerService.error('ERROR:RENDERING_MANIFESTS', exception)
       throw new ExceptionBuilder('Not a valid manifest', HttpStatus.UNPROCESSABLE_ENTITY)
