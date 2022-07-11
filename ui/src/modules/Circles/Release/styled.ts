@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2020, 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ const AddModule = styled(ButtonComponentDefault)`
   display: flex;
   background-color: transparent;
   border: 2px solid ${({ theme }) => theme.button.default.outline.border};
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 0 20px;
   border-radius: 4px;
   align-items: center;
@@ -122,6 +122,31 @@ const AddModule = styled(ButtonComponentDefault)`
 
 const Submit = styled(ButtonComponentDefault)`
   width: 80px;
+  margin-top: 20px;
+`;
+
+const MetadataWrapper = styled.div`
+  position: relative;
+  display: flex;
+  width: 490px;
+  margin-top: 20px;
+
+  :hover ${Trash} {
+    visibility: visible;
+  }'
+`;
+
+const MetadataInput = styled(FormComponent.Input)`
+  width: 200px;
+  margin: 0 0 20px;
+`;
+
+const MetadataCheckbox = styled(FormComponent.Checkbox)``;
+
+const InputWrapper = styled.div`
+  position: relative;
+  width: 200px;
+  margin-right: 20px;
 `;
 
 export default {
@@ -132,6 +157,7 @@ export default {
   Input,
   Select,
   SelectWrapper,
+  InputWrapper,
   SearchWrapper,
   Error,
   Submit,
@@ -142,5 +168,10 @@ export default {
     Button: AddModule,
     Info,
     Input: ModuleInput
+  },
+  Metadata: {
+    Wrapper: MetadataWrapper,
+    Input: MetadataInput,
+    Checkbox: MetadataCheckbox
   }
 };
